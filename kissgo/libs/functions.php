@@ -1,0 +1,555 @@
+<?php
+/**
+ * 公共函数库.
+ *
+ *
+ * 其中有部分函数来源于第三方开源库.如wordpress等.
+ *
+ * @author Leo Ning <leo.ning@like18.com>
+ * @copyright LIKE18 INC. 2008 - 2011
+ * @version 1.0
+ * @since 1.0
+ * @package utils
+ * @subpackage functions
+ */
+// 定义lcfirst
+if (!function_exists('lcfirst')) {
+    /**
+     * 将字符串第一个字母小写
+     *
+     * @param string $str
+     * @return string
+     */
+    function lcfirst($str) {
+        return strtolower(substr($str, 0, 1)) . substr($str, 1);
+    }
+}
+/**
+ * Set HTTP status header.
+ *
+ * @since 1.0
+ *
+ * @param int $header
+ * HTTP status code
+ */
+function status_header($header) {
+    $text = get_status_header_desc($header);
+
+    if (empty ($text)) {
+        return;
+    }
+    $protocol = $_SERVER ["SERVER_PROTOCOL"];
+    if ('HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol) {
+        $protocol = 'HTTP/1.0';
+    }
+    $status_header = "$protocol $header $text";
+
+    @header($status_header, true, $header);
+}
+
+/**
+ * Retrieve the description for the HTTP status.
+ *
+ * @since 1.0
+ *
+ * @param int $code
+ * HTTP status code.
+ * @return string Empty string if not found, or description if found.
+ */
+function get_status_header_desc($code) {
+    global $output_header_to_desc;
+
+    $code = abs(intval($code));
+
+    if (!isset ($output_header_to_desc)) {
+        $output_header_to_desc = array(100 => 'Continue', 101 => 'Switching Protocols', 102 => 'Processing',
+
+            200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 207 => 'Multi-Status', 226 => 'IM Used',
+
+            300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 306 => 'Reserved', 307 => 'Temporary Redirect',
+
+            400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Timeout', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Long', 415 => 'Unsupported Media Type', 416 => 'Requested Range Not Satisfiable', 417 => 'Expectation Failed', 422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required',
+
+            500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Timeout', 505 => 'HTTP Version Not Supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 510 => 'Not Extended');
+    }
+
+    if (isset ($output_header_to_desc [$code]))
+        return $output_header_to_desc [$code];
+    else
+        return '';
+}
+
+/**
+ * Appends a trailing slash.
+ *
+ * Will remove trailing slash if it exists already before adding a trailing
+ * slash. This prevents double slashing a string or path.
+ *
+ * The primary use of this is for paths and thus should be used for paths. It is
+ * not restricted to paths and offers no specific path support.
+ *
+ * @uses untrailingslashit() Unslashes string if it was slashed already.
+ *
+ * @param string $string
+ * What to add the trailing slash to.
+ * @return string String with trailing slash added.
+ */
+function trailingslashit($string) {
+    return untrailingslashit($string) . '/';
+}
+
+/**
+ * Removes trailing slash if it exists.
+ *
+ * The primary use of this is for paths and thus should be used for paths. It is
+ * not restricted to paths and offers no specific path support.
+ *
+ *
+ * @param string $string
+ * What to remove the trailing slash from.
+ * @return string String without the trailing slash.
+ */
+function untrailingslashit($string) {
+    return rtrim($string, '/\\');
+}
+
+/**
+ * Test if a give filesystem path is absolute ('/foo/bar', 'c:\windows').
+ *
+ *
+ * @param string $path
+ * File path
+ * @return bool True if path is absolute, false is not absolute.
+ */
+function path_is_absolute($path) {
+    // this is definitive if true but fails if $path does not exist or contains
+    // a symbolic link
+    if (realpath($path) == $path)
+        return true;
+
+    if (strlen($path) == 0 || $path{0} == '.')
+        return false;
+
+    // windows allows absolute paths like this
+    if (preg_match('#^[a-zA-Z]:\\\\#', $path))
+        return true;
+
+    // a path starting with / or \ is absolute; anything else is relative
+    return ( bool )preg_match('#^[/\\\\]#', $path);
+}
+
+/**
+ * Join two filesystem paths together (e.g.
+ * 'give me $path relative to $base').
+ *
+ * If the $path is absolute, then it the full path is returned.
+ *
+ *
+ * @param string $base
+ * @param string $path
+ * @return string The path with the base or absolute path.
+ */
+function path_join($base, $path) {
+    if (path_is_absolute($path))
+        return $path;
+
+    return rtrim($base, '/') . '/' . ltrim($path, '/');
+}
+
+/**
+ * Sanitizes a filename replacing whitespace with dashes
+ *
+ * Removes special characters that are illegal in filenames on certain
+ * operating systems and special characters requiring special escaping
+ * to manipulate at the command line. Replaces spaces and consecutive
+ * dashes with a single dash. Trim period, dash and underscore from beginning
+ * and end of filename.
+ *
+ * @since 2.1.0
+ *
+ * @param string $filename
+ * The filename to be sanitized
+ * @return string The sanitized filename
+ */
+function sanitize_file_name($filename) {
+    $special_chars = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", chr(0));
+    $filename = str_replace($special_chars, '', $filename);
+    $filename = preg_replace('/[\s-]+/', '-', $filename);
+    $filename = trim($filename, '.-_');
+    // Split the filename into a base and extension[s]
+    $parts = explode('.', $filename);
+    // Return if only one extension
+    if (count($parts) <= 2)
+        return $filename;
+
+    // Process multiple extensions
+    $filename = array_shift($parts);
+    $extension = array_pop($parts);
+
+    $mimes = array('tmp', 'txt', 'jpg', 'gif', 'png', 'rar', 'zip', 'gzip', 'ppt');
+
+    // Loop over any intermediate extensions. Munge them with a trailing
+    // underscore if they are a 2 - 5 character
+    // long alpha string not in the extension whitelist.
+    foreach (( array )$parts as $part) {
+        $filename .= '.' . $part;
+
+        if (preg_match('/^[a-zA-Z]{2,5}\d?$/', $part)) {
+            $allowed = false;
+            foreach ($mimes as $ext_preg => $mime_match) {
+                $ext_preg = '!(^' . $ext_preg . ')$!i';
+                if (preg_match($ext_preg, $part)) {
+                    $allowed = true;
+                    break;
+                }
+            }
+            if (!$allowed)
+                $filename .= '_';
+        }
+    }
+    $filename .= '.' . $extension;
+
+    return $filename;
+}
+
+/**
+ * Get a filename that is sanitized and unique for the given directory.
+ *
+ * If the filename is not unique, then a number will be added to the filename
+ * before the extension, and will continue adding numbers until the filename is
+ * unique.
+ *
+ * The callback must accept two parameters, the first one is the directory and
+ * the second is the filename. The callback must be a function.
+ *
+ * @param string $dir
+ * @param string $filename
+ * @param string $unique_filename_callback
+ * Function name, must be a function.
+ * @return string New filename, if given wasn't unique.
+ */
+function unique_filename($dir, $filename, $unique_filename_callback = null) {
+    // sanitize the file name before we begin processing
+    $filename = sanitize_file_name($filename);
+
+    // separate the filename into a name and extension
+    $info = pathinfo($filename);
+    $ext = !empty ($info ['extension']) ? '.' . $info ['extension'] : '';
+    $name = basename($filename, $ext);
+
+    // edge case: if file is named '.ext', treat as an empty name
+    if ($name === $ext)
+        $name = '';
+
+    // Increment the file number until we have a unique file to save in
+    // $dir. Use $override['unique_filename_callback'] if supplied.
+    if ($unique_filename_callback && is_callable($unique_filename_callback)) {
+        $filename = $unique_filename_callback ($dir, $name);
+    } else {
+        $number = '';
+
+        // change '.ext' to lower case
+        if ($ext && strtolower($ext) != $ext) {
+            $ext2 = strtolower($ext);
+            $filename2 = preg_replace('|' . preg_quote($ext) . '$|', $ext2, $filename);
+
+            // check for both lower and upper case extension or image sub-sizes
+            // may be overwritten
+            while (file_exists($dir . "/$filename") || file_exists($dir . "/$filename2")) {
+                $new_number = $number + 1;
+                $filename = str_replace("$number$ext", "$new_number$ext", $filename);
+                $filename2 = str_replace("$number$ext2", "$new_number$ext2", $filename2);
+                $number = $new_number;
+            }
+            return $filename2;
+        }
+
+        while (file_exists($dir . "/$filename")) {
+            if ('' == "$number$ext")
+                $filename = $filename . ++$number . $ext;
+            else
+                $filename = str_replace("$number$ext", ++$number . $ext, $filename);
+        }
+    }
+
+    return $filename;
+}
+
+/**
+ * 查找文件
+ *
+ * @param string $dir
+ * 起始目录
+ * @param string $pattern
+ * 合法的正则表达式,此表达式只用于文件名
+ * @param array $excludes
+ * 不包含的目录名
+ * @param boolean $recursive
+ * 是否递归查找
+ * @param int $stop
+ * 递归查找层数
+ * @return array 查找到的文件
+ */
+function find_files($dir = '.', $pattern = '', $excludes = array(), $recursive = 0, $stop = 0) {
+    $files = array();
+    $dir = trailingslashit($dir);
+    if (is_dir($dir)) {
+        $fhd = @opendir($dir);
+        if ($fhd) {
+            $excludes = is_array($excludes) ? $excludes : array();
+            $_excludes = array_merge($excludes, array('.', '..'));
+            while (($file = readdir($fhd)) !== false) {
+                if ($recursive && is_dir($dir . $file) && !in_array($file, $_excludes)) {
+                    if ($stop == 0 || $recursive <= $stop) {
+                        $files = array_merge($files, find_files($dir . $file, $pattern, $excludes, $recursive + 1, $stop));
+                    }
+                }
+                if (is_file($dir . $file) && @preg_match($pattern, $file)) {
+                    $files [] = $dir . $file;
+                }
+            }
+            @closedir($fhd);
+        }
+    }
+    return $files;
+}
+
+/**
+ * 取解析后的php文件内容
+ *
+ * 以{@link WEBROOT}为根目录查找$file,然后执行php文件并返回执行后的内容.
+ *
+ * @param string $file
+ * @param array $vars
+ * @return string
+ */
+function pfile_get_contents($file, $vars = array()) {
+    $content = false;
+    $file = trailingslashit(WEBROOT) . $file;
+    if (is_readable($file)) {
+        @extract($vars);
+        @ob_start();
+        @include $file;
+        $content = @ob_get_contents();
+        @ob_end_clean();
+    }
+    return $content;
+}
+
+/**
+ *
+ * 删除目录
+ * @param string $dir
+ */
+function rmdirs($dir) {
+    $hd = @opendir($dir);
+    if ($hd) {
+        while (($file = readdir($hd)) != false) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            }
+            if (is_dir($dir . DS . $file)) {
+                rmdirs($dir . DS . $file);
+            } else {
+                @unlink($dir . DS . $file);
+            }
+        }
+        closedir($hd);
+        @rmdir($dir);
+    }
+    return true;
+}
+
+/**
+ *
+ * 只保留URL中部分参数
+ *
+ * @param string $url
+ * @param array $include
+ * 要保留的参数
+ * @return string
+ */
+function keepargs($url, $include = array()) {
+    $urls = explode('?', $url);
+    if (count($urls) < 2) {
+        return $url;
+    }
+    $kargs = array();
+    foreach ($include as $arg) {
+        if (preg_match('/' . $arg . '=([^&]+)/', $urls [1], $m)) {
+            $kargs [] = $m [0];
+        }
+    }
+    if (!empty ($kargs)) {
+        $urls [1] = implode('&', $kargs);
+        return implode('?', $urls);
+    } else {
+        return $urls [0];
+    }
+}
+
+/**
+ *
+ * 去除URL中的参数
+ *
+ * @param
+ * string url
+ * @param
+ * array 要去除的参数
+ * @return string
+ */
+function unkeepargs($url, $exclude = array()) {
+    $regex = array();
+    $rpm = array();
+    if (is_string($exclude)) {
+        $exclude = array($exclude);
+    }
+    foreach ($exclude as $ex) {
+        $regex [] = '/&?' . $ex . '=[^&]*/';
+        $rpm [] = '';
+    }
+    return preg_replace($regex, $rpm, $url);
+}
+
+/**
+ * 安全ID
+ *
+ * @param string $ids
+ * 以$sp分隔的id列表,只能是大与0的整形
+ * @param string $sp
+ * 分隔符
+ * @param boolean $array
+ * 是否返回数组
+ * @return mixed
+ */
+function safe_ids($ids, $sp = ",", $array = false) {
+    if (empty ($ids)) {
+        return $array ? array() : null;
+    }
+    $_ids = explode($sp, $ids);
+    $ids = array();
+    foreach ($_ids as $id) {
+        if (preg_match('/^[1-9]\d*$/', $id)) {
+            $ids [] = $id;
+        }
+    }
+    if ($array === false) {
+        return empty ($ids) ? null : implode($sp, $ids);
+    } else {
+        return empty ($ids) ? array() : $ids;
+    }
+}
+
+/**
+ * 可读的size
+ * @param int $size
+ * @return string
+ */
+function readable_size($size) {
+    if ($size < 1024) {
+        return $size . 'B';
+    } else if ($size < 1048576) {
+        return number_format($size / 1024, 2) . 'K';
+    } else if ($size < 1073741824) {
+        return number_format($size / 1048576, 2) . 'M';
+    } else {
+        return number_format($size / 1073741824, 2) . 'G';
+    }
+}
+
+/**
+ * 来自ucenter的加密解密函数
+ * @param string $string 要解（加）密码字串
+ * @param string $operation DECODE|ENCODE 解密|加密
+ * @param string $key 密码
+ * @param int $expiry 超时
+ */
+function ntzauthcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
+    $ckey_length = 4;
+
+    $key = md5($key ? $key : COOKIE_KEY);
+    $keya = md5(substr($key, 0, 16));
+    $keyb = md5(substr($key, 16, 16));
+    $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
+
+    $cryptkey = $keya . md5($keya . $keyc);
+    $key_length = strlen($cryptkey);
+
+    $string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) : sprintf('%010d', $expiry ? $expiry + time() : 0) . substr(md5($string . $keyb), 0, 16) . $string;
+    $string_length = strlen($string);
+
+    $result = '';
+    $box = range(0, 255);
+
+    $rndkey = array();
+    for ($i = 0; $i <= 255; $i++) {
+        $rndkey [$i] = ord($cryptkey [$i % $key_length]);
+    }
+
+    for ($j = $i = 0; $i < 256; $i++) {
+        $j = ($j + $box [$i] + $rndkey [$i]) % 256;
+        $tmp = $box [$i];
+        $box [$i] = $box [$j];
+        $box [$j] = $tmp;
+    }
+
+    for ($a = $j = $i = 0; $i < $string_length; $i++) {
+        $a = ($a + 1) % 256;
+        $j = ($j + $box [$a]) % 256;
+        $tmp = $box [$a];
+        $box [$a] = $box [$j];
+        $box [$j] = $tmp;
+        $result .= chr(ord($string [$i]) ^ ($box [($box [$a] + $box [$j]) % 256]));
+    }
+
+    if ($operation == 'DECODE') {
+        if ((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) && substr($result, 10, 16) == substr(md5(substr($result, 26) . $keyb), 0, 16)) {
+            return substr($result, 26);
+        } else {
+            return '';
+        }
+    } else {
+        return $keyc . str_replace('=', '', base64_encode($result));
+    }
+}
+
+/**
+ * error log
+ */
+function elog($msg) {
+    if (LOG_LEVEL >= LERROR) {
+        $msg = date("[Y-m-d H:i:s]") . " ERROR > " . request_uri() . "\n\t{$msg} \n";
+        @error_log($msg, 3, TMP_PATH . 'error.log');
+    }
+}
+
+/**
+ * info log
+ */
+function ilog($msg) {
+    if (LOG_LEVEL >= LINFO) {
+        $msg = date("[Y-m-d H:i:s]") . " INFO > " . request_uri() . "\n\t{$msg} \n";
+        @error_log($msg, 3, TMP_PATH . 'error.log');
+    }
+}
+
+/**
+ * warn log
+ */
+function wlog($msg) {
+    if (LOG_LEVEL >= LWARN) {
+        $msg = date("[Y-m-d H:i:s]") . " WARN > " . request_uri() . "\n\t{$msg} \n";
+        @error_log($msg, 3, TMP_PATH . 'error.log');
+    }
+}
+
+/**
+ * debug log
+ */
+function dlog($msg) {
+    if (LOG_LEVEL >= LDEBUG) {
+        $msg = date("[Y-m-d H:i:s]") . " DEBUG > " . request_uri() . "\n\t{$msg} \n";
+        @error_log($msg, 3, TMP_PATH . 'error.log');
+    }
+}
+// end of file functions.php
