@@ -1,36 +1,19 @@
 <?php
 /**
- * 公共函数库.
+ * kissgo framework that keep it simple and stupid, go go go ~~
  *
+ * @author Leo Ning
+ * @package kissgo.libs
  *
- * 其中有部分函数来源于第三方开源库.如wordpress等.
- *
- * @author Leo Ning <leo.ning@like18.com>
- * @copyright LIKE18 INC. 2008 - 2011
- * @version 1.0
- * @since 1.0
- * @package utils
- * @subpackage functions
+ * $Id$
  */
-// 定义lcfirst
-if (!function_exists('lcfirst')) {
-    /**
-     * 将字符串第一个字母小写
-     *
-     * @param string $str
-     * @return string
-     */
-    function lcfirst($str) {
-        return strtolower(substr($str, 0, 1)) . substr($str, 1);
-    }
-}
 /**
  * Set HTTP status header.
  *
  * @since 1.0
  *
- * @param int $header
- * HTTP status code
+ * @param int $header HTTP status code
+ *
  */
 function status_header($header) {
     $text = get_status_header_desc($header);
@@ -284,7 +267,7 @@ function unique_filename($dir, $filename, $unique_filename_callback = null) {
  * 合法的正则表达式,此表达式只用于文件名
  * @param array $excludes
  * 不包含的目录名
- * @param boolean $recursive
+ * @param bool|int $recursive
  * 是否递归查找
  * @param int $stop
  * 递归查找层数
@@ -325,7 +308,7 @@ function find_files($dir = '.', $pattern = '', $excludes = array(), $recursive =
  */
 function pfile_get_contents($file, $vars = array()) {
     $content = false;
-    $file = trailingslashit(WEBROOT) . $file;
+    $file = trailingslashit(WEB_ROOT) . $file;
     if (is_readable($file)) {
         @extract($vars);
         @ob_start();
@@ -337,9 +320,10 @@ function pfile_get_contents($file, $vars = array()) {
 }
 
 /**
- *
  * 删除目录
+ *
  * @param string $dir
+ * @return bool
  */
 function rmdirs($dir) {
     $hd = @opendir($dir);
@@ -369,7 +353,7 @@ function rmdirs($dir) {
  * 要保留的参数
  * @return string
  */
-function keepargs($url, $include = array()) {
+function keep_args($url, $include = array()) {
     $urls = explode('?', $url);
     if (count($urls) < 2) {
         return $url;
@@ -392,13 +376,11 @@ function keepargs($url, $include = array()) {
  *
  * 去除URL中的参数
  *
- * @param
- * string url
- * @param
- * array 要去除的参数
+ * @param string $url
+ * @param array $exclude 要去除的参数
  * @return string
  */
-function unkeepargs($url, $exclude = array()) {
+function un_keep_args($url, $exclude = array()) {
     $regex = array();
     $rpm = array();
     if (is_string($exclude)) {
@@ -459,15 +441,17 @@ function readable_size($size) {
 
 /**
  * 来自ucenter的加密解密函数
+ *
  * @param string $string 要解（加）密码字串
  * @param string $operation DECODE|ENCODE 解密|加密
  * @param string $key 密码
  * @param int $expiry 超时
+ * @return string
  */
 function ntzauthcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
     $ckey_length = 4;
 
-    $key = md5($key ? $key : COOKIE_KEY);
+    $key = md5($key ? $key : SECURITY_KEY);
     $keya = md5(substr($key, 0, 16));
     $keyb = md5(substr($key, 16, 16));
     $keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length) : substr(md5(microtime()), -$ckey_length)) : '';
@@ -514,42 +498,53 @@ function ntzauthcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 }
 
 /**
- * error log
+ * 记录Log信息
+ *
+ * @param string $message 信息
+ * @param array $trace_info 栈信息
+ * @param int $level 调试级别
  */
-function elog($msg) {
-    if (LOG_LEVEL >= LERROR) {
-        $msg = date("[Y-m-d H:i:s]") . " ERROR > " . request_uri() . "\n\t{$msg} \n";
-        @error_log($msg, 3, TMP_PATH . 'error.log');
+function log_message($message, $trace_info, $level) {
+    static $log_name = array(DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR');
+    if ($level >= DEBUG) {
+        $msg = date("Y-m-d H:i:s") . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
+        @error_log($msg, 3, APPDATA_PATH . '/logs/kissgo.log');
     }
 }
 
 /**
- * info log
+ * 记录debug信息
+ *
+ * @param string $message
  */
-function ilog($msg) {
-    if (LOG_LEVEL >= LINFO) {
-        $msg = date("[Y-m-d H:i:s]") . " INFO > " . request_uri() . "\n\t{$msg} \n";
-        @error_log($msg, 3, TMP_PATH . 'error.log');
-    }
+function log_debug($message) {
+    log_message($message, debug_backtrace()[0], DEBUG_DEBUG);
 }
 
 /**
- * warn log
+ * 记录info信息
+ *
+ * @param string $message
  */
-function wlog($msg) {
-    if (LOG_LEVEL >= LWARN) {
-        $msg = date("[Y-m-d H:i:s]") . " WARN > " . request_uri() . "\n\t{$msg} \n";
-        @error_log($msg, 3, TMP_PATH . 'error.log');
-    }
+function log_info($message) {
+    log_message($message, debug_backtrace()[0], DEBUG_INFO);
 }
 
 /**
- * debug log
+ * 记录warn信息
+ *
+ * @param string $message
  */
-function dlog($msg) {
-    if (LOG_LEVEL >= LDEBUG) {
-        $msg = date("[Y-m-d H:i:s]") . " DEBUG > " . request_uri() . "\n\t{$msg} \n";
-        @error_log($msg, 3, TMP_PATH . 'error.log');
-    }
+function log_warn($message) {
+    log_message($message, debug_backtrace()[0], DEBUG_WARN);
+}
+
+/**
+ * 记录error信息
+ *
+ * @param string $message
+ */
+function log_error($message) {
+    log_message($message, debug_backtrace()[0], DEBUG_ERROR);
 }
 // end of file functions.php

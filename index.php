@@ -1,17 +1,18 @@
 <?php
 /**
+ * kissgo framework that keep it simple and stupid, go go go ~~
  *
- * Id: $ID$
+ * @author Leo Ning
+ *
+ * $Id$
  */
 //------------------------------------------------------------------------
-if (ini_get('register_globals')) {
-    exit ("Error: register_globals must be set to Off in php.ini");
-}
 // the abstract path of web root
 define('WEB_ROOT', dirname(__FILE__));
+// the default application path
+define('APP_PATH', WEB_ROOT . DIRECTORY_SEPARATOR . 'application' . DIRECTORY_SEPARATOR);
+// the default kissgo path
+define('KISSGO', WEB_ROOT . DIRECTORY_SEPARATOR . 'kissgo' . DIRECTORY_SEPARATOR);
 
-define('APP_DIR', 'application');
-define('KISSGO', 'kissgo');
-
-require_once  WEB_ROOT . DIRECTORY_SEPARATOR . KISSGO . DIRECTORY_SEPARATOR . 'bootstrap.php';
+require_once  KISSGO . 'bootstrap.php';
 // end of file index.php
