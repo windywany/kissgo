@@ -518,7 +518,8 @@ function log_message($message, $trace_info, $level) {
  * @param string $message
  */
 function log_debug($message) {
-    log_message($message, debug_backtrace()[0], DEBUG_DEBUG);
+    $trace = debug_backtrace();
+    log_message($message, $trace[0], DEBUG_DEBUG);
 }
 
 /**
@@ -527,7 +528,8 @@ function log_debug($message) {
  * @param string $message
  */
 function log_info($message) {
-    log_message($message, debug_backtrace()[0], DEBUG_INFO);
+    $trace = debug_backtrace();
+    log_message($message, $trace[0], DEBUG_INFO);
 }
 
 /**
@@ -536,7 +538,8 @@ function log_info($message) {
  * @param string $message
  */
 function log_warn($message) {
-    log_message($message, debug_backtrace()[0], DEBUG_WARN);
+    $trace = debug_backtrace();
+    log_message($message, $trace[0], DEBUG_WARN);
 }
 
 /**
@@ -545,6 +548,7 @@ function log_warn($message) {
  * @param string $message
  */
 function log_error($message) {
-    log_message($message, debug_backtrace()[0], DEBUG_ERROR);
+    $trace = debug_backtrace();
+    log_message($message, $trace[0], DEBUG_ERROR);
 }
 // end of file functions.php
