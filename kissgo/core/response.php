@@ -78,6 +78,17 @@ class Response {
     }
 
     /**
+     * @param string $name 变量名
+     * @param null|mixed$value
+     * @param null|int $expire
+     * @param null|string $path
+     * @param null|string $domain
+     */
+    public function set_cookie($name, $value = null, $expire = null, $path = null, $domain = null) {
+        // TODO 完成设置COOKIE功能
+    }
+
+    /**
      *
      *
      * 此方法不应该直接调用，用于ob_start处理output buffer中的内容。

@@ -105,11 +105,19 @@ defined('SECURITY_KEY') or define ("SECURITY_KEY", 'yeN3g9EbNfi-Zf!dV63dI1j8Fbk5
 // 是否开启i18n支持
 defined('I18N') or define('I18N', false);
 defined('GZIP_ENABLED') or define('GZIP_ENABLED', false);
+
+define('INSTALLED_APPS', 'INSTALLED_APPS');
+define('INSTALLED_PLUGINS', 'INSTALLED_PLUGINS');
+define('DATABASE', 'DATABASE');
+define('SESSION', 'SESSION');
+define('COOKIE', 'cookie');
+define('CACHE', 'cache');
 /**
  * 应用程序设置类
  */
-class KissGoSetting implements ArrayAccess {
+class KissGoSetting implements ArrayAccess, Iterator {
     private $settings = array();
+    private $pos = 0;
     private static $INSTANCE = array();
 
     /**
@@ -143,6 +151,35 @@ class KissGoSetting implements ArrayAccess {
 
     public function offsetUnset($offset) {
         unset($this->settings[$offset]);
+    }
+
+    public function current() {
+        return current($this->settings);
+    }
+
+    public function next() {
+        next($this->settings);
+        $this->pos++;
+    }
+
+    public function key() {
+        return key($this->settings);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     * Returns true on success or false on failure.
+     */
+    public function valid() {
+        return $this->pos < count($this->settings);
+    }
+
+    public function rewind() {
+        rewind($this->settings);
+        $this->pos = 0;
     }
 
     /**
@@ -195,8 +232,24 @@ include KISSGO . 'libs/i18n.php';
 include KISSGO . 'core/request.php';
 include KISSGO . 'core/response.php';
 include KISSGO . 'core/session.php';
-include KISSGO . 'core/cookie.php';
 include KISSGO . 'core/cache.php';
+// load plugins
+if (function_exists('application_plugin_load')) {
+    application_plugin_load();
+}
+// load apps
+$__ksg_global_settings = KissGoSetting::getSetting();
+$__ksg_installed_apps = $__ksg_global_settings[INSTALLED_APPS];
+if (is_array($__ksg_installed_apps)) {
+    foreach ($__ksg_installed_apps as $app) {
+        $app_init_file = APPS . $app . DS . '__init__.php';
+        if (is_readable($app_init_file)) {
+            include $app_init_file;
+        }
+    }
+    unset($app, $app_init_file);
+}
+
 
 include KISSGO . 'core/kissgo.php';
 KissGo::getInstance()->run();

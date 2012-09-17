@@ -3,5 +3,8 @@ defined('KISSGO') or exit('No direct script access allowed');
 
 $settings = KissGoSetting::getSetting();
 
-$settings['name'] = 'good';
+$settings[INSTALLED_APPS] = array(
+    'aaaa'
+);
+
 //end of file settings.php

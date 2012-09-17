@@ -8,62 +8,42 @@
  * $Id$
  */
 /**
- * Session基类
+ * Session处理器接口
  *
  */
-abstract class Session implements ArrayAccess {
-    public final function offsetExists($offset) {
-        return $this->has($offset);
+if (version_compare(phpversion(), '5.4', '<')) {
+    interface SessionHandlerInterface {
+        function close();
+
+        function destroy($session_id);
+
+        function gc($max_life_time);
+
+        function open($save_path, $name);
+
+        function read($session_id);
+
+        function write($session_id, $session_data);
     }
 
-    public final function offsetGet($offset) {
-        return $this->get($offset);
+    $__ksg_session_handler = apply_filter('get_session_handler', null);
+    if ($__ksg_session_handler instanceof SessionHandlerInterface) {
+        session_set_save_handler(
+            array($__ksg_session_handler, 'open'),
+            array($__ksg_session_handler, 'close'),
+            array($__ksg_session_handler, 'read'),
+            array($__ksg_session_handler, 'write'),
+            array($__ksg_session_handler, 'destroy'),
+            array($__ksg_session_handler, 'gc')
+        );
+        register_shutdown_function('session_write_close');
     }
-
-    public final function offsetSet($offset, $value) {
-        $this->add($offset, $value);
+} else {
+    $__ksg_session_handler = apply_filter('get_session_handler', null);
+    if ($__ksg_session_handler instanceof SessionHandlerInterface) {
+        @session_set_save_handler($__ksg_session_hander, true);
     }
-
-    public final function offsetUnset($offset) {
-        $this->add($offset, null);
-    }
-
-    /**
-     * 设置SESSION,当$value=null时从SESSION中删除$name对应的值
-     * @param string $name 值名
-     * @param mixed $value 值
-     */
-    public abstract function add($name, $value = null);
-
-    /**
-     * 从SESSION中取值
-     * @param string $name 值名
-     * @param mixed $default 默认值
-     * @return mixed
-     */
-    public abstract function get($name, $default = "");
-
-    /**
-     * session中是否有$name对应的值
-     * @param string $name
-     * @return bool
-     */
-    public abstract function has($name);
-
-    /**
-     * 关闭会话
-     */
-    public abstract function close();
-
-    /**
-     * 销毁会话
-     */
-    public abstract function destroy();
-
-    /**
-     *
-     * 当前会话的ID
-     */
-    public abstract function id();
 }
+// TODO 调用 session_start()之前的一些处理工作
+# session_set_cookie_params()
 // END OF FILE session.php
