@@ -208,8 +208,10 @@ include KISSGO . 'libs/i18n.php';
 // load kissgo core scripts
 include KISSGO . 'core/request.php';
 include KISSGO . 'core/response.php';
+include KISSGO . 'core/router.php';
 include KISSGO . 'core/session.php';
 include KISSGO . 'core/cache.php';
+include KISSGO . 'core/views.php';
 
 // load applications and plugins
 $__ksg_global_settings = KissGoSetting::getSetting();

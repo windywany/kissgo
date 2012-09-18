@@ -11,19 +11,20 @@
  * Session处理器接口
  *
  */
-interface SessionHandlerInterface {
-    function close();
+if (!interface_exists('SessionHandlerInterface')) {
+    interface SessionHandlerInterface {
+        function close();
 
-    function destroy($session_id);
+        function destroy($session_id);
 
-    function gc($max_life_time);
+        function gc($max_life_time);
 
-    function open($save_path, $name);
+        function open($save_path, $name);
 
-    function read($session_id);
+        function read($session_id);
 
-    function write($session_id, $session_data);
+        function write($session_id, $session_data);
+    }
 }
-
 // use cookie for session id
 @ini_set('session.use_cookies', 1);

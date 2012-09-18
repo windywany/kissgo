@@ -15,10 +15,13 @@ defined('KISSGO') or exit('No direct script access allowed');
  */
 class KissGo implements ArrayAccess {
     private static $INSTANCE = NULL;
-    private static $SESSION_STARTED = false;
 
     private function __construct() {
         if (!@ini_get('zlib.output_compression') && @ob_get_status()) {
+            $__ksg_before_out = @ob_get_contents();
+            if ($__ksg_before_out) {
+                log_debug($__ksg_before_out);
+            }
             @ob_end_clean();
         }
         @ob_start(array(Response::getInstance(), 'ob_out_handler'));
@@ -48,7 +51,16 @@ class KissGo implements ArrayAccess {
      */
     public function run() {
         $request = Request::getInstance();
-        echo $_COOKIE['leo'];
+        $response = Response::getInstance();
+        $view = apply_filter('before_route', false);
+        if ($view === false) {
+            $router = Router::getInstance();
+            $action_func = $router->get_app_action($request);
+            if (is_callable($action_func)) {
+                $view = call_user_func_array($action_func, array($request, $response));
+            }
+        }
+        $response->output($view);
     }
 
     public function offsetExists($offset) {
@@ -74,15 +86,19 @@ class KissGo implements ArrayAccess {
     private function initialize_session() {
         $__ksg_session_handler = apply_filter('get_session_handler', null);
         if ($__ksg_session_handler instanceof SessionHandlerInterface) {
-            session_set_save_handler(
-                array($__ksg_session_handler, 'open'),
-                array($__ksg_session_handler, 'close'),
-                array($__ksg_session_handler, 'read'),
-                array($__ksg_session_handler, 'write'),
-                array($__ksg_session_handler, 'destroy'),
-                array($__ksg_session_handler, 'gc')
-            );
-            register_shutdown_function('session_write_close');
+            if (version_compare('5.4', phpversion(), '>=')) {
+                session_set_save_handler($__ksg_session_handler, true);
+            } else {
+                session_set_save_handler(
+                    array($__ksg_session_handler, 'open'),
+                    array($__ksg_session_handler, 'close'),
+                    array($__ksg_session_handler, 'read'),
+                    array($__ksg_session_handler, 'write'),
+                    array($__ksg_session_handler, 'destroy'),
+                    array($__ksg_session_handler, 'gc')
+                );
+                register_shutdown_function('session_write_close');
+            }
         }
         $session_expire = apply_filter('get_session_expire', 900);
         @session_set_cookie_params($session_expire);
