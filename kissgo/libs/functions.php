@@ -498,6 +498,40 @@ function ntzauthcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
 }
 
 /**
+ * Include all of files in the $files or a single file if the $files is a string
+ * @param array|string $files
+ */
+function includes($files) {
+    if (!is_array($files)) {
+        $files = array($files);
+    }
+    foreach ($files as $file) {
+        if (preg_match('/^::/', $file)) { // 从核心库加载
+            $file = str_replace('::', KISSGO, $file);
+        } else {
+            $file = APP_PATH . $file;
+        }
+        if (is_readable($file)) {
+            include_once $file;
+        }
+    }
+}
+
+/**
+ * 合并$base与$arr
+ *
+ * @param mixed $base
+ * @param array $arr
+ * @return array 如果$base为空或$base不是一个array则直接返回$arr,反之返回array_merge($base,$arr)
+ */
+function array_merge2($base, $arr) {
+    if (empty($base) || !is_array($base)) {
+        return $arr;
+    }
+    return array_merge($base, $arr);
+}
+
+/**
  * 记录Log信息
  *
  * @param string $message 信息

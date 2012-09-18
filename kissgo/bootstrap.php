@@ -88,10 +88,13 @@ if (!empty($__ksg_run_level)) {
 if (is_readable($__ksg_app_bootstrap)) {
     include $__ksg_app_bootstrap;
 }
-define('APP_DIR', dirname(APP_PATH));
-define('KISSGO_DIR', dirname(KISSGO));
 // debug level
 defined('DEBUG') or define('DEBUG', 3);
+// set timezone
+defined('TIMEZONE') or define ('TIMEZONE', 'Asia/Shanghai');
+@date_default_timezone_set(TIMEZONE);
+define('APP_DIR', dirname(APP_PATH));
+define('KISSGO_DIR', dirname(KISSGO));
 // the default application name, this is used by session id
 defined('APP_NAME') or define('APP_NAME', basename(WEB_ROOT));
 // the default apps path
@@ -105,23 +108,25 @@ defined('SECURITY_KEY') or define ("SECURITY_KEY", 'yeN3g9EbNfi-Zf!dV63dI1j8Fbk5
 // 是否开启i18n支持
 defined('I18N') or define('I18N', false);
 defined('GZIP_ENABLED') or define('GZIP_ENABLED', false);
-
-define('INSTALLED_APPS', 'INSTALLED_APPS');
-define('INSTALLED_PLUGINS', 'INSTALLED_PLUGINS');
-define('DATABASE', 'DATABASE');
-define('SESSION', 'SESSION');
-define('COOKIE', 'cookie');
-define('CACHE', 'cache');
+// 常用设置
+define('INSTALLED_APPS', '__INSTALLED_APPS__');
+define('INSTALLED_PLUGINS', '__INSTALLED_PLUGINS__');
+define('DATABASE', '__DATABASE__');
+define('COOKIE', '__COOKIE__');
+define('CACHE', '__CACHE__');
 /**
  * 应用程序设置类
  */
-class KissGoSetting implements ArrayAccess, Iterator {
+class KissGoSetting implements ArrayAccess {
     private $settings = array();
     private $pos = 0;
     private static $INSTANCE = array();
 
     /**
+     * 取系统设置实例
+     *
      * @param string $name
+     * @param null|KissgoSetting
      * @return KissGoSetting
      */
     public static function getSetting($name = 'default', $setting = null) {
@@ -153,35 +158,6 @@ class KissGoSetting implements ArrayAccess, Iterator {
         unset($this->settings[$offset]);
     }
 
-    public function current() {
-        return current($this->settings);
-    }
-
-    public function next() {
-        next($this->settings);
-        $this->pos++;
-    }
-
-    public function key() {
-        return key($this->settings);
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
-     */
-    public function valid() {
-        return $this->pos < count($this->settings);
-    }
-
-    public function rewind() {
-        rewind($this->settings);
-        $this->pos = 0;
-    }
-
     /**
      * 获取设置
      * @param string $name
@@ -204,7 +180,8 @@ class KissGoSetting implements ArrayAccess, Iterator {
     /**
      * 保存
      */
-    public function save() { }
+    public function save() {
+    }
 }
 
 /**
@@ -233,24 +210,45 @@ include KISSGO . 'core/request.php';
 include KISSGO . 'core/response.php';
 include KISSGO . 'core/session.php';
 include KISSGO . 'core/cache.php';
-// load plugins
+
+// load applications and plugins
+$__ksg_global_settings = KissGoSetting::getSetting();
+$__ksg_installed_plugins = $__ksg_global_settings[INSTALLED_APPS];
+if (is_array($__ksg_installed_plugins) && !empty($__ksg_installed_plugins)) {
+    $plg_init_files = array();
+    foreach ($__ksg_installed_plugins as $plg) {
+        if (preg_match('/^::/', $plg)) {
+            $plg_init_files[] = str_replace('::', '::plugins/', $plg);
+        } else {
+            $plg_init_files[] = 'plugins/' . $plg;
+        }
+    }
+    if (!empty($plg_init_files)) {
+        includes($plg_init_files);
+    }
+    unset($plg, $plg_init_files);
+}
+// load user plugins
 if (function_exists('application_plugin_load')) {
     application_plugin_load();
 }
 // load apps
-$__ksg_global_settings = KissGoSetting::getSetting();
 $__ksg_installed_apps = $__ksg_global_settings[INSTALLED_APPS];
 if (is_array($__ksg_installed_apps)) {
+    $app_init_files = array();
     foreach ($__ksg_installed_apps as $app) {
-        $app_init_file = APPS . $app . DS . '__init__.php';
-        if (is_readable($app_init_file)) {
-            include $app_init_file;
+        if (preg_match('/^::/', $app)) {
+            $app_init_files[] = $app . '/__init__.php';
+        } else {
+            $app_init_files[] = 'apps/' . $app . '/__init__.php';
         }
     }
-    unset($app, $app_init_file);
+    if (!empty($app_init_files)) {
+        includes($app_init_files);
+    }
+    unset($app, $app_init_files);
 }
-
-
+unset($__ksg_installed_apps, $__ksg_installed_plugins);
 include KISSGO . 'core/kissgo.php';
 KissGo::getInstance()->run();
 // end of file bootstrap.php

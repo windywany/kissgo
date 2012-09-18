@@ -44,7 +44,7 @@ class Response {
      * 跳转
      *
      * @param string $location 要转到的网址
-     * @param array $args 参数
+     * @param string|array $args 参数
      * @param int $status 响应代码
      */
     public function redirect($location, $args = "", $status = 302) {
@@ -78,14 +78,31 @@ class Response {
     }
 
     /**
+     * 设置cookie
+     *
      * @param string $name 变量名
      * @param null|mixed$value
      * @param null|int $expire
      * @param null|string $path
      * @param null|string $domain
+     * @param null|bool $security
      */
-    public function set_cookie($name, $value = null, $expire = null, $path = null, $domain = null) {
-        // TODO 完成设置COOKIE功能
+    public function set_cookie($name, $value = null, $expire = null, $path = null, $domain = null, $security = null) {
+        $settings = KissGoSetting::getSetting();
+        $cookie_setting = array_merge2(array('expire' => 0, 'path' => '/', 'domain' => ".", 'security' => false), $settings[COOKIE]);
+        if ($expire == null) {
+            $expire = intval($cookie_setting['expire']);
+        }
+        if ($path == null) {
+            $path = $cookie_setting['path'];
+        }
+        if ($domain == null) {
+            $domain = $cookie_setting['domain'];
+        }
+        if ($security == null) {
+            $security = $cookie_setting['security'];
+        }
+        setcookie($name, $value, $expire, $path, $domain, $security);
     }
 
     /**

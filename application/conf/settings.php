@@ -6,5 +6,8 @@ $settings = KissGoSetting::getSetting();
 $settings[INSTALLED_APPS] = array(
     'aaaa'
 );
+$settings[INSTALLED_PLUGINS] = array(
+    '::hello.php'
+);
 
 //end of file settings.php

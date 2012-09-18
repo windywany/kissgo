@@ -1,5 +1,7 @@
-<?php 
+<?php
 
-function admin_index($req){
-	
+import('::aaaa/name.php');
+
+function admin_index($req) {
+
 }
