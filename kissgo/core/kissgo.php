@@ -58,6 +58,8 @@ class KissGo implements ArrayAccess {
             $action_func = $router->get_app_action($request);
             if (is_callable($action_func)) {
                 $view = call_user_func_array($action_func, array($request, $response));
+            } else if ($action_func instanceof View) {
+                $view = $action_func;
             }
         }
         $response->output($view);

@@ -13,7 +13,7 @@ if (@ini_get('register_globals')) {
     if (isset ($_REQUEST ['GLOBALS'])) {
         die ('GLOBALS overwrite attempt detected');
     }
-    $noUnset = array('GLOBALS', '_GET', '_POST', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES', '_KCF');
+    $noUnset = array('GLOBALS', '_GET', '_POST', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES');
     $input = array_merge($_GET, $_POST, $_COOKIE, $_SERVER, $_ENV, $_FILES, isset ($_SESSION) && is_array($_SESSION) ? $_SESSION : array());
     foreach ($input as $k => $v) {
         if (!in_array($k, $noUnset) && isset ($GLOBALS [$k])) {
@@ -108,6 +108,7 @@ defined('SECURITY_KEY') or define ("SECURITY_KEY", 'yeN3g9EbNfi-Zf!dV63dI1j8Fbk5
 // 是否开启i18n支持
 defined('I18N') or define('I18N', false);
 defined('GZIP_ENABLED') or define('GZIP_ENABLED', false);
+define('NOTNULL', '_@_NOT_NULL_@_');
 // 常用设置
 define('INSTALLED_APPS', '__INSTALLED_APPS__');
 define('INSTALLED_PLUGINS', '__INSTALLED_PLUGINS__');
@@ -206,6 +207,7 @@ include KISSGO . 'libs/plugin.php';
 include KISSGO . 'libs/template.php';
 include KISSGO . 'libs/i18n.php';
 // load kissgo core scripts
+include KISSGO . 'core/path.php';
 include KISSGO . 'core/request.php';
 include KISSGO . 'core/response.php';
 include KISSGO . 'core/router.php';
@@ -215,7 +217,7 @@ include KISSGO . 'core/views.php';
 
 // load applications and plugins
 $__ksg_global_settings = KissGoSetting::getSetting();
-$__ksg_installed_plugins = $__ksg_global_settings[INSTALLED_APPS];
+$__ksg_installed_plugins = $__ksg_global_settings[INSTALLED_PLUGINS];
 if (is_array($__ksg_installed_plugins) && !empty($__ksg_installed_plugins)) {
     $plg_init_files = array();
     foreach ($__ksg_installed_plugins as $plg) {
@@ -230,6 +232,33 @@ if (is_array($__ksg_installed_plugins) && !empty($__ksg_installed_plugins)) {
     }
     unset($plg, $plg_init_files);
 }
+// ////////////////////////////////////////////////////////////
+// 自动加载器
+/**
+ * 自动类加载器
+ *
+ * 根据类名和已经注册到系统的类路径{@link $__kissgo_exports}动态加载类
+ *
+ * @global array 系统类路径
+ * @param $clz string
+ * 类名
+ */
+function __kissgo_class_loader($clz) {
+    global $__kissgo_exports;
+    foreach ($__kissgo_exports as $path) {
+        $clz_file = $path . DS . $clz . '.php';
+        if (is_file($clz_file)) {
+            include $clz_file;
+            return;
+        }
+    }
+    $file = apply_filter('auto_load_class', '', $clz);
+    if ($file && file_exists($file)) {
+        include $file;
+    }
+}
+
+spl_autoload_register('__kissgo_class_loader');
 // load user plugins
 if (function_exists('application_plugin_load')) {
     application_plugin_load();
@@ -251,6 +280,7 @@ if (is_array($__ksg_installed_apps)) {
     unset($app, $app_init_files);
 }
 unset($__ksg_installed_apps, $__ksg_installed_plugins);
+/////////////////////////////////////////////////////////////////
 include KISSGO . 'core/kissgo.php';
 KissGo::getInstance()->run();
 // end of file bootstrap.php

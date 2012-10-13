@@ -85,15 +85,18 @@ class Response {
     /**
      * 内部转发
      * @param string $action
+     * @param $app
      * @return null|View|string|array
      */
-    public function forward($action) {
+    public function forward($action, $app) {
         $request = Request::getInstance();
 
         $router = Router::getInstance();
-        $action_func = $router->load_application($action);
+        $action_func = $router->load_application($action, $app);
         if (is_callable($action_func)) {
             return call_user_func_array($action_func, array($request, $this));
+        } else if ($action_func instanceof View) {
+            return $action_func;
         }
         return null;
     }

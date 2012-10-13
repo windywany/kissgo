@@ -511,8 +511,33 @@ function includes($files) {
         } else {
             $file = APP_PATH . $file;
         }
-        if (is_readable($file)) {
+        if (is_file($file)) {
             include_once $file;
+        }
+    }
+}
+
+/**
+ * 加载应用程序中的文件
+ * @param array|string $files
+ */
+function imports($files) {
+    if (!is_array($files)) {
+        $files = array($files);
+    }
+    foreach ($files as $file) {
+        if (preg_match('/.+\*$/', $file)) {
+            $_files = glob(APPS . $file . '.php');
+            foreach ($_files as $_file) {
+                if (is_file($_file)) {
+                    include_once $_file;
+                }
+            }
+        } else {
+            $file = APPS . $file;
+            if (is_file($file)) {
+                include_once $file;
+            }
         }
     }
 }
