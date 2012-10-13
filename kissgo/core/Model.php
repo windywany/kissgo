@@ -132,7 +132,7 @@ abstract class Model {
     public function __construct($ds = 'default') {
         $this->_ds = DataSource::getDataSource($ds);
         if ($this->_ds == null) {
-            trigger_error('can not connect to the database server!');
+            trigger_error('can not connect to the database server!', E_USER_ERROR);
         }
         // 获取表名
         $this->_entity_name = preg_replace('/Model$/', '', get_class($this));
@@ -873,6 +873,8 @@ abstract class Model {
             return $this->_entity_name;
         } else if ($name == '_queryString') {
             return $this->_queryString;
+        } else if($name == '_ds'){
+            return $this->_ds;
         } else if (isset ($this->_fields [$name])) {
             $field = $this->_fields [$name] ['var'];
             return $this->{$field};

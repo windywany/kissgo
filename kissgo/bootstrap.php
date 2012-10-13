@@ -79,7 +79,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('DEBUG_INFO', 4);
 define('DEBUG_WARN', 3);
 define('DEBUG_DEBUG', 2);
-define('DEBUG_ERROR', 1);
+define('DEBUG_ERROR', 5);
 // load the bootstrap script of the application,in this script you can change some settings
 $__ksg_app_bootstrap = APP_PATH . 'bootstrap.php';
 if (!empty($__ksg_run_level)) {
@@ -101,6 +101,9 @@ defined('APP_NAME') or define('APP_NAME', basename(WEB_ROOT));
 defined('APPS') or define('APPS', APP_PATH . 'apps' . DS);
 // the application data path
 defined('APPDATA_PATH') or define('APPDATA_PATH', APP_PATH . 'appdata' . DS);
+defined('TEMPLATE_PATH') or define('TEMPLATE_PATH', WEB_ROOT . 'templates' . DS);
+defined('STATIC_DIR') or define('STATIC_DIR', 'static');
+defined('BASE_URL') or define('BASE_URL', '/');
 // the temporary directory path
 defined('TMP_PATH') or define('TMP_PATH', APPDATA_PATH . 'tmp' . DS);
 // 安全码，用于cookie等内容的加密与解密
@@ -120,7 +123,6 @@ define('CACHE', '__CACHE__');
  */
 class KissGoSetting implements ArrayAccess {
     private $settings = array();
-    private $pos = 0;
     private static $INSTANCE = array();
 
     /**

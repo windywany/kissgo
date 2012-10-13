@@ -66,7 +66,11 @@ abstract class DataSource {
             $options = $database_settings[$datasource];
             $driver = isset($options['driver']) && !empty($options['driver']) ? $options['driver'] : 'Mysql';
             $driver .= 'Datasource';
-            $ds[$datasource] = $driver($options);
+            $dr = new $driver($options);
+            if(!$dr->connect()){
+                return null;
+            }
+            $ds[$datasource] = $dr;
         }
         return $ds[$datasource];
     }

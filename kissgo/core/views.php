@@ -25,6 +25,7 @@ abstract class View implements ArrayAccess {
     /**
      * @param string|array $data
      * @param string $tpl
+     * @param array $headers
      */
     public function __construct($data = array(), $tpl = '', $headers = array()) {
         if (is_string($data)) {
@@ -58,9 +59,9 @@ abstract class View implements ArrayAccess {
 
     /**
      * 绘制
-     * @param array $data
-     * @param Response $response
-     * @param string $tpl 模板
+     * @internal param array $data
+     * @internal param \Response $response
+     * @internal param string $tpl 模板
      * @return string
      */
     public abstract function render();

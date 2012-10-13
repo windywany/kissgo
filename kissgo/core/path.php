@@ -10,4 +10,5 @@
 $__kissgo_exports[] = KISSGO . 'core';
 $__kissgo_exports[] = KISSGO . 'core/ds';
 $__kissgo_exports[] = KISSGO . 'core/rs';
+$__kissgo_exports[] = KISSGO . 'vendors/smarty';
 // END OF FILE path.php

@@ -312,7 +312,7 @@ function pfile_get_contents($file, $vars = array()) {
     if (is_readable($file)) {
         @extract($vars);
         @ob_start();
-        @include $file;
+        include $file;
         $content = @ob_get_contents();
         @ob_end_clean();
     }
@@ -519,24 +519,28 @@ function includes($files) {
 
 /**
  * 加载应用程序中的文件
- * @param array|string $files
+ * @internal param array|string $files
  */
-function imports($files) {
-    if (!is_array($files)) {
-        $files = array($files);
-    }
-    foreach ($files as $file) {
-        if (preg_match('/.+\*$/', $file)) {
-            $_files = glob(APPS . $file . '.php');
-            foreach ($_files as $_file) {
-                if (is_file($_file)) {
-                    include_once $_file;
+function imports() {
+    $args = func_get_args();
+    if(empty($args)) return;
+    foreach($args as $files){
+        if (!is_array($files)) {
+            $files = array($files);
+        }
+        foreach ($files as $file) {
+            if (preg_match('/.+\*$/', $file)) {
+                $_files = glob(APPS . $file . '.php');
+                foreach ($_files as $_file) {
+                    if (is_file($_file)) {
+                        include_once $_file;
+                    }
                 }
-            }
-        } else {
-            $file = APPS . $file;
-            if (is_file($file)) {
-                include_once $file;
+            } else {
+                $file = APPS . $file;
+                if (is_file($file)) {
+                    include_once $file;
+                }
             }
         }
     }

@@ -4,6 +4,5 @@
  * @param Response $response
  * @return mixed
  */
-function do_default_index($request, $response) {
-    return $response->forward('index', 'admin');
-}
+
+return new SimpleView("小样");

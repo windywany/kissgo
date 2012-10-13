@@ -8,11 +8,11 @@
  */
 //------------------------------------------------------------------------
 // the abstract path of web root
-define('WEB_ROOT', dirname(__FILE__));
+define('WEB_ROOT', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 // the default application path
-define('APP_PATH', WEB_ROOT . DIRECTORY_SEPARATOR . 'application' . DIRECTORY_SEPARATOR);
+define('APP_PATH', WEB_ROOT . 'application' . DIRECTORY_SEPARATOR);
 // the default kissgo path
-define('KISSGO', WEB_ROOT . DIRECTORY_SEPARATOR . 'kissgo' . DIRECTORY_SEPARATOR);
+define('KISSGO', WEB_ROOT . 'kissgo' . DIRECTORY_SEPARATOR);
 
 require_once  KISSGO . 'bootstrap.php';
 // end of file index.php
