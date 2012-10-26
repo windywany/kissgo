@@ -305,6 +305,21 @@ function smarty_modifiercompiler_random($ary, $compiler) {
     return $output;
 }
 
+function smarty_modifiercompiler_ts($ary, $compiler) {
+    if (count($ary) < 1) {
+        trigger_error('error usage of ts', E_USER_WARNING);
+        return "''";
+    }
+    $string = array_shift($ary);
+    if (!empty($ary)) {
+        $args = smarty_argstr($ary);
+        $output = "__({$string},$args)";
+    } else {
+        $output = "__({$string})";
+    }
+    return $output;
+}
+
 function smarty_modifiercompiler_params($ary, $compiler) {
     if (count($ary) < 1) {
         trigger_error('error usage of params', E_USER_WARNING);

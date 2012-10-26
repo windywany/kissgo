@@ -8,13 +8,5 @@
  * $Id$
  */
 imports('aaaa/forms/*', 'aaaa/models/*');
-function dox_aaaa_index($req, $res) {
-
-}
-
-$uM = new CoreUserModel();
-
-$users = $uM->retrieve();
-
 return new SmartyView('test/index.tpl', array('name' => 'Leo'));
 // END OF FILE index.php

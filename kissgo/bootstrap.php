@@ -109,7 +109,7 @@ defined('TMP_PATH') or define('TMP_PATH', APPDATA_PATH . 'tmp' . DS);
 // 安全码，用于cookie等内容的加密与解密
 defined('SECURITY_KEY') or define ("SECURITY_KEY", 'yeN3g9EbNfi-Zf!dV63dI1j8Fbk5H@L7+6ya}4y7u2j4Mf4|mPg2v?99g4{1k576');
 // 是否开启i18n支持
-defined('I18N') or define('I18N', false);
+defined('I18N_ENABLED') or define('I18N_ENABLED', false);
 defined('GZIP_ENABLED') or define('GZIP_ENABLED', false);
 define('NOTNULL', '_@_NOT_NULL_@_');
 // 常用设置
@@ -204,10 +204,10 @@ if (is_readable($__ksg_settings_file)) {
 }
 
 // load kissgo libs scripts
+include KISSGO . 'libs/i18n.php';
 include KISSGO . 'libs/functions.php';
 include KISSGO . 'libs/plugin.php';
 include KISSGO . 'libs/template.php';
-include KISSGO . 'libs/i18n.php';
 // load kissgo core scripts
 include KISSGO . 'core/path.php';
 include KISSGO . 'core/request.php';

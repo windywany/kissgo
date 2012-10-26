@@ -1,0 +1,74 @@
+body {
+    padding: 40px 0 35px 0;
+}
+
+#crumb .container-fluid {
+    padding-left: 120px;
+    background: transparent url('../images/logo.png') no-repeat 20px 4px;
+}
+.breadcrumb {
+    margin-bottom: 5px;
+}
+
+#container {
+    font-size: 12px;
+}
+#container-wrap{
+    padding-left: 185px;
+}
+#sidemenu{
+    float: left;
+    width: 165px;
+    margin-left: -185px;
+}
+#sidemenu .nav-tabs{
+    width: 165px;
+}
+#sidemenu .icon-chevron-right {
+    float: right;
+    margin-right: -6px;
+    margin-top: 2px;
+    opacity: 0.25;
+}
+.nav-kissgo > li > a {
+    border: 1px solid #E5E5E5;
+    display: block;
+    margin: 0 0 -1px;
+    padding: 3px 14px;
+}
+
+.nav-kissgo > .active > a {
+    border: 0 none;
+    box-shadow: 1px 0 0 rgba(0, 0, 0, 0.1) inset, -1px 0 0 rgba(0, 0, 0, 0.1) inset;
+    padding: 3px 15px;
+    position: relative;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+.nav-kissgo > .active > a, .nav-kissgo > .active > a:hover {
+    background-color: #0088CC;
+    color: #FFFFFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+#sidemenu .active .icon-chevron-right{
+    opacity: 1;
+}
+#foot {
+    background: none repeat scroll 0 0 #EDEDED;
+    border-top: 1px solid #DDDDDD;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 -15px 15px rgba(255, 255, 255, 0.6);
+    color: #999999;
+    padding: 2px 10px 4px;
+}
+
+#foot .btn-toolbar, #foot p {
+    margin: 0;
+}
+
+#foot .btn-toolbar, #foot .btn-group {
+    font-size: 12px;
+}
+
+#foot a {
+    color: #999999;
+}
