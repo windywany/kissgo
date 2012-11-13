@@ -9,6 +9,7 @@
  */
 class Router {
     private static $INSTANCE = null;
+    private static $url = '';
 
     private function __construct() {
     }
@@ -31,7 +32,7 @@ class Router {
      * @return string
      */
     public function get_app_action($request) {
-        $url = !isset($request['__url']) || empty($request['__url']) ? '/' : $request['__url'];
+        self::$url = $url = !isset($request['__url']) || empty($request['__url']) ? '/' : $request['__url'];
         $action = 'index';
         if ($url == '/') {
             $app = '';
@@ -41,7 +42,7 @@ class Router {
             if ($cnt == 1) {
                 $app = $chunks[0];
             } else if ($cnt == 2) {
-                list($app, $action) = $chunks[0];
+                list($app, $action) = $chunks;
             } else {
                 $app = array_shift($chunks);
                 $action = array_shift($chunks);
@@ -53,12 +54,13 @@ class Router {
 
     /**
      * @param string $action
+     * @param string $app
      * @return string a callable function
      */
     public function load_application($action, $app = '') {
         $func_name = 'do_default_' . $action;
         if ($app) {
-            $func_name = 'do_' . $app . '_' . $action;
+            $func_name = 'do_' . $action;
             $app = str_replace('_', '/', $app) . "/actions/{$action}.php";
         } else {
             $app = 'index.php';
@@ -66,12 +68,12 @@ class Router {
         $app_action_file = APPS . $app;
         $rtn = null;
         if (is_file($app_action_file)) {
-            $rtn = include $app_action_file;
+            $rtn = include($app_action_file);
         } else {
             $func_name = 'do_default_' . $action;
             $app = 'index.php';
             $app_action_file = APPS . $app;
-            $rtn = include $app_action_file;
+            $rtn = include($app_action_file);
         }
         if (function_exists($func_name)) {
             return $func_name;

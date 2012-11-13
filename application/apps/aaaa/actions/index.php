@@ -7,6 +7,10 @@
  * @date 12-10-10 下午1:56
  * $Id$
  */
-imports('aaaa/forms/*', 'aaaa/models/*');
-return new SmartyView('test/index.tpl', array('name' => 'Leo'));
+$url = 'abc/aaaa?leo=name';
+
+echo "<pre>";
+
+print_r(parse_url($url));
+echo "</pre>";
 // END OF FILE index.php

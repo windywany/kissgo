@@ -84,15 +84,27 @@ class Response {
 
     /**
      * 内部转发
-     * @param string $action
-     * @param $app
+     * @param string $url forward to the $url
      * @return null|View|string|array
      */
-    public function forward($action, $app) {
+    public function forward($url) {
         $request = Request::getInstance();
+        $parsed_ary = parse_url($url);
+        if (isset($parsed_ary['path'])) {
+            $request['__url'] = $parsed_ary['path'];
+        } else {
+            $request['__url'] = '/';
+        }
+        if (isset($parsed_ary['query'])) {
+            $args = array();
+            parse_str($parsed_ary['query'], $args);
+            foreach ($args as $key => $value) {
+                $request[$key] = $value;
+            }
+        }
 
         $router = Router::getInstance();
-        $action_func = $router->load_application($action, $app);
+        $action_func = $router->get_app_action($request);
         if (is_callable($action_func)) {
             return call_user_func_array($action_func, array($request, $this));
         } else if ($action_func instanceof View) {

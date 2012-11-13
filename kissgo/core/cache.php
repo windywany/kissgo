@@ -10,7 +10,7 @@
 /**
  * cache基类
  */
-abstract class Cache implements ArrayAccess {
+class Cache implements ArrayAccess {
     public $current_group = 'default';
     public $expire = 0;
 
@@ -37,7 +37,9 @@ abstract class Cache implements ArrayAccess {
      * @param int $expire 缓存时间
      * @param string $group 缓存组
      */
-    public abstract function add($key, $value, $expire = 0, $group = 'default');
+    public function add($key, $value, $expire = 0, $group = 'default') {
+
+    }
 
     /**
      * 从缓存中取数据
@@ -45,26 +47,34 @@ abstract class Cache implements ArrayAccess {
      * @param string $group 缓存组
      * @return mixed 缓存数据,如果未命中则返回null
      */
-    public abstract function get($key, $group = 'default');
+    public function get($key, $group = 'default') {
+        return null;
+    }
 
     /**
      * 删除一个缓存
      * @param string $key 缓存唯一键值
      * @param string $group 缓存组
      */
-    public abstract function delete($key, $group = 'default');
+    public function delete($key, $group = 'default') {
+
+    }
 
     /**
      * 清空组内所有缓存
      * @param string $group 缓存组
      */
-    public abstract function clear($check = true, $group = 'default');
+    public function clear($check = true, $group = 'default') {
+
+    }
 
     /**
      * @param string $key
      * @param string $group
      * @return bool
      */
-    public abstract function has_key($key, $group = 'default');
+    public function has_key($key, $group = 'default') {
+        return false;
+    }
 }
 // END OF FILE cache.php

@@ -216,7 +216,8 @@ include KISSGO . 'core/router.php';
 include KISSGO . 'core/session.php';
 include KISSGO . 'core/cache.php';
 include KISSGO . 'core/views.php';
-
+include KISSGO . 'core/form.php';
+include KISSGO . 'core/table.php';
 // load applications and plugins
 $__ksg_global_settings = KissGoSetting::getSetting();
 $__ksg_installed_plugins = $__ksg_global_settings[INSTALLED_PLUGINS];
@@ -284,5 +285,4 @@ if (is_array($__ksg_installed_apps)) {
 unset($__ksg_installed_apps, $__ksg_installed_plugins);
 /////////////////////////////////////////////////////////////////
 include KISSGO . 'core/kissgo.php';
-KissGo::getInstance()->run();
 // end of file bootstrap.php

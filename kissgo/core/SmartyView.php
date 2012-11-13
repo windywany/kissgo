@@ -11,9 +11,13 @@
  * @package view
  */
 class SmartyView extends View {
+    /**
+     * @var Smarty Smarty
+     */
     private $__smarty;
-    public function __construct($tpl, $data = array()) {
-        parent::__construct($data, $tpl);
+
+    public function __construct($data = array(), $tpl = '', $headers = array()) {
+        parent::__construct($data, $tpl, $headers);
         $basedir = TEMPLATE_PATH;
         $tpl = $basedir . $this->tpl;
         if (is_file($tpl)) {

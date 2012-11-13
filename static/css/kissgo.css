@@ -1,7 +1,9 @@
 body {
     padding: 40px 0 35px 0;
 }
-
+#navbar .dropdown-menu .divider {
+    margin: 2px 1px;
+}
 #crumb .container-fluid {
     padding-left: 120px;
     background: transparent url('../images/logo.png') no-repeat 20px 4px;
@@ -16,15 +18,15 @@ body {
 #container-wrap{
     padding-left: 185px;
 }
-#sidemenu{
+#sidebar{
     float: left;
     width: 165px;
     margin-left: -185px;
 }
-#sidemenu .nav-tabs{
+#sidebar .nav-tabs{
     width: 165px;
 }
-#sidemenu .icon-chevron-right {
+#sidebar .icon-chevron-right {
     float: right;
     margin-right: -6px;
     margin-top: 2px;
@@ -50,7 +52,7 @@ body {
     color: #FFFFFF;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
-#sidemenu .active .icon-chevron-right{
+#sidebar .active .icon-chevron-right{
     opacity: 1;
 }
 #foot {
@@ -67,6 +69,7 @@ body {
 
 #foot .btn-toolbar, #foot .btn-group {
     font-size: 12px;
+    line-height: 14px;
 }
 
 #foot a {

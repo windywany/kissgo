@@ -13,7 +13,7 @@
  */
 class Request implements ArrayAccess {
     private $userData = array();
-    private $use_xss_clean = false;
+    protected $use_xss_clean = false;
     private $xss_cleaner;
     private $quotes_gpc;
     private static $INSTANCE = null;
@@ -28,11 +28,22 @@ class Request implements ArrayAccess {
     /**
      * @return Request
      */
-    public static function getInstance() {
+    public static function getInstance($use_xss_clean = null) {
         if (self::$INSTANCE == null) {
-            self::$INSTANCE = new Request();
+            self::$INSTANCE = new Request($use_xss_clean);
+        }
+        if (is_bool($use_xss_clean)) {
+            self::$INSTANCE->set_cleaner_enable($use_xss_clean);
         }
         return self::$INSTANCE;
+    }
+
+    /**
+     * set enable flag
+     * @param $enable
+     */
+    public function set_cleaner_enable($enable) {
+        $this->use_xss_clean = $enable;
     }
 
     /**
@@ -43,7 +54,7 @@ class Request implements ArrayAccess {
      * @return mixed
      */
     public function get($name, $default = '', $xss_clean = false) {
-        $ary = isset ($_POST [$name]) ? $_POST : $_GET;
+        $ary = isset($this->userData[$name]) ? $this->userData : (isset ($_POST [$name]) ? $_POST : $_GET);
         if (!isset ($ary [$name])) {
             return $default;
         }
@@ -59,25 +70,19 @@ class Request implements ArrayAccess {
      * @param $val 要进行xss处理的值
      * @return string
      */
-    public function xss_clean($val){
-        if($this->use_xss_clean === false){
+    public function xss_clean($val) {
+        if ($this->use_xss_clean === false) {
             $val = $this->xss_cleaner->xss_clean($val);
         }
         return $val;
     }
+
     public function offsetExists($offset) {
-        return isset($_GET) || isset($_POST) || isset($this->userData);
+        return isset($_GET[$offset]) || isset($_POST[$offset]) || isset($this->userData[$offset]);
     }
 
     public function offsetGet($offset) {
-        if (isset($_GET[$offset])) {
-            return $_GET[$offset];
-        } else if (isset($_POST[$offset])) {
-            return $_POST[$offset];
-        } else if (isset($this->userData[$offset])) {
-            return $this->userData[$offset];
-        }
-        return null;
+        return $this->get($offset);
     }
 
     public function offsetSet($offset, $value) {
@@ -92,8 +97,8 @@ class Request implements ArrayAccess {
 
     //处理全局输入
     private function _sanitize_globals() {
-        $_GET = $this->_clean_input_data($_GET);
-        $_POST = $this->_clean_input_data($_POST);
+        //$_GET = $this->_clean_input_data($_GET);
+        //$_POST = $this->_clean_input_data($_POST);
         unset ($_COOKIE ['$Version']);
         unset ($_COOKIE ['$Path']);
         unset ($_COOKIE ['$Domain']);

@@ -19,7 +19,7 @@ $settings[DATABASE] = array(
 );
 
 $settings[INSTALLED_APPS] = array(
-    'aaaa'
+    'admin','aaaa'
 );
 $settings[INSTALLED_PLUGINS] = array(
     '::hello.php'
