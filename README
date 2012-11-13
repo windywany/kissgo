@@ -1,5 +1,5 @@
 1.install with apache (with rewrite module)
-    1.1 edit your apache configure file httpd.conf or others,then add the following fragment in main or virtualhost
+    1.1 edit your apache configure file httpd.conf or others,then add the following fragment in main or virtualhost section
 
 	<Directory "your_centims_webroot_dir">
 		Options FollowSymLinks
