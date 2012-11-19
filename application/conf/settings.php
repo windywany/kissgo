@@ -18,7 +18,7 @@ $settings[DATABASE] = array(
     //,'another'=>array(), others can be here
 );
 
-$settings[INSTALLED_APPS] = array(
+$settings[INSTALLED_MODULES] = array(
     'admin','aaaa'
 );
 $settings[INSTALLED_PLUGINS] = array(

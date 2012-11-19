@@ -16,21 +16,6 @@ defined('KISSGO') or exit('No direct script access allowed');
 class KissGo implements ArrayAccess {
     private static $INSTANCE = NULL;
 
-    /**
-     * 取系统缓存管理器
-     * @return Cache
-     */
-    public static function getCache() {
-        static $cache = false;
-        if ($cache === false) {
-            $cache = apply_filter('get_cache_manager', null);
-            if (!$cache instanceof Cache) {
-                $cache = new Cache();
-            }
-        }
-        return $cache;
-    }
-
     private function __construct() {
         if (!@ini_get('zlib.output_compression') && @ob_get_status()) {
             $__ksg_before_out = @ob_get_contents();

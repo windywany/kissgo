@@ -14,6 +14,21 @@ class Cache implements ArrayAccess {
     public $current_group = 'default';
     public $expire = 0;
 
+    /**
+     * 取系统缓存管理器
+     * @return Cache
+     */
+    public static function getCache() {
+        static $cache = false;
+        if ($cache === false) {
+            $cache = apply_filter('get_cache_manager', null);
+            if (!$cache instanceof Cache) {
+                $cache = new Cache();
+            }
+        }
+        return $cache;
+    }
+
     public function offsetExists($offset) {
         return $this->has_key($offset, $this->current_group);
     }

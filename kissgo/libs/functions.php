@@ -530,14 +530,14 @@ function imports() {
         }
         foreach ($files as $file) {
             if (preg_match('/.+\*$/', $file)) {
-                $_files = glob(APPS . $file . '.php');
+                $_files = glob(MODULES_PATH . $file . '.php');
                 foreach ($_files as $_file) {
                     if (is_file($_file)) {
                         include_once $_file;
                     }
                 }
             } else {
-                $file = APPS . $file;
+                $file = MODULES_PATH . $file;
                 if (is_file($file)) {
                     include_once $file;
                 }

@@ -65,14 +65,14 @@ class Router {
         } else {
             $app = 'index.php';
         }
-        $app_action_file = APPS . $app;
+        $app_action_file = MODULES_PATH . $app;
         $rtn = null;
         if (is_file($app_action_file)) {
             $rtn = include($app_action_file);
         } else {
             $func_name = 'do_default_' . $action;
             $app = 'index.php';
-            $app_action_file = APPS . $app;
+            $app_action_file = MODULES_PATH . $app;
             $rtn = include($app_action_file);
         }
         if (function_exists($func_name)) {

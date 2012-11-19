@@ -97,8 +97,9 @@ define('APP_DIR', dirname(APP_PATH));
 define('KISSGO_DIR', dirname(KISSGO));
 // the default application name, this is used by session id
 defined('APP_NAME') or define('APP_NAME', basename(WEB_ROOT));
-// the default apps path
-defined('APPS') or define('APPS', APP_PATH . 'apps' . DS);
+// the default modules path
+defined('MODULES_PATH') or define('MODULES_PATH', APP_PATH . 'modules' . DS);
+define('MODULE_DIR', basename(MODULES_PATH));
 // the application data path
 defined('APPDATA_PATH') or define('APPDATA_PATH', APP_PATH . 'appdata' . DS);
 defined('TEMPLATE_PATH') or define('TEMPLATE_PATH', WEB_ROOT . 'templates' . DS);
@@ -113,7 +114,7 @@ defined('I18N_ENABLED') or define('I18N_ENABLED', false);
 defined('GZIP_ENABLED') or define('GZIP_ENABLED', false);
 define('NOTNULL', '_@_NOT_NULL_@_');
 // 常用设置
-define('INSTALLED_APPS', '__INSTALLED_APPS__');
+define('INSTALLED_MODULES', '__INSTALLED_MODULES__');
 define('INSTALLED_PLUGINS', '__INSTALLED_PLUGINS__');
 define('DATABASE', '__DATABASE__');
 define('COOKIE', '__COOKIE__');
@@ -212,6 +213,7 @@ include KISSGO . 'libs/template.php';
 include KISSGO . 'core/path.php';
 include KISSGO . 'core/request.php';
 include KISSGO . 'core/response.php';
+include KISSGO . 'core/rbac.php';
 include KISSGO . 'core/router.php';
 include KISSGO . 'core/session.php';
 include KISSGO . 'core/cache.php';
@@ -267,14 +269,14 @@ if (function_exists('application_plugin_load')) {
     application_plugin_load();
 }
 // load apps
-$__ksg_installed_apps = $__ksg_global_settings[INSTALLED_APPS];
+$__ksg_installed_apps = $__ksg_global_settings[INSTALLED_MODULES];
 if (is_array($__ksg_installed_apps)) {
     $app_init_files = array();
     foreach ($__ksg_installed_apps as $app) {
         if (preg_match('/^::/', $app)) {
             $app_init_files[] = $app . '/__init__.php';
         } else {
-            $app_init_files[] = 'apps/' . $app . '/__init__.php';
+            $app_init_files[] = MODULE_DIR . '/' . $app . '/__init__.php';
         }
     }
     if (!empty($app_init_files)) {
