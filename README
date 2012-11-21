@@ -7,6 +7,11 @@
 		Order allow,deny
 		Allow from all
 	</Directory>
+	<Directory "your_centims_webroot_dir/application/">
+        Order deny,allow
+    	Deny from all
+    </Directory>
+
     <IfModule mod_env.c>
         SetEnv SPECIAL_PATH /foo/bin
     </IfModule>
@@ -27,6 +32,9 @@
         }
         location ~ /uploads/.+\.php$ {
         	return 403;
+        }
+        location ~ /application/ {
+            return 403;
         }
         error_page  404              /404.html;
         location ~ \.php$ {

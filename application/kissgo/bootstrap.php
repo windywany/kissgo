@@ -72,7 +72,6 @@ if (version_compare(phpversion(), '5.3', '<')) {
 // no magic quotes
 @ini_set('magic_quotes_sybase', 0);
 
-$__ksg_run_level = isset($_SERVER['KSG_RUN_LEVEL']) ? $_SERVER['KSG_RUN_LEVEL'] : '';
 // the short for directory separator
 define('DS', DIRECTORY_SEPARATOR);
 // debug levels
@@ -81,6 +80,7 @@ define('DEBUG_WARN', 3);
 define('DEBUG_DEBUG', 2);
 define('DEBUG_ERROR', 5);
 // load the bootstrap script of the application,in this script you can change some settings
+$__ksg_run_level = isset($_SERVER['KSG_RUN_LEVEL']) ? $_SERVER['KSG_RUN_LEVEL'] : '';
 $__ksg_app_bootstrap = APP_PATH . 'bootstrap.php';
 if (!empty($__ksg_run_level)) {
     $__ksg_app_bootstrap = APP_PATH . 'bootstrap_' . $__ksg_run_level . '.php';

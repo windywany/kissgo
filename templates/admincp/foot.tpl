@@ -41,7 +41,7 @@
     	{$_foot_toolbar_btns->render()}
         <div class="btn-group"><a href="#"><i class="icon-off"></i>退出</a></div>        
         <div class="btn-group pull-right">
-            <p>&copy; KissGO! 1.0 BETA Demo 2012</p>
+            <p>&copy; <a href="http://www.kissgo.com/" target="_blank">KissGO! 1.0 BETA</a> Demo 2012</p>
         </div>
     </div>
 </div>

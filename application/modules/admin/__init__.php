@@ -32,8 +32,10 @@ function set_admin_global_vars($smarty) {
  * @return mixed
  */
 function _hook_for_admincp_menu($mm) {
-	$mm->addMenu2 ( 'admincp_1', '系统' );
-	$mm->addMenuItem ( 'admincp_1', 'book', '小样' );
+	$mm->addMenu2 ( 'admincp_1', '系统','icon-th-large' );
+	$mm->addMenuItem ( 'admincp_1', 'book', '小样','#','icon-home' );
+    $mm->addMenuItemDivider('admincp_1');
+    $mm->addMenuItem ( 'admincp_1', 'book1', '大样' );
 	$mm->addMenu2 ( 'admincp_2', '系统1' );
 	
 	return $mm;
@@ -43,7 +45,7 @@ bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
 /**
  * 
  * 设置底部按键
- * @param NavigationToolbar $tb
+ * @param NavigationFootToolbar $tb
  */
 function _hook_for_foot_toolbar($tb) {
 	$tb->addButton ( 'btn1', 'Leo' );

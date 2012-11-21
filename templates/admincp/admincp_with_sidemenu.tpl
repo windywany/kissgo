@@ -8,7 +8,7 @@
             </ul>
         </div>
         <div id="body">
-            {block name="admincp_body"}admin control panel{/block}
+            {block name="admincp_body"}{/block}
         </div>
     </div>
 </div>

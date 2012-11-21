@@ -24,38 +24,6 @@
             <div class="nav-collapse">
                 <ul id="menu" class="nav">
                     {$_top_navigation_menu->render()}
-                    <li class="dropdown">
-                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">System<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Control Panel</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Global Configuration</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Global Check-in</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Clear Cache</a></li>
-                            <li><a href="#">Purge Expired Cache</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">System Information</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">System<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Control Panel</a>
-                            </li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Global Configuration</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Global Check-in</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Clear Cache</a></li>
-                            <li><a href="#">Purge Expired Cache</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">System Information</a></li>
-                        </ul>
-                    </li>
                 </ul>
                 <ul class="nav pull-right">
                     <li class="dropdown">
@@ -64,17 +32,10 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Control Panel</a>
+                                <a href="#">Control Panel</a>
                             </li>
                             <li class="divider"><span></span></li>
-                            <li><a href="#">Global Configuration</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Global Check-in</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">Clear Cache</a></li>
-                            <li><a href="#">Purge Expired Cache</a></li>
-                            <li class="divider"><span></span></li>
-                            <li><a href="#">System Information</a></li>
+                            <li><a href="#"><i class="icon-off"></i>{'Logout'|ts}</a></li>
                         </ul>
                     </li>
                 </ul>

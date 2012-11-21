@@ -222,3 +222,6 @@ body {
 #foot a {
     color: #999999;
 }
+#foot a:hover{
+    color: #0088CC;
+}
