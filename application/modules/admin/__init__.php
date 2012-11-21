@@ -2,34 +2,55 @@
 /**
  * Id: $ID$
  */
+defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 /**
  * @param Smarty $smarty
  */
 function set_site_global_vars($smarty) {
-    $smarty->assign('_SITE_URL', BASE_URL);
-    return $smarty;
+	$smarty->assign ( '_SITE_URL', BASE_URL );
+	return $smarty;
 }
 
-bind('init_smarty_engine', 'set_site_global_vars');
+bind ( 'init_smarty_engine', 'set_site_global_vars' );
+/**
+ * 
+ * 设置管理界面全局数据
+ * @param Smarty $smarty
+ */
 function set_admin_global_vars($smarty) {
-    $smarty->assign('admincp_url', BASE_URL . basename(dirname(__FILE__)) . '/');
-    $smarty->assign('_kissgo_page_tip', $_SESSION['_kissgo_page_tip']);
-    $smarty->assign('_top_navigation_menu', apply_filter('get_top_navigation_menu', new NavigationMenuManager()));
-    unset($_SESSION['_kissgo_page_tip']);
-    return $smarty;
+	$smarty->assign ( 'admincp_url', BASE_URL . basename ( dirname ( __FILE__ ) ) . '/' );
+	$smarty->assign ( '_kissgo_page_tip', $_SESSION ['_kissgo_page_tip'] );
+	$smarty->assign ( '_top_navigation_menu', apply_filter ( 'get_top_navigation_menu', new NavigationMenuManager () ) );
+	$smarty->assign ( '_foot_toolbar_btns', apply_filter ( 'get_foot_toolbar_buttons', new NavigationFootToolbar () ) );
+	unset ( $_SESSION ['_kissgo_page_tip'] );
+	return $smarty;
 }
 
 /**
+ * 设置导航菜单
  * @param NavigationMenuManager $mm
  * @return mixed
  */
 function _hook_for_admincp_menu($mm) {
-    $menu = new NavigationMenu('admincp', '系统');
-    $mm->addMenu($menu);
-    return $mm;
+	$mm->addMenu2 ( 'admincp_1', '系统' );
+	$mm->addMenuItem ( 'admincp_1', 'book', '小样' );
+	$mm->addMenu2 ( 'admincp_2', '系统1' );
+	
+	return $mm;
 }
 
-bind('get_top_navigation_menu', '_hook_for_admincp_menu');
+bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
+/**
+ * 
+ * 设置底部按键
+ * @param NavigationToolbar $tb
+ */
+function _hook_for_foot_toolbar($tb) {
+	$tb->addButton ( 'btn1', 'Leo' );
+	$tb->addButton ( 'btn2', 'Ning' );
+	return $tb;
+}
+bind ( 'get_foot_toolbar_buttons', '_hook_for_foot_toolbar' );
 /**
  * 设置页面提示
  * @param $tip
@@ -37,7 +58,7 @@ bind('get_top_navigation_menu', '_hook_for_admincp_menu');
  * @param int $during
  */
 function set_page_tip($tip, $type = 'info', $during = 5000) {
-    $_SESSION['_kissgo_page_tip'] = array('tip' => $tip, 'type' => $type, 'during' => $during);
+	$_SESSION ['_kissgo_page_tip'] = array ('tip' => $tip, 'type' => $type, 'during' => $during );
 }
 
 /**
@@ -48,8 +69,8 @@ function set_page_tip($tip, $type = 'info', $during = 5000) {
  * @return SmartyView
  */
 function admin_view($tpl, $data = array(), $headers = array()) {
-    bind('init_smarty_engine', 'set_admin_global_vars');
-    return new SmartyView($data, $tpl, $headers);
+	bind ( 'init_smarty_engine', 'set_admin_global_vars' );
+	return new SmartyView ( $data, $tpl, $headers );
 }
 
 /**
@@ -61,7 +82,7 @@ function admin_view($tpl, $data = array(), $headers = array()) {
  * @return SmartyView
  */
 function theme_view($tpl, $data = array(), $headers = array()) {
-    return new SmartyView($data, $tpl, $headers);
+	return new SmartyView ( $data, $tpl, $headers );
 }
 
 /**
@@ -74,12 +95,11 @@ function theme_view($tpl, $data = array(), $headers = array()) {
  */
 function show_message($type, $title, $message, $redirect = '', $timeout = 5) {
 
-
 }
 
 function show_error_message($title, $message, $redirect = '', $timeout = 5) {
-    show_error_message('error', $title, $message, $redirect, $timeout);
+	show_error_message ( 'error', $title, $message, $redirect, $timeout );
 }
 
-I18n::append(__FILE__);
-
+I18n::append ( __FILE__ );
+// end of __init__.php

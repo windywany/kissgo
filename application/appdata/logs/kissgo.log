@@ -9,3 +9,43 @@
 2012-09-16 13:21:58 WARN [44] F:\kissgo\kissgo\kissgo\core\kissgo.php - debug
 2012-09-16 13:21:58 WARN [44] F:\kissgo\kissgo\kissgo\core\kissgo.php - debug
 2012-09-16 13:21:59 WARN [44] F:\kissgo\kissgo\kissgo\core\kissgo.php - debug
+2012-11-16 09:15:44 WARN [720] C:\java sources\kissgo\kissgo\vendors\smarty\sysplugins\smarty_resource.php - filemtime() [<a href='function.filemtime'>function.filemtime</a>]: stat failed for C:\java sources\kissgo\application\appdata\tmp\tpls_c\admincp\admin\81e902e609979b5df1524845caca6721a07d8671.file.index.tpl.php
+2012-11-16 09:15:44 WARN [57] C:\java sources\kissgo\kissgo\vendors\smarty\sysplugins\smarty_internal_write_file.php - unlink(C:\java sources\kissgo\application\appdata\tmp\tpls_c\admincp\admin\81e902e609979b5df1524845caca6721a07d8671.file.index.tpl.php) [<a href='function.unlink'>function.unlink</a>]: No such file or directory
+2012-11-16 09:15:44 WARN [720] C:\java sources\kissgo\kissgo\vendors\smarty\sysplugins\smarty_resource.php - filemtime() [<a href='function.filemtime'>function.filemtime</a>]: stat failed for C:\java sources\kissgo\application\appdata\tmp\tpls_c\admincp\admin\7ff3ca78b09e9b38bd720c2feb643b5d8471ebe9.file.head.tpl.php
+2012-11-16 09:15:44 WARN [57] C:\java sources\kissgo\kissgo\vendors\smarty\sysplugins\smarty_internal_write_file.php - unlink(C:\java sources\kissgo\application\appdata\tmp\tpls_c\admincp\admin\7ff3ca78b09e9b38bd720c2feb643b5d8471ebe9.file.head.tpl.php) [<a href='function.unlink'>function.unlink</a>]: No such file or directory
+2012-11-16 09:15:44 WARN [720] C:\java sources\kissgo\kissgo\vendors\smarty\sysplugins\smarty_resource.php - filemtime() [<a href='function.filemtime'>function.filemtime</a>]: stat failed for C:\java sources\kissgo\application\appdata\tmp\tpls_c\admincp\admin\90032037df8a81aa8c68a6fb3f385639207d9920.file.foot.tpl.php
+2012-11-16 09:15:44 WARN [57] C:\java sources\kissgo\kissgo\vendors\smarty\sysplugins\smarty_internal_write_file.php - unlink(C:\java sources\kissgo\application\appdata\tmp\tpls_c\admincp\admin\90032037df8a81aa8c68a6fb3f385639207d9920.file.foot.tpl.php) [<a href='function.unlink'>function.unlink</a>]: No such file or directory
+2012-11-21 15:23:59 DEBUG [23] C:\java sources\kissgo\kissgo\core\kissgo.php - 
+    [COMSPEC] => C:\Windows\system32\cmd.exe
+    [WINDIR] => C:\Windows
+    [SERVER_SIGNATURE] => 
+    [SERVER_SOFTWARE] => Apache/2.2.22 (Win32) mod_ssl/2.2.22 OpenSSL/0.9.8o
+    [SERVER_NAME] => s5.covidien.com
+    [SERVER_ADDR] => 127.0.0.1
+    [SERVER_PORT] => 80
+    [REMOTE_ADDR] => 127.0.0.1
+    [DOCUMENT_ROOT] => C:/java sources/kissgo
+    [SERVER_ADMIN] => guangfeng.ning@covidien.com
+    [SCRIPT_FILENAME] => C:/java sources/kissgo/index.php
+    [REMOTE_PORT] => 57891
+    [REDIRECT_QUERY_STRING] => __url=admin
+    [REDIRECT_URL] => /admin
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [REQUEST_METHOD] => GET
+    [QUERY_STRING] => __url=admin
+    [REQUEST_URI] => /admin
+    [SCRIPT_NAME] => /index.php
+    [PHP_SELF] => /index.php
+    [REQUEST_TIME] => 1353482639
+    [argv] => Array
+        (
+            [0] => __url=admin
+        )
+
+    [argc] => 1
+)
+</pre>
+2012-11-21 15:23:59 WARN [118] C:\java sources\kissgo\kissgo\core\kissgo.php - session_start() [<a href='function.session-start'>function.session-start</a>]: Cannot send session cookie - headers already sent by (output started at C:\java sources\kissgo\kissgo\libs\i18n.php:39)
+2012-11-21 15:23:59 WARN [118] C:\java sources\kissgo\kissgo\core\kissgo.php - session_start() [<a href='function.session-start'>function.session-start</a>]: Cannot send session cache limiter - headers already sent (output started at C:\java sources\kissgo\kissgo\libs\i18n.php:39)
+2012-11-21 15:23:59 WARN [56] C:\java sources\kissgo\kissgo\core\SmartyView.php - Cannot modify header information - headers already sent by (output started at C:\java sources\kissgo\kissgo\libs\i18n.php:39)

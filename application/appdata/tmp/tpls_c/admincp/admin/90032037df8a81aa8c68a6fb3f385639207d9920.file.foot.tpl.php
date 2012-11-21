@@ -1,4 +1,30 @@
-<div id="sideTools">
+<?php /* Smarty version Smarty-3.1.12, created on 2012-11-21 17:25:35
+         compiled from "C:\java sources\kissgo\templates\admincp\foot.tpl" */ ?>
+<?php /*%%SmartyHeaderCode:1915350ac9e0f018ae0-69822977%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_valid = $_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    '90032037df8a81aa8c68a6fb3f385639207d9920' => 
+    array (
+      0 => 'C:\\java sources\\kissgo\\templates\\admincp\\foot.tpl',
+      1 => 1353488219,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '1915350ac9e0f018ae0-69822977',
+  'function' => 
+  array (
+  ),
+  'variables' => 
+  array (
+    '_SITE_URL' => 0,
+    '_foot_toolbar_btns' => 0,
+  ),
+  'has_nocache_code' => false,
+  'version' => 'Smarty-3.1.12',
+  'unifunc' => 'content_50ac9e0f02f409_87805816',
+),false); /*/%%SmartyHeaderCode%%*/?>
+<?php if ($_valid && !is_callable('content_50ac9e0f02f409_87805816')) {function content_50ac9e0f02f409_87805816($_smarty_tpl) {?><div id="sideTools">
 	<p class="miniNav"><a><s></s><span>快速导航</span></a></p>	
 	<div class="stMore">
 		<dl class="side01">
@@ -37,14 +63,16 @@
 <!-- foot -->
 <div id="foot" class="navbar navbar-fixed-bottom hidden-phone">
     <div class="btn-toolbar">
-        <div class="btn-group"><a href="{$_SITE_URL}" target="_blank"><i class="icon-globe"></i>查看</a></div>
-    	{$_foot_toolbar_btns->render()}
+        <div class="btn-group"><a href="<?php echo $_smarty_tpl->tpl_vars['_SITE_URL']->value;?>
+" target="_blank"><i class="icon-globe"></i>查看</a></div>
+    	<?php echo $_smarty_tpl->tpl_vars['_foot_toolbar_btns']->value->render();?>
+
         <div class="btn-group"><a href="#"><i class="icon-off"></i>退出</a></div>        
         <div class="btn-group pull-right">
             <p>&copy; KissGO! 1.0 BETA Demo 2012</p>
         </div>
     </div>
 </div>
-{block name="foot_js_block"}{/block}
+
 </body>
-</html>
+</html><?php }} ?>
