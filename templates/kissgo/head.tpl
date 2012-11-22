@@ -9,11 +9,12 @@
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-responsive.css"/>
     <link rel="stylesheet" href="/static/css/kissgo.css"/>
-{block name="css_block"}{/block}
+    {block name="css_block"}{/block}
     <script type="text/javascript" language="javascript" src="/static/js/jquery-1.8.x.js"></script>
     <script type="text/javascript" language="javascript" src="/static/bootstrap/bootstrap.js"></script>
     <script type="text/javascript" language="javascript" src="/static/js/kissgo.js"></script>
-{block name="head_js_block"}{/block}
+    {'kissgo_admin_page_header'|fire}
+    {block name="head_js_block"}{/block}
 </head>
 <body>
 <!-- head -->
