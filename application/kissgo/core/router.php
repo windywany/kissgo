@@ -60,22 +60,28 @@ class Router {
     public function load_application($action, $app = '') {
         $func_name = 'do_default_' . $action;
         if ($app) {
+        	// TODO 对$app进行转换以实现动态修改访问module的URL,这样可以提高安全性
             $func_name = 'do_' . $action;
             $app = str_replace('_', '/', $app) . "/actions/{$action}.php";
         } else {
             $app = 'index.php';
         }
         $app_action_file = MODULES_PATH . $app;
+        $core_app_action_file = KISSGO.'modules/' . $app;
         $rtn = null;
         if (is_file($app_action_file)) {
             $rtn = include($app_action_file);
+        }else if(is_file($core_app_action_file)){
+        	$rtn = include($core_app_action_file);
         } else {
             $func_name = 'do_default_' . $action;
             $app = 'index.php';
             $app_action_file = MODULES_PATH . $app;
             $rtn = include($app_action_file);
         }
-        if (function_exists($func_name)) {
+        if(is_callable($rtn)){
+        	return $rtn;
+        }else if (function_exists($func_name)) {
             return $func_name;
         } else {
             return $rtn;

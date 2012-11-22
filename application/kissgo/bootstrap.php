@@ -274,7 +274,7 @@ if (is_array($__ksg_installed_apps)) {
     $app_init_files = array();
     foreach ($__ksg_installed_apps as $app) {
         if (preg_match('/^::/', $app)) {
-            $app_init_files[] = $app . '/__init__.php';
+            $app_init_files[] = str_replace('::', '::modules/', $app). '/__init__.php';
         } else {
             $app_init_files[] = MODULE_DIR . '/' . $app . '/__init__.php';
         }

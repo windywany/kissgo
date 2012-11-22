@@ -1,5 +1,5 @@
 body {
-    padding: 40px 0 35px 0;
+    padding: 40px 0 35px 0;    
 }
 #navbar .dropdown-menu .divider {
     margin: 2px 1px;
@@ -117,18 +117,6 @@ body {
 #sideTools p.miniNav a.on s {
     background-position: -160px -1px;
 }
-#sideTools p.iRpt a s {
-    background-position: -40px -1px;
-}
-#sideTools p.iRpt a:hover s {
-    background-position: -200px -1px;
-}
-#sideTools p.iOnline a s {
-    background-position: -80px -1px;
-}
-#sideTools p.iOnline a:hover s {
-    background-position: -240px -1px;
-}
 #sideTools p.iToTop a s {
     background-position: -120px -1px;
 }
@@ -166,14 +154,9 @@ body {
 #sideTools .stMore dl.side01 {
     border-top: 1px solid #7E7E7E;
 }
-#sideTools .stMore dl.side02 dt {
-    color: #86BE15;
-}
-#sideTools .stMore dl.side02 dt s {
-    background-position: -320px -0px;
-}
+
 #sideTools .stMore dl dd {
-    margin-left: 31px;
+    margin-left: 16px;
 }
 #sideTools .stMore dl dd a {
     color: #FFFFFF;
