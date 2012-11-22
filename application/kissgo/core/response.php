@@ -83,13 +83,20 @@ class Response {
     }
 
     /**
-     * 内部转发
+     * 内部转发,当你使用内部转发时，请一定要保证不会出现循环重写向错误。
      * @param string $url forward to the $url
      * @return null|View|string|array
      */
     public function forward($url) {
+        static $last_forward_url = false;
+        if ($last_forward_url == $url) {
+            log_error('循环重定向出错:' . $url);
+            $this->respond(500);
+        } else {
+            $last_forward_url = $url;
+        }
         $request = Request::getInstance();
-        $parsed_ary = parse_url($url);
+        $parsed_ary = parse_url(preg_replace('#.*/index\.php/#', '', $url));
         if (isset($parsed_ary['path'])) {
             $request['__url'] = $parsed_ary['path'];
         } else {
@@ -102,15 +109,23 @@ class Response {
                 $request[$key] = $value;
             }
         }
-
         $router = Router::getInstance();
-        $action_func = $router->get_app_action($request);
+        $action_func = $router->get_app_action($request, true);
         if (is_callable($action_func)) {
             return call_user_func_array($action_func, array($request, $this));
         } else if ($action_func instanceof View) {
             return $action_func;
         }
         return null;
+    }
+
+    /**
+     *
+     * @param int $status respond status code
+     */
+    public function respond($status = 404) {
+        status_header($status);
+        $this->close(true);
     }
 
     /**

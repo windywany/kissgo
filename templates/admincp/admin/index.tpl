@@ -1,1 +1,0 @@
-{extends file="admincp/admincp_with_sidemenu.tpl"}

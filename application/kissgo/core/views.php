@@ -180,7 +180,7 @@ class SimpleView extends View {
     }
 
     public function setHeader() {
-        @header('Content-Type: text/plain');
+        @header('Content-Type: text/html');
     }
 }
 // END OF FILE view.php

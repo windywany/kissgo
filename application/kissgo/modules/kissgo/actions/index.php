@@ -8,4 +8,4 @@
  */
 
 
-return admin_view('admincp/admin/index.tpl');
+return admin_view('kissgo/index.tpl');

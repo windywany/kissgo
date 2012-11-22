@@ -1,4 +1,2 @@
 <?php
-
-
-return Response::getInstance()->forward('admin/adduser?age=20');
+return "<h1>It works!</h1>";

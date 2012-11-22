@@ -105,6 +105,7 @@ defined('APPDATA_PATH') or define('APPDATA_PATH', APP_PATH . 'appdata' . DS);
 defined('TEMPLATE_PATH') or define('TEMPLATE_PATH', WEB_ROOT . 'templates' . DS);
 defined('STATIC_DIR') or define('STATIC_DIR', 'static');
 defined('BASE_URL') or define('BASE_URL', '/');
+defined('CLEAN_URL') or define('CLEAN_URL', false);
 // the temporary directory path
 defined('TMP_PATH') or define('TMP_PATH', APPDATA_PATH . 'tmp' . DS);
 // 安全码，用于cookie等内容的加密与解密
@@ -274,7 +275,7 @@ if (is_array($__ksg_installed_apps)) {
     $app_init_files = array();
     foreach ($__ksg_installed_apps as $app) {
         if (preg_match('/^::/', $app)) {
-            $app_init_files[] = str_replace('::', '::modules/', $app). '/__init__.php';
+            $app_init_files[] = str_replace('::', '::modules/', $app) . '/__init__.php';
         } else {
             $app_init_files[] = MODULE_DIR . '/' . $app . '/__init__.php';
         }

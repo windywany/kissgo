@@ -1,4 +1,4 @@
-{include file="admincp/head.tpl"}
+{include file="kissgo/head.tpl"}
 <!-- container -->
 <div id="container" class="container-fluid">
     <div id="container-wrap">
@@ -10,4 +10,4 @@
         </div>
     </div>
 </div>
-{include file="admincp/foot.tpl"}
+{include file="kissgo/foot.tpl"}

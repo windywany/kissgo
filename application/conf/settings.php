@@ -19,7 +19,7 @@ $settings[DATABASE] = array(
 );
 
 $settings[INSTALLED_MODULES] = array(
-    'admin','aaaa'
+    '::kissgo'
 );
 $settings[INSTALLED_PLUGINS] = array(
     '::hello.php'

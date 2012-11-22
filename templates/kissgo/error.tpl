@@ -1,4 +1,4 @@
-{extends file="admincp/admincp_no_sidebar.tpl"}
+{extends file="kissgo/admincp_no_sidebar.tpl"}
 
 {block name="breadcrumb"}
 <li class="active">出错啦</li>

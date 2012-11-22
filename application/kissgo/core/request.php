@@ -56,6 +56,13 @@ class Request implements ArrayAccess {
     public function get($name, $default = '', $xss_clean = false) {
         $ary = isset($this->userData[$name]) ? $this->userData : (isset ($_POST [$name]) ? $_POST : $_GET);
         if (!isset ($ary [$name])) {
+            if ($name == '__url') {
+                $default = ltrim($_SERVER['PATH_INFO'], '/');
+                if (empty($default)) {
+                    $default = '/';
+                }
+                $this->userData[$name] = $default;
+            }
             return $default;
         }
         if ($xss_clean === true && $this->use_xss_clean === false) {

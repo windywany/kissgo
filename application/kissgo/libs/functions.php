@@ -523,23 +523,35 @@ function includes($files) {
  */
 function imports() {
     $args = func_get_args();
-    if(empty($args)) return;
-    foreach($args as $files){
+    if (empty($args)) return;
+    foreach ($args as $files) {
         if (!is_array($files)) {
             $files = array($files);
         }
         foreach ($files as $file) {
             if (preg_match('/.+\*$/', $file)) {
+
                 $_files = glob(MODULES_PATH . $file . '.php');
                 foreach ($_files as $_file) {
                     if (is_file($_file)) {
                         include_once $_file;
                     }
                 }
+                $_files = glob(KISSGO . 'modules' . DS . $file . '.php');
+                foreach ($_files as $_file) {
+                    if (is_file($_file)) {
+                        include_once $_file;
+                    }
+                }
             } else {
-                $file = MODULES_PATH . $file;
-                if (is_file($file)) {
-                    include_once $file;
+                $_file = MODULES_PATH . $file;
+                if (is_file($_file)) {
+                    include_once $_file;
+                } else {
+                    $_file = KISSGO . 'modules' . DS . $file;
+                    if (is_file($_file)) {
+                        include_once $_file;
+                    }
                 }
             }
         }
@@ -613,5 +625,43 @@ function log_warn($message) {
 function log_error($message) {
     $trace = debug_backtrace();
     log_message($message, $trace[0], DEBUG_ERROR);
+}
+
+/**
+ *
+ * @param string $uri
+ * @return string
+ */
+function the_module_path($uri) {
+    return untrailingslashit(apply_filter('get_module_path_from_path', $uri));
+}
+
+/**
+ * 将模块路径，Action,参数等数据转换成url
+ * @param string $module 模块路径
+ * @param string $action Action
+ * @param string|array $args 参数
+ * @return string
+ */
+function the_module_url($module, $action = '', $args = '') {
+    $url = trailingslashit(apply_filter('get_module_url_from_path', $module));
+    if (!empty($action)) {
+        $url .= $action;
+    }
+    if (!empty($args)) {
+        if (is_string($args)) {
+            $url .= '?' . ltrim($args, '?&');
+        } else if (is_array($args)) {
+            $_args = array();
+            foreach ($args as $key => $val) {
+                $_args[] = $key . '=' . urlencode($val);
+            }
+            $url .= '?' . implode('&', $_args);
+        }
+    }
+    if (!CLEAN_URL) {
+        $url = BASE_URL . 'index.php/' . $url;
+    }
+    return $url;
 }
 // end of file functions.php

@@ -1,4 +1,4 @@
-{extends file="admincp/admincp_with_sidemenu.tpl"}
+{extends file="kissgo/admincp_with_sidemenu.tpl"}
 {block name="title"}添加新用户{/block}
 {block name="breadcrumb"}
 <li>用户管理</li>
