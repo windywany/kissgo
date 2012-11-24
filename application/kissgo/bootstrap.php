@@ -124,8 +124,13 @@ define('CACHE', '__CACHE__');
  * 应用程序设置类
  */
 class KissGoSetting implements ArrayAccess {
+    private $setting_name = '';
     private $settings = array();
     private static $INSTANCE = array();
+
+    public function __construct($name) {
+        $this->setting_name = $name;
+    }
 
     /**
      * 取系统设置实例
@@ -138,11 +143,10 @@ class KissGoSetting implements ArrayAccess {
         if ($setting instanceof KissGoSetting) {
             self::$INSTANCE[$name] = $setting;
         } else if (!isset(self::$INSTANCE[$name]) || !self::$INSTANCE[$name]) {
-            self::$INSTANCE[$name] = new KissGoSetting();
+            self::$INSTANCE[$name] = new KissGoSetting($name);
         }
         return self::$INSTANCE[$name];
     }
-
     public static function hasSetting($name) {
         return isset(self::$INSTANCE[$name]);
     }

@@ -211,6 +211,20 @@ function smarty_modifiercompiler_paging($value, $compiler) {
     return $output;
 }
 
+function smarty_modifiercompiler_murl($value, $compiler) {
+    if (count($value) < 1) {
+        trigger_error('error usage of murl', E_USER_WARNING);
+        return "#";
+    }
+    $module = $value [0]; // url
+    $action = "''";
+    if (isset ($value [1])) {
+        $action = $value [1]; // 每页显示的条数
+    }
+    $output = "murl($module,$action)";
+    return $output;
+}
+
 /**
  * Smarty status modifier plugin
  *
@@ -317,6 +331,25 @@ function smarty_modifiercompiler_ts($ary, $compiler) {
     } else {
         $output = "__({$string})";
     }
+    return $output;
+}
+
+function smarty_modifiercompiler_cfg($ary, $compiler) {
+    if (count($ary) < 1) {
+        trigger_error('error usage of cfg', E_USER_WARNING);
+        return "''";
+    }
+    $option = array_shift($ary);
+    $default = "''";
+    if (!empty($ary)) {
+        $name = $ary[0];
+        if (isset($ary[1])) {
+            $default = $ary[1];
+        }
+    } else {
+        $name = "'default'";
+    }
+    $output = "KissGoSetting::getSetting($name)->get($option, $default)";
     return $output;
 }
 

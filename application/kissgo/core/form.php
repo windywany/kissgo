@@ -414,7 +414,7 @@ class CheckboxWidget extends TextWidget {
         $properties = $this->getProperties(false, false);
         $rtn = array();
         foreach ($this->getBindData() as $key => $value) {
-            if (in_array($key, $this->value)) {
+            if ($this->value !=null && in_array($key, $this->value)) {
                 $rtn [] = '<label><input type="checkbox" name="' . $this->name . '[]" value="' . $key . '" checked="checked" ' . $properties . '/>' . $value . '</label>';
             } else {
                 $rtn [] = '<label><input type="checkbox" name="' . $this->name . '[]" value="' . $key . '" ' . $properties . '/>' . $value . '</label>';

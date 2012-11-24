@@ -39,6 +39,22 @@ class Request implements ArrayAccess {
     }
 
     /**
+     * 本次请求的类型
+     * @return bool 如果是通过ajax请求的返回true,反之返回false
+     */
+    public static function isAjaxRequest() {
+        return isset ($_SERVER ["HTTP_X_AJAX_TYPE"]);
+    }
+
+    public static function isGet() {
+        return strtoupper($_SERVER['REQUEST_METHOD']) == 'GET';
+    }
+
+    public static function isPost() {
+        return strtoupper($_SERVER['REQUEST_METHOD']) == 'POST';
+    }
+
+    /**
      * set enable flag
      * @param $enable
      */
@@ -56,7 +72,7 @@ class Request implements ArrayAccess {
     public function get($name, $default = '', $xss_clean = false) {
         $ary = isset($this->userData[$name]) ? $this->userData : (isset ($_POST [$name]) ? $_POST : $_GET);
         if (!isset ($ary [$name])) {
-            if ($name == '__url') {
+            if ($name == '_url') {
                 $default = ltrim($_SERVER['PATH_INFO'], '/');
                 if (empty($default)) {
                     $default = '/';
@@ -69,6 +85,26 @@ class Request implements ArrayAccess {
             return $this->xss_cleaner->xss_clean($ary [$name]);
         }
         return $ary [$name];
+    }
+
+    public static function getUri($unset = array()) {
+        if (isset($_SERVER['REQUEST_URI'])) {
+            return $_SERVER['REQUEST_URI'];
+        } else if (isset($_SERVER['PATH_INFO'])) {
+            $url = $_SERVER['SCRIPT_NAME'] . $_SERVER['PATH_INFO'];
+            $query_str = $_SERVER['QUERY_STRING'];
+        } else {
+            $query_str = $_SERVER['QUERY_STRING'];
+            if ($_SERVER['SCRIPT_NAME'] == '/index.php') {
+                parse_str($query_str, $args);
+                $url = $args['_url'];
+                unset($args['_url']);
+                $query_str = build_query_args($args);
+            } else {
+                $url = $_SERVER['SCRIPT_NAME'];
+            }
+        }
+        return BASE_URL . ltrim($url, '/') . (empty($query_str) ? '' : '?' . $query_str);
     }
 
     /**

@@ -5,7 +5,7 @@ $settings = KissGoSetting::getSetting();
 
 
 $settings[DATABASE] = array(
-    'default'=>array(
+    'default' => array(
         'driver' => 'PdoMysql',
         'encoding' => 'UTF8',
         'prefix' => '',
@@ -19,10 +19,10 @@ $settings[DATABASE] = array(
 );
 
 $settings[INSTALLED_MODULES] = array(
-    '::kissgo'
+    '::kissgo', '::passport'
 );
 $settings[INSTALLED_PLUGINS] = array(
     '::hello.php'
 );
-
+$settings['site_name'] = ' DEMO';
 //end of file settings.php

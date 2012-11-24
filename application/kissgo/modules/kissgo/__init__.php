@@ -8,6 +8,7 @@ defined('KISSGO') or exit ('No direct script access allowed');
  */
 function set_site_global_vars($smarty) {
     $smarty->assign('_SITE_URL', BASE_URL);
+    $smarty->assign('_PASSPORT', Passport::getPassport());
     return $smarty;
 }
 
@@ -50,6 +51,21 @@ function _hook_for_foot_toolbar($tb) {
 }
 
 bind('get_foot_toolbar_buttons', '_hook_for_foot_toolbar');
+function _hook_for_login_page($url) {
+    return murl('passport');
+}
+
+bind('get_login_page_url_for_KISSGO_ADMIN', '_hook_for_login_page');
+
+function _kissgo_hook_for_get_user_passport($passport) {
+    $uid = $passport['uid'];
+    if ($uid == 1) {
+        $passport['name'] = '宁广丰';
+    }
+    return $passport;
+}
+
+bind('get_user_passport', '_kissgo_hook_for_get_user_passport');
 /**
  * 设置页面提示
  * @param $tip
@@ -93,7 +109,8 @@ function theme_view($tpl, $data = array(), $headers = array()) {
  * @param int $timeout 跳转时间,当$redirect为空时，些值无效
  */
 function show_message($type, $title, $message, $redirect = '', $timeout = 5) {
-
+    echo $type, ':', $title, '<br/>', $message;
+    exit();
 }
 
 function show_error_message($title, $message, $redirect = '', $timeout = 5) {

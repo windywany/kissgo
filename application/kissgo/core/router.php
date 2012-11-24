@@ -33,7 +33,7 @@ class Router {
      * @return string
      */
     public function get_app_action($request) {
-        self::$url = $url = $request['__url'];
+        self::$url = $url = $request['_url'];
         $action = 'index';
         if ($url == '/') {
             $app = '';
@@ -47,7 +47,7 @@ class Router {
             } else {
                 $app = array_shift($chunks);
                 $action = array_shift($chunks);
-                $request['__params'] = $chunks;
+                $request['_params'] = $chunks;
             }
         }
         return $this->load_application($action, $app);
@@ -61,7 +61,7 @@ class Router {
     public function load_application($action, $app = '') {
         $func_name = 'do_default_' . $action;
         if ($app) {
-            $app = the_module_path($app);
+            $app = mpath($app);
             if ($app === false) {
                 Response::getInstance()->respond(403);
             }

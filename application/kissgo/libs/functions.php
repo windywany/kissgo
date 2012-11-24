@@ -345,52 +345,37 @@ function rmdirs($dir) {
 }
 
 /**
+ * 从SESSION中取值
  *
- * 只保留URL中部分参数
+ * 如果未设置,则返回默认值 $default
  *
- * @param string $url
- * @param array $include
- * 要保留的参数
- * @return string
+ * @param string $name
+ * 值名
+ * @param mixed $default
+ * 默认值
+ * @return mixed SESSION中的值
  */
-function keep_args($url, $include = array()) {
-    $urls = explode('?', $url);
-    if (count($urls) < 2) {
-        return $url;
+function sess_get($name, $default = "") {
+    if (isset($_SESSION[$name])) {
+        return $_SESSION[$name];
     }
-    $kargs = array();
-    foreach ($include as $arg) {
-        if (preg_match('/' . $arg . '=([^&]+)/', $urls [1], $m)) {
-            $kargs [] = $m [0];
-        }
-    }
-    if (!empty ($kargs)) {
-        $urls [1] = implode('&', $kargs);
-        return implode('?', $urls);
-    } else {
-        return $urls [0];
-    }
+    return $default;
 }
 
 /**
+ * 从SESSION中删除变量$name,并将该变量值返回
  *
- * 去除URL中的参数
- *
- * @param string $url
- * @param array $exclude 要去除的参数
- * @return string
+ * @param string $name
+ * @param string $default
+ * @return mixed
  */
-function un_keep_args($url, $exclude = array()) {
-    $regex = array();
-    $rpm = array();
-    if (is_string($exclude)) {
-        $exclude = array($exclude);
+function sess_del($name, $default = '') {
+    $value = sess_get($name, $default);
+    if (isset($_SESSION[$name])) {
+        $_SESSION[$name] = null;
+        unset($_SESSION[$name]);
     }
-    foreach ($exclude as $ex) {
-        $regex [] = '/&?' . $ex . '=[^&]*/';
-        $rpm [] = '';
-    }
-    return preg_replace($regex, $rpm, $url);
+    return $value;
 }
 
 /**
@@ -448,7 +433,7 @@ function readable_size($size) {
  * @param int $expiry 超时
  * @return string
  */
-function ntzauthcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
+function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
     $ckey_length = 4;
 
     $key = md5($key ? $key : SECURITY_KEY);
@@ -632,7 +617,7 @@ function log_error($message) {
  * @param string $uri
  * @return string
  */
-function the_module_path($uri) {
+function mpath($uri) {
     return untrailingslashit(apply_filter('get_module_path_from_path', $uri));
 }
 
@@ -643,7 +628,7 @@ function the_module_path($uri) {
  * @param string|array $args 参数
  * @return string
  */
-function the_module_url($module, $action = '', $args = '') {
+function murl($module, $action = '', $args = '') {
     $url = trailingslashit(apply_filter('get_module_url_from_path', $module));
     if (!empty($action)) {
         $url .= $action;
@@ -660,8 +645,24 @@ function the_module_url($module, $action = '', $args = '') {
         }
     }
     if (!CLEAN_URL) {
-        $url = BASE_URL . 'index.php/' . $url;
+        $url = 'index.php/' . $url;
     }
-    return $url;
+    return BASE_URL . $url;
+}
+
+/**
+ * 根据数据构建查询参数
+ * @param $args
+ * @return string
+ */
+function build_query_args($args) {
+    if (empty($args)) {
+        return '';
+    }
+    $_args = array();
+    foreach ($args as $name => $value) {
+        $_args[] = $name . '=' . urlencode($value);
+    }
+    return implode('&', $_args);
 }
 // end of file functions.php

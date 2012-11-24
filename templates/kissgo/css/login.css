@@ -1,0 +1,38 @@
+#login-wrap {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 360px;
+	height: 200px;
+	margin: -150px 0 0 -180px;
+}
+#login-wrap .title {
+	background: transparent url(../images/login.png) no-repeat 0 50%;
+	padding-left:30px;
+}
+#login-wrap .title h1 {
+	font-size: 18px;
+	font-weight: bold;	
+}
+.rows {
+	margin-top: 5px;
+}
+.well {
+	margin-bottom: 5px;
+}
+img.captcha {
+	width: 50px;
+	height: 20px;
+	cursor:pointer;
+}
+.info {	
+	text-align: right;
+	color: #999;
+}
+.alert{
+	margin-bottom:5px;
+	padding-left:22px;
+	background-image: url(../images/user_error.png);
+	background-repeat:no-repeat;
+	background-position:0 50%;
+}

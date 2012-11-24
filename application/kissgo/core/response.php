@@ -45,7 +45,7 @@ class Response {
     /**
      * 禁用浏览器缓存
      */
-    public function nocache() {
+    public static function nocache() {
         $headers = array('Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT', 'Cache-Control' => 'no-cache, must-revalidate, max-age=0', 'Pragma' => 'no-cache');
         foreach ($headers as $header => $val) {
             @header($header . ': ' . $val);
@@ -59,7 +59,7 @@ class Response {
      * @param string|array $args 参数
      * @param int $status 响应代码
      */
-    public function redirect($location, $args = "", $status = 302) {
+    public static function redirect($location, $args = "", $status = 302) {
         global $is_IIS;
         if (!$location) {
             return;
@@ -79,7 +79,7 @@ class Response {
             }
             @header("Location: $location", true, $status);
         }
-        $this->close(true);
+        exit();
     }
 
     /**
@@ -87,20 +87,20 @@ class Response {
      * @param string $url forward to the $url
      * @return null|View|string|array
      */
-    public function forward($url) {
+    public static function forward($url) {
         static $last_forward_url = false;
         if ($last_forward_url == $url) {
             log_error('循环重定向出错:' . $url);
-            $this->respond(500);
+            self::respond(500);
         } else {
             $last_forward_url = $url;
         }
         $request = Request::getInstance();
         $parsed_ary = parse_url(preg_replace('#.*/index\.php/#', '', $url));
         if (isset($parsed_ary['path'])) {
-            $request['__url'] = $parsed_ary['path'];
+            $request['_url'] = $parsed_ary['path'];
         } else {
-            $request['__url'] = '/';
+            $request['_url'] = '/';
         }
         if (isset($parsed_ary['query'])) {
             $args = array();
@@ -112,7 +112,7 @@ class Response {
         $router = Router::getInstance();
         $action_func = $router->get_app_action($request, true);
         if (is_callable($action_func)) {
-            return call_user_func_array($action_func, array($request, $this));
+            return call_user_func_array($action_func, array($request, Response::getInstance()));
         } else if ($action_func instanceof View) {
             return $action_func;
         }
@@ -123,9 +123,9 @@ class Response {
      *
      * @param int $status respond status code
      */
-    public function respond($status = 404) {
+    public static function respond($status = 404) {
         status_header($status);
-        $this->close(true);
+        exit();
     }
 
     /**
@@ -138,7 +138,7 @@ class Response {
      * @param null|string $domain
      * @param null|bool $security
      */
-    public function set_cookie($name, $value = null, $expire = null, $path = null, $domain = null, $security = null) {
+    public static function set_cookie($name, $value = null, $expire = null, $path = null, $domain = null, $security = null) {
         $settings = KissGoSetting::getSetting();
         $cookie_setting = array_merge2(array('expire' => 0, 'path' => '/', 'domain' => ".", 'security' => false), $settings[COOKIE]);
         if ($expire == null) {
