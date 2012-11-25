@@ -488,12 +488,15 @@ class ScheckboxWidget extends TextWidget {
         }
     }
 
-    public function getValue($request) {
-        if (isset ($request [$this->name])) {
-            $this->value = 1;
-        } else {
-            $this->value = 0;
+    public function getValue($request = null) {
+        if (!is_null($request)) {
+            if (isset ($request [$this->name])) {
+                $this->value = 1;
+            } else {
+                $this->value = 0;
+            }
         }
+        return $this->value;
     }
 }
 
