@@ -89,7 +89,7 @@ class CtsData implements Iterator {
      */
     private function getPageInfo($paging, $args) {
         $_c_url = Request::getUri();
-        $url = the_safe_url($paging ['prefix']);
+        $url = safe_url($paging ['prefix']);
         $cur = $paging ['current'];
         $total = $paging ['total'];
         $per = $paging ['limit'];
