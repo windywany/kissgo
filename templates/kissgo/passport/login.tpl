@@ -15,16 +15,19 @@
 			</div>
 			<div id="login-body">
 				<form id="login-form" class="well form-inline" action="." method="post">
-					<div id="eMsg" class="alert alert-error {if !$error}hide{/if}">
+					<div id="eMsg" class="alert alert-error {if $form->isValid()}hide{/if}">
 						<button class="close">×</button>
-						<div id="eMsgdiv">{$error}</div>
+						<div id="eMsgdiv">{$form|form:errors}</div>
 					</div>
 					<div>
 						<div class="input-prepend  pull-left">
-							<span class="add-on"><i class="icon-user"></i></span><input class="w120" id="account" type="text" name="account" value="{$account}"/>
+							<span class="add-on"><i class="icon-user"></i></span>
+                            <input class="w120" id="account" type="text" name="account" value="{$form|form:value:account}"/>
 			          	</div>
 			          	<div class="input-prepend input-append pull-right">
-							<span class="add-on"><i class="icon-lock"></i></span><input class="w90" id="passwd" type="password" name="passwd" value="{$passwd}"/><span class="add-on" title="忘记密码?"><i class="icon-question-sign"></i></span>
+							<span class="add-on"><i class="icon-lock"></i></span>
+                            <input class="w90" id="passwd" type="password" name="passwd" value="{$form|form:value:passwd}"/>
+                            <span class="add-on" title="忘记密码?"><i class="icon-question-sign"></i></span>
 			          	</div>
 			          	<br class="clear"/>
 		          	</div>

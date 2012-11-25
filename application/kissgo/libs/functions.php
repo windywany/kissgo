@@ -558,6 +558,45 @@ function array_merge2($base, $arr) {
 }
 
 /**
+ *
+ * 输入安全URL
+ * @param string $url
+ * @return string
+ */
+function safe_url($page) {
+    global $_CURRENT_PAGE;
+    static $domain = false, $protocol = false, $port = '';
+    if (!$domain) {
+        $domain = preg_match('#^https?://#i', BASE_URL) ? preg_replace('#^https?://#i', '', trim(BASE_URL, '/')) : $_SERVER ['HTTP_HOST'];
+        $domain = strstr($domain, ".");
+        $protocol = isset ($_SERVER ['HTTPS']) ? 'https://' : 'http://';
+        $port = intval($_SERVER ['SERVER_PORT']) == 80 ? '' : ':' . $_SERVER ['SERVER_PORT'];
+    }
+    if (is_string($page)) {
+        $url = $page;
+        $page = $_CURRENT_PAGE;
+    } else {
+        $url = $page ['url'];
+    }
+    if (preg_match('/index\.html?$/i', $url)) {
+        $url = preg_replace('/index\.html?$/i', '', $url);
+    }
+    if (preg_match('#^(http|ftp)s?://#i', $url)) {
+        return $url;
+    } else {
+        $url = ltrim($url, '/');
+        if (isset ($page ['bind']) && !empty ($page ['bind'])) { //绑定了二级域名
+            if (!empty ($page ['domain_home']) || !empty ($page ['home'])) { //是二级域名的首页啦，要清空url
+                $url = '';
+            }
+            return $protocol . $page ['bind'] . $domain . $port . '/' . $url;
+        } else {
+            return BASE_URL . $url;
+        }
+    }
+}
+
+/**
  * 记录Log信息
  *
  * @param string $message 信息
@@ -651,18 +690,66 @@ function murl($module, $action = '', $args = '') {
 }
 
 /**
- * 根据数据构建查询参数
- * @param $args
+ * 表格排序
+ *
+ * @param string $text
+ * 表头文字
+ * @param string $url
+ * url,无参数的URL
+ * @param string $filed
+ * 排序字段
+ * @param string $sort
+ * 默认排序
  * @return string
  */
-function build_query_args($args) {
-    if (empty($args)) {
-        return '';
+function sortheader($text, $filed, $sort = 'd') {
+    $url = Request::getUri();
+    $stext = '';
+    if (preg_match('/_sf=' . $filed . '/', $_SERVER ['QUERY_STRING'])) {
+        if (preg_match('/_sd=([ad])/', $_SERVER ['QUERY_STRING'], $_sort)) {
+            $sort = $_sort [1] == 'a' ? 'd' : 'a';
+            $stext = $_sort [1] == 'a' ? '<i class="asc"></i>' : '<i class="desc"></i>';
+        }
     }
-    $_args = array();
-    foreach ($args as $name => $value) {
-        $_args[] = $name . '=' . urlencode($value);
+    !empty ($stext) or $stext = '<i class="sdir"></i>';
+    $qs = preg_replace(array('/[&\?]?_sf=[^&]*/', '/[&\?]?_sd=[^&]*/'), array('', ''), $url);
+    $ss = '_sf=' . $filed . '&_sd=' . $sort;
+    $qs .= (strpos($qs, '?') === false ? '?' : '&') . $ss;
+    return sprintf('<div class="sortheader"><a href="%s">%s</a>%s</div>', $qs, $text, $stext);
+}
+
+/**
+ * 生成带参数的页面url
+ */
+function build_page_url($url, $args) {
+    static $params = null;
+    if (is_null($params)) {
+        parse_str($_SERVER ['QUERY_STRING'], $params);
+        unset ($params ['_url']);
     }
-    return implode('&', $_args);
+    $url = explode('?', $url);
+    $url = $url [0];
+    $pargs = $params;
+    if (!empty ($args)) {
+        $argnames = array_shift($args);
+        $argnames = explode(',', $argnames);
+        $i = 0;
+        foreach ($argnames as $n) {
+            if (preg_match('#^\-([a-z_][a-z\d_-]*)$#', $n, $m)) {
+                unset ($pargs [$m [1]]);
+            } else {
+                $pargs [$n] = $args [$i++];
+            }
+        }
+    }
+    if (!empty ($pargs) && !preg_match('/.*#$/', $url)) {
+        if (strpos($url, '?') === false) {
+            return $url . '?' . http_build_query($pargs);
+        } else {
+            return $url . '&' . http_build_query($pargs);
+        }
+    } else {
+        return $url;
+    }
 }
 // end of file functions.php

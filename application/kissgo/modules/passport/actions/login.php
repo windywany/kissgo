@@ -5,15 +5,18 @@
  * Date: 12-11-24
  * Time: 下午1:01
  */
-
+imports('passport/forms/*');
 
 $req = Request::getInstance();
 if (Request::isPost()) { //处理登录
     // TODO 登录功能实现
-    $loginInfo = new LoginInfo(1, '小宁', time(), $_SERVER['REMOTE_ADDR']);
-    $loginInfo->login(true);
-    LoginInfo::save($loginInfo);
-    Response::redirect(sess_del('go_to_the_page_when_login', murl('kissgo')));
+    $form = new PassportForm();
+    if ($form->valid()) {
+        $loginInfo = new LoginInfo(1, '小宁', time(), $_SERVER['REMOTE_ADDR']);
+        $loginInfo->login(true);
+        LoginInfo::save($loginInfo);
+        Response::redirect(sess_del('go_to_the_page_when_login', murl('kissgo')));
+    }
 } else {
     $me = Passport::getPassport();
     if ($me->isLogin()) {
@@ -22,5 +25,6 @@ if (Request::isPost()) { //处理登录
     if (!empty($req['from'])) {
         $_SESSION['go_to_the_page_when_login'] = $req['from'];
     }
+    $form = new PassportForm();
 }
-return theme_view('kissgo/passport/login.tpl', $data);
+return theme_view('kissgo/passport/login.tpl', array('form' => $form));

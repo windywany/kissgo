@@ -1,6 +1,27 @@
 <?php
+/**
+ * kissgo framework that keep it simple and stupid, go go go ~~
+ *
+ * @author Leo Ning
+ * @package kissgo.core
+ *
+ * $Id$
+ */
+define('BST_TEXT', 'text');
+define('BST_FIELD', 'field');
+define('BST_ORDER', 'order');
+define('BST_SORT', 'sortable');
+define('BST_RENDER', 'render');
+/**
+ * Simple Code:
+ * <code>
+ * class UserTable extends SimpleTable {
+ *  var $name = array('text' => 'First Name', 'sortable' => true, 'render' => array('render_name'),'order'=>'d','field'=>'abc');
+ *  var $name1 = array('text' => 'Last Name', 'sortable' => true, 'render' => array('render_name'));
+ * }
+ * </code>
+ */
 abstract class BaseTable {
-
     public function __construct($data, $extraData = array(), $properties = array()) {
         $this->initialize();
         $this->_extraData = $extraData;
@@ -9,7 +30,7 @@ abstract class BaseTable {
     }
 
     public final function render() {
-        return $this->drawHeader() . $this->drawBody();
+        return $this->drawHeader() . $this->drawBody() . $this->drawFooter();
     }
 
     private function initialize() {
@@ -22,7 +43,7 @@ abstract class BaseTable {
             if (!isset($column['text'])) {
                 $column['text'] = ucfirst($name);
             }
-
+            $column['text'] = __($column['text']);
             if (isset($column['sortable']) && !isset($column['order'])) {
                 $column['order'] = 'd';
             }
@@ -69,6 +90,8 @@ abstract class BaseTable {
     protected abstract function drawHeader();
 
     protected abstract function drawBody();
+
+    protected abstract function drawFooter();
 }
 
 /**
@@ -102,7 +125,8 @@ class SimpleTable extends BaseTable {
         $body[] = '</tbody></table>';
         return implode('', $body);
     }
+
+    protected function drawFooter() {
+        return '';
+    }
 }
-
-
-

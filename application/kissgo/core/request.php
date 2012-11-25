@@ -99,7 +99,7 @@ class Request implements ArrayAccess {
                 parse_str($query_str, $args);
                 $url = $args['_url'];
                 unset($args['_url']);
-                $query_str = build_query_args($args);
+                $query_str = http_build_query($args);
             } else {
                 $url = $_SERVER['SCRIPT_NAME'];
             }

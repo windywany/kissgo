@@ -1,5 +1,187 @@
 <?php
 /**
+ * kissgo framework that keep it simple and stupid, go go go ~~
+ *
+ * @author Leo Ning
+ * @package kissgo.libs
+ *
+ * $Id$
+ */
+/**
+ * 数据提供器可以提供的结果
+ */
+class CtsData implements Iterator {
+    private $data = array();
+    private $pos = 0;
+    private $total = 0;
+    private $countTotal = 0;
+    private $per = 10;
+
+    public function __construct($data, $countTotal = 0, $per = 0) {
+        $this->data = $data;
+        if (is_array($data) || $data instanceof ResultSet) {
+            $this->total = count($data);
+        }
+        $this->countTotal = $countTotal;
+        $this->per = $per <= 0 ? 1 : intval($per);
+    }
+
+    /**
+     * 取用于ctv标签的数据
+     *
+     * @return mixed
+     */
+    public function assign() {
+        if (is_array($this->data) || $this->data instanceof ResultSet) {
+            return empty ($this->data) ? array() : $this->data [0];
+        } else {
+            return $this->data;
+        }
+    }
+
+    public function current() {
+        if (is_array($this->data) || $this->data instanceof ResultSet) {
+            return $this->data[$this->pos];
+        }
+        return null;
+    }
+
+    public function next() {
+        $this->pos++;
+    }
+
+    public function key() {
+        return $this->pos;
+    }
+
+    public function valid() {
+        return $this->pos < $this->total;
+    }
+
+    public function rewind() {
+        $this->pos = 0;
+    }
+
+    /**
+     * 绘制分页
+     * @param string $render
+     * @param array $options
+     * @return array
+     */
+    public final function onPagingRender($render, $options) {
+        global $_current_page;
+        $_current_page = $_current_page == null ? 1 : $_current_page;
+        $url = explode('.', Request::getUri());
+        $ext = array_pop($url);
+        $paging = array('prefix' => implode('.', $url) . '_', 'current' => $_current_page, 'total' => $this->countTotal, 'limit' => $this->per, 'ext' => '.' . $ext);
+        $paging_data = apply_filter('on_render_paging_by_' . $render, array(), $paging, $options);
+        if (empty($paging_data)) {
+            $paging_data = $this->getPageInfo($paging, $options);
+        } else if (is_array($paging_data)) {
+            $paging_data = array_merge2(array('total' => ceil($this->countTotal / $this->per), 'ctotal' => $this->countTotal, 'first' => '#', 'prev' => '#', 'next' => '#', 'last' => '#'), $paging_data);
+        }
+        return $paging_data;
+    }
+
+    /**
+     * 取分页
+     * @param $paging
+     */
+    private function getPageInfo($paging, $args) {
+        $_c_url = Request::getUri();
+        $url = the_safe_url($paging ['prefix']);
+        $cur = $paging ['current'];
+        $total = $paging ['total'];
+        $per = $paging ['limit'];
+        $ext = $paging ['ext'];
+        $tp = ceil($total / $per); // 一共有多少页
+        $pager = array();
+        if ($tp < 2) {
+            return $pager;
+        }
+        $pager ['total'] = $tp;
+        $pager ['ctotal'] = $total;
+        if ($cur == 1) { // 当前在第一页
+            $pager ['first'] = '#';
+            $pager ['prev'] = '#';
+        } else {
+            $pager ['first'] = $_c_url;
+            $pager ['prev'] = $cur == 2 ? $_c_url : $url . ($cur - 1) . $ext;
+        }
+        // 向前后各多少页
+        $pp = isset ($args ['pp']) ? intval($args ['pp']) : 10;
+        $sp = $pp % 2 == 0 ? $pp / 2 : ($pp - 1) / 2;
+        if ($cur <= $sp) {
+            $start = 1;
+            $end = $pp;
+            $end = $end > $tp ? $tp : $end;
+        } else {
+            $start = $cur - $sp;
+            $end = $cur + $sp;
+            if ($pp % 2 == 0) {
+                $end -= 1;
+            }
+            if ($end >= $tp) {
+                $start -= ($end - $tp);
+                $start > 0 or $start = 1;
+                $end = $tp;
+            }
+        }
+        for ($i = $start; $i <= $end; $i++) {
+            if ($i == $cur) {
+                $pager [$i] = '#';
+            } else if ($i == 1) {
+                $pager [$i] = BASE_URL . $_c_url;
+            } else {
+                $pager [$i] = $url . $i . $ext;
+            }
+        }
+        if ($cur == $tp) {
+            $pager ['next'] = '#';
+            $pager ['last'] = '#';
+        } else {
+            $pager ['next'] = $url . ($cur + 1) . $ext;
+            $pager ['last'] = $url . $tp . $ext;
+        }
+        return $pager;
+    }
+}
+
+/**
+ * @param $name
+ * @param $provider
+ */
+function register_cts_provider($name, $provider, $desc = '') {
+    static $providers = false;
+    if (!$providers) {
+        $providers = KissGoSetting::getSetting('cts_providers');
+    }
+    $providers[$name] = array($provider, $desc);
+}
+
+/**
+ * @param $name
+ * @param $method
+ * @param $args
+ */
+function get_data_from_cts_provider($name, $args) {
+    $providers = KissGoSetting::getSetting('cts_providers');
+    $data = null;
+    if ($providers && isset($providers[$name])) {
+        $provider = $providers[$name];
+        $provider = $provider[0];
+        if (is_callable($provider)) {
+            $data = call_user_func_array($provider, array($args));
+        }
+    }
+    if ($data instanceof CtsData) {
+        return $data;
+    } else {
+        return new CtsData(array());
+    }
+}
+
+/**
  * 解析smarty参数.
  *
  * 将参数中 '" 去除比,如 '1' 转换为1.
@@ -35,46 +217,6 @@ function smarty_argstr($args) {
         $a [] = "'$k'=>$v";
     }
     return 'array(' . implode(',', $a) . ')';
-}
-
-/**
- *
- * 输入安全URL
- * @param $page
- * @internal param string $url
- * @return string
- */
-function the_safe_url($page) {
-    global $_PAGE;
-    static $domain = false, $proto = false, $port = '';
-    if (!$domain) {
-        $domain = preg_match('#^https?://#i', BASE_URL) ? preg_replace('#^https?://#i', '', trim(BASE_URL, '/')) : $_SERVER ['HTTP_HOST'];
-        $domain = strstr($domain, ".");
-        $proto = isset ($_SERVER ['HTTPS']) ? 'https://' : 'http://';
-        $port = intval($_SERVER ['SERVER_PORT']) == 80 ? '' : ':' . $_SERVER ['SERVER_PORT'];
-    }
-    if (is_string($page)) {
-        $url = $page;
-        $page = $_PAGE;
-    } else {
-        $url = $page ['url'];
-    }
-    if (preg_match('/index\.html?$/i', $url)) {
-        $url = preg_replace('/index\.html?$/i', '', $url);
-    }
-    if (preg_match('#^(http|ftp)s?://#i', $url)) {
-        return $url;
-    } else {
-        $url = ltrim($url, '/');
-        if (isset ($page ['bind']) && !empty ($page ['bind'])) { //绑定了二级域名
-            if (!empty ($page ['domain_home']) || !empty ($page ['home'])) { //是二级域名的首页啦，要清空url
-                $url = '';
-            }
-            return $proto . $page ['bind'] . $domain . $port . '/' . $url;
-        } else {
-            return BASE_URL . $url;
-        }
-    }
 }
 
 /**
@@ -122,9 +264,9 @@ function smarty_modifiercompiler_url($params, $compiler) {
     $page = array_shift($params);
     $args = empty ($params) ? array() : smarty_argstr($params);
     if (!empty ($args)) {
-        $output = "build_page_url(the_safe_url({$page}),$args)";
+        $output = "build_page_url(safe_url({$page}),$args)";
     } else {
-        $output = "the_safe_url({$page})";
+        $output = "safe_url({$page})";
     }
     return $output;
 }
@@ -171,46 +313,10 @@ function smarty_modifiercompiler_checked($value, $compiler) {
 }
 
 /**
- * Smarty paging modifier plugin
- *
- * <code>
- * {url|paging:total:limit:paging_arg:num_per_page}
- * </code>
- *
- *
- * Type: modifier<br>
- * Name: paging<br>
- * Purpose: 输出分页
- *
- * @param Smarty $compiler
- * @return string with compiled code
+ * @param $value
+ * @param $compiler
+ * @return string
  */
-function smarty_modifiercompiler_paging($value, $compiler) {
-    if (count($value) < 2) {
-        trigger_error('error usage of paging', E_USER_WARNING);
-        return "'error usage of paging'";
-    }
-    $url = $value [0]; // url
-    $total = $value [1]; // 总数
-    if (isset ($value [2])) {
-        $limit = $value [2]; // 每页显示的条数
-    } else {
-        $limit = 10; // 默认显示10
-    }
-    if (isset ($value [3])) {
-        $param = $value [3]; // 分类参数
-    } else {
-        $param = "'pid'";
-    }
-    if (isset ($value [4])) {
-        $pno = $value [4]; // 分类参数
-    } else {
-        $pno = 4;
-    }
-    $output = "paging($total,$limit,null,$param,$pno,$url)";
-    return $output;
-}
-
 function smarty_modifiercompiler_murl($value, $compiler) {
     if (count($value) < 1) {
         trigger_error('error usage of murl', E_USER_WARNING);
@@ -267,19 +373,18 @@ function smarty_modifiercompiler_status($status, $compiler) {
  * @return string with compiled code
  */
 function smarty_modifiercompiler_sorth($sorth, $compiler) {
-    if (count($sorth) < 3) {
+    if (count($sorth) < 2) {
         trigger_error('error usage of sorth', E_USER_WARNING);
         return "'error usage of sorth'";
     }
     $text = $sorth [0];
     $field = $sorth [1];
-    $url = $sorth [2];
-    if (isset ($sorth [3])) {
-        $dir = $sorth [3];
+    if (isset ($sorth [2])) {
+        $dir = $sorth [2];
     } else {
         $dir = "'d'";
     }
-    $output = "sortheader($text,$url,$field,$dir)";
+    $output = "sortheader($text,$field,$dir)";
     return $output;
 }
 
@@ -362,4 +467,21 @@ function smarty_modifiercompiler_params($ary, $compiler) {
     $args = empty ($ary) ? array() : smarty_argstr($ary);
     $output = "build_page_url($url,$args)";
     return $output;
+}
+
+function smarty_modifiercompiler_form($ary, $compiler) {
+    if (count($ary) < 2) {
+        trigger_error('error usage of params', E_USER_WARNING);
+        return "''";
+    }
+    $form = $ary[0];
+    if (isset($ary[2])) {
+        $name = trim($ary[2], "'\"");
+        $component = trim($ary[1], "'\"");
+    } else {
+        $name = trim($ary[1], "'\"");
+        $component = 'null';
+    }
+
+    return "{$form}->render('$name',$component)";
 }

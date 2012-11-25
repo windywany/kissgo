@@ -1,4 +1,12 @@
 <?php
+/**
+ * kissgo framework that keep it simple and stupid, go go go ~~
+ *
+ * @author Leo Ning
+ * @package kissgo.core
+ *
+ * $Id$
+ */
 define ('FWT_NAME', 'name');
 define ('FWT_WIDGET', 'widget');
 define ('FWT_LABEL', 'label');
@@ -10,6 +18,16 @@ define ('FWT_TIP', 'tip');
 define ('FWT_SEARCH', 'search');
 define ('FWT_OPTIONS', 'options');
 define ('FWT_INITIAL', 'initial');
+/**
+ * 抽象表单
+ * Simple Code:
+ * <code>
+ * class myForm extends TableForm {
+ *  var $name = array('label' => '姓名', 'bind' => 'abc', 'search' => '<>', 'field' => 'name1', 'validator' => '');
+ *  var $age = array('label' => '年龄', 'validator' => array('required', 'maxlength(10)', 'minlength(1)', 'range(1,5)', 'min(1)', 'max(10)', 'email', 'url', 'callback($scope->aaa)'));
+ * }
+ * </code>
+ */
 abstract class BaseForm {
     private $__properties__ = array();
 
@@ -90,7 +108,8 @@ abstract class BaseForm {
      * @return string
      */
     public function render($name = null, $component = null) {
-        if (!is_null($name)) {
+        $body = '';
+        if (!is_null($name) && !is_null($component)) {
             if (isset ($this->widgets [$name])) {
                 $widget = $this->widgets [$name];
                 switch ($component) {
@@ -106,6 +125,9 @@ abstract class BaseForm {
                     case 'error' :
                         $body = $widget->error;
                         break;
+                    case 'value':
+                        $body = $widget->getValue();
+                        break;
                     default :
                         $body = str_replace(array('{$error_class}', '{$label}', '{$widget}', '{$tip}'), array($widget->valid ? '' : 'error', $widget->getLabelComponent(), $widget->getWidgetComponent(), $widget->getTipComponent()), $this->getFormItemWrapper());
                         break;
@@ -114,6 +136,24 @@ abstract class BaseForm {
             } else {
                 return '';
             }
+        } else if ($component == null) {
+            switch ($name) {
+                case 'errors':
+                    $body = '<p class="form-error">' . implode('</p><p class="form-error">', $this->errors) . '</p>';
+                    break;
+                case 'options':
+                    $_ops = array();
+                    if ($this->options) {
+                        foreach ($this->options as $name => $val) {
+                            $_ops[] = $name . '="' . $val . '"';
+                        }
+                    }
+                    $body = implode(' ', $_ops);
+                    break;
+                default:
+                    break;
+            }
+            return $body;
         } else {
             $head = $this->getFormHead();
             $item_wrapper = $this->getFormItemWrapper();
@@ -164,6 +204,7 @@ abstract class BaseForm {
                 if (!isset ($widget [FWT_LABEL])) {
                     $widget [FWT_LABEL] = ucfirst($widget_name);
                 }
+                $widget[FWT_LABEL] = __($widget[FWT_LABEL]);
                 $this->{$widget_name} [FWT_NAME] = $widget_name;
                 $this->{$widget_name} [FWT_FIELD] = $key;
                 $widget_object = new $widget_class ($widget, $data [$key], $this);
@@ -182,6 +223,10 @@ abstract class BaseForm {
 
     public function addSearch($widget_name, $search) {
         $this->__properties__ ['searches'] [$widget_name] = $search;
+    }
+
+    public function isValid() {
+        return count($this->errors) > 0 ? false : true;
     }
 
     public function __get($name) {
@@ -242,7 +287,11 @@ abstract class FormWidget {
                         $exp = $rules [3];
                     }
                 }
-
+                if ($message && strlen($exp) > 0) {
+                    $message = __($message, $exp);
+                } else if ($message) {
+                    $message = __($message);
+                }
                 $this->validates [$rule] = array('message' => $message, 'option' => $exp);
             }
             $this->required = isset ($this->validates ['required']);
@@ -309,8 +358,10 @@ abstract class FormWidget {
      * @param Request $request
      * @return mixed
      */
-    public function getValue($request) {
-        $this->value = $request->get($this->name, $this->initial);
+    public function getValue($request = null) {
+        if (!is_null($request)) {
+            $this->value = $request->get($this->name, $this->initial);
+        }
         return $this->value;
     }
 
@@ -414,7 +465,7 @@ class CheckboxWidget extends TextWidget {
         $properties = $this->getProperties(false, false);
         $rtn = array();
         foreach ($this->getBindData() as $key => $value) {
-            if ($this->value !=null && in_array($key, $this->value)) {
+            if ($this->value != null && in_array($key, $this->value)) {
                 $rtn [] = '<label><input type="checkbox" name="' . $this->name . '[]" value="' . $key . '" checked="checked" ' . $properties . '/>' . $value . '</label>';
             } else {
                 $rtn [] = '<label><input type="checkbox" name="' . $this->name . '[]" value="' . $key . '" ' . $properties . '/>' . $value . '</label>';
