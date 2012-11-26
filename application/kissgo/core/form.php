@@ -143,16 +143,14 @@ abstract class BaseForm implements ArrayAccess{
         } else if ($component == null) {
             switch ($name) {
                 case 'errors':
-                    $body = '<p class="form-error">' . implode('</p><p class="form-error">', $this->errors) . '</p>';
+                	if(!empty($this->errors)){
+                    	$body = '<p class="form-error">' . implode('</p><p class="form-error">', $this->errors) . '</p>';
+                	}
                     break;
-                case 'options':
-                    $_ops = array();
+                case 'options':                    
                     if ($this->options) {
-                        foreach ($this->options as $name => $val) {
-                            $_ops[] = $name . '="' . $val . '"';
-                        }
-                    }
-                    $body = implode(' ', $_ops);
+                    	$body = html_tag_properties($this->options);
+                    }                    
                     break;
                 default:
                     break;

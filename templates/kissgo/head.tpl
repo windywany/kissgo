@@ -25,7 +25,7 @@
             <a target="_blank" title="Preview KissGO! 1.0 Demo" href="{$_SITE_URL}" class="brand">KissGO! 1.0 Demo... <i class="icon-share"></i></a>
             <div class="nav-collapse">
                 <ul id="menu" class="nav">
-                    {$_top_navigation_menu->render()}
+                    {$_top_navigation_menu->render()}                    
                 </ul>
                 <ul class="nav pull-right">
                     <li class="dropdown">

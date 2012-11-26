@@ -13,6 +13,7 @@ define ( 'BST_ORDER', 'order' );
 define ( 'BST_SORT', 'sortable' );
 define ( 'BST_RENDER', 'render' );
 define ( 'BST_HRENDER', 'hrender' );
+define ('BST_OPTS','opts');
 /**
  * Simple Code:
  * <code>
