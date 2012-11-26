@@ -24,5 +24,5 @@ $settings[INSTALLED_MODULES] = array(
 $settings[INSTALLED_PLUGINS] = array(
     '::hello.php'
 );
-$settings['site_name'] = ' DEMO';
+
 //end of file settings.php

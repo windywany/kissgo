@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Id: $ID$
  */
 defined('KISSGO') or exit ('No direct script access allowed');
@@ -85,18 +85,6 @@ function set_page_tip($tip, $type = 'info', $during = 5000) {
  */
 function admin_view($tpl, $data = array(), $headers = array()) {
     bind('init_smarty_engine', 'set_admin_global_vars');
-    return new SmartyView ($data, $tpl, $headers);
-}
-
-/**
- * load the theme view
- *
- * @param $tpl
- * @param array $data
- * @param array $headers
- * @return SmartyView
- */
-function theme_view($tpl, $data = array(), $headers = array()) {
     return new SmartyView ($data, $tpl, $headers);
 }
 

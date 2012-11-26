@@ -28,7 +28,7 @@ define ('FWT_INITIAL', 'initial');
  * }
  * </code>
  */
-abstract class BaseForm {
+abstract class BaseForm implements ArrayAccess{
     private $__properties__ = array();
 
     public function __construct($data = array(), $title = '', $options = array()) {
@@ -52,6 +52,7 @@ abstract class BaseForm {
                 $key = $this->{$name} [FWT_FIELD];
                 $clean_data [$key] = $widget_object->getValue($request);
             }
+            $this->__properties__['__cleandata'] = $clean_data;
         }
         if (!empty ($widget)) {
             if (is_array($widget)) {
@@ -128,6 +129,9 @@ abstract class BaseForm {
                     case 'value':
                         $body = $widget->getValue();
                         break;
+                    case 'validate':
+                    	$body = $widget->getValidate();
+                    	break;
                     default :
                         $body = str_replace(array('{$error_class}', '{$label}', '{$widget}', '{$tip}'), array($widget->valid ? '' : 'error', $widget->getLabelComponent(), $widget->getWidgetComponent(), $widget->getTipComponent()), $this->getFormItemWrapper());
                         break;
@@ -235,8 +239,23 @@ abstract class BaseForm {
         }
         return null;
     }
-
-    protected abstract function getFormHead();
+	public function offsetExists($offset) {
+		return isset($this->__properties__['__cleandata'][$offset]);		
+	}	
+	public function offsetGet($offset) {
+		if(isset($this->__properties__['__cleandata'][$offset])){
+			return $this->__properties__['__cleandata'][$offset];
+		}else if(isset($this->{$offset}) && isset($this->{$offset}[FWT_INITIAL])){
+			return $this->{$offset}[FWT_INITIAL];
+		}
+		return '';
+	}	
+	public function offsetSet($offset, $value) {		
+		
+	}	
+	public function offsetUnset($offset) {		
+	}
+	protected abstract function getFormHead();
 
     protected abstract function getFormItemWrapper();
 
@@ -322,12 +341,8 @@ abstract class FormWidget {
                 $properties ['class'] = 'invalid';
             }
         }
-        $tmp_ary = array();
-        foreach ($properties as $name => $val) {
-            $name = trim($name);
-            $tmp_ary [] = $name . '="' . $val . '"';
-        }
-        return implode(' ', $tmp_ary);
+        
+        return html_tag_properties($properties);
     }
 
     public function valid($data, $scope = null) {
@@ -381,7 +396,16 @@ abstract class FormWidget {
         }
         return null;
     }
-
+	public function getValidate(){
+		$properties = array('validate'=>'');
+		if (!empty ($this->validates)) {
+            $validator = $this->form->useValidator();
+            if ($validator) {
+                $validator->yield($properties, $this->validates);
+            }
+        }
+        return $properties['validate'];
+	}
     public abstract function getLabelComponent();
 
     public abstract function getWidgetComponent();
@@ -444,7 +468,7 @@ class PasswordWidget extends TextWidget {
 class SelectWidget extends TextWidget {
     public function getWidgetComponent() {
         $properties = $this->getProperties();
-        $rtn = array('<select ' . $properties . '>');
+        $rtn = array('<select' . $properties . '>');
         foreach ($this->getBindData() as $key => $value) {
             if ($this->value == $key) {
                 $rtn [] = '<option value="' . $key . '" selected="selected">' . $value . '</option>';
