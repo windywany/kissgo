@@ -30,7 +30,7 @@
                 <ul class="nav pull-right">
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                            <i class="icon-user"></i>{$_PASSPORT['account']}<span class="caret"></span>
+                            <i class="icon-user"></i>{$_PASSPORT['name']}({$_PASSPORT['account']})<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li>
