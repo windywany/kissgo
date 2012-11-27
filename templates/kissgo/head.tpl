@@ -28,19 +28,25 @@
                     {$_top_navigation_menu->render()}                    
                 </ul>
                 <ul class="nav pull-right">
+                	<li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                            <i class="icon-plus"></i>{'Add'|ts}<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {'add_new_menu_items'|fire}
+                        </ul>
+                    </li>
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
                             <i class="icon-user"></i>{$_PASSPORT['name']}({$_PASSPORT['account']})<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li>
-                                <a href="#">Control Panel</a>
-                            </li>
+                            {'add_passport_menu_items'|fire}
                             <li class="divider"><span></span></li>
                             <li><a href="{'passport'|murl:'logout'}"><i class="icon-off"></i>{'Logout'|ts}</a></li>
                         </ul>
                     </li>
-                </ul>
+                </ul>                
             </div>
         </div>
     </div>

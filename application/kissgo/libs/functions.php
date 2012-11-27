@@ -796,4 +796,32 @@ function html_tag_properties($properties) {
 function cfgv($name, $default = '', $group = 'default') {
 	
 }
+/**
+ * 显示消息提示页面
+ *
+ * @param string $type
+ *        	消息类型
+ * @param string $title
+ *        	提示标题
+ * @param string $message
+ *        	消息内容
+ * @param string $redirect
+ *        	跳转到URL
+ * @param int $timeout
+ *        	跳转时间,当$redirect为空时，些值无效
+ */
+function show_message($type, $title, $message, $redirect = '', $timeout = 5) {
+	echo $type, ':', $title, '<br/>', $message;
+	exit ();
+}
+/**
+ * 
+ * @param string $title
+ * @param string $message
+ * @param string $redirect
+ * @param int $timeout
+ */
+function show_error_message($title, $message, $redirect = '', $timeout = 5) {
+	show_message ( 'error', $title, $message, $redirect, $timeout );
+}
 // end of file functions.php

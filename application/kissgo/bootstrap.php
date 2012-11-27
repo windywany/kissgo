@@ -13,7 +13,16 @@ if (@ini_get ( 'register_globals' )) {
 	if (isset ( $_REQUEST ['GLOBALS'] )) {
 		die ( 'GLOBALS overwrite attempt detected' );
 	}
-	$noUnset = array ('GLOBALS', '_GET', '_POST', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES' );
+	$noUnset = array (
+			'GLOBALS',
+			'_GET',
+			'_POST',
+			'_COOKIE',
+			'_REQUEST',
+			'_SERVER',
+			'_ENV',
+			'_FILES' 
+	);
 	$input = array_merge ( $_GET, $_POST, $_COOKIE, $_SERVER, $_ENV, $_FILES, isset ( $_SESSION ) && is_array ( $_SESSION ) ? $_SESSION : array () );
 	foreach ( $input as $k => $v ) {
 		if (! in_array ( $k, $noUnset ) && isset ( $GLOBALS [$k] )) {
@@ -35,21 +44,32 @@ if (function_exists ( 'memory_get_usage' ) && (( int ) @ini_get ( 'memory_limit'
 if (function_exists ( 'mb_internal_encoding' )) {
 	mb_internal_encoding ( 'UTF-8' );
 }
-
 function __kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
 	if (function_exists ( 'fire' )) {
 		fire ( 'kissgo_error_raise', $error_no, $error_str, $error_file, $error_line );
 	}
 	if (function_exists ( 'log_message' )) {
 		if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
-			log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_ERROR );
+			log_message ( $error_str, array (
+					'file' => $error_file,
+					'line' => $error_line 
+			), DEBUG_ERROR );
 			Response::getInstance ()->close ( true );
 		} else if ($error_no == E_USER_NOTICE) {
-			log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_INFO );
+			log_message ( $error_str, array (
+					'file' => $error_file,
+					'line' => $error_line 
+			), DEBUG_INFO );
 		} else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
-			log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_WARN );
+			log_message ( $error_str, array (
+					'file' => $error_file,
+					'line' => $error_line 
+			), DEBUG_WARN );
 		} else if ($error_no != E_NOTICE) {
-			log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_DEBUG );
+			log_message ( $error_str, array (
+					'file' => $error_file,
+					'line' => $error_line 
+			), DEBUG_DEBUG );
 		}
 	} else {
 		echo $error_str, ' in file ', $error_file, ' on line ', $error_line;
@@ -57,7 +77,6 @@ function __kissgo_error_handler($error_no, $error_str, $error_file, $error_line)
 }
 
 set_error_handler ( '__kissgo_error_handler' );
-
 function __kissgo_exception_handler($exception) {
 	if (function_exists ( 'fire' )) {
 		fire ( 'catch_exception', $exception );
@@ -79,7 +98,8 @@ define ( 'DEBUG_INFO', 4 );
 define ( 'DEBUG_WARN', 3 );
 define ( 'DEBUG_DEBUG', 2 );
 define ( 'DEBUG_ERROR', 5 );
-// load the bootstrap script of the application,in this script you can change some settings
+// load the bootstrap script of the application,in this script you can change
+// some settings
 $__ksg_run_level = isset ( $_SERVER ['KSG_RUN_LEVEL'] ) ? $_SERVER ['KSG_RUN_LEVEL'] : '';
 $__ksg_app_bootstrap = APP_PATH . 'bootstrap.php';
 if (! empty ( $__ksg_run_level )) {
@@ -100,6 +120,7 @@ defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) );
 // the default modules path
 defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS );
 define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
+defined ( 'PLUGIN_PATH' ) or define ( 'PLUGIN_PATH', APP_PATH . 'plugins' . DS );
 // the application data path
 defined ( 'APPDATA_PATH' ) or define ( 'APPDATA_PATH', APP_PATH . 'appdata' . DS );
 defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', WEB_ROOT . 'templates' . DS );
@@ -127,7 +148,6 @@ class KissGoSetting implements ArrayAccess {
 	private $setting_name = '';
 	private $settings = array ();
 	private static $INSTANCE = array ();
-	
 	public function __construct($name) {
 		$this->setting_name = $name;
 	}
@@ -135,8 +155,9 @@ class KissGoSetting implements ArrayAccess {
 	/**
 	 * 取系统设置实例
 	 *
-	 * @param string $name
-	 * @param null|KissgoSetting
+	 * @param string $name        	
+	 * @param
+	 *        	null|KissgoSetting
 	 * @return KissGoSetting
 	 */
 	public static function getSetting($name = 'default', $setting = null) {
@@ -150,27 +171,24 @@ class KissGoSetting implements ArrayAccess {
 	public static function hasSetting($name) {
 		return isset ( self::$INSTANCE [$name] );
 	}
-	
 	public function offsetExists($offset) {
 		return isset ( $this->settings [$offset] );
 	}
-	
 	public function offsetGet($offset) {
 		return $this->settings [$offset];
 	}
-	
 	public function offsetSet($offset, $value) {
 		$this->settings [$offset] = $value;
 	}
-	
 	public function offsetUnset($offset) {
 		unset ( $this->settings [$offset] );
 	}
 	
 	/**
 	 * 获取设置
-	 * @param string $name
-	 * @param string $default
+	 * 
+	 * @param string $name        	
+	 * @param string $default        	
 	 * @return string
 	 */
 	public function get($name, $default = '') {
@@ -179,8 +197,9 @@ class KissGoSetting implements ArrayAccess {
 	
 	/**
 	 * 设置
-	 * @param string $name
-	 * @param mixed $value
+	 * 
+	 * @param string $name        	
+	 * @param mixed $value        	
 	 */
 	public function set($name, $value) {
 		$this->settings [$name] = $value;
@@ -197,7 +216,6 @@ class KissGoSetting implements ArrayAccess {
  * 存取程序运行中的全局变量
  */
 class KissGoValues extends KissGoSetting {
-
 }
 
 // the application settings script
@@ -235,7 +253,7 @@ include KISSGO . 'core/kissgo.php';
  *
  * @global array 系统类路径
  * @param $clz string
- * 类名
+ *        	类名
  */
 function __kissgo_class_loader($clz) {
 	global $__kissgo_exports;

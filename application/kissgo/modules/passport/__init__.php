@@ -1,8 +1,10 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: Leo
- * Date: 12-11-24
- * Time: 下午1:03
- * To change this template use File | Settings | File Templates.
- */
+/*
+Plugin ID: cn.usephp.core.passport
+Plugin Name: Passport
+Plugin URI: http://www.usephp.cn/modules/core/passport.html
+Description: 提供登录KissGO后台的登录界面。
+Author: Leo Ning
+Version: 1.0
+Author URI: http://www.usephp.cn/
+*/

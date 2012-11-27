@@ -1,5 +1,10 @@
 <?php
 /*
+ * Plugin ID: cn.usephp.core.gui Plugin Name: KissGO GUI Plugin URI:
+ * http://www.usephp.cn/modules/core/ui.html Description: KissGO管理界面。 Author:
+ * Leo Ning Version: 1.0 Author URI: http://www.usephp.cn/
+ */
+/*
  * Id: $ID$
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
@@ -15,9 +20,6 @@ function set_site_global_vars($smarty) {
 
 bind ( 'init_smarty_engine', 'set_site_global_vars' );
 /**
- *
- *
- *
  * 设置管理界面全局数据
  *
  * @param Smarty $smarty        	
@@ -38,20 +40,51 @@ function set_admin_global_vars($smarty) {
  * @return mixed
  */
 function _hook_for_admincp_menu($mm) {
-	$mm->addMenu2 ( 'admincp_1', __ ( 'System' ), 'icon-th-large' );
-	$mm->addMenuItem ( 'admincp_1', 'book', '小样', '#', 'icon-home' );
-	$mm->addSubItem ( 'admincp_1/book', 'xiaoyang', '二级菜单1' );
-	$mm->addSubItem ( 'admincp_1/book', 'xiaoyang1', '二级菜单2' );
-	$mm->addMenuItemDivider ( 'admincp_1' );
-	$mm->addMenuItem ( 'admincp_1', 'book1', '大样' );
+	// System
+	$mm->addMenu2 ( 'system', __ ( 'System' ), 'icon-th-large' );
+	$mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), '#', 'icon-user' );
+	$mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ) );
+	$mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-groups', __ ( 'Groups Management' ) );
+	$mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ) );
+	$mm->addMenuItemDivider ( 'system' );
+	$mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Plugins & Modules' ), murl ( 'kissgo', 'modules' ), 'icon-asterisk' );
+	$mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preferences' ), 'icon-wrench' );
+	// Web Site
+	$mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
+	$mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'kissgo', 'pages' ), 'icon-file' );
+	$mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'kissgo', 'comments' ), 'icon-comment' );
+	$mm->addMenuItem ( 'menu-website', 'menuitem-category', __ ( 'Categories' ), murl ( 'kissgo', 'categoris' ), 'icon-briefcase' );
+	$mm->addMenuItemDivider ( 'menu-website' );
+	$mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'kissgo', 'pagetypes' ), 'icon-list' );
+	$mm->addMenuItem ( 'menu-website', 'menuitem-themes', __ ( 'Themes & Templates' ), murl ( 'kissgo', 'themes' ), 'icon-list' );
+	$mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'kissgo', 'menus' ), 'icon-list' );
+	$mm->addMenuItemDivider ( 'menu-website' );
+	$mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Attachments' ), murl ( 'kissgo', 'attachs' ), 'icon-picture' );
+	// Components
+	$mm->addMenu2 ( 'menu-components', __ ( 'Components' ), 'icon-cog' );
+	$mm->addMenuItem ( 'menu-components', 'menuitem-codes', __ ( 'Code Fragments' ), murl ( 'kissgo', 'fragments' ), 'icon-list-alt' );
+	$mm->addMenuItem ( 'menu-components', 'menuitem-links', __ ( 'Links' ), murl ( 'kissgo', 'links' ), 'icon-retweet' );
+	$mm->addMenuItem ( 'menu-components', 'menuitem-tags', __ ( 'Tags' ), murl ( 'kissgo', 'tags' ), 'icon-tags' );
+	$mm->addMenuItem ( 'menu-components', 'menuitem-props', __ ( 'Properties' ), murl ( 'kissgo', 'properties' ), 'icon-tag' );
+	$mm->addMenuItem ( 'menu-components', 'menuitem-enums', __ ( 'Enums' ), '', 'icon-book' );
+	$mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-authors', __ ( 'Authors' ), murl ( 'kissgo', 'authors' ), 'icon-book' );
+	$mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-origins', __ ( 'Origins' ), murl ( 'kissgo', 'origins' ), 'icon-book' );
+	$mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-keywords', __ ( 'Keywords' ), murl ( 'kissgo', 'keywords' ), 'icon-book' );
 	return $mm;
 }
-
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
+// add new menu items
+function _hook_add_new_menu_items($items) {
+	$items .= '<li><a href="#">new page</a></li>';
+	return $items;
+}
+bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
+function _hook_for_add_passport_menu_items($items) {
+	$items .= '<li><a href="#">Control Panel</a></li>';
+	return $items;
+}
+bind ( 'add_passport_menu_items', '_hook_for_add_passport_menu_items' );
 /**
- *
- *
- *
  * 设置底部按键
  *
  * @param NavigationFootToolbar $tb        	
@@ -103,27 +136,5 @@ function set_page_tip($tip, $type = 'info', $during = 5000) {
 function admin_view($tpl, $data = array(), $headers = array()) {
 	bind ( 'init_smarty_engine', 'set_admin_global_vars' );
 	return new SmartyView ( $data, $tpl, $headers );
-}
-
-/**
- * 显示消息提示页面
- *
- * @param string $type
- *        	消息类型
- * @param string $title
- *        	提示标题
- * @param string $message
- *        	消息内容
- * @param string $redirect
- *        	跳转到URL
- * @param int $timeout
- *        	跳转时间,当$redirect为空时，些值无效
- */
-function show_message($type, $title, $message, $redirect = '', $timeout = 5) {
-	echo $type, ':', $title, '<br/>', $message;
-	exit ();
-}
-function show_error_message($title, $message, $redirect = '', $timeout = 5) {
-	show_error_message ( 'error', $title, $message, $redirect, $timeout );
 }
 // end of __init__.php
