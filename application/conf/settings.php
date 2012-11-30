@@ -1,8 +1,13 @@
 <?php
+// configuration file, don't edit this file manually, The KissGO! provides a interface to manage this.
 defined('KISSGO') or exit('No direct script access allowed');
-
 $settings = KissGoSetting::getSetting();
 
+$settings['DEBUG'] = 2;
+
+$settings['CLEAN_URL'] = true;
+
+$settings['I18N_ENABLED'] = true;
 
 $settings[DATABASE] = array(
     'default' => array(
@@ -13,16 +18,8 @@ $settings[DATABASE] = array(
         'user' => 'root',
         'password' => 'root',
         'pconnect' => false,
-        'dbname' => 'centims'
+        'dbname' => 'kissgodb'
     )
-    //,'another'=>array(), others can be here
 );
-
-$settings[INSTALLED_MODULES] = array(
-    '::kissgo', '::passport'
-);
-$settings[INSTALLED_PLUGINS] = array(
-    '::hello.php'
-);
-
+$settings['SECURITY_KEY'] = 'yeN3g9EbNfiaZfodV63dI1j8Fbk5HaL7W6yaW4y7u2j4Mf45mPg2v899g451k576';
 //end of file settings.php

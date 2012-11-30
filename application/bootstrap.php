@@ -7,6 +7,8 @@
  *
  * $Id$
  */
+$settings = KissGoSetting::getSetting ();
+
 define ( 'DEBUG', DEBUG_DEBUG );
 define ( 'CLEAN_URL', true );
 define ( 'I18N_ENABLED', true );
