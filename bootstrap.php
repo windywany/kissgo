@@ -11,9 +11,9 @@
 // below setting.
 //------------------------------------------------------------------------
 // the abstract path of web root
-define('WEB_ROOT', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+define ( 'WEB_ROOT', dirname ( __FILE__ ) . DIRECTORY_SEPARATOR );
 // the default application path
-define('APP_PATH', WEB_ROOT . 'application' . DIRECTORY_SEPARATOR);
-define('KISSGO', APP_PATH . 'kissgo' . DIRECTORY_SEPARATOR);
-require_once  KISSGO . 'bootstrap.php';
+define ( 'APP_PATH', WEB_ROOT . 'application' . DIRECTORY_SEPARATOR );
+define ( 'KISSGO', APP_PATH . 'kissgo' . DIRECTORY_SEPARATOR );
+require_once KISSGO . 'bootstrap.php';
 // END OF bootstrap.php

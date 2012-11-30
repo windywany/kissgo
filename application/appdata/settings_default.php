@@ -9,6 +9,10 @@ $settings['CLEAN_URL'] = true;
 
 $settings['I18N_ENABLED'] = true;
 
+$settings['GZIP_ENABLED'] = true;
+
+$settings['TIMEZONE'] = 'Asia/Shanghai';
+
 $settings[DATABASE] = array(
     'default' => array(
         'driver' => 'PdoMysql',

@@ -8,6 +8,28 @@
  * $Id$
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
+define ( 'KISSGO_VERISON', '1.0 BETA 1-1130-2012' ); // the version of kissgo
+define ( 'DS', DIRECTORY_SEPARATOR ); // the short for directory separator
+define ( 'DEBUG_ERROR', 5 ); // debug levels
+define ( 'DEBUG_INFO', 4 );
+define ( 'DEBUG_WARN', 3 );
+define ( 'DEBUG_DEBUG', 2 );
+define ( 'APP_DIR', dirname ( APP_PATH ) );
+define ( 'KISSGO_DIR', dirname ( KISSGO ) );
+defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) ); // the default application name, this is used by session id
+defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS ); // the default modules path
+define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
+defined ( 'PLUGIN_PATH' ) or define ( 'PLUGIN_PATH', APP_PATH . 'plugins' . DS );
+defined ( 'APPDATA_PATH' ) or define ( 'APPDATA_PATH', APP_PATH . 'appdata' . DS ); // the application data path
+defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', WEB_ROOT . 'templates' . DS );
+defined ( 'STATIC_DIR' ) or define ( 'STATIC_DIR', 'static' );
+defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS ); // the temporary directory path
+define ( 'NOTNULL', '_@_NOT_NULL_@_' );
+define ( 'INSTALLED_MODULES', '__INSTALLED_MODULES__' );
+define ( 'INSTALLED_PLUGINS', '__INSTALLED_PLUGINS__' );
+define ( 'DATABASE', '__DATABASE__' );
+define ( 'COOKIE', '__COOKIE__' );
+define ( 'CACHE', '__CACHE__' );
 // 过滤输入
 if (@ini_get ( 'register_globals' )) {
 	if (isset ( $_REQUEST ['GLOBALS'] )) {
@@ -35,7 +57,7 @@ if (function_exists ( 'memory_get_usage' ) && (( int ) @ini_get ( 'memory_limit'
 if (function_exists ( 'mb_internal_encoding' )) {
 	mb_internal_encoding ( 'UTF-8' );
 }
-function __kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
+function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
 	if (function_exists ( 'fire' )) {
 		fire ( 'kissgo_error_raise', $error_no, $error_str, $error_file, $error_line );
 	}
@@ -54,29 +76,42 @@ function __kissgo_error_handler($error_no, $error_str, $error_file, $error_line)
 		echo $error_str, ' in file ', $error_file, ' on line ', $error_line;
 	}
 }
-
-set_error_handler ( '__kissgo_error_handler' );
-function __kissgo_exception_handler($exception) {
+set_error_handler ( '_kissgo_error_handler' );
+function _kissgo_exception_handler($exception) {
 	if (function_exists ( 'fire' )) {
 		fire ( 'catch_exception', $exception );
 	}
 }
-
-set_exception_handler ( '__kissgo_exception_handler' );
+set_exception_handler ( '_kissgo_exception_handler' );
 
 if (version_compare ( phpversion (), '5.3', '<' )) {
 	@set_magic_quotes_runtime ( 0 );
 }
-// no magic quotes
-@ini_set ( 'magic_quotes_sybase', 0 );
-
-// the short for directory separator
-define ( 'DS', DIRECTORY_SEPARATOR );
-// debug levels
-define ( 'DEBUG_ERROR', 5 );
-define ( 'DEBUG_INFO', 4 );
-define ( 'DEBUG_WARN', 3 );
-define ( 'DEBUG_DEBUG', 2 );
+@ini_set ( 'magic_quotes_sybase', 0 ); // no magic quotes
+function detect_app_base_url() {
+	$script_name = $_SERVER ['SCRIPT_NAME'];
+	$script_name = trim ( str_replace ( WEB_ROOT, '', $script_name ), '/' );
+	$script_names = explode ( '/', $script_name );
+	array_pop ( $script_names );
+	if (! empty ( $script_names ) && ! is_file ( WEB_ROOT . $script_name )) {
+		$web_roots = explode ( '/', trim ( str_replace ( DS, '/', WEB_ROOT ), '/' ) );
+		$matchs = array ();
+		$pos = 0;
+		foreach ( $web_roots as $chunk ) {
+			if ($chunk == $script_names [$pos]) {
+				$matchs [] = $chunk;
+				$pos ++;
+			} else {
+				$matchs = array ();
+				$pos = 0;
+			}
+		}
+		if ($pos > 0) {
+			return '/' . implode ( '/', $matchs ) . '/';
+		}
+	}
+	return '/';
+}
 /**
  * 应用程序设置类
  */
@@ -147,17 +182,29 @@ class KissGoSetting implements ArrayAccess {
 		}
 		if (isset ( $this->settings ['CLEAN_URL'] )) {
 			define ( 'CLEAN_URL', ! empty ( $this->settings ['CLEAN_URL'] ) );
+		} else {
+			define ( 'CLEAN_URL', false );
 		}
 		if (isset ( $this->settings ['I18N_ENABLED'] )) {
 			define ( 'I18N_ENABLED', ! empty ( $this->settings ['I18N_ENABLED'] ) );
+		} else {
+			define ( 'I18N_ENABLED', false );
+		}
+		if (isset ( $this->settings ['GZIP_ENABLED'] )) {
+			define ( 'GZIP_ENABLED', ! empty ( $this->settings ['GZIP_ENABLED'] ) );
+		} else {
+			define ( 'GZIP_ENABLED', true );
 		}
 		if (isset ( $this->settings ['SECURITY_KEY'] ) && ! empty ( $this->settings ['SECURITY_KEY'] )) {
 			define ( 'SECURITY_KEY', $this->settings ['SECURITY_KEY'] );
 		} else {
 			define ( 'SECURITY_KEY', md5 ( __FILE__ ) );
 		}
-		if (isset ( $this->settings ['BASE_URL'] )) {
-			define ( 'BASE_URL', trim ( $this->settings ['BASE_URL'] ) . '/' );
+		if (isset ( $this->settings ['BASE_URL'] ) && ! empty ( $this->settings ['BASE_URL'] )) {
+			define ( 'BASE_URL', rtrim ( $this->settings ['BASE_URL'] ) . '/' );
+		}
+		if (isset ( $this->settings ['TIMEZONE'] ) && ! empty ( $this->settings ['TIMEZONE'] )) {
+			define ( 'TIMEZONE', $this->settings ['TIMEZONE'] );
 		}
 	}
 	/**
@@ -175,50 +222,24 @@ class KissGoSetting implements ArrayAccess {
  */
 class KissGoValues extends KissGoSetting {
 }
-
-// the application settings script
-$__ksg_settings_file = APP_PATH . 'conf/settings.php';
-if (is_readable ( $__ksg_settings_file )) {
-	include $__ksg_settings_file;
+global $_kissgo_processing_installation;
+$_ksg_settings_file = APPDATA_PATH . 'settings.php'; // the application settings script
+if (is_readable ( $_ksg_settings_file )) {
+	include $_ksg_settings_file;
+	include APP_PATH . 'version.php';
 	$settings = KissGoSetting::getSetting ();
 	$settings->prepareSettings ();
 	unset ( $settings );
-} else { // goto install page
+} else if ($_kissgo_processing_installation != true) { // goto install page
+	$install_script = detect_app_base_url () . 'install.php';
+	echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$install_script}';</script></head><body></body></html>";
+	exit ();
 }
-unset ( $__ksg_settings_file );
-// debug level
-defined ( 'DEBUG' ) or define ( 'DEBUG', 3 );
-// set timezone
+unset ( $_ksg_settings_file );
+defined ( 'DEBUG' ) or define ( 'DEBUG', 3 ); // debug level
 defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
+defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
 @date_default_timezone_set ( TIMEZONE );
-define ( 'APP_DIR', dirname ( APP_PATH ) );
-define ( 'KISSGO_DIR', dirname ( KISSGO ) );
-// the default application name, this is used by session id
-defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) );
-// the default modules path
-defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS );
-define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
-defined ( 'PLUGIN_PATH' ) or define ( 'PLUGIN_PATH', APP_PATH . 'plugins' . DS );
-// the application data path
-defined ( 'APPDATA_PATH' ) or define ( 'APPDATA_PATH', APP_PATH . 'appdata' . DS );
-defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', WEB_ROOT . 'templates' . DS );
-defined ( 'STATIC_DIR' ) or define ( 'STATIC_DIR', 'static' );
-defined ( 'BASE_URL' ) or define ( 'BASE_URL', '/' );
-defined ( 'CLEAN_URL' ) or define ( 'CLEAN_URL', false );
-// the temporary directory path
-defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS );
-// 安全码，用于cookie等内容的加密与解密
-defined ( 'SECURITY_KEY' ) or define ( "SECURITY_KEY", 'yeN3g9EbNfi-Zf!dV63dI1j8Fbk5H@L7+6ya}4y7u2j4Mf4|mPg2v?99g4{1k576' );
-// 是否开启i18n支持
-defined ( 'I18N_ENABLED' ) or define ( 'I18N_ENABLED', false );
-defined ( 'GZIP_ENABLED' ) or define ( 'GZIP_ENABLED', false );
-define ( 'NOTNULL', '_@_NOT_NULL_@_' );
-// 常用设置
-define ( 'INSTALLED_MODULES', '__INSTALLED_MODULES__' );
-define ( 'INSTALLED_PLUGINS', '__INSTALLED_PLUGINS__' );
-define ( 'DATABASE', '__DATABASE__' );
-define ( 'COOKIE', '__COOKIE__' );
-define ( 'CACHE', '__CACHE__' );
 // load kissgo libs scripts
 include KISSGO . 'libs/i18n.php';
 include KISSGO . 'libs/functions.php';
@@ -247,7 +268,7 @@ include KISSGO . 'core/kissgo.php';
  * @param $clz string
  * 类名
  */
-function __kissgo_class_loader($clz) {
+function _kissgo_class_loader($clz) {
 	global $__kissgo_exports;
 	foreach ( $__kissgo_exports as $path ) {
 		$clz_file = $path . DS . $clz . '.php';
@@ -261,7 +282,9 @@ function __kissgo_class_loader($clz) {
 		include $file;
 	}
 }
-function __kissgo_load_modules($modules) {
+spl_autoload_register ( '_kissgo_class_loader' );
+///////////////////////////////////////////////////////////////
+function _kissgo_load_modules($modules) {
 	global $_ksg_installed_modules;
 	if (is_array ( $modules )) {
 		$app_init_files = array ();
@@ -280,7 +303,7 @@ function __kissgo_load_modules($modules) {
 		}
 	}
 }
-function __kissgo_load_plugins($plugins) {
+function _kissgo_load_plugins($plugins) {
 	if (is_array ( $plugins ) && ! empty ( $plugins )) {
 		$plg_init_files = array ();
 		foreach ( $plugins as $plg ) {
@@ -295,14 +318,14 @@ function __kissgo_load_plugins($plugins) {
 		}
 	}
 }
-spl_autoload_register ( '__kissgo_class_loader' );
 // load applications and plugins
-$__ksg_global_settings = KissGoSetting::getSetting ();
-global $__ksg_installed_plugins;
-$__ksg_installed_plugins = $__ksg_global_settings [INSTALLED_PLUGINS];
-__kissgo_load_plugins ( $__ksg_installed_plugins );
-global $__ksg_installed_apps, $_ksg_installed_modules;
-$__ksg_installed_apps = $__ksg_global_settings [INSTALLED_MODULES];
-__kissgo_load_modules ( $__ksg_installed_apps );
+$_ksg_global_settings = KissGoSetting::getSetting ();
+global $_ksg_installed_plugins;
+$_ksg_installed_plugins = $_ksg_global_settings [INSTALLED_PLUGINS];
+_kissgo_load_plugins ( $_ksg_installed_plugins );
+global $_ksg_installed_apps, $_ksg_installed_modules;
+$_ksg_installed_apps = $_ksg_global_settings [INSTALLED_MODULES];
+_kissgo_load_modules ( $_ksg_installed_apps );
+//////////////////////////////////////////////////////////////////
 fire ( 'kissgo_startted' );
 // end of file bootstrap.php
