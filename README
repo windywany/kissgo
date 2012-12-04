@@ -44,4 +44,7 @@
             fastcgi_param  HTTP_REFERER  $http_referer;
             include        fastcgi_params;
         }
+		location ~ /\.ht {
+			deny  all;
+		}
     }
