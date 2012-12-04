@@ -37,7 +37,9 @@
 				        	<h2>{block name="title"}安装协议{/block}</h2>
 				       	</div>											
 				       	{block name="body"}
-				       	<div class="well" style="height:350px;">安装协议与许可在这儿....</div>
+				       	<div class="well" style="height:350px;overflow-y:auto;">
+				       		{include file="kissgo/install/license.tpl"}
+				       	</div>
 				       	<form class="form-inline pull-right" onsubmit="check" method="post">
 				       		<input type="hidden" name="step" value="check"/>						   
 						    <label class="checkbox">
