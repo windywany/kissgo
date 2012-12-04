@@ -1,77 +1,121 @@
 @CHARSET "UTF-8";
 
+.container {
+	padding-bottom: 15px;
+}
+
 .jumbotron:after {
-    background: url("masthead-pattern.png") repeat scroll center center transparent;
-    bottom: 0;
-    content: "";
-    display: block;
-    left: 0;
-    opacity: 0.4;
-    position: absolute;
-    right: 0;
-    top: 0;
+	background: url("masthead-pattern.png") repeat scroll center center
+		transparent;
+	bottom: 0;
+	content: "";
+	display: block;
+	left: 0;
+	opacity: 0.4;
+	position: absolute;
+	right: 0;
+	top: 0;
 }
+
 .subhead {
-    border-bottom: 1px solid #DDDDDD;    
+	border-bottom: 1px solid #DDDDDD;
 }
+
 .jumbotron {
-    background: linear-gradient(45deg, #020031 0%, #6D3353 100%) repeat scroll 0 0 transparent;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2) inset, 0 -3px 7px rgba(0, 0, 0, 0.2) inset;
-    color: #FFFFFF;
-    padding: 40px 0 10px;
-    position: relative;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+	background: linear-gradient(45deg, #020031 0%, #6D3353 100%) repeat
+		scroll 0 0 transparent;
+	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2) inset, 0 -3px 7px
+		rgba(0, 0, 0, 0.2) inset;
+	color: #FFFFFF;
+	padding: 40px 0 10px;
+	position: relative;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
 }
+
 .jumbotron h1 {
-    font-size: 60px;
-    font-weight: bold;
-    letter-spacing: -1px;
-    line-height: 1;
+	font-size: 60px;
+	font-weight: bold;
+	letter-spacing: -1px;
+	line-height: 1;
 }
+
 .jumbotron p {
-    font-size: 24px;
-    font-weight: 300;
-    line-height: 1.25;
-    margin-bottom: 10px;
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 1.25;
+	margin-bottom: 10px;
 }
+
 .sidenav {
-    background-color: #FFFFFF;
-    border-radius: 6px 6px 6px 6px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
-    margin: 40px 0 0;
-    padding: 0;
-    width: 258px;
+	background-color: #FFFFFF;
+	border-radius: 6px 6px 6px 6px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+	margin: 40px 0 0;
+	padding: 0;
+	width: 258px;
 }
-.sidenav > li > a {
-    border: 1px solid #E5E5E5;
-    display: block;
-    margin: 0 0 -1px;
-    padding: 8px 14px;
+
+.sidenav>li>a {
+	border: 1px solid #E5E5E5;
+	display: block;
+	margin: 0 0 -1px;
+	padding: 8px 14px;
 }
-.sidenav > li:first-child > a {
-    border-radius: 6px 6px 0 0;
+
+.sidenav>li:first-child>a {
+	border-radius: 6px 6px 0 0;
 }
-.sidenav > li:last-child > a {
-    border-radius: 0 0 6px 6px;
+
+.sidenav>li:last-child>a {
+	border-radius: 0 0 6px 6px;
 }
-.sidenav > .active > a {
-    border: 0 none;
-    box-shadow: 1px 0 0 rgba(0, 0, 0, 0.1) inset, -1px 0 0 rgba(0, 0, 0, 0.1) inset;
-    padding: 9px 15px;
-    position: relative;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-    z-index: 2;
+
+.sidenav>.active>a {
+	border: 0 none;
+	box-shadow: 1px 0 0 rgba(0, 0, 0, 0.1) inset, -1px 0 0
+		rgba(0, 0, 0, 0.1) inset;
+	padding: 9px 15px;
+	position: relative;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+	z-index: 2;
 }
+
 .sidenav .icon-chevron-right {
-    float: right;
-    margin-right: -6px;
-    margin-top: 2px;
-    opacity: 0.25;
+	float: right;
+	margin-right: -6px;
+	margin-top: 2px;
+	opacity: 0.25;
 }
-.sidenav > li > a:hover {
-    background-color: #F5F5F5;
+
+.sidenav>li>a:hover {
+	background-color: #F5F5F5;
 }
+
 .sidenav a:hover .icon-chevron-right {
-    opacity: 0.5;
+	opacity: 0.5;
 }
-.mlr10{margin:0 10px;}
+
+.mlr10 {
+	margin: 0 10px;
+}
+.ml10 {
+	margin: 0 0 0 10px;
+}
+.mr10 {
+	margin: 0 10px 0 0;
+}
+th.span2 {
+	text-align: center;
+}
+
+td.status {
+	background: transparent url(loading.gif) no-repeat center center;
+}
+
+.success td.status {
+	background-image: url(accept.png);
+}
+
+.error td.status {
+	background-image: url(error.png);
+}

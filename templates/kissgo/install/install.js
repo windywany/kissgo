@@ -1,16 +1,18 @@
 $(function(){
-	var detailList = $('#detail-list'),tpl = '<tr><td class="op"></td><td class="status">正在处理...</td></tr>',pgb=$('#progress-bar'),pgbv=0;	
+	var detailList = $('#detail-list'),tpl = '<tr><td class="op"></td><td class="status"></td></tr>',pgb=$('#progress-bar'),pgbv=0;	
 	var detail = addDetail('初始化安装程序');
-	var tasks  = [];
+	var tasks  = [],errMsg='';
 	
 	$.post('./install.php',{step:'tasks'},function(data){
 		if(data.success){
 			tasks = data.taskes;
-			updates('成功');
+			updates();
 			updatep(5);
 			install();			
 		}else{
-			updates('失败','error');			
+			errMsg = data.msg;
+			updates('error');			
+			alert(data.msg);
 		}
 	},'json');
 	
@@ -27,10 +29,14 @@ $(function(){
 		detailList.prepend(detail);
 		return detail;
 	}
-	function updates(status,cls){
+	function updates(cls){
 		var clz = cls || 'success';
-		detail.find('.status').html(status);
 		detail.addClass(clz);
+		if(clz == 'error'){
+			var tip = $('#tip').removeClass('alert-block').addClass('alert-error');
+			tip.html('<h3>出错啦！</h3>在安装的过程中发生了错误:<br/>'+errMsg);	
+			$('.page-header').find('h2').html('安装失败');
+		}
 	}	
 	function install(){
 		var task = tasks.shift();
@@ -47,15 +53,23 @@ $(function(){
 							tasks.unshift(data.taskes[i]);
 						}
 					}
-					updates('成功');
+					updates();
 					updatep(wt);					
 					install();			
 				}else{
-					updates('失败','error');			
+					errMsg = data.msg;
+					updates('error');
+					alert(data.msg);
 				}
 			},'json');			
 		}else{
 			pgb.css('width','100%').html('100%');
+			show_success();
 		}
+	}
+	function show_success(){
+		var tip = $('#tip').removeClass('alert-block').addClass('alert-success');
+		tip.html('<h3>恭喜！</h3>你已经成功安装了KissGO!,现在你就可以登录<a href="'+BASE_URL+'kissgo/">管理后台</a>进行操作了,祝使用愉快.');	
+		$('.page-header').find('h2').html('安装成功');
 	}
 });

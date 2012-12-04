@@ -2,11 +2,11 @@
 {block name="title"}正在安装...{/block}
 {block name="body"}
 <div class="alert alert-block" id="tip">
-	<h4>警告!</h4>
+	<h3>警告!</h3>
 	请不要关闭，退回或刷新本页，安装正在进行中,请耐心等候。
 </div>
 <div class="progress progress-striped active">
-	<div id="progress-bar" class="bar" style="width: 1%;">1%</div>
+	<div id="progress-bar" class="bar" style="width: 0%;">0%</div>
 </div>
 <div class="well">
 	<table class="table">
@@ -18,5 +18,6 @@
 		</tbody>
 	</table>
 </div>
+<script type="text/javascript"> var BASE_URL = '{$base_url}';</script>
 <script type="text/javascript" src="{'install.js'|here}"></script>
 {/block}

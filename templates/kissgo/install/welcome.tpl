@@ -32,18 +32,18 @@
 			        </ul>
 			    </div>
 			    <div class="span9">
-					<section>	
+					<div>
 						<div class="page-header">
 				        	<h2>{block name="title"}安装协议{/block}</h2>
 				       	</div>											
 				       	{block name="body"}
-				       	<div class="well" style="height:550px;">安装协议与许可在这儿....</div>
-				       	<form class="form-inline pull-right" onsubmit="return check();" method="post">
+				       	<div class="well" style="height:350px;">安装协议与许可在这儿....</div>
+				       	<form class="form-inline pull-right" onsubmit="check" method="post">
 				       		<input type="hidden" name="step" value="check"/>						   
 						    <label class="checkbox">
-						    	<input type="checkbox" id="accept"/>我同意
+						    	<input type="checkbox" id="accept"/>我已经阅读并同意此协议
 						    </label>
-						    <button type="submit" class="btn btn-primary" id="start-btn" disabled="disabled">同意安装</button>
+						    <button type="submit" class="btn btn-primary" id="start-btn" disabled="disabled">继续</button>
 						</form>
 						<script type="text/javascript">
 							function check(){							
@@ -60,7 +60,7 @@
 							});
 						</script>
 				       	{/block}
-					</section>
+					</div>
 			    </div>
 			</div>
 		</div>
