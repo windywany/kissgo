@@ -259,186 +259,48 @@
         return format;
     };
 
-    $.extend({
-        metadata : {
-            defaults : {
-                type : 'validator',
-                name : 'metadata',
-                cre : /({.*})/,
-                single : 'metadata'
-            },
-            setType : function(type, name) {
-                this.defaults.type = type;
-                this.defaults.name = name;
-            },
-            get : function(elem, opts) {
-                var settings = $.extend({}, this.defaults, opts);
-                // check for empty string in single property
-                if (!settings.single.length)
-                    settings.single = 'metadata';
-
-                var data = $.data(elem, settings.single);
-                // returned cached data if it already exists
-                if (data)
-                    return data;
-
-                data = "{}";
-
-                if (settings.type == "class") {
-                    var m = settings.cre.exec(elem.className);
-                    if (m)
-                        data = m[1];
-                } else if (settings.type == "elem") {
-                    if (!elem.getElementsByTagName)
-                        return undefined;
-                    var e = elem.getElementsByTagName(settings.name);
-                    if (e.length)
-                        data = $.trim(e[0].innerHTML);
-                } else if (elem.getAttribute != undefined) {
-                    var attr = elem.getAttribute(settings.name);
-                    if (attr)
-                        data = attr;
-                }
-
-                if (data.indexOf('{') < 0)
-                    data = "{" + data + "}";
-
-                data = eval("(" + data + ")");
-
-                $.data(elem, settings.single, data);
-                return data;
-            }
-        }
-    });
-
-    $.fn.metadata = function(opts) {
-        return $.metadata.get(this[0], opts);
-    };
-
     if ($.validator) {
     	$.fn.uvalidate = function(options){
+    		options = $.extend({
+				errorElement : 'span',
+				errorPlacement : function(error, element) {
+					element.parents(".control-group").addClass('error');
+					var espan = element.next('span');
+					if (espan.length > 0 && !espan.hasClass('error')) {
+						espan.remove();
+					}
+					error.addClass('help-inline').appendTo(
+							element.parent(".controls"));
+				},
+				success : function(label) {
+					label.parents(".control-group").addClass('success')
+							.removeClass('error');
+					label.text("");
+				},
+				invalid : function(error, element) {
+					element.parents(".control-group").addClass('error')
+							.removeClass('success');
+				}
+    		},$options);
     		return $(this).validate(options);
     	};
         $.validator.addMethod('baseurl', function(value, element) {
             return this.optional(element) || /^(https?:\/\/|\/).*$/.test(value);
         }, '请输入正确的URL或以/开头的url路径.');
     }
-
-    $(function() {
-        $('input[placeholder], textarea[placeholder]').placeholder();
-        if ($.datepicker) {
-            $.datepicker.setDefaults({
-                dateFormat : 'yy-mm-dd',
-                currentText : '今天',
-                weekHeader : '周',
-                dayNames : ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
-                dayNamesMin : ["日", "一", "二", "三", "四", "五", "六"],
-                dayNamesShort : ["日", "一", "二", "三", "四", "五", "六"],
-                monthNames : ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一", "腊月"],
-                monthNamesShort : ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一", "腊月"]
-            });
-        }
-    });
-})(jQuery);
-
-(function($) {
-    function Placeholder(input) {
-        this.input = input;
-        if (input.attr('type') == 'password') {
-            this.handlePassword();
-        }
-        // Prevent placeholder values from submitting
-        $(input[0].form).submit(function() {
-            if (input.hasClass('placeholder') && input[0].value == input.attr('placeholder')) {
-                input[0].value = '';
-            }
-        });
-    }
-    Placeholder.prototype = {
-        show : function(loading) {
-            // FF and IE saves values when you refresh the page. If the user refreshes the page with
-            // the placeholders showing they will be the default values and the input fields won't be empty.
-            if (this.input[0].value === '' || (loading && this.valueIsPlaceholder())) {
-                if (this.isPassword) {
-                    try {
-                        this.input[0].setAttribute('type', 'text');
-                    } catch (e) {
-                        this.input.before(this.fakePassword.show()).hide();
-                    }
-                }
-                this.input.addClass('placeholder');
-                this.input[0].value = this.input.attr('placeholder');
-            }
-        },
-        hide : function() {
-            if (this.valueIsPlaceholder() && this.input.hasClass('placeholder')) {
-                this.input.removeClass('placeholder');
-                this.input[0].value = '';
-                if (this.isPassword) {
-                    try {
-                        this.input[0].setAttribute('type', 'password');
-                    } catch (e) {
-                    }
-                    // Restore focus for Opera and IE
-                    this.input.show();
-                    this.input[0].focus();
-                }
-            }
-        },
-        valueIsPlaceholder : function() {
-            return this.input[0].value == this.input.attr('placeholder');
-        },
-        handlePassword : function() {
-            var input = this.input;
-            input.attr('realType', 'password');
-            this.isPassword = true;
-            // IE < 9 doesn't allow changing the type of password inputs
-            if ($.browser.msie && input[0].outerHTML) {
-                var fakeHTML = $(input[0].outerHTML.replace(/type=(['"])?password\1/gi, 'type=$1text$1'));
-                this.fakePassword = fakeHTML.val(input.attr('placeholder')).addClass('placeholder').focus(function() {
-                    input.trigger('focus');
-                    $(this).hide();
-                });
-                $(input[0].form).submit(function() {
-                    fakeHTML.remove();
-                    input.show()
-                });
-            }
-        }
-    };
-    var NATIVE_SUPPORT = !!("placeholder" in document.createElement("input"));
-    $.fn.placeholder = function() {
-        return NATIVE_SUPPORT ? this : this.each(function() {
-            var input = $(this);
-            var placeholder = new Placeholder(input);
-            placeholder.show(true);
-            input.focus(function() {
-                placeholder.hide();
-            });
-            input.blur(function() {
-                placeholder.show(false);
-            });
-
-            // On page refresh, IE doesn't re-populate user input
-            // until the window.onload event is fired.
-            if ($.browser.msie) {
-                $(window).load(function() {
-                    if (input.val()) {
-                        input.removeClass("placeholder");
-                    }
-                    placeholder.show(true);
-                });
-                // What's even worse, the text cursor disappears
-                // when tabbing between text inputs, here's a fix
-                input.focus(function() {
-                    if (this.value == "") {
-                        var range = this.createTextRange();
-                        range.collapse(true);
-                        range.moveStart('character', 0);
-                        range.select();
-                    }
-                });
-            }
-        });
-    };
+    if ($.datepicker) {
+		$.datepicker.setDefaults({
+			dateFormat : 'yy-mm-dd',
+			currentText : '今天',
+			weekHeader : '周',
+			dayNames : [ "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" ],
+			dayNamesMin : [ "日", "一", "二", "三", "四", "五", "六" ],
+			dayNamesShort : [ "日", "一", "二", "三", "四", "五", "六" ],
+			monthNames : [ "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月",
+					"九月", "十月", "十一", "腊月" ],
+			monthNamesShort : [ "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月",
+					"九月", "十月", "十一", "腊月" ]
+		});
+	}
+    
 })(jQuery);
