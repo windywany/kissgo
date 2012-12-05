@@ -19,7 +19,7 @@ abstract class DataSource {
 	protected $connection = NULL;
 	private static $queryStrings = array ();
 	protected $error_message;
-	
+	public static $errors = array();
 	/**
 	 * 构造函数,只负责为子类接收参数
 	 *
@@ -57,27 +57,39 @@ abstract class DataSource {
 		if (! isset ( $ds [$datasource] )) {
 			$settings = KissGoSetting::getSetting ();
 			if (! isset ( $settings [DATABASE] )) {
+			    self::$errors[$datasource] = '数据库配置文件不存在.';
 				return null;
 			}
 			$database_settings = $settings [DATABASE];
 			if (! isset ( $database_settings [$datasource] )) {
+			    self::$errors[$datasource] = '未找到'.$datasource.'对应的数据库配置.';
 				return null;
 			}
 			$options = $database_settings [$datasource];
 			$driver = isset ( $options ['driver'] ) && ! empty ( $options ['driver'] ) ? $options ['driver'] : 'Mysql';
 			$driver .= 'Datasource';
 			if (! is_subclass_of ( $driver, 'DataSource' )) {
+			    self::$errors[$datasource] = '数据库驱动器错误.';
 				return null;
 			}
 			$dr = new $driver ( $options );
 			if (! $dr->connect ()) {
+			    self::$errors[$datasource] = $dr->last_error_msg();
 				return null;
 			}
 			$ds [$datasource] = $dr;
 		}
 		return $ds [$datasource];
 	}
-	
+	public static function getLastError($ds='default',$msg=''){
+	    if($msg){
+	        self::$errors[$ds] = $msg;
+	    }
+	    if(isset(self::$errors[$ds])){
+	        return self::$errors[$ds];
+	    }
+	    return '';
+	}
 	/**
 	 * 连接数据库
 	 *

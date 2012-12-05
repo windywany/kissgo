@@ -49,7 +49,7 @@ class MysqlDatasource extends DataSource {
      * @return boolean
      */
     public function connect() {
-        $this->options = array_merge(array('encoding' => 'UTF8', 'prefix' => '', 'host' => 'localhost', 'user' => 'root', 'password' => 'root', 'pconnect' => false), $this->options);
+        $this->options = array_merge(array('encoding' => 'UTF8', 'prefix' => '', 'host' => 'localhost','port'=>3306, 'user' => 'root', 'password' => 'root', 'pconnect' => false), $this->options);
         extract($this->options);
         $crash = 0;
         $this->prefix = isset ($prefix) ? $prefix : '';
@@ -66,7 +66,7 @@ class MysqlDatasource extends DataSource {
         }
         $this->encoding();
         if (!empty ($dbname)) {
-            $this->usedb($dbname);
+            return $this->usedb($dbname);
         }
         return true;
     }

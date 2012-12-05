@@ -1,54 +1,55 @@
 {extends file="kissgo/install/welcome.tpl"}
 {block name="title"}安装{/block}
 {block name="body"}
-<div class="well">
-	<table class="table">
+<div>
+    {if !$db_connection}
+	<div class="alert alert-error check_rst">
+	    <h3 class="error">出错啦!</h3>
+	    {$db_error}
+	</div>
+    {/if}
+	<table class="table table-bordered">
 		<caption>数据库配置</caption>
 		<thead>
-			<tr><th class="span4">项</th><th>值</th></tr>
+			<tr><th class="span4">项</th><th>值</th><th>检测</th></tr>
 		</thead>
-		<tbody>
-			<tr><td>数据库驱动</td><td></td></tr>
-			<tr><td>主机地址</td><td></td></tr>
-			<tr><td>用户名</td><td></td></tr>
-			<tr><td>数据库</td><td></td></tr>
-			<tr><td>存储引擎</td><td></td></tr>		
+		<tbody class="check_rst">
+		    {foreach $db_form as $item}
+			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td>{$item->error}</td></tr>
+			{/foreach}			
 		</tbody>
-	</table>
+	</table>	
 </div>
-<div class="well">
-	<table class="table">
+<div>
+	<table class="table table-bordered table-striped">
 		<caption>管理员</caption>
 		<thead>
-			<tr><th class="span4">项</th><th>值</th></tr>
+			<tr><th class="span4">项</th><th>值</th><th>检测</th></tr>
 		</thead>
-		<tbody>
-			<tr><td>管理员账户</td><td></td></tr>
-			<tr><td>登录密码</td><td></td></tr>
+		<tbody class="check_rst">
+			{foreach $admin_form as $item}
+			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td>{$item->error}</td></tr>
+			{/foreach}
 		</tbody>
 	</table>
 </div>
-<div class="well">
-	<table class="table">
+<div>
+	<table class="table table-bordered table-striped">
 		<caption>基本设置</caption>
 		<thead>
-			<tr><th class="span4">项</th><th>值</th></tr>
+			<tr><th class="span4">项</th><th>值</th><th>检测</th></tr>
 		</thead>
-		<tbody>
-			<tr><td>网站名称</td><td></td></tr>
-			<tr><td>网站安全码</td><td></td></tr>
-			<tr><td>启用GZIP压缩</td><td></td></tr>
-			<tr><td>启用重写</td><td></td></tr>
-			<tr><td>启用多语言支持</td><td></td></tr>
-			<tr><td>时区</td><td></td></tr>
-			<tr><td>日期格式</td><td></td></tr>
+		<tbody class=check_rst>
+			{foreach $config_form as $item}
+			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td>{$item->error}</td></tr>
+			{/foreach}
 		</tbody>
 	</table>
 </div>
 <div class="row">
 	<form class="form-inline pull-right" id="todone" method="post">
 		<input type="hidden" name="step" value="done"/>
-		<button class="btn pull-right btn-primary" id="next-btn">开始安装</button>	
+		<button class="btn pull-right btn-primary" id="next-btn" disabled="disabled">开始安装</button>	
 	</form>			
 	<form class="form-inline pull-right mlr10" method="post">
 		<input type="hidden" name="step" value="config"/>
@@ -57,6 +58,9 @@
 </div>
 <script type="text/javascript">
 	$(function(){
+		if($('.check_rst').find('.error').length == 0){
+			$('#next-btn').removeAttr('disabled');		
+		}
 		$('#next-btn').click(function(){
 			$('#todone').submit();
 		});

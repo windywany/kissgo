@@ -262,7 +262,7 @@
     $.extend({
         metadata : {
             defaults : {
-                type : 'class',
+                type : 'validator',
                 name : 'metadata',
                 cre : /({.*})/,
                 single : 'metadata'
@@ -316,6 +316,9 @@
     };
 
     if ($.validator) {
+    	$.fn.uvalidate = function(options){
+    		return $(this).validate(options);
+    	};
         $.validator.addMethod('baseurl', function(value, element) {
             return this.optional(element) || /^(https?:\/\/|\/).*$/.test(value);
         }, '请输入正确的URL或以/开头的url路径.');

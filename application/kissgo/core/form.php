@@ -169,7 +169,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                     if ($this->options) {
                         $body = html_tag_properties ( $this->options );
                     }
-                    break;
+                    break;                
                 default :
                     break;
             }
@@ -475,7 +475,7 @@ abstract class FormWidget {
     public function setValue($value) {
         $this->value = $value;
     }
-    public function getBindLabel(){
+    public function readable(){
         $data = $this->getBindData();
         if(is_array($data) && isset($data[$this->value])){
             return $data[$this->value];
@@ -492,6 +492,10 @@ abstract class FormWidget {
             return $this->is_valid;
         } else if ($name == 'required') {
             return $this->required;
+        } else if($name == 'readable'){
+            return $this->readable();
+        } else if($name == 'error_cls'){
+            return $this->is_valid?'success':'error';
         }
         return null;
     }

@@ -122,3 +122,9 @@ td.status {
 .control-label span{
 	color:red;
 }
+table caption{
+	padding-left:5px;
+	margin-bottom:5px;
+	text-align:left;
+	font-weight:bold;
+}

@@ -235,6 +235,14 @@ class InstallDbForm extends BootstrapForm {
                                             'required' 
                     ) 
     );
+    var $port = array (
+                    FWT_LABEL => '端口', 
+                    FWT_TIP => '数据库服务器使用的端口,如果使用默认值请留空.', 
+                    FWT_INITIAL => '', 
+                    FWT_VALIDATOR => array (
+                                            'num' 
+                    ) 
+    );
     var $dbuser = array (
                         FWT_LABEL => '数据库用户', 
                         FWT_TIP => '可以访问数据库的用户.', 
@@ -297,6 +305,27 @@ class InstallDbForm extends BootstrapForm {
         );
         return $engines;
     }
+    public function check_connection($config) {
+        $settings = KissGoSetting::getSetting ();
+        $settings [DATABASE] = array (
+                                    'default' => array (
+                                                        'driver' => $config ['driver'], 
+                                                        'encoding' => 'UTF8', 
+                                                        'prefix' => '', 
+                                                        'host' => $config ['host'], 
+                                                        'port' => $config ['port'], 
+                                                        'user' => $config ['dbuser'], 
+                                                        'password' => $config ['passwd'], 
+                                                        'pconnect' => false, 
+                                                        'dbname' => $config ['dbname'] 
+                                    ) 
+        );
+        $ds = DataSource::getDataSource ();        
+        if (! $ds) {            
+            return false;
+        }        
+        return true;
+    }    
 }
 /**
  * 

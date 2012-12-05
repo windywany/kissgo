@@ -347,7 +347,7 @@ class BaseValidator implements IValidator {
         } else {
             $rst = preg_match('/^[_a-z0-9\-]+(\.[_a-z0-9\-]+)*@[a-z0-9][a-z0-9\-]+(\.[a-z0-9-]*)*$/i', $value);
         }
-        return $rst ? true : empty($message) ? __('Please enter a valid email address.') : $message;
+        return $rst ? true : (empty($message) ? __('Please enter a valid email address.') : $message);
     }
 
     //url
@@ -360,7 +360,7 @@ class BaseValidator implements IValidator {
         } else {
             $rst = preg_match('/^[a-z]+://[^\s]$/i', $value);
         }
-        return $rst ? true : empty($message) ? __('Please enter a valid URL.') : $message;
+        return $rst ? true : (empty($message) ? __('Please enter a valid URL.') : $message);
     }
 
     //url
@@ -373,7 +373,7 @@ class BaseValidator implements IValidator {
         } else {
             $rst = ip2long($value) === false ? false : true;
         }
-        return $rst ? true : empty($message) ? __('Please enter a valid IP.') : $message;
+        return $rst ? true : (empty($message) ? __('Please enter a valid IP.') : $message);
     }
 
     //date:true
