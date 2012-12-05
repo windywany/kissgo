@@ -119,3 +119,6 @@ td.status {
 .error td.status {
 	background-image: url(error.png);
 }
+.control-label span{
+	color:red;
+}

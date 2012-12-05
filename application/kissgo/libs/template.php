@@ -556,7 +556,7 @@ function smarty_modifiercompiler_params($ary, $compiler) {
  * @return string with compiled code
  */
 function smarty_modifiercompiler_form($ary, $compiler) {
-	if (count ( $ary ) < 2) {
+	if (count ( $ary ) < 1) {
 		trigger_error ( 'error usage of params', E_USER_WARNING );
 		return "''";
 	}
@@ -564,9 +564,10 @@ function smarty_modifiercompiler_form($ary, $compiler) {
 	if (isset ( $ary [2] )) {
 		$name = trim ( $ary [2], "'\"" );
 		$component = trim ( $ary [1], "'\"" );
-	} else {
-		$name = trim ( $ary [1], "'\"" );
-		$component = 'null';
+		return "{$form}->render('$name',$component)";
+	} else if(isset($ary[1])){
+		$name = trim ( $ary [1], "'\"" );		
+		return "{$form}->render('$name',null)";
 	}
-	return "{$form}->render('$name',$component)";
+	return "{$form}->render()";
 }

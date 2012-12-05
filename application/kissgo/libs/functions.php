@@ -788,6 +788,33 @@ function html_tag_properties($properties) {
 }
 /**
  * 
+ * 合并二个数组，并将对应值相加
+ * @param array $ary1
+ * @param array $ary2
+ * @param string $sep 相加时的分隔符
+ * @return array 合并后的数组
+ */
+function merge_add($ary1,$ary2,$sep = ' '){
+    foreach ($ary2 as $key => $val){
+        if(isset($ary1[$key])){
+            if(is_array($ary1[$key]) && is_array($val)){
+                $ary1[$key] = merge_add($ary1[$key],$val);
+            }else if(is_array($ary1[$key]) && !is_array($val)){
+                $ary1[$key][] = $val;
+            }else if(!is_array($ary1[$key]) && is_array($val)){
+                $val[] = $ary1[$key];
+                $ary1[$key] = $val;
+            }else{
+                $ary1[$key] = $ary1[$key]. $sep . $val;
+            }
+        }else{
+            $ary1[$key] = $val;
+        }
+    }
+    return $ary1;
+}
+/**
+ * 
  * 读取配置
  * @param string $name 配置
  * @param mixed $default 默认名

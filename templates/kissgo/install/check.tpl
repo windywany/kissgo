@@ -7,7 +7,7 @@
 		<thead>
 			<tr><th class="span4">项</th><th>要求</th><th>当前</th></tr>
 		</thead>
-		<tbody>
+		<tbody class="check_rst">
 			{foreach $dirs as $dir}
 			<tr class="{$dir.cls}"><td title="{$dir.path}">{$dir.dir}</td><td>可读写</td><td>{$dir.status}</td></tr>
 			{/foreach}			
@@ -21,7 +21,7 @@
 		<thead>
 			<tr><th class="span4">项</th><th>要求</th><th>当前</th></tr>
 		</thead>
-		<tbody>
+		<tbody class="check_rst">
 			{foreach $envs as $env}
 			<tr class="{$env.cls}"><td>{$env.name}</td><td>{$env.requirement}</td><td>{$env.current}</td></tr>
 			{/foreach}			
@@ -30,9 +30,10 @@
 	<div class="alert alert-info">注: 如检测失败，请安装或升级相应的扩展和程序。</div>
 </div>
 <div class="row">	
-	<form class="form-inline pull-right" onsubmit="check" method="post">
-		<input type="hidden" name="step" value="db"/>						   
-		<button type="submit" class="btn btn-primary" id="next-btn">数据库配置&gt;&gt;</button>
+	<form class="form-inline pull-right" method="post">
+		<input type="hidden" name="step" value="db"/>
+		<input type="hidden" name="from" value="check"/>						   
+		<button type="submit" class="btn btn-primary" id="next-btn" disabled="disabled">数据库配置&gt;&gt;</button>
 	</form>
 	<form class="form-inline pull-right mlr10" method="post">
 		<input type="hidden" name="step" value="welcome"/>						   
@@ -40,8 +41,10 @@
 	</form>
 </div>
 <script type="text/javascript">
-	function check(){
-		return true;
-	}
+	$(function(){
+		if($('tbody.check_rst').find('tr.error').length == 0){
+			$('#next-btn').removeAttr('disabled');		
+		}
+	});
 </script>
 {/block}

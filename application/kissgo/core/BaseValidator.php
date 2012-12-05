@@ -41,11 +41,36 @@ class BaseValidator implements IValidator {
 
     //必填项目
     protected function v_required($value, $exp, $data, $scope, $message) {
+        if($exp){
+            $exps = explode(',', $exp);
+            $need_check = true;
+            foreach ($exps as $e){
+                $e = trim($e);
+                if($e{0} == '!'){//如果$e,则当前不必须
+                    $e = substr($e, 1);
+                    if(empty($data[$e])){
+                        $need_check = true;
+                        break;
+                    }else{
+                        $need_check = false;
+                    }
+                }else if(!empty($data[$e])){
+                    $need_check = true;
+                    break;
+                }else{
+                    $need_check = false;
+                }
+            }
+            if(!$need_check){
+                return true;
+            }
+        }
         if (!$this->emp($value)) {
             return true;
         } else {
             return empty($message) ? __('This field is required.') : $message;
         }
+        
     }
 
     //相等

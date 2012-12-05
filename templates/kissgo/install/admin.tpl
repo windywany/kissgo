@@ -3,18 +3,8 @@
 {block name="body"}
 <form class="form-horizontal well" id="admin-form" method="post">
 	<input type="hidden" name="step" value="config"/>
-	<div class="control-group">
-		<label class="control-label" for="name">管理员账号</label>
-		<div class="controls">
-			<input type="text" class="input-xlarge" id="name" name="name" value="root"/>
-		</div>
-	</div>	
-	<div class="control-group">
-		<label class="control-label" for="passwd">登录密码</label>
-		<div class="controls">
-			<input type="password" name="passwd" class="input-xlarge" id="passwd"/>
-		</div>
-	</div>
+	<input type="hidden" name="from" value="admin"/>
+	{$form|form}
 </form>
 <div class="row">	
 	<button  class="btn btn-primary pull-right" id="next-btn">基本配置&gt;&gt;</button>	
