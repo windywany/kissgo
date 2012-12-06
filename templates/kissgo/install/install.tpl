@@ -15,7 +15,7 @@
 		</thead>
 		<tbody class="check_rst">
 		    {foreach $db_form as $item}
-			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td>{$item->error}</td></tr>
+			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td class="check">{$item->error}</td></tr>
 			{/foreach}			
 		</tbody>
 	</table>	
@@ -28,7 +28,7 @@
 		</thead>
 		<tbody class="check_rst">
 			{foreach $admin_form as $item}
-			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td>{$item->error}</td></tr>
+			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td class="check">{$item->error}</td></tr>
 			{/foreach}
 		</tbody>
 	</table>
@@ -41,7 +41,7 @@
 		</thead>
 		<tbody class=check_rst>
 			{foreach $config_form as $item}
-			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td>{$item->error}</td></tr>
+			<tr class="{$item->error_cls}"><td>{$item->label}</td><td>{$item->readable}</td><td class="check">{$item->error}</td></tr>
 			{/foreach}
 		</tbody>
 	</table>

@@ -7,10 +7,16 @@
 		<link href="{'bootstrap/css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
 		<link href="{'common.css'|static}" rel="stylesheet"/>
 		<link href="{'install.css'|here}" rel="stylesheet"/>	
-		<script src="{'js/jquery-1.8.x.js'|static}"></script>	
+		<script src="{'jquery/jquery.js'|static}"></script>	
 		<script src="{'bootstrap/bootstrap.js'|static}"></script>
+		<script src="{'jquery/plugins/validate.js'|static}"></script>
+		<script src="{'jquery/plugins/validate_addons.js'|static}"></script>
+		<script src="{'js/kissgo.js'|static}"></script>
+        <!--[if lt IE 9]>
+          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
 	</head>
-	<body>
+	<body data-spy="scroll" data-target=".sidebar">
 		<div class="jumbotron subhead">
 		  <div class="container">
 		    <h1>KissGO!安装向导</h1>
@@ -20,8 +26,8 @@
 		</div>
 		<div class="container">
 			<div class="row">
-				<div class="span3">
-			        <ul class="nav nav-list sidenav affix-top">
+				<div class="span3 sidebar">
+			        <ul class="nav nav-list sidenav">
 			          <li {if $step=='welcome'}class="active"{/if}><a><i class="icon-chevron-right"></i>安装协议</a></li>
 			          <li {if $step=='check'}class="active"{/if}><a><i class="icon-chevron-right"></i>环境检测</a></li>
 			          <li {if $step=='db'}class="active"{/if}><a><i class="icon-chevron-right"></i>数据库配置</a></li>
@@ -65,6 +71,12 @@
 					</div>
 			    </div>
 			</div>
-		</div>		
+		</div>
+		<script type="text/javascript">
+			$(function(){
+				$window = $(window);
+				$('.sidenav').affix();
+			});
+		</script>	
 	</body>
 </html>

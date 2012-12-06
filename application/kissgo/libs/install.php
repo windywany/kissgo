@@ -176,9 +176,9 @@ class InstallAdminForm extends BootstrapForm {
                     FWT_LABEL => '管理员账号', 
                     FWT_TIP => '此用户为超级管理员，可对系统进行维护。', 
                     FWT_VALIDATOR => array (
-                                            'required', 
-                                            'minlength(4)', 
-                                            'maxlength(15)' 
+                                            'required'=>'管理员账号不能为空.', 
+                                            'minlength(4)'=>'长度至少4个字符.', 
+                                            'maxlength(15)'=>'长度不能大于15个字条.' 
                     ), 
                     FWT_INITIAL => 'root' 
     );
@@ -186,17 +186,17 @@ class InstallAdminForm extends BootstrapForm {
                         FWT_LABEL => '登录密码', 
                         FWT_TIP => '请尽量设置复杂一点的密码.', 
                         FWT_VALIDATOR => array (
-                                                'required', 
-                                                'minlength(6)', 
-                                                'maxlength(15)' 
+                                                'required' =>'密码不能为空.', 
+                                                'minlength(6)'=>'密码至少6个字符.', 
+                                                'maxlength(15)'=>'密码最多15个字符.' 
                         ) 
     );
     var $email = array (
                         FWT_LABEL => '邮箱', 
                         FWT_TIP => '一些相关的信息将发到此邮箱.', 
                         FWT_VALIDATOR => array (
-                                                'required', 
-                                                'email' 
+                                                'required'=>'邮箱不能为空.', 
+                                                'email'=>'邮箱地址不合法.' 
                         ) 
     );
     protected function getDefaultWidgetOptions() {
@@ -232,15 +232,16 @@ class InstallDbForm extends BootstrapForm {
                     FWT_TIP => '使用何种方式访问数据库.', 
                     FWT_INITIAL => 'localhost', 
                     FWT_VALIDATOR => array (
-                                            'required' 
+                                            'required' => '主机地址必须填写.' 
                     ) 
     );
     var $port = array (
                     FWT_LABEL => '端口', 
-                    FWT_TIP => '数据库服务器使用的端口,如果使用默认值请留空.', 
-                    FWT_INITIAL => '', 
+                    FWT_TIP => '数据库服务器使用的端口.', 
+                    FWT_INITIAL => '3306', 
                     FWT_VALIDATOR => array (
-                                            'num' 
+                                            'required'=>'端口必须填写.',
+                                            'num' => '端口只能是数字.' 
                     ) 
     );
     var $dbuser = array (
@@ -248,14 +249,14 @@ class InstallDbForm extends BootstrapForm {
                         FWT_TIP => '可以访问数据库的用户.', 
                         FWT_INITIAL => 'root', 
                         FWT_VALIDATOR => array (
-                                                'required' 
+                                                'required' => '数据库用户名不能为空' 
                         ) 
     );
     var $passwd = array (
                         FWT_LABEL => '用户的密码', 
                         FWT_TIP => '可以访问数据库的用户的密码.', 
                         FWT_VALIDATOR => array (
-                                                'required' 
+                                                'required' => '用户的密码不能为空' 
                         ) 
     );
     var $dbname = array (
@@ -263,12 +264,15 @@ class InstallDbForm extends BootstrapForm {
                         FWT_TIP => 'KissGO!将要使用的数据库.', 
                         FWT_INITIAL => 'kissgodb', 
                         FWT_VALIDATOR => array (
-                                                'required' 
+                                                'required' => '数据库不能为空' 
                         ) 
     );
     var $prefix = array (
                         FWT_LABEL => '表前缀', 
-                        FWT_TIP => '如果要在一个库中安装多个KissGO时，请指定一个前缀.' 
+                        FWT_TIP => '在一个库中安装多个KissGO时,请指定前缀,例如:app_', 
+                        FWT_VALIDATOR => array (
+                                                'regexp(/^[a-z][\W]*_$/i)' => '表前缘格式错误,必须以字母开头下划线结尾.' 
+                        ) 
     );
     var $engine = array (
                         FWT_WIDGET => 'select', 
@@ -320,12 +324,12 @@ class InstallDbForm extends BootstrapForm {
                                                         'dbname' => $config ['dbname'] 
                                     ) 
         );
-        $ds = DataSource::getDataSource ();        
-        if (! $ds) {            
+        $ds = DataSource::getDataSource ();
+        if (! $ds) {
             return false;
-        }        
+        }
         return true;
-    }    
+    }
 }
 /**
  * 
@@ -339,7 +343,7 @@ class InstallConfigForm extends BootstrapForm {
                             FWT_TIP => '网站的主要名称.', 
                             FWT_INITIAL => '我的网站', 
                             FWT_VALIDATOR => array (
-                                                    'required' 
+                                                    'required' =>'网站名称不能为空，必须填写.'
                             ) 
     );
     var $security_key = array (
@@ -347,7 +351,8 @@ class InstallConfigForm extends BootstrapForm {
                             FWT_TIP => '用于加密一些比较敏感的COOKIE数据或加密与其它服务器交换的数.', 
                             FWT_INITIAL => '', 
                             FWT_VALIDATOR => array (
-                                                    'required' 
+                                                    'required'=>'安全码不能为空，必须填写.',
+                                                    'minlength(32)'=>'为了保证安全,安全码长度不能小于32个字符.'
                             ), 
                             FWT_OPTIONS => array (
                                                 'class' => 'input-xxlarge' 

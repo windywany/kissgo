@@ -14,8 +14,12 @@
 	</form>
 </div>
 <script type="text/javascript">
+$(function(){
+	$('#config-form').uvalidate();
+
 	$('#next-btn').click(function(){
 		$('#config-form').submit();
 	});
+});
 </script>
 {/block}

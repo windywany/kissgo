@@ -47,7 +47,7 @@ switch ($step) {
     case 'db' :
         $_SESSION ['INSTALL_STEP'] = 'db';
         $form_data = sess_get ( '_INSTALL_DB_DATA', array () );
-        $form = new InstallDbForm ( $form_data );
+        $form = new InstallDbForm ( $form_data );        
         $data ['form'] = $form;
         $tpl = template ( 'kissgo/install/db.tpl', $data );
         break;
@@ -60,7 +60,7 @@ switch ($step) {
             $_SESSION ['_INSTALL_DB_FORM'] = $db_from;
         }
         $form_data = sess_get ( '_INSTALL_ADMIN_DATA', array () );
-        $form = new InstallAdminForm ( $form_data );
+        $form = new InstallAdminForm ( $form_data );        
         $data ['form'] = $form;
         $tpl = template ( 'kissgo/install/admin.tpl', $data );
         break;
@@ -73,7 +73,7 @@ switch ($step) {
             $_SESSION ['_INSTALL_ADMIN_FORM'] = $admin_from;
         }
         $form_data = sess_get ( '_INSTALL_CONFIG_DATA', array () );
-        $form = new InstallConfigForm ( $form_data );
+        $form = new InstallConfigForm ( $form_data );        
         $data ['form'] = $form;
         $tpl = template ( 'kissgo/install/config.tpl', $data );
         break;
@@ -88,7 +88,7 @@ switch ($step) {
         $data ['db_form'] = $_SESSION ['_INSTALL_DB_FORM'];
         $data ['admin_form'] = $_SESSION ['_INSTALL_ADMIN_FORM'];
         $data ['config_form'] = $_SESSION ['_INSTALL_CONFIG_FORM'];
-        if($data ['db_form']->isValid()){
+        if ($data ['db_form']->isValid ()) {
             $data ['db_connection'] = $data ['db_form']->check_connection ( $_SESSION ['_INSTALL_DB_DATA'] );
             $data ['db_error'] = DataSource::getLastError ();
         }

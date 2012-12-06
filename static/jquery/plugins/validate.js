@@ -168,26 +168,7 @@ $.extend($.expr[":"], {
 
 // constructor for validator
 $.validator = function( options, form ) {
-	this.settings = $.extend( true, {}, $.validator.defaults, {			
-			errorPlacement : function(error, element) {
-				element.parents(".control-group").addClass('error');
-				var espan = element.next('span');
-				if (espan.length > 0 && !espan.hasClass('error')) {
-					espan.remove();
-				}
-				error.addClass('help-inline').appendTo(
-						element.parent(".controls"));
-			},
-			success : function(label) {
-				label.parents(".control-group").addClass('success')
-						.removeClass('error');
-				label.text("");
-			},
-			invalid : function(error, element) {
-				element.parents(".control-group").addClass('error')
-						.removeClass('success');
-			}
-		}, options );
+	this.settings = $.extend( true, {}, $.validator.defaults, options );
 	this.currentForm = form;
 	this.init();
 };

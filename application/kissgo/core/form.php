@@ -142,12 +142,12 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                         break;
                     default :
                         $body = str_replace ( array (
-                                                    '{$error_class}', 
+                                                    '{$tip_cls}', 
                                                     '{$label}', 
                                                     '{$widget}', 
                                                     '{$tip}' 
                         ), array (
-                                $widget->valid ? '' : 'error', 
+                                $widget->valid ? 'tip' : 'error', 
                                 $widget->getLabelComponent (), 
                                 $widget->getWidgetComponent (), 
                                 $widget->getTipComponent () 
@@ -169,7 +169,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                     if ($this->options) {
                         $body = html_tag_properties ( $this->options );
                     }
-                    break;                
+                    break;
                 default :
                     break;
             }
@@ -181,13 +181,13 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $body = '';
             foreach ( $this->widgets as $widget ) {
                 $body .= str_replace ( array (
-                                                '{$error_class}', 
+                                                '{$tip_cls}', 
                                                 '{$widget_wraper_cls}', 
                                                 '{$label}', 
                                                 '{$widget}', 
                                                 '{$tip}' 
                 ), array (
-                        $widget->valid ? '' : 'error', 
+                        $widget->valid ? 'tip' : 'error', 
                         $widget->getWraperCls (), 
                         $widget->getLabelComponent (), 
                         $widget->getWidgetComponent (), 
@@ -198,8 +198,12 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         }
     }
     
-    public function validate($scope = null) {
-        $clean_data = $this->getCleanData ();
+    public function validate($scope = null, $initail = false) {
+        if (! $initail) {
+            $clean_data = $this->getCleanData ();
+        } else {
+            $clean_data = $this->data;
+        }
         $errors = array ();
         $scope = is_object ( $scope ) ? $scope : $this;
         foreach ( $this->widgets as $widget ) {
@@ -264,9 +268,9 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                 $widget_object = new $widget_class ( $widget, $value, $this );
                 $this->addWidget ( $widget_name, $widget_object );
             }
-            $this->__properties__ ['widgets_count'] =  count($this->widgets_keys);            
+            $this->__properties__ ['widgets_count'] = count ( $this->widgets_keys );
         }
-        
+    
     }
     
     public function __set($name, $value) {
@@ -275,7 +279,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     
     public function addWidget($widget_name, $widget) {
         $this->__properties__ ['widgets'] [$widget_name] = $widget;
-        $this->__properties__ ['widgets_keys'][] = $widget_name;        
+        $this->__properties__ ['widgets_keys'] [] = $widget_name;
     }
     
     public function addSearch($widget_name, $search) {
@@ -311,26 +315,26 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     protected function getDefaultWidgetOptions() {
         return array ();
     }
-    public function current() {        
-        return $this->widgets[$this->widgets_keys[$this->pos]];        
+    public function current() {
+        return $this->widgets [$this->widgets_keys [$this->pos]];
     }
     public function key() {
-        return $this->widgets_keys[$this->pos];
-        
+        return $this->widgets_keys [$this->pos];
+    
     }
-    public function next() {        
-        if($this->pos < $this->widgets_count){
+    public function next() {
+        if ($this->pos < $this->widgets_count) {
             $this->pos ++;
         }
     }
-    public function valid(){
+    public function valid() {
         return $this->pos >= 0 && $this->pos < $this->widgets_count;
-    }	
+    }
     public function rewind() {
         $this->pos = 0;
     }
-
-	protected abstract function getFormHead();
+    
+    protected abstract function getFormHead();
     
     protected abstract function getFormItemWrapper();
     
@@ -360,6 +364,7 @@ abstract class FormWidget {
     protected $value = null;
     protected $validates = array ();
     protected $required = false;
+    
     public function __construct($option, $value = '', $form) {
         $this->option = $option;
         $this->form = $form;
@@ -405,17 +410,17 @@ abstract class FormWidget {
             $properties ['name'] = $this->name;
             $properties ['id'] = $this->id;
         }
-        if (! empty ( $this->validates )) {
-            $validator = $this->form->useValidator ();
-            if ($validator) {
-                $validator->yield ( $properties, $this->validates );
-            }
-        }
         if (! $this->is_valid) {
             if (isset ( $properties ['class'] )) {
-                $properties ['class'] = $properties ['class'] . ' invalid';
+                $properties ['class'] = $properties ['class'] . ' error';
             } else {
-                $properties ['class'] = 'invalid';
+                $properties ['class'] = 'error';
+            }
+        }else{
+            if (isset ( $properties ['class'] )) {
+                $properties ['class'] = $properties ['class'] . ' valid';
+            } else {
+                $properties ['class'] = 'valid';
             }
         }
         if (isset ( $this->option [FWT_TIP] )) {
@@ -429,6 +434,14 @@ abstract class FormWidget {
                 $properties ['data-original-title'] = $this->label;
                 $properties ['data-content'] = $this->option [FWT_TIP];
                 $properties ['rel'] = 'popover';
+            } else {
+                $properties ['data-content'] = $this->option [FWT_TIP];
+            }
+        }
+        if (! empty ( $this->validates )) {
+            $validator = $this->form->useValidator ();
+            if ($validator) {
+                $validator->yield ( $properties, $this->validates );
             }
         }
         return html_tag_properties ( $properties );
@@ -475,11 +488,11 @@ abstract class FormWidget {
     public function setValue($value) {
         $this->value = $value;
     }
-    public function readable(){
-        $data = $this->getBindData();
-        if(is_array($data) && isset($data[$this->value])){
-            return $data[$this->value];
-        }else{
+    public function readable() {
+        $data = $this->getBindData ();
+        if (is_array ( $data ) && isset ( $data [$this->value] )) {
+            return $data [$this->value];
+        } else {
             return $this->value;
         }
     }
@@ -492,10 +505,10 @@ abstract class FormWidget {
             return $this->is_valid;
         } else if ($name == 'required') {
             return $this->required;
-        } else if($name == 'readable'){
-            return $this->readable();
-        } else if($name == 'error_cls'){
-            return $this->is_valid?'success':'error';
+        } else if ($name == 'readable') {
+            return $this->readable ();
+        } else if ($name == 'error_cls') {
+            return $this->is_valid ? 'success' : 'error';
         }
         return null;
     }
@@ -551,13 +564,13 @@ class BootstrapForm extends BaseForm {
         static $wrapper = false;
         if (! $wrapper) {
             // '{$error_class}', '{$widget_wraper_cls}','{$label}', '{$widget}', '{$tip}'
-            $wrapper = '<div class="control-group {$error_class}">{$label}';
+            $wrapper = '<div class="control-group">{$label}';
             $wrapper .= '<div class="{$widget_wraper_cls}">{$widget}';
             $ops = $this->options;
             if (isset ( $ops ['blockTip'] ) && $ops ['blockTip']) {
-                $wrapper .= '<span class="help-block">{$tip}</span>';
+                $wrapper .= '<span class="{$tip_cls} help-block" data-style="help-block">{$tip}</span>';
             } else {
-                $wrapper .= '<span class="help-inline">{$tip}</span>';
+                $wrapper .= '<span class="{$tip_cls} help-inline" data-style="help-inline">{$tip}</span>';
             }
             $wrapper .= '</div></div>';
         }

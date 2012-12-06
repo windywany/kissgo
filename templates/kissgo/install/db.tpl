@@ -16,8 +16,12 @@
 	</form>
 </div>
 <script type="text/javascript">
-	$('#next-btn').click(function(){
-		$('#db-form').submit();
+	$(function(){
+		$('#db-form').uvalidate();
+		$('#next-btn').click(function(){			
+			$('#db-form').submit();			
+		});
 	});
+	
 </script>
 {/block}

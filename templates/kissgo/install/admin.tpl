@@ -14,8 +14,12 @@
 	</form>
 </div>
 <script type="text/javascript">
+$(function(){
+	$('#admin-form').uvalidate();
+
 	$('#next-btn').click(function(){
 		$('#admin-form').submit();
 	});
+});
 </script>
 {/block}
