@@ -26,28 +26,31 @@ $steps = array (
                 'done' => 'Done', 
                 'scheme' => 'scheme', 
                 'cu' => 'cu', 
+                'pf' => 'pf', 
                 'save' => 'save', 
                 'tasks' => 'tasks' 
 );
 $step = isset ( $_POST ['step'] ) ? $_POST ['step'] : ''/*$_SESSION ['INSTALL_STEP']*/;
 $step = in_array ( $step, array_keys ( $steps ) ) ? $step : 'welcome';
+$settings = KissGoSetting::getSetting ();
 $data = array (
-            '_KISSGO_VERSION' => KissGoSetting::getSetting ( 'VERSION' ) 
+            '_KISSGO_VERSION' => $settings ['VERSION'] . ' ' . $settings ['RELEASE'] . ' BUILD ' . $settings ['BUILD'] 
 );
 $data ['page_title'] = $steps [$step];
 $data ['base_url'] = BASE_URL;
 $data ['step'] = $step;
+$installer = new KissGOInstaller ();
 switch ($step) {
     case 'check' :
         $_SESSION ['INSTALL_STEP'] = 'check';
-        $data ['dirs'] = check_directory_rw ();
-        $data ['envs'] = check_server_env ();
+        $data ['dirs'] = $installer->check_directory_rw ();
+        $data ['envs'] = $installer->check_server_env ();
         $tpl = template ( 'kissgo/install/check.tpl', $data );
         break;
     case 'db' :
         $_SESSION ['INSTALL_STEP'] = 'db';
         $form_data = sess_get ( '_INSTALL_DB_DATA', array () );
-        $form = new InstallDbForm ( $form_data );        
+        $form = new InstallDbForm ( $form_data );
         $data ['form'] = $form;
         $tpl = template ( 'kissgo/install/db.tpl', $data );
         break;
@@ -60,7 +63,7 @@ switch ($step) {
             $_SESSION ['_INSTALL_DB_FORM'] = $db_from;
         }
         $form_data = sess_get ( '_INSTALL_ADMIN_DATA', array () );
-        $form = new InstallAdminForm ( $form_data );        
+        $form = new InstallAdminForm ( $form_data );
         $data ['form'] = $form;
         $tpl = template ( 'kissgo/install/admin.tpl', $data );
         break;
@@ -73,7 +76,7 @@ switch ($step) {
             $_SESSION ['_INSTALL_ADMIN_FORM'] = $admin_from;
         }
         $form_data = sess_get ( '_INSTALL_CONFIG_DATA', array () );
-        $form = new InstallConfigForm ( $form_data );        
+        $form = new InstallConfigForm ( $form_data );
         $data ['form'] = $form;
         $tpl = template ( 'kissgo/install/config.tpl', $data );
         break;
@@ -89,51 +92,60 @@ switch ($step) {
         $data ['admin_form'] = $_SESSION ['_INSTALL_ADMIN_FORM'];
         $data ['config_form'] = $_SESSION ['_INSTALL_CONFIG_FORM'];
         if ($data ['db_form']->isValid ()) {
-            $data ['db_connection'] = $data ['db_form']->check_connection ( $_SESSION ['_INSTALL_DB_DATA'] );
+            $data ['db_connection'] = $installer->check_connection ( $_SESSION ['_INSTALL_DB_DATA'] );
             $data ['db_error'] = DataSource::getLastError ();
         }
+        
         $tpl = template ( 'kissgo/install/install.tpl', $data );
         break;
     case 'done' :
         $_SESSION ['INSTALL_STEP'] = 'done';
+        if (! $_SESSION ['_INSTALL_CONFIG_FORM'] ['clean_url']) {
+            $data ['base_url'] = BASE_URL . 'index.php/';
+        }
         $tpl = template ( 'kissgo/install/done.tpl', $data );
         break;
-    case 'scheme' : // create the scheme of kissgo	
-        sleep ( 2 );
+    case 'scheme' : // create the scheme of kissgo	        
         if (isset ( $_POST ['arg'] ) && ! empty ( $_POST ['arg'] )) {
+            $rst = $installer->create_scheme_table ( $_POST ['arg'] );
             $tpl = new JsonView ( array (
-                                        'success' => true 
+                                        'success' => $rst, 
+                                        'msg' => $installer->error 
             ) );
         } else {
             $tpl = new JsonView ( array (
                                         'success' => true, 
-                                        'taskes' => get_scheme_tables () 
+                                        'taskes' => $installer->get_scheme_tables () 
             ) );
         }
         break;
     case 'cu' : // create administrator		
-        sleep ( 2 );
+        $rst = $installer->create_administrator ();
         $tpl = new JsonView ( array (
-                                    'success' => true 
+                                    'success' => $rst, 
+                                    'msg' => $installer->error 
+        ) );
+        break;
+    case 'pf' :
+        $rst = $installer->save_peferences ();
+        $tpl = new JsonView ( array (
+                                    'success' => $rst, 
+                                    'msg' => $installer->error 
         ) );
         break;
     case 'save' : // save configuration to settings.php file
-        sleep ( 2 );
+        $rst = $installer->create_settings_file ();
         $tpl = new JsonView ( array (
-                                    'success' => true 
+                                    'success' => $rst, 
+                                    'msg' => $installer->error 
         ) );
         break;
     case 'tasks' : // install task list	
         sleep ( 2 );
-        $taskes = get_install_taskes ();
+        $taskes = $installer->get_install_taskes ();
         $tpl = new JsonView ( array (
                                     'success' => true, 
                                     'taskes' => $taskes 
-        ) );
-        break;
-    case 'checkmysql' :
-        $tpl = new JsonView ( array (
-                                    'success' => true 
         ) );
         break;
     default :

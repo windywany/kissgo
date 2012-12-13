@@ -1,5 +1,5 @@
 {extends file="kissgo/admincp_with_sidemenu.tpl"}
 
 {block name="admincp_body"}
-    heihei
+    <div style="height:1000px;">heihei</div>
 {/block}

@@ -38,7 +38,6 @@ define ( 'FWT_TIP_SHOW_S', 's' );
  */
 abstract class BaseForm implements ArrayAccess, Iterator {
     private $__properties__ = array ();
-    
     public function __construct($data = array(), $options = array(), $title = '') {
         $this->initialize ( $data );
         $this->title = $title;
@@ -50,7 +49,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         }
         $this->options = $options;
     }
-    
     public function getCleanData($widget = null, $default = '') {
         static $clean_data = false;
         if (! $clean_data) {
@@ -77,23 +75,18 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         }
         return $clean_data;
     }
-    
     public function getOptions() {
         return $this->options;
     }
-    
     public function getId() {
         return $this->id;
     }
-    
     public function getTitle() {
         return $this->title;
     }
-    
     public function getInitialData() {
         return $this->data;
     }
-    
     public function getSearchCondition() {
     }
     
@@ -197,7 +190,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             return $head . "\n" . $body . $foot;
         }
     }
-    
     public function validate($scope = null, $initail = false) {
         if (! $initail) {
             $clean_data = $this->getCleanData ();
@@ -214,7 +206,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         $this->errors = $errors;
         return count ( $errors ) > 0 ? false : $clean_data;
     }
-    
     protected function initialize($data) {
         $widgets = get_object_vars ( $this );
         $this->pos = 0;
@@ -270,26 +261,20 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             }
             $this->__properties__ ['widgets_count'] = count ( $this->widgets_keys );
         }
-    
     }
-    
     public function __set($name, $value) {
         $this->__properties__ [$name] = $value;
     }
-    
     public function addWidget($widget_name, $widget) {
         $this->__properties__ ['widgets'] [$widget_name] = $widget;
         $this->__properties__ ['widgets_keys'] [] = $widget_name;
     }
-    
     public function addSearch($widget_name, $search) {
         $this->__properties__ ['searches'] [$widget_name] = $search;
     }
-    
     public function isValid() {
         return count ( $this->errors ) > 0 ? false : true;
     }
-    
     public function __get($name) {
         if (isset ( $this->__properties__ [$name] )) {
             return $this->__properties__ [$name];
@@ -308,7 +293,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         return '';
     }
     public function offsetSet($offset, $value) {
-    
     }
     public function offsetUnset($offset) {
     }
@@ -320,7 +304,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     }
     public function key() {
         return $this->widgets_keys [$this->pos];
-    
     }
     public function next() {
         if ($this->pos < $this->widgets_count) {
@@ -333,11 +316,8 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     public function rewind() {
         $this->pos = 0;
     }
-    
     protected abstract function getFormHead();
-    
     protected abstract function getFormItemWrapper();
-    
     protected abstract function getFormFoot();
 }
 
@@ -349,7 +329,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
  */
 interface IValidator {
     public function yield(&$properties, $rules);
-    
     public function valid($value, $data, $rules, $scope);
 }
 
@@ -364,7 +343,6 @@ abstract class FormWidget {
     protected $value = null;
     protected $validates = array ();
     protected $required = false;
-    
     public function __construct($option, $value = '', $form) {
         $this->option = $option;
         $this->form = $form;
@@ -398,7 +376,6 @@ abstract class FormWidget {
             $this->required = isset ( $this->validates ['required'] );
         }
     }
-    
     protected function getProperties($properties = array(), $append = true) {
         if (! is_array ( $properties )) {
             $properties = array ();
@@ -416,7 +393,7 @@ abstract class FormWidget {
             } else {
                 $properties ['class'] = 'error';
             }
-        }else{
+        } else {
             if (isset ( $properties ['class'] )) {
                 $properties ['class'] = $properties ['class'] . ' valid';
             } else {
@@ -446,7 +423,6 @@ abstract class FormWidget {
         }
         return html_tag_properties ( $properties );
     }
-    
     public function valid($data, $scope = null) {
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
@@ -463,7 +439,6 @@ abstract class FormWidget {
         $this->is_valid = true;
         return true;
     }
-    
     protected function getBindData() {
         if (isset ( $this->option [FWT_BIND] ) && is_callable ( $this->option [FWT_BIND] )) {
             return call_user_func_array ( $this->option [FWT_BIND], array (
@@ -484,11 +459,10 @@ abstract class FormWidget {
         }
         return $this->value;
     }
-    
     public function setValue($value) {
         $this->value = $value;
     }
-    public function readable() {
+    protected function readableValue() {
         $data = $this->getBindData ();
         if (is_array ( $data ) && isset ( $data [$this->value] )) {
             return $data [$this->value];
@@ -506,7 +480,7 @@ abstract class FormWidget {
         } else if ($name == 'required') {
             return $this->required;
         } else if ($name == 'readable') {
-            return $this->readable ();
+            return $this->readableValue ();
         } else if ($name == 'error_cls') {
             return $this->is_valid ? 'success' : 'error';
         }
@@ -528,9 +502,7 @@ abstract class FormWidget {
         return 'controls';
     }
     public abstract function getLabelComponent();
-    
     public abstract function getWidgetComponent();
-    
     public abstract function getTipComponent();
 }
 
@@ -541,11 +513,9 @@ class TableForm extends BaseForm {
     protected function getFormHead() {
         return "<table>";
     }
-    
     protected function getFormItemWrapper() {
         return '<tr><td>{$label}</td><td>{$widget}</td><td>{$tip}</td></tr>';
     }
-    
     protected function getFormFoot() {
         return "</table>\n";
     }
@@ -599,14 +569,12 @@ class TextWidget extends FormWidget {
             return '<label class="control-label" for="' . $this->id . '">' . $this->label . '</label>';
         }
     }
-    
     public function getWidgetComponent() {
         $properties = $this->getProperties ( array (
                                                     'value' => $this->value 
         ) );
         return '<input type="text" ' . $properties . '/>';
     }
-    
     public function getTipComponent() {
         if (! empty ( $this->error )) {
             return $this->error;
@@ -625,6 +593,9 @@ class PasswordWidget extends TextWidget {
     public function getWidgetComponent() {
         $properties = $this->getProperties ();
         return '<input type="password" ' . $properties . '/>';
+    }
+    protected function readableValue() {
+        return "******";
     }
 }
 
@@ -679,7 +650,6 @@ class ScheckboxWidget extends TextWidget {
             return '<label class="checkbox inline"><input type="checkbox" ' . $properties . '/></label>';
         }
     }
-    
     public function getValue($request = null) {
         if (! is_null ( $request )) {
             if (isset ( $request [$this->name] )) {

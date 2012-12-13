@@ -1,6 +1,6 @@
 <div class="pr-agreement">
-	<p>KissGO! 是遵循GPL V2 协议的开源项目 </p>
-	<p>感谢您选择KissGO!做为您建站和二次开发平台，KissGO!基于 PHP + MySQL的技术开发，具体高度可扩展性与灵活性，可定制性非常强大。</p>
+	<p><strong>KissGO! 是遵循GPL V2 协议的开源项目</strong></p>
+	<p>感谢您选择KissGO!做为您建站和二次开发平台，KissGO!基于 PHP + MySQL + Jquery + Bootrap 技术开发,遵循KISS原则，具体高度可扩展性与灵活性，可定制性非常强大。</p>
 	<p>KissGO! 的官方网址是： <a target="_blank" href="http://www.kissgo.org">www.kissgo.org</a></p>
 	<p>为了使你正确并合法的使用本软件，请你在使用前务必阅读清楚下面的协议条款：</p>
 	<strong>一、本授权协议适用于 KissGO! 所有版本，KissGO!开发组织对本授权协议的最终解释权。</strong><br/>

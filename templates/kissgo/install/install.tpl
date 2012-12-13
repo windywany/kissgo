@@ -11,7 +11,7 @@
 	<table class="table table-bordered">
 		<caption>数据库配置</caption>
 		<thead>
-			<tr><th class="span4">项</th><th>值</th><th>检测</th></tr>
+			<tr><th class="span4">项</th><th>值</th><th style="width:40px;">检测</th></tr>
 		</thead>
 		<tbody class="check_rst">
 		    {foreach $db_form as $item}
@@ -24,7 +24,7 @@
 	<table class="table table-bordered table-striped">
 		<caption>管理员</caption>
 		<thead>
-			<tr><th class="span4">项</th><th>值</th><th>检测</th></tr>
+			<tr><th class="span4">项</th><th>值</th><th style="width:40px;">检测</th></tr>
 		</thead>
 		<tbody class="check_rst">
 			{foreach $admin_form as $item}
@@ -37,7 +37,7 @@
 	<table class="table table-bordered table-striped">
 		<caption>基本设置</caption>
 		<thead>
-			<tr><th class="span4">项</th><th>值</th><th>检测</th></tr>
+			<tr><th class="span4">项</th><th>值</th><th style="width:40px;">检测</th></tr>
 		</thead>
 		<tbody class=check_rst>
 			{foreach $config_form as $item}

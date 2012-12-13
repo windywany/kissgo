@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>登录管理后台 -- Powered by KissGo! {$_KISSGO_VERSION}</title>
+		<title>{'Login'|ts}[Powered by KissGo! {$_KISSGO_R_VERSION}]</title>
 		<link href="{'bootstrap/css/bootstrap.css'|static}" rel="stylesheet"/>
 		<link href="{'bootstrap/css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
 		<link href="{'common.css'|static}" rel="stylesheet"/>
@@ -45,9 +45,9 @@
 		          	</div>
 				</form>
 			</div>
-			<div class="info">本系统基于<a href="http://www.kissgo.org/">KissGo! {$_KISSGO_VERSION}</a>构建,<a href="http://www.kissgo.org/">KissGo!</a>提供动力。</div>
+			<div class="info">本系统基于<a href="http://www.kissgo.org/">KissGo! {$_KISSGO_VERSION}</a>构建,由<a href="http://www.kissgo.org/">KissGo!</a>提供动力。</div>
 		</div>	
-		<script type="text/javascript" src="{'js/jquery-1.8.x.js'|static}"></script>
+		<script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>
 		<script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>
 		<script type="text/javascript">
 			$(function(){

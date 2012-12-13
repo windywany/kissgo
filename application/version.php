@@ -15,5 +15,5 @@ $settings ['VERSION'] = '0.1';
 
 $settings ['RELEASE'] = 'BETA';
 
-$settings ['BUILD_VERSION'] = '1.1130-2012';
+$settings ['BUILD'] = '10-1206-12';
 // end of version.php

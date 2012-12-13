@@ -12,7 +12,7 @@ body {
     margin-bottom: 5px;
 }
 #crumb .container-fluid, #container .container-fluid{
-	padding-right: 35px;
+	padding-right: 25px;
 }
 #container {
     font-size: 12px;
@@ -58,133 +58,23 @@ body {
     opacity: 1;
 }
 
-#sideTools {
-	font-size:12px;
+#sideTools {	
     position: fixed;
-    right: -52px;
-    bottom: 50px;
-    width: 86px;
+    right: 1px;
+    bottom: 90px;	
+    width: 23px;
     z-index: 10010;
+	display:none;
 }
-#sideTools p {
-    margin: 5px 0 0;
+#sideTools a{
+	background:transparent url(../images/gotop.gif) no-repeat left top;
+	display:block;
+	width: 23px;
+	height: 83px;
 }
-#sideTools p a {
-    background: none repeat scroll 0 0 #AEB2BD;
-    cursor: pointer;
-    display: block;
-    height: 36px;
-    overflow: hidden;
-    text-decoration: none;
-    width: 86px;
+#sideTools a:hover{
+	background-position: -23px top;
 }
-#sideTools p a:link, #sideTools p a:visited {
-    background: none repeat scroll 0 0 #AEB2BD;
-}
-#sideTools p a:hover {
-    background: none repeat scroll 0 0 #676767;
-    text-decoration: none;
-}
-#sideTools p a:active {
-    background: none repeat scroll 0 0 #676767;
-}
-#sideTools p a s {
-    background: url("../images/sidetool.png") repeat scroll 0 -1px transparent;
-    display: inline-block;
-    float: left;
-    height: 36px;
-    vertical-align: middle;
-    width: 34px;
-}
-#sideTools p a span {
-    color: #FFFFFF;
-    display: inline-block;
-    float: left;
-    height: 36px;
-    line-height: 36px;
-    overflow: hidden;
-    width: 50px;
-}
-#sideTools p.miniNav a s {
-    background-position: 0 -1px;
-}
-#sideTools p.miniNav a.on {
-    background: none repeat scroll 0 0 #676767;
-}
-#sideTools p.miniNav a:hover s {
-    background-position: -160px -1px;
-}
-#sideTools p.miniNav a.on s {
-    background-position: -160px -1px;
-}
-#sideTools p.iToTop a s {
-    background-position: -120px -1px;
-}
-#sideTools p.iToTop a:hover s {
-    background-position: -280px -1px;
-}
-#sideTools p.iToTop a span {
-    text-align: center;
-}
-#sideTools .stMore {
-    background: none repeat scroll 0 0 #676767;
-    border-top: 1px solid #585858;    
-    overflow: hidden;
-    width: 86px;
-    display:none;
-}
-#sideTools .stMore dl {
-    padding-bottom: 0;
-    margin: 0;
-}
-#sideTools .stMore dl dt {
-    color: #FD741C;
-    font-weight: bold;
-    height: 30px;
-    line-height: 30px;
-}
-#sideTools .stMore dl dt s {
-    background: url("../images/sidetool.png") repeat scroll -320px 0px transparent;
-    display: inline-block;
-    height: 16px;
-    margin: 0 2px 0 10px;
-    vertical-align: middle;
-    width: 20px;
-}
-#sideTools .stMore dl.side01 {
-    border-top: 1px solid #7E7E7E;
-}
-
-#sideTools .stMore dl dd {
-    margin-left: 16px;
-}
-#sideTools .stMore dl dd a {
-    color: #FFFFFF;
-    display: block;
-    margin-bottom: 2px;
-}
-#sideTools .stMoreClose {
-    background: none repeat scroll 0 0 #676767;
-    display: none;
-    height: 16px;
-    width: 86px;
-}
-#sideTools .stMoreClose a {
-    border-top: 1px solid #7E7E7E;
-    cursor: pointer;
-    display: block;
-    height: 14px;
-    text-decoration: none;
-    width: 86px;
-}
-#sideTools .stMoreClose a i {
-    background: url("../images/sidetool.png") repeat scroll -320px -20px transparent;
-    display: inline-block;
-    height: 14px;
-    margin-left: 36px;
-    width: 14px;
-}
-
 #foot {
     background: none repeat scroll 0 0 #EDEDED;
     border-top: 1px solid #DDDDDD;

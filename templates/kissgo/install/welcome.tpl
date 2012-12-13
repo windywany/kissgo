@@ -21,7 +21,7 @@
 		  <div class="container">
 		    <h1>KissGO!安装向导</h1>
 		    <p class="lead">欢迎使用开源的KissGO!做为您的建站工具和二次开发平台,更多信息请访问<a href="#">KissGO!</a>官方网站.</p>
-		    <p class="lead">本向导将引导您完成KissGO!的安装.</p>
+		    <p class="lead">你正在安装的版本是：{$_KISSGO_VERSION},本向导将引导您完成KissGO!的安装.</p>
 		  </div>
 		</div>
 		<div class="container">
