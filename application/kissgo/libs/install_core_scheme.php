@@ -34,12 +34,13 @@ $scheme ['user_role'] = "CREATE TABLE `%PREFIX%user_role` (
 )  ENGINE=%ENGINE% DEFAULT CHARACTER SET=utf8 COMMENT='用户的角色'";
 
 $scheme ['preference'] = "CREATE TABLE `%PREFIX%preference` (
-    `option_id` INT UNSIGNED NULL AUTO_INCREMENT,
-    `option_group` VARCHAR(16) NOT NULL DEFAULT 'base' COMMENT '选项组',
-    `option_name` VARCHAR(16) NOT NULL COMMENT '选项名',
-    `option_value` LONGTEXT NULL COMMENT '选项值',
-    PRIMARY KEY (`option_id`),
-    UNIQUE INDEX `IDU_OPT_NAME` (`option_name` ASC)
+    option_id INT UNSIGNED NULL AUTO_INCREMENT,
+    option_uid INT UNSIGNED ZEROFILL NOT NULL DEFAULT 0 COMMENT '用户ID,0为系统选项.',
+    option_group VARCHAR(16) NOT NULL DEFAULT 'core' COMMENT '选项组',
+    option_name VARCHAR(16) NOT NULL COMMENT '选项名',
+    option_value LONGTEXT NULL COMMENT '选项值',
+    PRIMARY KEY (option_id),
+    UNIQUE INDEX IDU_OPT_NAME (option_uid ASC , option_group ASC , option_name ASC)
 )  ENGINE=%ENGINE% DEFAULT CHARACTER SET=utf8 COMMENT='系统选项'";
 
 $scheme ['authorization'] = "CREATE TABLE `%PREFIX%authorization` (

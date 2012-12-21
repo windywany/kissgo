@@ -63,7 +63,7 @@ class Router {
 		if ($app) {
 			$app = mpath ( $app );
 			if ($app === false) {
-				Response::getInstance ()->respond ( 403 );
+				Response::respond ( 403 );
 			}
 			$func_name = 'do_' . $action;
 			$app = str_replace ( '_', '/', $app ) . "/actions/{$action}.php";

@@ -164,7 +164,7 @@ class LoginInfo {
     private $count = 0;
     private $account, $time, $ip, $uid;
     private $isLogin = false;
-
+    
     public function __construct($uid, $account, $time, $ip) {
         $this->uid = $uid;
         $this->account = $account;

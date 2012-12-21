@@ -135,7 +135,7 @@ abstract class Model {
             trigger_error('can not connect to the database server!', E_USER_ERROR);
         }
         // 获取表名
-        $this->_entity_name = preg_replace('/Model$/', '', get_class($this));
+        $this->_entity_name = preg_replace('/(Model|Entity)$/', '', get_class($this));
         $this->_old_entity_name = $this->_entity_name;
         if (empty ($this->_table)) {
             $this->_table = strtolower($this->_entity_name);

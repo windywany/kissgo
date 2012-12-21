@@ -154,7 +154,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         } else if ($component == null && ! is_null ( $name )) {
             switch ($name) {
                 case 'errors' :
-                    if (! empty ( $this->errors )) {
+                    if (count ( $this->errors ) > 0) {
                         $body = '<p class="form-error">' . implode ( '</p><p class="form-error">', $this->errors ) . '</p>';
                     }
                     break;
@@ -315,6 +315,12 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     }
     public function rewind() {
         $this->pos = 0;
+    }
+    public function setError($widget, $error) {
+        if (isset ( $this->widgets [$widget] )) {
+            $this->widgets [$widget]->setErrorMsg ( $error );
+            $this->__properties__['errors'][] = $error;            
+        }
     }
     protected abstract function getFormHead();
     protected abstract function getFormItemWrapper();
@@ -485,6 +491,9 @@ abstract class FormWidget {
             return $this->is_valid ? 'success' : 'error';
         }
         return null;
+    }
+    public function setErrorMsg($value) {
+        $this->error = $value;
     }
     public function getValidate() {
         $properties = array (
