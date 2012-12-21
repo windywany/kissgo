@@ -25,8 +25,6 @@ defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', WEB_ROOT . 'templates' 
 defined ( 'STATIC_DIR' ) or define ( 'STATIC_DIR', 'static' );
 defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS ); // the temporary directory path
 define ( 'NOTNULL', '_@_NOT_NULL_@_' );
-define ( 'INSTALLED_MODULES', '__INSTALLED_MODULES__' );
-define ( 'INSTALLED_PLUGINS', '__INSTALLED_PLUGINS__' );
 define ( 'DATABASE', '__DATABASE__' );
 define ( 'COOKIE', '__COOKIE__' );
 define ( 'CACHE', '__CACHE__' );
@@ -199,10 +197,6 @@ class KissGoSetting implements ArrayAccess {
         $this->settings [$name] = $value;
     }
     public function prepareSettings() {
-        $this->settings [INSTALLED_MODULES] = array (
-                                                    '::kissgo', 
-                                                    '::passport' 
-        );
         if (isset ( $this->settings ['DEBUG'] )) {
             define ( 'DEBUG', intval ( $this->settings ['DEBUG'] ) );
         }
@@ -313,48 +307,9 @@ function _kissgo_class_loader($clz) {
 }
 spl_autoload_register ( '_kissgo_class_loader' );
 ///////////////////////////////////////////////////////////////
-function _kissgo_load_modules($modules) {
-    global $_ksg_installed_modules;
-    if (is_array ( $modules )) {
-        $app_init_files = array ();
-        foreach ( $modules as $app ) {
-            $app_path = $app;
-            if (preg_match ( '/^::/', $app )) {
-                $app_path = ltrim ( $app, ':' );
-                $app_init_files [] = str_replace ( '::', '::modules/', $app ) . '/__init__.php';
-            } else {
-                $app_init_files [] = MODULE_DIR . '/' . $app . '/__init__.php';
-            }
-            $_ksg_installed_modules [] = $app_path;
-        }
-        if (! empty ( $app_init_files )) {
-            includes ( $app_init_files );
-        }
-    }
-}
-function _kissgo_load_plugins($plugins) {
-    if (is_array ( $plugins ) && ! empty ( $plugins )) {
-        $plg_init_files = array ();
-        foreach ( $plugins as $plg ) {
-            if (preg_match ( '/^::/', $plg )) {
-                $plg_init_files [] = str_replace ( '::', '::plugins/', $plg );
-            } else {
-                $plg_init_files [] = 'plugins/' . $plg;
-            }
-        }
-        if (! empty ( $plg_init_files )) {
-            includes ( $plg_init_files );
-        }
-    }
-}
 // load applications and plugins
-$_ksg_global_settings = KissGoSetting::getSetting ();
-global $_ksg_installed_plugins;
-$_ksg_installed_plugins = $_ksg_global_settings [INSTALLED_PLUGINS];
-_kissgo_load_plugins ( $_ksg_installed_plugins );
-global $_ksg_installed_apps, $_ksg_installed_modules;
-$_ksg_installed_apps = $_ksg_global_settings [INSTALLED_MODULES];
-_kissgo_load_modules ( $_ksg_installed_apps );
+global $_ksg_installed_plugins, $_ksg_installed_modules;
+PluginManager::getInstance ()->loadInstalledExtensions ();
 //////////////////////////////////////////////////////////////////
 fire ( 'kissgo_startted' );
 // end of file bootstrap.php

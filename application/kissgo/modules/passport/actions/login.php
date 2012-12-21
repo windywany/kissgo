@@ -7,7 +7,6 @@
  */
 imports ( 'passport/forms/*' );
 
-$req = Request::getInstance ();
 if (Request::isPost ()) { //处理登录
     // TODO 登录功能实现
     $form = new PassportForm ();
@@ -37,6 +36,7 @@ if (Request::isPost ()) { //处理登录
     if ($me->isLogin ()) {
         Response::redirect ( sess_get ( 'go_to_the_page_when_login', BASE_URL ) );
     }
+    $req = Request::getInstance ();
     if (! empty ( $req ['from'] )) {
         $_SESSION ['go_to_the_page_when_login'] = $req ['from'];
     }

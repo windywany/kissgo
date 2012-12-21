@@ -26,11 +26,12 @@ $steps = array (
                 'done' => 'Done', 
                 'scheme' => 'scheme', 
                 'cu' => 'cu', 
+                'cm' => 'cm', 
                 'pf' => 'pf', 
                 'save' => 'save', 
                 'tasks' => 'tasks' 
 );
-$step = isset ( $_POST ['step'] ) ? $_POST ['step'] : ''/*$_SESSION ['INSTALL_STEP']*/;
+$step = isset ( $_POST ['step'] ) ? $_POST ['step'] : $_SESSION ['INSTALL_STEP'];
 $step = in_array ( $step, array_keys ( $steps ) ) ? $step : 'welcome';
 $settings = KissGoSetting::getSetting ();
 $data = array (
@@ -126,8 +127,16 @@ switch ($step) {
                                     'msg' => $installer->error 
         ) );
         break;
+    
     case 'pf' :
         $rst = $installer->save_peferences ();
+        $tpl = new JsonView ( array (
+                                    'success' => $rst, 
+                                    'msg' => $installer->error 
+        ) );
+        break;
+    case 'cm' :
+        $rst = $installer->install_core_modules ();
         $tpl = new JsonView ( array (
                                     'success' => $rst, 
                                     'msg' => $installer->error 
@@ -139,9 +148,9 @@ switch ($step) {
                                     'success' => $rst, 
                                     'msg' => $installer->error 
         ) );
+        $_SESSION ['INSTALL_STEP'] = 'welcome';
         break;
-    case 'tasks' : // install task list	
-        sleep ( 2 );
+    case 'tasks' : // install task list	        
         $taskes = $installer->get_install_taskes ();
         $tpl = new JsonView ( array (
                                     'success' => true, 

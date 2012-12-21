@@ -36,9 +36,14 @@ class KissGOInstaller {
                             'weight' => 7 
         );
         $taskes [] = array (
+                            'text' => '安装核心模块', 
+                            'step' => 'cm', 
+                            'weight' => 10 
+        );
+        $taskes [] = array (
                             'text' => '创建settings.php文件', 
                             'step' => 'save', 
-                            'weight' => 15 
+                            'weight' => 5 
         );
         return $taskes;
     }
@@ -170,6 +175,27 @@ class KissGOInstaller {
             return false;
         } else {
             $this->error = DataSource::getLastError ();
+            return false;
+        }
+    }
+    public function install_core_modules() {
+        $plgmgr = PluginManager::getInstance ();
+        $ext = $plgmgr->getExensionInfo ( KISSGO . 'modules/kissgo/__pkg__.php', 1 );
+        $ext ['unremovable'] = 1;
+        $ext ['disabled'] = 0;
+        $ext ['Installed_Time'] = time ();
+        unset ( $ext ['Installed'] );
+        $extensions [] = $ext;
+        $ext = $plgmgr->getExensionInfo ( KISSGO . 'modules/passport/__pkg__.php', 1 );
+        $ext ['unremovable'] = 1;
+        $ext ['disabled'] = 0;
+        $ext ['Installed_Time'] = time ();
+        unset ( $ext ['Installed'] );
+        $extensions [] = $ext;
+        if ($plgmgr->saveExtensionsData ( $extensions )) {
+            return true;
+        } else {
+            $this->error = '无法写入配置文件：[' . APPDATA_PATH . 'extensions.ini]. 请检查目录是否有可写权限.';
             return false;
         }
     }
