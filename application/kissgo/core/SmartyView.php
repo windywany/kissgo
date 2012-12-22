@@ -25,6 +25,7 @@ class SmartyView extends View {
             $this->__smarty->addPluginsDir(KISSGO . 'vendors/smarty/user_plugins');
             $this->__smarty->template_dir = $basedir; //模板目录
             $tpl = str_replace(DS, '/', $this->tpl);
+            $this->data['_current_template_file'] = $tpl;
             $tpl = explode('/', $tpl);
             array_pop($tpl);
             $sub = implode(DS, $tpl);

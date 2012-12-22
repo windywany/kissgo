@@ -83,7 +83,7 @@ class Router {
 		} else {
 			$func_name = 'do_default_' . $action;
 			$app = 'index.php';
-			$app_action_file = MODULES_PATH . $app;
+			$app_action_file = KISSGO . 'modules/' . $app;
 			$rtn = include ($app_action_file);
 		}
 		if (is_callable ( $rtn )) {

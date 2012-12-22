@@ -195,7 +195,7 @@ function theme_view($tpl, $data = array(), $headers = array()) {
 		$tpl = $_tpl;
 	} else {
 		$tpl = 'themes/defaults/' . $tpl;
-	}
+	}	
 	return new SmartyView ( $data, $tpl, $headers );
 }
 /**

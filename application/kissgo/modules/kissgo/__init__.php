@@ -3,6 +3,7 @@
  * Id: $ID$
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
+imports ( 'kissgo/models/*' );
 /**
  *
  * @param Smarty $smarty        	
@@ -41,12 +42,11 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenu2 ( 'system', __ ( 'System' ), 'icon-th-large' );
     $mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), '#', 'icon-user' );
     $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ) );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-groups', __ ( 'Groups Management' ) );
     $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ) );
     $mm->addMenuItemDivider ( 'system' );
-    $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Plugins & Modules' ), murl ( 'kissgo', 'modules' ), 'icon-asterisk' );
+    $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'kissgo', 'extension' ), 'icon-asterisk' );
     $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preferences' ), 'icon-wrench' );
-    // Web Site
+    /*// Web Site
     $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'kissgo', 'pages' ), 'icon-file' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'kissgo', 'comments' ), 'icon-comment' );
@@ -67,6 +67,7 @@ function _hook_for_admincp_menu($mm) {
     $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-authors', __ ( 'Authors' ), murl ( 'kissgo', 'authors' ), 'icon-book' );
     $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-origins', __ ( 'Origins' ), murl ( 'kissgo', 'origins' ), 'icon-book' );
     $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-keywords', __ ( 'Keywords' ), murl ( 'kissgo', 'keywords' ), 'icon-book' );
+    */
     return $mm;
 }
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
@@ -75,9 +76,9 @@ function _hook_add_new_menu_items($items) {
     $items .= '<li><a href="#">new page</a></li>';
     return $items;
 }
-bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
+//bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
 function _hook_for_add_passport_menu_items($items) {
-    $items .= '<li><a href="#">Control Panel</a></li>';
+    $items .= '<li><a href="#">' . __ ( 'Control Panel' ) . '</a></li>';
     return $items;
 }
 bind ( 'add_passport_menu_items', '_hook_for_add_passport_menu_items' );
@@ -96,10 +97,26 @@ function _hook_for_login_page($url) {
 }
 
 bind ( 'get_login_page_url_for_KISSGO_ADMIN', '_hook_for_login_page' );
+/**
+ * 
+ * 读取登录用户信息
+ * @param Passport $passport
+ */
 function _kissgo_hook_for_get_user_passport($passport) {
-    $uid = $passport ['uid'];
-    if ($uid == 1) {
-        $passport ['name'] = '宁广丰';
+    if ($passport->isLogin ()) {
+        $uid = $passport ['uid'];
+        $user = sess_get ( 'login_user_info_' . $uid, false );
+        if (! $user) {
+            $um = new UserEntity ();
+            $user = $um->read ( $uid );
+            if ($user) {
+                $_SESSION ['login_user_info_' . $uid] = $user;
+            }
+        }
+        if ($user) {
+            $passport ['name'] = $user ['name'];
+            $passport ['email'] = $user ['email'];
+        }
     }
     return $passport;
 }
@@ -109,7 +126,7 @@ bind ( 'get_user_passport', '_kissgo_hook_for_get_user_passport' );
  * 设置页面提示
  *
  * @param
- *        	$tip
+ * $tip
  * @param string $type        	
  * @param int $during        	
  */
@@ -125,9 +142,9 @@ function set_page_tip($tip, $type = 'info', $during = 5000) {
  * load administrator panel page and show it.
  *
  * @param
- *        	$tpl
+ * $tpl
  * @param
- *        	$data
+ * $data
  * @return SmartyView
  */
 function admin_view($tpl, $data = array(), $headers = array()) {
