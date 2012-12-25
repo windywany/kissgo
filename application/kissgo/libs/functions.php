@@ -16,18 +16,18 @@
  *
  */
 function status_header($header) {
-	$text = get_status_header_desc ( $header );
-	
-	if (empty ( $text )) {
-		return;
-	}
-	$protocol = $_SERVER ["SERVER_PROTOCOL"];
-	if ('HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol) {
-		$protocol = 'HTTP/1.0';
-	}
-	$status_header = "$protocol $header $text";
-	
-	@header ( $status_header, true, $header );
+    $text = get_status_header_desc ( $header );
+    
+    if (empty ( $text )) {
+        return;
+    }
+    $protocol = $_SERVER ["SERVER_PROTOCOL"];
+    if ('HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol) {
+        $protocol = 'HTTP/1.0';
+    }
+    $status_header = "$protocol $header $text";
+    
+    @header ( $status_header, true, $header );
 }
 
 /**
@@ -40,26 +40,74 @@ function status_header($header) {
  * @return string Empty string if not found, or description if found.
  */
 function get_status_header_desc($code) {
-	global $output_header_to_desc;
-	
-	$code = abs ( intval ( $code ) );
-	
-	if (! isset ( $output_header_to_desc )) {
-		$output_header_to_desc = array (100 => 'Continue', 101 => 'Switching Protocols', 102 => 'Processing', 
-
-		200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 207 => 'Multi-Status', 226 => 'IM Used', 
-
-		300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 306 => 'Reserved', 307 => 'Temporary Redirect', 
-
-		400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Timeout', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Long', 415 => 'Unsupported Media Type', 416 => 'Requested Range Not Satisfiable', 417 => 'Expectation Failed', 422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required', 
-
-		500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Timeout', 505 => 'HTTP Version Not Supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 510 => 'Not Extended' );
-	}
-	
-	if (isset ( $output_header_to_desc [$code] ))
-		return $output_header_to_desc [$code];
-	else
-		return '';
+    global $output_header_to_desc;
+    
+    $code = abs ( intval ( $code ) );
+    
+    if (! isset ( $output_header_to_desc )) {
+        $output_header_to_desc = array (
+                                        100 => 'Continue', 
+                                        101 => 'Switching Protocols', 
+                                        102 => 'Processing', 
+                                        
+                                        200 => 'OK', 
+                                        201 => 'Created', 
+                                        202 => 'Accepted', 
+                                        203 => 'Non-Authoritative Information', 
+                                        204 => 'No Content', 
+                                        205 => 'Reset Content', 
+                                        206 => 'Partial Content', 
+                                        207 => 'Multi-Status', 
+                                        226 => 'IM Used', 
+                                        
+                                        300 => 'Multiple Choices', 
+                                        301 => 'Moved Permanently', 
+                                        302 => 'Found', 
+                                        303 => 'See Other', 
+                                        304 => 'Not Modified', 
+                                        305 => 'Use Proxy', 
+                                        306 => 'Reserved', 
+                                        307 => 'Temporary Redirect', 
+                                        
+                                        400 => 'Bad Request', 
+                                        401 => 'Unauthorized', 
+                                        402 => 'Payment Required', 
+                                        403 => 'Forbidden', 
+                                        404 => 'Not Found', 
+                                        405 => 'Method Not Allowed', 
+                                        406 => 'Not Acceptable', 
+                                        407 => 'Proxy Authentication Required', 
+                                        408 => 'Request Timeout', 
+                                        409 => 'Conflict', 
+                                        410 => 'Gone', 
+                                        411 => 'Length Required', 
+                                        412 => 'Precondition Failed', 
+                                        413 => 'Request Entity Too Large', 
+                                        414 => 'Request-URI Too Long', 
+                                        415 => 'Unsupported Media Type', 
+                                        416 => 'Requested Range Not Satisfiable', 
+                                        417 => 'Expectation Failed', 
+                                        422 => 'Unprocessable Entity', 
+                                        423 => 'Locked', 
+                                        424 => 'Failed Dependency', 
+                                        426 => 'Upgrade Required', 
+                                        
+                                        500 => 'Internal Server Error', 
+                                        501 => 'Not Implemented', 
+                                        502 => 'Bad Gateway', 
+                                        503 => 'Service Unavailable', 
+                                        504 => 'Gateway Timeout', 
+                                        505 => 'HTTP Version Not Supported', 
+                                        506 => 'Variant Also Negotiates', 
+                                        507 => 'Insufficient Storage', 
+                                        510 => 'Not Extended' 
+        );
+    }
+    
+    if (isset ( $output_header_to_desc [$code] ))
+        return $output_header_to_desc [$code];
+    else
+        return '';
 }
 
 /**
@@ -78,7 +126,7 @@ function get_status_header_desc($code) {
  * @return string String with trailing slash added.
  */
 function trailingslashit($string) {
-	return untrailingslashit ( $string ) . '/';
+    return untrailingslashit ( $string ) . '/';
 }
 
 /**
@@ -93,7 +141,7 @@ function trailingslashit($string) {
  * @return string String without the trailing slash.
  */
 function untrailingslashit($string) {
-	return rtrim ( $string, '/\\' );
+    return rtrim ( $string, '/\\' );
 }
 
 /**
@@ -105,20 +153,20 @@ function untrailingslashit($string) {
  * @return bool True if path is absolute, false is not absolute.
  */
 function path_is_absolute($path) {
-	// this is definitive if true but fails if $path does not exist or contains
-	// a symbolic link
-	if (realpath ( $path ) == $path)
-		return true;
-	
-	if (strlen ( $path ) == 0 || $path {0} == '.')
-		return false;
-	
-		// windows allows absolute paths like this
-	if (preg_match ( '#^[a-zA-Z]:\\\\#', $path ))
-		return true;
-	
-		// a path starting with / or \ is absolute; anything else is relative
-	return ( bool ) preg_match ( '#^[/\\\\]#', $path );
+    // this is definitive if true but fails if $path does not exist or contains
+    // a symbolic link
+    if (realpath ( $path ) == $path)
+        return true;
+    
+    if (strlen ( $path ) == 0 || $path {0} == '.')
+        return false;
+        
+        // windows allows absolute paths like this
+    if (preg_match ( '#^[a-zA-Z]:\\\\#', $path ))
+        return true;
+        
+        // a path starting with / or \ is absolute; anything else is relative
+    return ( bool ) preg_match ( '#^[/\\\\]#', $path );
 }
 
 /**
@@ -133,10 +181,10 @@ function path_is_absolute($path) {
  * @return string The path with the base or absolute path.
  */
 function path_join($base, $path) {
-	if (path_is_absolute ( $path ))
-		return $path;
-	
-	return rtrim ( $base, '/' ) . '/' . ltrim ( $path, '/' );
+    if (path_is_absolute ( $path ))
+        return $path;
+    
+    return rtrim ( $base, '/' ) . '/' . ltrim ( $path, '/' );
 }
 
 /**
@@ -155,44 +203,81 @@ function path_join($base, $path) {
  * @return string The sanitized filename
  */
 function sanitize_file_name($filename) {
-	$special_chars = array ("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", chr ( 0 ) );
-	$filename = str_replace ( $special_chars, '', $filename );
-	$filename = preg_replace ( '/[\s-]+/', '-', $filename );
-	$filename = trim ( $filename, '.-_' );
-	// Split the filename into a base and extension[s]
-	$parts = explode ( '.', $filename );
-	// Return if only one extension
-	if (count ( $parts ) <= 2)
-		return $filename;
-	
-		// Process multiple extensions
-	$filename = array_shift ( $parts );
-	$extension = array_pop ( $parts );
-	
-	$mimes = array ('tmp', 'txt', 'jpg', 'gif', 'png', 'rar', 'zip', 'gzip', 'ppt' );
-	
-	// Loop over any intermediate extensions. Munge them with a trailing
-	// underscore if they are a 2 - 5 character
-	// long alpha string not in the extension whitelist.
-	foreach ( ( array ) $parts as $part ) {
-		$filename .= '.' . $part;
-		
-		if (preg_match ( '/^[a-zA-Z]{2,5}\d?$/', $part )) {
-			$allowed = false;
-			foreach ( $mimes as $ext_preg => $mime_match ) {
-				$ext_preg = '!(^' . $ext_preg . ')$!i';
-				if (preg_match ( $ext_preg, $part )) {
-					$allowed = true;
-					break;
-				}
-			}
-			if (! $allowed)
-				$filename .= '_';
-		}
-	}
-	$filename .= '.' . $extension;
-	
-	return $filename;
+    $special_chars = array (
+                            "?", 
+                            "[", 
+                            "]", 
+                            "/", 
+                            "\\", 
+                            "=", 
+                            "<", 
+                            ">", 
+                            ":", 
+                            ";", 
+                            ",", 
+                            "'", 
+                            "\"", 
+                            "&", 
+                            "$", 
+                            "#", 
+                            "*", 
+                            "(", 
+                            ")", 
+                            "|", 
+                            "~", 
+                            "`", 
+                            "!", 
+                            "{", 
+                            "}", 
+                            chr ( 0 ) 
+    );
+    $filename = str_replace ( $special_chars, '', $filename );
+    $filename = preg_replace ( '/[\s-]+/', '-', $filename );
+    $filename = trim ( $filename, '.-_' );
+    // Split the filename into a base and extension[s]
+    $parts = explode ( '.', $filename );
+    // Return if only one extension
+    if (count ( $parts ) <= 2)
+        return $filename;
+        
+        // Process multiple extensions
+    $filename = array_shift ( $parts );
+    $extension = array_pop ( $parts );
+    
+    $mimes = array (
+                    'tmp', 
+                    'txt', 
+                    'jpg', 
+                    'gif', 
+                    'png', 
+                    'rar', 
+                    'zip', 
+                    'gzip', 
+                    'ppt' 
+    );
+    
+    // Loop over any intermediate extensions. Munge them with a trailing
+    // underscore if they are a 2 - 5 character
+    // long alpha string not in the extension whitelist.
+    foreach ( ( array ) $parts as $part ) {
+        $filename .= '.' . $part;
+        
+        if (preg_match ( '/^[a-zA-Z]{2,5}\d?$/', $part )) {
+            $allowed = false;
+            foreach ( $mimes as $ext_preg => $mime_match ) {
+                $ext_preg = '!(^' . $ext_preg . ')$!i';
+                if (preg_match ( $ext_preg, $part )) {
+                    $allowed = true;
+                    break;
+                }
+            }
+            if (! $allowed)
+                $filename .= '_';
+        }
+    }
+    $filename .= '.' . $extension;
+    
+    return $filename;
 }
 
 /**
@@ -212,50 +297,50 @@ function sanitize_file_name($filename) {
  * @return string New filename, if given wasn't unique.
  */
 function unique_filename($dir, $filename, $unique_filename_callback = null) {
-	// sanitize the file name before we begin processing
-	$filename = sanitize_file_name ( $filename );
-	
-	// separate the filename into a name and extension
-	$info = pathinfo ( $filename );
-	$ext = ! empty ( $info ['extension'] ) ? '.' . $info ['extension'] : '';
-	$name = basename ( $filename, $ext );
-	
-	// edge case: if file is named '.ext', treat as an empty name
-	if ($name === $ext)
-		$name = '';
-	
-		// Increment the file number until we have a unique file to save in
-	// $dir. Use $override['unique_filename_callback'] if supplied.
-	if ($unique_filename_callback && is_callable ( $unique_filename_callback )) {
-		$filename = $unique_filename_callback ( $dir, $name );
-	} else {
-		$number = '';
-		
-		// change '.ext' to lower case
-		if ($ext && strtolower ( $ext ) != $ext) {
-			$ext2 = strtolower ( $ext );
-			$filename2 = preg_replace ( '|' . preg_quote ( $ext ) . '$|', $ext2, $filename );
-			
-			// check for both lower and upper case extension or image sub-sizes
-			// may be overwritten
-			while ( file_exists ( $dir . "/$filename" ) || file_exists ( $dir . "/$filename2" ) ) {
-				$new_number = $number + 1;
-				$filename = str_replace ( "$number$ext", "$new_number$ext", $filename );
-				$filename2 = str_replace ( "$number$ext2", "$new_number$ext2", $filename2 );
-				$number = $new_number;
-			}
-			return $filename2;
-		}
-		
-		while ( file_exists ( $dir . "/$filename" ) ) {
-			if ('' == "$number$ext")
-				$filename = $filename . ++ $number . $ext;
-			else
-				$filename = str_replace ( "$number$ext", ++ $number . $ext, $filename );
-		}
-	}
-	
-	return $filename;
+    // sanitize the file name before we begin processing
+    $filename = sanitize_file_name ( $filename );
+    
+    // separate the filename into a name and extension
+    $info = pathinfo ( $filename );
+    $ext = ! empty ( $info ['extension'] ) ? '.' . $info ['extension'] : '';
+    $name = basename ( $filename, $ext );
+    
+    // edge case: if file is named '.ext', treat as an empty name
+    if ($name === $ext)
+        $name = '';
+        
+        // Increment the file number until we have a unique file to save in
+        // $dir. Use $override['unique_filename_callback'] if supplied.
+    if ($unique_filename_callback && is_callable ( $unique_filename_callback )) {
+        $filename = $unique_filename_callback ( $dir, $name );
+    } else {
+        $number = '';
+        
+        // change '.ext' to lower case
+        if ($ext && strtolower ( $ext ) != $ext) {
+            $ext2 = strtolower ( $ext );
+            $filename2 = preg_replace ( '|' . preg_quote ( $ext ) . '$|', $ext2, $filename );
+            
+            // check for both lower and upper case extension or image sub-sizes
+            // may be overwritten
+            while ( file_exists ( $dir . "/$filename" ) || file_exists ( $dir . "/$filename2" ) ) {
+                $new_number = $number + 1;
+                $filename = str_replace ( "$number$ext", "$new_number$ext", $filename );
+                $filename2 = str_replace ( "$number$ext2", "$new_number$ext2", $filename2 );
+                $number = $new_number;
+            }
+            return $filename2;
+        }
+        
+        while ( file_exists ( $dir . "/$filename" ) ) {
+            if ('' == "$number$ext")
+                $filename = $filename . ++ $number . $ext;
+            else
+                $filename = str_replace ( "$number$ext", ++ $number . $ext, $filename );
+        }
+    }
+    
+    return $filename;
 }
 
 /**
@@ -274,27 +359,30 @@ function unique_filename($dir, $filename, $unique_filename_callback = null) {
  * @return array 查找到的文件
  */
 function find_files($dir = '.', $pattern = '', $excludes = array(), $recursive = 0, $stop = 0) {
-	$files = array ();
-	$dir = trailingslashit ( $dir );
-	if (is_dir ( $dir )) {
-		$fhd = @opendir ( $dir );
-		if ($fhd) {
-			$excludes = is_array ( $excludes ) ? $excludes : array ();
-			$_excludes = array_merge ( $excludes, array ('.', '..' ) );
-			while ( ($file = readdir ( $fhd )) !== false ) {
-				if ($recursive && is_dir ( $dir . $file ) && ! in_array ( $file, $_excludes )) {
-					if ($stop == 0 || $recursive <= $stop) {
-						$files = array_merge ( $files, find_files ( $dir . $file, $pattern, $excludes, $recursive + 1, $stop ) );
-					}
-				}
-				if (is_file ( $dir . $file ) && @preg_match ( $pattern, $file )) {
-					$files [] = $dir . $file;
-				}
-			}
-			@closedir ( $fhd );
-		}
-	}
-	return $files;
+    $files = array ();
+    $dir = trailingslashit ( $dir );
+    if (is_dir ( $dir )) {
+        $fhd = @opendir ( $dir );
+        if ($fhd) {
+            $excludes = is_array ( $excludes ) ? $excludes : array ();
+            $_excludes = array_merge ( $excludes, array (
+                                                        '.', 
+                                                        '..' 
+            ) );
+            while ( ($file = readdir ( $fhd )) !== false ) {
+                if ($recursive && is_dir ( $dir . $file ) && ! in_array ( $file, $_excludes )) {
+                    if ($stop == 0 || $recursive <= $stop) {
+                        $files = array_merge ( $files, find_files ( $dir . $file, $pattern, $excludes, $recursive + 1, $stop ) );
+                    }
+                }
+                if (is_file ( $dir . $file ) && @preg_match ( $pattern, $file )) {
+                    $files [] = $dir . $file;
+                }
+            }
+            @closedir ( $fhd );
+        }
+    }
+    return $files;
 }
 
 /**
@@ -307,16 +395,16 @@ function find_files($dir = '.', $pattern = '', $excludes = array(), $recursive =
  * @return string
  */
 function pfile_get_contents($file, $vars = array()) {
-	$content = false;
-	$file = trailingslashit ( WEB_ROOT ) . $file;
-	if (is_readable ( $file )) {
-		@extract ( $vars );
-		@ob_start ();
-		include $file;
-		$content = @ob_get_contents ();
-		@ob_end_clean ();
-	}
-	return $content;
+    $content = false;
+    $file = trailingslashit ( WEB_ROOT ) . $file;
+    if (is_readable ( $file )) {
+        @extract ( $vars );
+        @ob_start ();
+        include $file;
+        $content = @ob_get_contents ();
+        @ob_end_clean ();
+    }
+    return $content;
 }
 
 /**
@@ -326,22 +414,22 @@ function pfile_get_contents($file, $vars = array()) {
  * @return bool
  */
 function rmdirs($dir) {
-	$hd = @opendir ( $dir );
-	if ($hd) {
-		while ( ($file = readdir ( $hd )) != false ) {
-			if ($file == '.' || $file == '..') {
-				continue;
-			}
-			if (is_dir ( $dir . DS . $file )) {
-				rmdirs ( $dir . DS . $file );
-			} else {
-				@unlink ( $dir . DS . $file );
-			}
-		}
-		closedir ( $hd );
-		@rmdir ( $dir );
-	}
-	return true;
+    $hd = @opendir ( $dir );
+    if ($hd) {
+        while ( ($file = readdir ( $hd )) != false ) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            }
+            if (is_dir ( $dir . DS . $file )) {
+                rmdirs ( $dir . DS . $file );
+            } else {
+                @unlink ( $dir . DS . $file );
+            }
+        }
+        closedir ( $hd );
+        @rmdir ( $dir );
+    }
+    return true;
 }
 
 /**
@@ -356,10 +444,10 @@ function rmdirs($dir) {
  * @return mixed SESSION中的值
  */
 function sess_get($name, $default = "") {
-	if (isset ( $_SESSION [$name] )) {
-		return $_SESSION [$name];
-	}
-	return $default;
+    if (isset ( $_SESSION [$name] )) {
+        return $_SESSION [$name];
+    }
+    return $default;
 }
 
 /**
@@ -370,12 +458,12 @@ function sess_get($name, $default = "") {
  * @return mixed
  */
 function sess_del($name, $default = '') {
-	$value = sess_get ( $name, $default );
-	if (isset ( $_SESSION [$name] )) {
-		$_SESSION [$name] = null;
-		unset ( $_SESSION [$name] );
-	}
-	return $value;
+    $value = sess_get ( $name, $default );
+    if (isset ( $_SESSION [$name] )) {
+        $_SESSION [$name] = null;
+        unset ( $_SESSION [$name] );
+    }
+    return $value;
 }
 
 /**
@@ -390,21 +478,21 @@ function sess_del($name, $default = '') {
  * @return mixed
  */
 function safe_ids($ids, $sp = ",", $array = false) {
-	if (empty ( $ids )) {
-		return $array ? array () : null;
-	}
-	$_ids = explode ( $sp, $ids );
-	$ids = array ();
-	foreach ( $_ids as $id ) {
-		if (preg_match ( '/^[1-9]\d*$/', $id )) {
-			$ids [] = $id;
-		}
-	}
-	if ($array === false) {
-		return empty ( $ids ) ? null : implode ( $sp, $ids );
-	} else {
-		return empty ( $ids ) ? array () : $ids;
-	}
+    if (empty ( $ids )) {
+        return $array ? array () : null;
+    }
+    $_ids = explode ( $sp, $ids );
+    $ids = array ();
+    foreach ( $_ids as $id ) {
+        if (preg_match ( '/^[1-9]\d*$/', $id )) {
+            $ids [] = $id;
+        }
+    }
+    if ($array === false) {
+        return empty ( $ids ) ? null : implode ( $sp, $ids );
+    } else {
+        return empty ( $ids ) ? array () : $ids;
+    }
 }
 
 /**
@@ -413,15 +501,15 @@ function safe_ids($ids, $sp = ",", $array = false) {
  * @return string
  */
 function readable_size($size) {
-	if ($size < 1024) {
-		return $size . 'B';
-	} else if ($size < 1048576) {
-		return number_format ( $size / 1024, 2 ) . 'K';
-	} else if ($size < 1073741824) {
-		return number_format ( $size / 1048576, 2 ) . 'M';
-	} else {
-		return number_format ( $size / 1073741824, 2 ) . 'G';
-	}
+    if ($size < 1024) {
+        return $size . 'B';
+    } else if ($size < 1048576) {
+        return number_format ( $size / 1024, 2 ) . 'K';
+    } else if ($size < 1073741824) {
+        return number_format ( $size / 1048576, 2 ) . 'M';
+    } else {
+        return number_format ( $size / 1073741824, 2 ) . 'G';
+    }
 }
 
 /**
@@ -434,52 +522,52 @@ function readable_size($size) {
  * @return string
  */
 function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
-	$ckey_length = 4;
-	
-	$key = md5 ( $key ? $key : SECURITY_KEY );
-	$keya = md5 ( substr ( $key, 0, 16 ) );
-	$keyb = md5 ( substr ( $key, 16, 16 ) );
-	$keyc = $ckey_length ? ($operation == 'DECODE' ? substr ( $string, 0, $ckey_length ) : substr ( md5 ( microtime () ), - $ckey_length )) : '';
-	
-	$cryptkey = $keya . md5 ( $keya . $keyc );
-	$key_length = strlen ( $cryptkey );
-	
-	$string = $operation == 'DECODE' ? base64_decode ( substr ( $string, $ckey_length ) ) : sprintf ( '%010d', $expiry ? $expiry + time () : 0 ) . substr ( md5 ( $string . $keyb ), 0, 16 ) . $string;
-	$string_length = strlen ( $string );
-	
-	$result = '';
-	$box = range ( 0, 255 );
-	
-	$rndkey = array ();
-	for($i = 0; $i <= 255; $i ++) {
-		$rndkey [$i] = ord ( $cryptkey [$i % $key_length] );
-	}
-	
-	for($j = $i = 0; $i < 256; $i ++) {
-		$j = ($j + $box [$i] + $rndkey [$i]) % 256;
-		$tmp = $box [$i];
-		$box [$i] = $box [$j];
-		$box [$j] = $tmp;
-	}
-	
-	for($a = $j = $i = 0; $i < $string_length; $i ++) {
-		$a = ($a + 1) % 256;
-		$j = ($j + $box [$a]) % 256;
-		$tmp = $box [$a];
-		$box [$a] = $box [$j];
-		$box [$j] = $tmp;
-		$result .= chr ( ord ( $string [$i] ) ^ ($box [($box [$a] + $box [$j]) % 256]) );
-	}
-	
-	if ($operation == 'DECODE') {
-		if ((substr ( $result, 0, 10 ) == 0 || substr ( $result, 0, 10 ) - time () > 0) && substr ( $result, 10, 16 ) == substr ( md5 ( substr ( $result, 26 ) . $keyb ), 0, 16 )) {
-			return substr ( $result, 26 );
-		} else {
-			return '';
-		}
-	} else {
-		return $keyc . str_replace ( '=', '', base64_encode ( $result ) );
-	}
+    $ckey_length = 4;
+    
+    $key = md5 ( $key ? $key : SECURITY_KEY );
+    $keya = md5 ( substr ( $key, 0, 16 ) );
+    $keyb = md5 ( substr ( $key, 16, 16 ) );
+    $keyc = $ckey_length ? ($operation == 'DECODE' ? substr ( $string, 0, $ckey_length ) : substr ( md5 ( microtime () ), - $ckey_length )) : '';
+    
+    $cryptkey = $keya . md5 ( $keya . $keyc );
+    $key_length = strlen ( $cryptkey );
+    
+    $string = $operation == 'DECODE' ? base64_decode ( substr ( $string, $ckey_length ) ) : sprintf ( '%010d', $expiry ? $expiry + time () : 0 ) . substr ( md5 ( $string . $keyb ), 0, 16 ) . $string;
+    $string_length = strlen ( $string );
+    
+    $result = '';
+    $box = range ( 0, 255 );
+    
+    $rndkey = array ();
+    for($i = 0; $i <= 255; $i ++) {
+        $rndkey [$i] = ord ( $cryptkey [$i % $key_length] );
+    }
+    
+    for($j = $i = 0; $i < 256; $i ++) {
+        $j = ($j + $box [$i] + $rndkey [$i]) % 256;
+        $tmp = $box [$i];
+        $box [$i] = $box [$j];
+        $box [$j] = $tmp;
+    }
+    
+    for($a = $j = $i = 0; $i < $string_length; $i ++) {
+        $a = ($a + 1) % 256;
+        $j = ($j + $box [$a]) % 256;
+        $tmp = $box [$a];
+        $box [$a] = $box [$j];
+        $box [$j] = $tmp;
+        $result .= chr ( ord ( $string [$i] ) ^ ($box [($box [$a] + $box [$j]) % 256]) );
+    }
+    
+    if ($operation == 'DECODE') {
+        if ((substr ( $result, 0, 10 ) == 0 || substr ( $result, 0, 10 ) - time () > 0) && substr ( $result, 10, 16 ) == substr ( md5 ( substr ( $result, 26 ) . $keyb ), 0, 16 )) {
+            return substr ( $result, 26 );
+        } else {
+            return '';
+        }
+    } else {
+        return $keyc . str_replace ( '=', '', base64_encode ( $result ) );
+    }
 }
 
 /**
@@ -487,62 +575,66 @@ function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
  * @param array|string $files
  */
 function includes($files) {
-	if (! is_array ( $files )) {
-		$files = array ($files );
-	}
-	foreach ( $files as $file ) {
-		if (preg_match ( '/^::/', $file )) { // 从核心库加载
-			$file = str_replace ( '::', KISSGO, $file );
-		} else {
-			$file = APP_PATH . $file;
-		}
-		if (is_file ( $file )) {
-			include_once $file;
-		}
-	}
+    if (! is_array ( $files )) {
+        $files = array (
+                        $files 
+        );
+    }
+    foreach ( $files as $file ) {
+        if (preg_match ( '/^::/', $file )) { // 从核心库加载
+            $file = str_replace ( '::', KISSGO, $file );
+        } else {
+            $file = APP_PATH . $file;
+        }
+        if (is_file ( $file )) {
+            include_once $file;
+        }
+    }
 }
 /**
  * 加载已经安装模块中的文件
  * @internal param array|string $files
  */
 function imports() {
-	$args = func_get_args ();
-	if (empty ( $args ))
-		return;
-	foreach ( $args as $files ) {
-		if (! is_array ( $files )) {
-			$files = array ($files );
-		}
-		foreach ( $files as $file ) {
-			if (! is_module_file ( $file )) {
-				continue;
-			}
-			if (preg_match ( '/.+\*$/', $file )) {
-				$_files = glob ( MODULES_PATH . $file . '.php' );
-				foreach ( $_files as $_file ) {
-					if (is_file ( $_file )) {
-						include_once $_file;
-					}
-				}
-				$_files = glob ( KISSGO . 'modules' . DS . $file . '.php' );
-				foreach ( $_files as $_file ) {
-					if (is_file ( $_file )) {
-						include_once $_file;
-					}
-				}
-			} else {
-				$_file = MODULES_PATH . $file;
-				if (is_file ( $_file )) {
-					include_once $_file;
-				} else {
-					$_file = KISSGO . 'modules' . DS . $file;
-					if (is_file ( $_file )) {
-						include_once $_file;
-					}
-				}
-			}
-		}
-	}
+    $args = func_get_args ();
+    if (empty ( $args ))
+        return;
+    foreach ( $args as $files ) {
+        if (! is_array ( $files )) {
+            $files = array (
+                            $files 
+            );
+        }
+        foreach ( $files as $file ) {
+            if (! is_module_file ( $file )) {
+                continue;
+            }
+            if (preg_match ( '/.+\*$/', $file )) {
+                $_files = glob ( MODULES_PATH . $file . '.php' );
+                foreach ( $_files as $_file ) {
+                    if (is_file ( $_file )) {
+                        include_once $_file;
+                    }
+                }
+                $_files = glob ( KISSGO . 'modules' . DS . $file . '.php' );
+                foreach ( $_files as $_file ) {
+                    if (is_file ( $_file )) {
+                        include_once $_file;
+                    }
+                }
+            } else {
+                $_file = MODULES_PATH . $file;
+                if (is_file ( $_file )) {
+                    include_once $_file;
+                } else {
+                    $_file = KISSGO . 'modules' . DS . $file;
+                    if (is_file ( $_file )) {
+                        include_once $_file;
+                    }
+                }
+            }
+        }
+    }
 }
 /**
  * 
@@ -550,15 +642,15 @@ function imports() {
  * @param unknown_type $file
  */
 function is_module_file($file) {
-	global $_ksg_installed_modules;
-	if (is_array ( $_ksg_installed_modules ) && ! empty ( $_ksg_installed_modules )) {
-		foreach ( $_ksg_installed_modules as $module ) {
-			if (preg_match ( '#^' . $module . '/.+#', $file )) {
-				return true;
-			}
-		}
-	}
-	return false;
+    global $_ksg_installed_modules;
+    if (is_array ( $_ksg_installed_modules ) && ! empty ( $_ksg_installed_modules )) {
+        foreach ( $_ksg_installed_modules as $module ) {
+            if (preg_match ( '#^' . $module . '/.+#', $file )) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 /**
  * 合并$base与$arr
@@ -568,10 +660,10 @@ function is_module_file($file) {
  * @return array 如果$base为空或$base不是一个array则直接返回$arr,反之返回array_merge($base,$arr)
  */
 function array_merge2($base, $arr) {
-	if (empty ( $base ) || ! is_array ( $base )) {
-		return $arr;
-	}
-	return array_merge ( $base, $arr );
+    if (empty ( $base ) || ! is_array ( $base )) {
+        return $arr;
+    }
+    return array_merge ( $base, $arr );
 }
 
 /**
@@ -581,36 +673,36 @@ function array_merge2($base, $arr) {
  * @return string
  */
 function safe_url($page) {
-	global $_CURRENT_PAGE;
-	static $domain = false, $protocol = false, $port = '';
-	if (! $domain) {
-		$domain = preg_match ( '#^https?://#i', BASE_URL ) ? preg_replace ( '#^https?://#i', '', trim ( BASE_URL, '/' ) ) : $_SERVER ['HTTP_HOST'];
-		$domain = strstr ( $domain, "." );
-		$protocol = isset ( $_SERVER ['HTTPS'] ) ? 'https://' : 'http://';
-		$port = intval ( $_SERVER ['SERVER_PORT'] ) == 80 ? '' : ':' . $_SERVER ['SERVER_PORT'];
-	}
-	if (is_string ( $page )) {
-		$url = $page;
-		$page = $_CURRENT_PAGE;
-	} else {
-		$url = $page ['url'];
-	}
-	if (preg_match ( '/index\.html?$/i', $url )) {
-		$url = preg_replace ( '/index\.html?$/i', '', $url );
-	}
-	if (preg_match ( '#^(http|ftp)s?://#i', $url )) {
-		return $url;
-	} else {
-		$url = ltrim ( $url, '/' );
-		if (isset ( $page ['bind'] ) && ! empty ( $page ['bind'] )) { //绑定了二级域名
-			if (! empty ( $page ['domain_home'] ) || ! empty ( $page ['home'] )) { //是二级域名的首页啦，要清空url
-				$url = '';
-			}
-			return $protocol . $page ['bind'] . $domain . $port . '/' . $url;
-		} else {
-			return BASE_URL . $url;
-		}
-	}
+    global $_CURRENT_PAGE;
+    static $domain = false, $protocol = false, $port = '';
+    if (! $domain) {
+        $domain = preg_match ( '#^https?://#i', BASE_URL ) ? preg_replace ( '#^https?://#i', '', trim ( BASE_URL, '/' ) ) : $_SERVER ['HTTP_HOST'];
+        $domain = strstr ( $domain, "." );
+        $protocol = isset ( $_SERVER ['HTTPS'] ) ? 'https://' : 'http://';
+        $port = intval ( $_SERVER ['SERVER_PORT'] ) == 80 ? '' : ':' . $_SERVER ['SERVER_PORT'];
+    }
+    if (is_string ( $page )) {
+        $url = $page;
+        $page = $_CURRENT_PAGE;
+    } else {
+        $url = $page ['url'];
+    }
+    if (preg_match ( '/index\.html?$/i', $url )) {
+        $url = preg_replace ( '/index\.html?$/i', '', $url );
+    }
+    if (preg_match ( '#^(http|ftp)s?://#i', $url )) {
+        return $url;
+    } else {
+        $url = ltrim ( $url, '/' );
+        if (isset ( $page ['bind'] ) && ! empty ( $page ['bind'] )) { //绑定了二级域名
+            if (! empty ( $page ['domain_home'] ) || ! empty ( $page ['home'] )) { //是二级域名的首页啦，要清空url
+                $url = '';
+            }
+            return $protocol . $page ['bind'] . $domain . $port . '/' . $url;
+        } else {
+            return BASE_URL . $url;
+        }
+    }
 }
 
 /**
@@ -621,11 +713,16 @@ function safe_url($page) {
  * @param int $level 调试级别
  */
 function log_message($message, $trace_info, $level) {
-	static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
-	if ($level >= DEBUG) {
-		$msg = date ( "Y-m-d H:i:s" ) . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
-		@error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
-	}
+    static $log_name = array (
+                            DEBUG_INFO => 'INFO', 
+                            DEBUG_WARN => 'WARN', 
+                            DEBUG_DEBUG => 'DEBUG', 
+                            DEBUG_ERROR => 'ERROR' 
+    );
+    if ($level >= DEBUG) {
+        $msg = date ( "Y-m-d H:i:s" ) . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
+        @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
+    }
 }
 
 /**
@@ -634,8 +731,8 @@ function log_message($message, $trace_info, $level) {
  * @param string $message
  */
 function log_debug($message) {
-	$trace = debug_backtrace ();
-	log_message ( $message, $trace [0], DEBUG_DEBUG );
+    $trace = debug_backtrace ();
+    log_message ( $message, $trace [0], DEBUG_DEBUG );
 }
 
 /**
@@ -644,8 +741,8 @@ function log_debug($message) {
  * @param string $message
  */
 function log_info($message) {
-	$trace = debug_backtrace ();
-	log_message ( $message, $trace [0], DEBUG_INFO );
+    $trace = debug_backtrace ();
+    log_message ( $message, $trace [0], DEBUG_INFO );
 }
 
 /**
@@ -654,8 +751,8 @@ function log_info($message) {
  * @param string $message
  */
 function log_warn($message) {
-	$trace = debug_backtrace ();
-	log_message ( $message, $trace [0], DEBUG_WARN );
+    $trace = debug_backtrace ();
+    log_message ( $message, $trace [0], DEBUG_WARN );
 }
 
 /**
@@ -664,8 +761,8 @@ function log_warn($message) {
  * @param string $message
  */
 function log_error($message) {
-	$trace = debug_backtrace ();
-	log_message ( $message, $trace [0], DEBUG_ERROR );
+    $trace = debug_backtrace ();
+    log_message ( $message, $trace [0], DEBUG_ERROR );
 }
 
 /**
@@ -674,7 +771,7 @@ function log_error($message) {
  * @return string
  */
 function mpath($uri) {
-	return untrailingslashit ( apply_filter ( 'get_module_path_from_path', $uri ) );
+    return untrailingslashit ( apply_filter ( 'get_module_path_from_path', $uri ) );
 }
 
 /**
@@ -685,25 +782,25 @@ function mpath($uri) {
  * @return string
  */
 function murl($module, $action = '', $args = '') {
-	$url = trailingslashit ( apply_filter ( 'get_module_url_from_path', $module ) );
-	if (! empty ( $action )) {
-		$url .= $action;
-	}
-	if (! empty ( $args )) {
-		if (is_string ( $args )) {
-			$url .= '?' . ltrim ( $args, '?&' );
-		} else if (is_array ( $args )) {
-			$_args = array ();
-			foreach ( $args as $key => $val ) {
-				$_args [] = $key . '=' . urlencode ( $val );
-			}
-			$url .= '?' . implode ( '&', $_args );
-		}
-	}
-	if (! defined ( 'CLEAN_URL' ) || CLEAN_URL == false) {
-		$url = 'index.php/' . $url;
-	}
-	return BASE_URL . $url;
+    $url = trailingslashit ( apply_filter ( 'get_module_url_from_path', $module ) );
+    if (! empty ( $action )) {
+        $url .= $action;
+    }
+    if (! empty ( $args )) {
+        if (is_string ( $args )) {
+            $url .= '?' . ltrim ( $args, '?&' );
+        } else if (is_array ( $args )) {
+            $_args = array ();
+            foreach ( $args as $key => $val ) {
+                $_args [] = $key . '=' . urlencode ( $val );
+            }
+            $url .= '?' . implode ( '&', $_args );
+        }
+    }
+    if (! defined ( 'CLEAN_URL' ) || CLEAN_URL == false) {
+        $url = 'index.php/' . $url;
+    }
+    return BASE_URL . $url;
 }
 
 /**
@@ -717,57 +814,144 @@ function murl($module, $action = '', $args = '') {
  * 排序字段
  * @param string $sort
  * 默认排序
+ * @param string $url 
  * @return string
  */
-function sortheader($text, $filed, $sort = 'd') {
-	$url = Request::getUri ();
-	$stext = '';
-	if (preg_match ( '/_sf=' . $filed . '/', $_SERVER ['QUERY_STRING'] )) {
-		if (preg_match ( '/_sd=([ad])/', $_SERVER ['QUERY_STRING'], $_sort )) {
-			$sort = $_sort [1] == 'a' ? 'd' : 'a';
-			$stext = $_sort [1] == 'a' ? '<i class="asc"></i>' : '<i class="desc"></i>';
-		}
-	}
-	! empty ( $stext ) or $stext = '<i class="sdir"></i>';
-	$qs = preg_replace ( array ('/[&\?]?_sf=[^&]*/', '/[&\?]?_sd=[^&]*/' ), array ('', '' ), $url );
-	$ss = '_sf=' . $filed . '&_sd=' . $sort;
-	$qs .= (strpos ( $qs, '?' ) === false ? '?' : '&') . $ss;
-	return sprintf ( '<div class="sortheader"><a href="%s">%s</a>%s</div>', $qs, $text, $stext );
+function sortheader($text, $filed, $sort = 'd', $url = '') {
+    if (empty ( $url )) {
+        $url = Request::getUri ();
+    }
+    $stext = '';
+    if (preg_match ( '/_sf=' . $filed . '/', $_SERVER ['QUERY_STRING'] )) {
+        if (preg_match ( '/_sd=([ad])/', $_SERVER ['QUERY_STRING'], $_sort )) {
+            $sort = $_sort [1] == 'a' ? 'd' : 'a';
+            $stext = $_sort [1] == 'a' ? '<i class="asc"></i>' : '<i class="desc"></i>';
+        }
+    }
+    ! empty ( $stext ) or $stext = '<i class="sdir"></i>';
+    $qs = preg_replace ( array (
+                                '/[&\?]?_sf=[^&]*/', 
+                                '/[&\?]?_sd=[^&]*/' 
+    ), array (
+            '', 
+            '' 
+    ), $url );
+    $ss = '_sf=' . $filed . '&_sd=' . $sort;
+    $qs .= (strpos ( $qs, '?' ) === false ? '?' : '&') . $ss;
+    return sprintf ( '<div class="sortheader"><a href="%s">%s</a>%s</div>', $qs, $text, $stext );
 }
-
+/**
+ * 分页
+ *
+ *
+ * @param int $total
+ * 记录总数
+ * @param int $limit
+ * 每页记录数,默认为15
+ * @param int $cur
+ * 当前是第几页,默认从URL获取
+ * @param string $param
+ * 分页参数,默认为start
+ * @param int $pp
+ * 每页显示几条页数导航,默认为10
+ * @param string $url
+ * 分页链接,不需要添加参数
+ * @return string 分页HTML片断
+ */
+function paging($total, $limit = 15, $cur = null, $param = 'start', $pp = 10, $url = null) {
+    $req = Request::getInstance ();
+    $cur != null or $cur = $req->get ( $param, 1 );
+    if (empty ( $url )) {
+        $url = Request::getUri ();
+    }
+    $limit = empty ( $limit ) ? 10 : $limit;
+    $total = intval ( $total );
+    $tp = ceil ( $total / $limit ); // 一共有多少页
+    $qs = preg_replace ( '/[&\?]?' . $param . '=\d*/', '', $url );
+    $qs .= (strpos ( $qs, '?' ) === false ? '?' : '&') . $param . '=';
+    $url = $qs;
+    $pager [] = '<ul>';
+    $pager [] = sprintf ( '<li><a>共%s条记录,每页%d条记录,', $total, $limit );
+    $_cp = $cur * $limit;
+    $_cp = $_cp > $total ? $total : $_cp;
+    if ($_cp > 0) {
+        $pager [] = sprintf ( '第%s~%s条记录</a></li>', ($cur - 1) * $limit + 1, $_cp );
+    } else {
+        $pager [] = '</a></li>';
+    }
+    if ($tp > 1) {
+        if ($cur == 1) { // 当前在第一页
+            $pager [] = '<li><a>首</a></li><li><a>上</a></li>';
+        } else {
+            $pager [] = sprintf ( '<li><a title="第一页" href="%s">首</a></li><li><a title="上一页" href="%s">上</a></li>', $url . '1', $url . ($cur - 1) );
+        }
+        // 向前后各多少页
+        $sp = $pp % 2 == 0 ? $pp / 2 : ($pp - 1) / 2;
+        if ($cur <= $sp) {
+            $start = 1;
+            $end = $pp;
+            $end = $end > $tp ? $tp : $end;
+        } else {
+            $start = $cur - $sp;
+            $end = $cur + $sp;
+            if ($pp % 2 == 0) {
+                $end -= 1;
+            }
+            if ($end >= $tp) {
+                $start -= ($end - $tp);
+                $start > 0 or $start = 1;
+                $end = $tp;
+            }
+        }
+        for($i = $start; $i <= $end; $i ++) {
+            if ($i == $cur) {
+                $pager [] = sprintf ( '<li class="active"><a>%d</a></li>', $i );
+            } else {
+                $pager [] = sprintf ( '<li><a href="%s" title="第%d页">%d</a></li>', $url . $i, $i, $i );
+            }
+        }
+        if ($cur == $tp) {
+            $pager [] = '<li><a>下</a></li><li><a>尾</a></li>';
+        } else {
+            $pager [] = sprintf ( '<li><a title="下一页" href="%s">下</a></li><li><a title="最后一页" href="%s">尾</a></li>', $url . ($cur + 1), $url . $tp );
+        }
+    }
+    $pager [] = '</ul>';
+    return implode ( "", $pager );
+}
 /**
  * 生成带参数的页面url
  */
 function build_page_url($url, $args) {
-	static $params = null;
-	if (is_null ( $params )) {
-		parse_str ( $_SERVER ['QUERY_STRING'], $params );
-		unset ( $params ['_url'] );
-	}
-	$url = explode ( '?', $url );
-	$url = $url [0];
-	$pargs = $params;
-	if (! empty ( $args )) {
-		$argnames = array_shift ( $args );
-		$argnames = explode ( ',', $argnames );
-		$i = 0;
-		foreach ( $argnames as $n ) {
-			if (preg_match ( '#^\-([a-z_][a-z\d_-]*)$#', $n, $m )) {
-				unset ( $pargs [$m [1]] );
-			} else {
-				$pargs [$n] = $args [$i ++];
-			}
-		}
-	}
-	if (! empty ( $pargs ) && ! preg_match ( '/.*#$/', $url )) {
-		if (strpos ( $url, '?' ) === false) {
-			return $url . '?' . http_build_query ( $pargs );
-		} else {
-			return $url . '&' . http_build_query ( $pargs );
-		}
-	} else {
-		return $url;
-	}
+    static $params = null;
+    if (is_null ( $params )) {
+        parse_str ( $_SERVER ['QUERY_STRING'], $params );
+        unset ( $params ['_url'] );
+    }
+    $url = explode ( '?', $url );
+    $url = $url [0];
+    $pargs = $params;
+    if (! empty ( $args )) {
+        $argnames = array_shift ( $args );
+        $argnames = explode ( ',', $argnames );
+        $i = 0;
+        foreach ( $argnames as $n ) {
+            if (preg_match ( '#^\-([a-z_][a-z\d_-]*)$#', $n, $m )) {
+                unset ( $pargs [$m [1]] );
+            } else {
+                $pargs [$n] = $args [$i ++];
+            }
+        }
+    }
+    if (! empty ( $pargs ) && ! preg_match ( '/.*#$/', $url )) {
+        if (strpos ( $url, '?' ) === false) {
+            return $url . '?' . http_build_query ( $pargs );
+        } else {
+            return $url . '&' . http_build_query ( $pargs );
+        }
+    } else {
+        return $url;
+    }
 }
 /**
  * 
@@ -776,15 +960,15 @@ function build_page_url($url, $args) {
  * @return string
  */
 function html_tag_properties($properties) {
-	if (empty ( $properties )) {
-		return '';
-	}
-	$tmp_ary = array ();
-	foreach ( $properties as $name => $val ) {
-		$name = trim ( $name );
-		$tmp_ary [] = $name . '="' . $val . '"';
-	}
-	return ' ' . implode ( ' ', $tmp_ary ) . ' ';
+    if (empty ( $properties )) {
+        return '';
+    }
+    $tmp_ary = array ();
+    foreach ( $properties as $name => $val ) {
+        $name = trim ( $name );
+        $tmp_ary [] = $name . '="' . $val . '"';
+    }
+    return ' ' . implode ( ' ', $tmp_ary ) . ' ';
 }
 /**
  * 
@@ -794,42 +978,30 @@ function html_tag_properties($properties) {
  * @param string $sep 相加时的分隔符
  * @return array 合并后的数组
  */
-function merge_add($ary1,$ary2,$sep = ' '){
-    foreach ($ary2 as $key => $val){
-        if(isset($ary1[$key])){
-            if(is_array($ary1[$key]) && is_array($val)){
-                $ary1[$key] = merge_add($ary1[$key],$val);
-            }else if(is_array($ary1[$key]) && !is_array($val)){
-                $ary1[$key][] = $val;
-            }else if(!is_array($ary1[$key]) && is_array($val)){
-                $val[] = $ary1[$key];
-                $ary1[$key] = $val;
-            }else{
-                $ary1[$key] = $ary1[$key]. $sep . $val;
+function merge_add($ary1, $ary2, $sep = ' ') {
+    foreach ( $ary2 as $key => $val ) {
+        if (isset ( $ary1 [$key] )) {
+            if (is_array ( $ary1 [$key] ) && is_array ( $val )) {
+                $ary1 [$key] = merge_add ( $ary1 [$key], $val );
+            } else if (is_array ( $ary1 [$key] ) && ! is_array ( $val )) {
+                $ary1 [$key] [] = $val;
+            } else if (! is_array ( $ary1 [$key] ) && is_array ( $val )) {
+                $val [] = $ary1 [$key];
+                $ary1 [$key] = $val;
+            } else {
+                $ary1 [$key] = $ary1 [$key] . $sep . $val;
             }
-        }else{
-            $ary1[$key] = $val;
+        } else {
+            $ary1 [$key] = $val;
         }
     }
     return $ary1;
 }
 /**
- * 
- * 读取配置
- * @param string $name 配置
- * @param mixed $default 默认名
- * @param string $group 配置组
- */
-function cfgv($name, $default = '', $group = 'default') {
-
-}
-/**
  * 显示消息提示页面
  *
  * @param string $type
- * 消息类型
- * @param string $title
- * 提示标题
+ * 消息类型 
  * @param string $message
  * 消息内容
  * @param string $redirect
@@ -837,18 +1009,53 @@ function cfgv($name, $default = '', $group = 'default') {
  * @param int $timeout
  * 跳转时间,当$redirect为空时，些值无效
  */
-function show_message($type, $title, $message, $redirect = '', $timeout = 5) {
-	echo $type, ':', $title, '<br/>', $message;
-	exit ();
+function show_message($type, $message, $redirect = '') {
+    static $titles = array (
+                            'error' => '出错啦!', 
+                            'warning' => '警告!', 
+                            'info' => '提示!' 
+    );
+    $msg ['type'] = $type;
+    $msg ['message'] = $message;
+    $msg ['title'] = $titles [$type];
+    if (! Request::isAjaxRequest ()) { //html 
+        if (Request::isGet ()) {
+            $redirect = $redirect ? $redirect : Request::getUri ();
+        } else {
+            $redirect = $redirect ? $redirect : $_SERVER ['HTTP_REFERER'];
+        }
+        $msg ['redirect'] = $redirect;
+        $view = template ( 'common/error.tpl', $msg );
+    } else { //ajax        
+        @header ( 'X-AJAX-MESSAGE: ' . $type );
+        status_header ( 500 );
+        $view = new JsonView ( $msg );
+    }
+    echo $view->render ();
+    Response::getInstance ()->close ();
 }
 /**
  * 
- * @param string $title
  * @param string $message
  * @param string $redirect
- * @param int $timeout
  */
-function show_error_message($title, $message, $redirect = '', $timeout = 5) {
-	show_message ( 'error', $title, $message, $redirect, $timeout );
+function show_error_message($message, $redirect = '') {
+    show_message ( 'error', $message, $redirect );
+}
+/**
+ *
+ * @param string $message
+ * @param string $redirect
+ */
+function show_warning_message($message, $redirect = '') {
+    show_message ( 'warning', $message, $redirect );
+}
+/**
+ *
+ * @param string $message
+ * @param string $redirect
+ */
+function show_info_message($message, $redirect = '') {
+    show_message ( 'info', $message, $redirect );
 }
 // end of file functions.php

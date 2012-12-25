@@ -5,23 +5,22 @@
  * @author LeoNing
  *
  */
-class PluginManager {
+class ExtensionManager {
     private static $INSTANCE = false;
     private $extensions = array ();
     private $plugins = array (); //enabled plugins
-    private $modules = array (); //enabled modules
-    private $allPlugins = array ();
-    private $allModules = array ();
+    private $modules = array (); //enabled modules    
     private $installed = array ();
     private $uninstalled = array ();
+    private $getUpgradeInfo = false;
     /**
 	 * 获取系统唯一插件管理器实例
 	 *
-	 * @return PluginManager
+	 * @return ExtensionManager
 	 */
     public static function getInstance() {
         if (! self::$INSTANCE) {
-            self::$INSTANCE = new PluginManager ();
+            self::$INSTANCE = new ExtensionManager ();
         }
         return self::$INSTANCE;
     }
@@ -52,32 +51,9 @@ class PluginManager {
                     $this->modules [] = $plugin ['Plugin'];
                 }
             }
-            $this->load_modules ( $this->modules );
-            $this->load_plugins ( $this->plugins );
+            $this->load ( $this->modules );
+            $this->load ( $this->plugins, 'plugin' );
         }
-    }
-    /**
-	 * 插件$pluginID是否启用
-	 *
-	 * @param string $pluginID        	
-	 * @return boolean
-	 */
-    public static function enabled($pluginID, $forbidden = true) {
-        static $pm = false;
-        if (! $pm) {
-            $pm = self::getInstance ();
-        }
-        $enabled = $pm->isEnabled ( $pluginID );
-        if ($enabled) {
-            return true;
-        } else if (! $forbidden) {
-            return false;
-        } else {
-            Response::error ( '', 403, true );
-        }
-    }
-    public function isEnabled($pluginID) {
-        return isset ( $this->plugins [$pluginID] ) && empty ( $this->plugins [$pluginID] ['disabled'] );
     }
     /**
 	 * 保存已经安装插件信息
@@ -90,6 +66,7 @@ class PluginManager {
         foreach ( $extensions as $o ) {
             $pluginsStr [] = "[{$o['Plugin_ID']}]";
             foreach ( $o as $key => $val ) {
+                $val = str_replace ( '!', '！', $val );
                 $pluginsStr [] = "\t{$key} = {$val}";
             }
         }
@@ -101,44 +78,52 @@ class PluginManager {
         }
         return false;
     }
-    // 扫描插件信息
-    private function scanPlugins() {
-        $coreModules = find_files ( KISSGO . 'modules', '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $coreModules )) {
-            foreach ( $coreModules as $plugin_file ) {
-                $this->loadExtension ( $plugin_file, 1 );
-            }
-        }
-        $coreModules = find_files ( KISSGO . 'plugins', '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $coreModules )) {
-            foreach ( $coreModules as $plugin_file ) {
-                $this->loadExtension ( $plugin_file, 1, 'plugin' );
-            }
-        }
-        $allPlugins = find_files ( PLUGIN_PATH, '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $allPlugins )) {
-            foreach ( $allPlugins as $plugin_file ) {
-                $this->loadExtension ( $plugin_file, 0, 'plugin' );
-            }
-        }
-        $allPlugins = find_files ( MODULES_PATH, '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $allPlugins )) {
-            foreach ( $allPlugins as $plugin_file ) {
-                $this->loadExtension ( $plugin_file );
-            }
-        }
-    }
-    private function loadExtension($file, $core = 0, $type = 'module') {
-        $plg = $this->getExensionInfo ( $file, $core, $type );
-        if ($plg) {
-            if ($type == 'module') {
-                $this->allModules [$plg ['Plugin_ID']] = $plg;
+    public function installExtension($pid, $type = "module") {
+        if (isset ( $this->uninstalled [$type] [$pid] )) {
+            $extension = $this->uninstalled [$type] [$pid];            
+            $extension ['disabled'] = 0;
+            $extension ['Installed_Time'] = time ();
+            $plugin ['unremovable'] = 0;
+            $this->extensions [] = $extension;
+            $rst = $this->saveExtensionsData ();
+            if ($rst) {
+                return true;
             } else {
-                $this->allPlugins [$plg ['Plugin_ID']] = $plg;
+                return "无法保存扩展配置文件.";
             }
+        } else {
+            return "插件不存在或已经安装.";
         }
     }
-    
+    public function upgradeExtension($pid) {
+        if (isset ( $this->extensions [$pid] )) {
+            $file = APP_PATH . $this->extensions [$pid] ['pkg_file'];
+            $plugin = $this->getExensionInfo ( $file, $this->extensions [$pid] ['core'], $this->extensions [$pid] ['type'] );
+            if ($plugin) {
+                unset ( $plugin ['upgradable'] );
+                $this->extensions [$pid] = $plugin;
+                return $this->saveExtensionsData ();
+            }
+        } else {
+            return false;
+        }
+    }
+    public function uninstallExtension($pid) {
+        if (isset ( $this->extensions [$pid] )) {
+            unset ( $this->extensions [$pid] );
+            return $this->saveExtensionsData ();
+        } else {
+            return false;
+        }
+    }
+    public function enableExtension($pid, $enabled = 1) {
+        if (isset ( $this->extensions [$pid] )) {
+            $this->extensions [$pid] ['disabled'] = $enabled ? 0 : 1;
+            return $this->saveExtensionsData ();
+        } else {
+            return false;
+        }
+    }
     /**
 	 * 取插件系统
 	 *
@@ -149,11 +134,17 @@ class PluginManager {
         static $scaned = false;
         if (! $scaned) {
             $scaned = true;
-            $this->scanPlugins ();
+            $this->scanExentions ();
         }
-        return $installed ? $this->installed [$type] : $this->uninstalled [$type];
+        $extensions = $installed ? $this->installed [$type] : $this->uninstalled [$type];
+        if (is_array ( $extensions )) {
+            return $extensions;
+        }
+        return array ();
     }
-    
+    public function enableUpgradeInfo($upgrade = true) {
+        $this->getUpgradeInfo = $upgrade;
+    }
     // 加载插件信息
     public function getExensionInfo($plugin_file, $core = 0, $type = 'module') {
         $content = file_get_contents ( $plugin_file );
@@ -184,7 +175,7 @@ class PluginManager {
         if (preg_match ( '/Version\s*:\s+(.*)/', $content, $Version )) {
             $plugin ['Version'] = trim ( $Version [1] );
         } else {
-            $plugin ['Version'] = '';
+            $plugin ['Version'] = '0';
         }
         if (preg_match ( '/Author\s+URI\s*:\s+(.*)/', $content, $URI )) {
             $plugin ['Author_URI'] = trim ( $URI [1] );
@@ -209,11 +200,17 @@ class PluginManager {
         ), str_replace ( '/', DS, $plugin_file ) );
         $plugin ['core'] = $core;
         $plugin ['type'] = $type;
+        $plugin ['pkg_file'] = str_replace ( APP_PATH, '', $plugin_file );
         $extensions = $this->extensions;
         if (isset ( $extensions [$plugin ['Plugin_ID']] )) {
             $plugin ['Installed'] = true;
             $plugin ['disabled'] = $extensions [$plugin ['Plugin_ID']] ['disabled'];
-            $plugin ['Installed_Time'] = $extensions [$plugin ['Plugin_ID']] ['installed'];
+            $plugin ['Installed_Time'] = $extensions [$plugin ['Plugin_ID']] ['Installed_Time'];
+            $plugin ['unremovable'] = $extensions [$plugin ['Plugin_ID']] ['unremovable'];
+            $plugin ['upgradable'] = $this->isUpgradable ( $plugin, $extensions [$plugin ['Plugin_ID']] ['Version'] );
+            if ($this->getUpgradeInfo) {
+                $plugin ['curVersion'] = $extensions [$plugin ['Plugin_ID']] ['Version'];
+            }
             $this->installed [$type] [$plugin ['Plugin_ID']] = $plugin;
         } else {
             $plugin ['Installed'] = false;
@@ -223,41 +220,62 @@ class PluginManager {
         }
         return $plugin;
     }
-    public function load_modules($modules) {
-        global $_ksg_installed_modules;
-        if (is_array ( $modules )) {
+    public function load($extensions, $type = 'module', $pkg = false) {
+        global $_ksg_installed_modules, $_ksg_installed_plugins;
+        if (is_array ( $extensions )) {
             $app_init_files = array ();
-            foreach ( $modules as $app ) {
+            foreach ( $extensions as $app ) {
                 $app_path = $app;
                 if (preg_match ( '/^::/', $app )) {
                     $app_path = ltrim ( $app, ':' );
-                    $app_init_files [] = str_replace ( '::', '::modules/', $app ) . '/__init__.php';
+                    
+                    $app_init_files [] = str_replace ( '::', "::{$type}s/", $app ) . ($pkg ? '/__pkg__.php' : '/__init__.php');
                 } else {
-                    $app_init_files [] = MODULE_DIR . '/' . $app . '/__init__.php';
+                    $app_init_files [] = ($type == 'module' ? MODULE_DIR : PLUGIN_PATH) . '/' . $app . ($pkg ? '/__pkg__.php' : '/__init__.php');
                 }
-                $_ksg_installed_modules [] = $app_path;
+                if (! $pkg) {
+                    if ($type == 'module') {
+                        $_ksg_installed_modules [] = $app_path;
+                    } else {
+                        $_ksg_installed_plugins [] = $app_path;
+                    }
+                }
             }
             if (! empty ( $app_init_files )) {
                 includes ( $app_init_files );
             }
         }
     }
-    public function load_plugins($plugins) {
-        if (is_array ( $plugins ) && ! empty ( $plugins )) {
-            $plg_init_files = array ();
-            foreach ( $plugins as $plg ) {
-                $app_path = $plg;
-                if (preg_match ( '/^::/', $plg )) {
-                    $app_path = ltrim ( $plg, ':' );
-                    $plg_init_files [] = str_replace ( '::', '::plugins/', $plg );
-                } else {
-                    $plg_init_files [] = 'plugins/' . $plg;
-                }
-                $_ksg_installed_plugins [] = $app_path;
-            }
-            if (! empty ( $plg_init_files )) {
-                includes ( $plg_init_files );
+    // 扫描插件信息
+    private function scanExentions() {
+        $coreModules = find_files ( KISSGO . 'modules', '/^__pkg__\.php$/', array (), 1, 1 );
+        if (! empty ( $coreModules )) {
+            foreach ( $coreModules as $plugin_file ) {
+                $this->getExensionInfo ( $plugin_file, 1 );
             }
         }
+        $coreModules = find_files ( KISSGO . 'plugins', '/^__pkg__\.php$/', array (), 1, 1 );
+        if (! empty ( $coreModules )) {
+            foreach ( $coreModules as $plugin_file ) {
+                $this->getExensionInfo ( $plugin_file, 1, 'plugin' );
+            }
+        }
+        $allPlugins = find_files ( PLUGIN_PATH, '/^__pkg__\.php$/', array (), 1, 1 );
+        if (! empty ( $allPlugins )) {
+            foreach ( $allPlugins as $plugin_file ) {
+                $this->getExensionInfo ( $plugin_file, 0, 'plugin' );
+            }
+        }
+        $allPlugins = find_files ( MODULES_PATH, '/^__pkg__\.php$/', array (), 1, 1 );
+        if (! empty ( $allPlugins )) {
+            foreach ( $allPlugins as $plugin_file ) {
+                $this->getExensionInfo ( $plugin_file );
+            }
+        }
+    }
+    private function isUpgradable($plugin, $curVersion) {
+        //if($this->getUpgradeInfo){
+        //}
+        return version_compare ( $plugin ['Version'], $curVersion, '>' );
     }
 }

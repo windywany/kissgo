@@ -1,0 +1,27 @@
+th.span2 {
+	text-align: center;
+}
+
+td.status {
+	background: transparent url(../images/loading.gif) no-repeat center
+		center;
+}
+
+.success td.status {
+	background-image: url(../images/accept.png);
+}
+
+.error td.status {
+	background-image: url(../images/error.png);
+}
+
+.control-label span {
+	color: red;
+}
+
+table caption {
+	padding-left: 5px;
+	margin-bottom: 5px;
+	text-align: left;
+	font-weight: bold;
+}

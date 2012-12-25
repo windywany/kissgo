@@ -2,7 +2,7 @@
 <!-- container -->
 <div id="container">
 <div class="container-fluid">
-    <div id="container-wrap">
+    <div id="container-wrap" class="small">
         <div id="sidebar">
             {block name="sidebar"}{/block}
         </div>

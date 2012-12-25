@@ -222,10 +222,20 @@
 						.getResponseHeader('X-AJAX-REDIRECT'));
 				var ajaxAuth = $.trim(self.ajaxReq
 						.getResponseHeader('X-AJAX-TRANSIT'));
-				if (ajaxAuth) {
-					if ($.isFunction(options.transit)) {
-						options.transit(ajaxAuth, ajaxRes);
-					}
+				var ajaxMsg = $.trim(self.ajaxReq
+						.getResponseHeader('X-AJAX-MESSAGE'));
+				if (ajaxAuth && $.isFunction(options.transit)) {
+						options.transit(ajaxAuth, ajaxRes);					
+				} else if(ajaxMsg){
+					var txt = {};
+					try{
+						eval("txt = ("+xhr.responseText+")");
+						$.showMessageBox(txt.type,txt.title,txt.message);	
+					}catch(e){
+						if ($.isFunction(options.error)) {
+							options.error(xhr, error);
+						}
+					}					
 				} else if (ajaxRes) {
 					if ($.isFunction(options.error)) {
 						options.error(xhr, error);
@@ -308,12 +318,10 @@
 				this.defaults.name = name;
 			},
 			get : function(elem, opts) {
-				var settings = $.extend({}, this.defaults, opts);
-				// check for empty string in single property
+				var settings = $.extend({}, this.defaults, opts);				
 				if (!settings.single.length)
 					settings.single = 'metadata';
-				var data = $.data(elem, settings.single);
-				// returned cached data if it already exists
+				var data = $.data(elem, settings.single);				
 				if (data)
 					return data;
 				data = "{}";
@@ -347,8 +355,7 @@
 		$.fn.uvalidate = function(options) {
 			options = $.extend({
 				errorElement : 'span',
-				errorPlacement : function(label, element) {	
-					var cls = this.errorClass;
+				errorPlacement : function(label, element) {						
 					var ccls = undefined;
 					var espan = element.next('span');
 					if (espan.length > 0 && !espan.attr('generated')) {	
@@ -401,5 +408,18 @@
 					"九月", "十月", "十一", "腊月" ]
 		});
 	}
-
+	$.showMessageBoxTpl = '<div id="xui-messagebox" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="msgModalLabel" aria-hidden="true">';
+	$.showMessageBoxTpl += '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div>';
+	$.showMessageBoxTpl += '<div class="modal-body" id="xui-messagebox-body"></div>';
+	$.showMessageBoxTpl += '<div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">确定</button></div></div>';
+	$.showMessageBox = function(type, title, message){
+		var msgbox = $('#xui-messagebox');
+		if(msgbox.length == 0){
+			msgbox = $($.showMessageBoxTpl);
+			msgbox.appendTo($('body'));
+		}
+		msgbox.find('.modal-header h3').addClass(type).html(title);
+		msgbox.find('#xui-messagebox-body').addClass(type).html(message);
+		msgbox.modal('show');
+	};
 })(jQuery);

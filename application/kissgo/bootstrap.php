@@ -65,42 +65,57 @@ if (function_exists ( 'memory_get_usage' ) && (( int ) @ini_get ( 'memory_limit'
 if (function_exists ( 'mb_internal_encoding' )) {
     mb_internal_encoding ( 'UTF-8' );
 }
-function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
-    if (function_exists ( 'fire' )) {
-        fire ( 'kissgo_error_raise', $error_no, $error_str, $error_file, $error_line );
+global $_kissgo_log_msg;
+$_kissgo_log_msg = array ();
+function _kissgo_echo_msg($message, $trace_info, $level) {
+    global $_kissgo_log_msg;
+    static $log_name = array (
+                            DEBUG_INFO => 'INFO', 
+                            DEBUG_WARN => 'WARN', 
+                            DEBUG_DEBUG => 'DEBUG', 
+                            DEBUG_ERROR => 'ERROR' 
+    );
+    if ($level == DEBUG_ERROR || $level == DEBUG_WARN) {
+        $msg = date ( "Y-m-d H:i:s" ) . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
+        $_kissgo_log_msg [] = $msg;
     }
+}
+function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
     if (function_exists ( 'log_message' )) {
-        if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
-            log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
-            ), DEBUG_ERROR );
-            Response::getInstance ()->close ( true );
-        } else if ($error_no == E_USER_NOTICE) {
-            log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
-            ), DEBUG_INFO );
-        } else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
-            log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
-            ), DEBUG_WARN );
-        } else if ($error_no != E_NOTICE) {
-            log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
-            ), DEBUG_DEBUG );
-        }
+        $log_message = 'log_message';
     } else {
-        echo $error_str, ' in file ', $error_file, ' on line ', $error_line;
+        $log_message = '_kissgo_echo_msg';
+    }
+    if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
+        $log_message ( $error_str, array (
+                                            'file' => $error_file, 
+                                            'line' => $error_line 
+        ), DEBUG_ERROR );
+        Response::getInstance ()->close ( true );
+    } else if ($error_no == E_USER_NOTICE) {
+        $log_message ( $error_str, array (
+                                            'file' => $error_file, 
+                                            'line' => $error_line 
+        ), DEBUG_INFO );
+    } else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
+        $log_message ( $error_str, array (
+                                            'file' => $error_file, 
+                                            'line' => $error_line 
+        ), DEBUG_WARN );
+    } else if ($error_no != E_NOTICE) {
+        $log_message ( $error_str, array (
+                                            'file' => $error_file, 
+                                            'line' => $error_line 
+        ), DEBUG_DEBUG );
     }
 }
 set_error_handler ( '_kissgo_error_handler' );
 function _kissgo_exception_handler($exception) {
-    if (function_exists ( 'fire' )) {
-        fire ( 'catch_exception', $exception );
-    }
+    _kissgo_echo_msg ( html_entity_decode ( $exception->getMessage () ), array (
+                                                                                'file' => $exception->getFile (), 
+                                                                                'line' => $exception->getLine () 
+    ), DEBUG_ERROR );
+    Response::getInstance ()->close ( true );
 }
 set_exception_handler ( '_kissgo_exception_handler' );
 
@@ -309,7 +324,7 @@ spl_autoload_register ( '_kissgo_class_loader' );
 ///////////////////////////////////////////////////////////////
 // load applications and plugins
 global $_ksg_installed_plugins, $_ksg_installed_modules;
-PluginManager::getInstance ()->loadInstalledExtensions ();
+ExtensionManager::getInstance ()->loadInstalledExtensions ();
 //////////////////////////////////////////////////////////////////
 fire ( 'kissgo_startted' );
 // end of file bootstrap.php

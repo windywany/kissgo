@@ -88,15 +88,15 @@ th.span2 {
 }
 
 td.status {
-	background: transparent url(loading.gif) no-repeat center center;
+	background: transparent url(../images/loading.gif) no-repeat center center;
 }
 
 .success td.status {
-	background-image: url(accept.png);
+	background-image: url(../images/accept.png);
 }
 
 .error td.status {
-	background-image: url(error.png);
+	background-image: url(../images/error.png);
 }
 .control-label span{
 	color:red;

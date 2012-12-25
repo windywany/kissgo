@@ -11,7 +11,7 @@
 		<script src="{'bootstrap/bootstrap.js'|static}"></script>
 		<script src="{'jquery/plugins/validate.js'|static}"></script>
 		<script src="{'jquery/plugins/validate_addons.js'|static}"></script>
-		<script src="{'js/kissgo.js'|static}"></script>
+		<script src="{common.js'|static}"></script>
         <!--[if lt IE 9]>
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->

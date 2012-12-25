@@ -20,6 +20,9 @@ body {
 #container-wrap{
     padding-left: 185px;
 }
+#container-wrap.small{
+	padding-left: 120px;
+}
 #sidebar{
     float: left;
     width: 165px;
@@ -27,6 +30,13 @@ body {
 }
 #sidebar .nav-tabs{
     width: 165px;
+}
+#container-wrap.small #sidebar{
+	width: 100px;
+    margin-left: -120px;
+}
+#container-wrap.small #sidebar .nav-tabs{
+	width: 100px;
 }
 #sidebar .icon-chevron-right {
     float: right;

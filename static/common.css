@@ -220,6 +220,7 @@ br.clear {
 }
 .table .tools {
 	text-align: center;
+	vertical-align: middle;
 }
 .table .tools a {
 	margin: 0 2px;
@@ -517,4 +518,21 @@ span.tip{
 	color: #888;
 	background: transparent url(images/tip_info.png) no-repeat left center;
 	padding-left:18px;
+}
+#xui-messagebox .modal-body{
+	background:transparent url(images/msg-tip.png) no-repeat 10px 10px;
+	min-height:120px;
+	padding-left:150px;
+}
+#xui-messagebox .modal-body.error{
+	background-image:url(images/msg-err.png);
+	color:red;
+}
+#xui-messagebox .modal-body.error{
+	background-image:url(images/msg-err.png);
+	color:red;
+}
+#xui-messagebox .modal-body.warning{
+	background-image:url(images/msg-war.png);
+	color:red;
 }

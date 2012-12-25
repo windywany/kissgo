@@ -87,7 +87,7 @@ class Request implements ArrayAccess {
 		return $ary [$name];
 	}
 	
-	public static function getUri($unset = array()) {
+	public static function getUri() {
 		if (isset ( $_SERVER ['REQUEST_URI'] )) {
 			return $_SERVER ['REQUEST_URI'];
 		} else if (isset ( $_SERVER ['PATH_INFO'] )) {

@@ -15,7 +15,6 @@ function set_site_global_vars($smarty) {
     $smarty->assign ( '_KISSGO_R_VERSION', $settings ['VERSION'] . ' ' . $settings ['RELEASE'] );
     return $smarty;
 }
-
 bind ( 'init_smarty_engine', 'set_site_global_vars' );
 /**
  * 设置管理界面全局数据
@@ -24,10 +23,8 @@ bind ( 'init_smarty_engine', 'set_site_global_vars' );
  */
 function set_admin_global_vars($smarty) {
     $smarty->assign ( 'admincp_url', murl ( 'kissgo' ) );
-    $smarty->assign ( '_kissgo_page_tip', $_SESSION ['_kissgo_page_tip'] );
     $smarty->assign ( '_top_navigation_menu', apply_filter ( 'get_top_navigation_menu', new NavigationMenuManager () ) );
     $smarty->assign ( '_foot_toolbar_btns', apply_filter ( 'get_foot_toolbar_buttons', new NavigationFootToolbar () ) );
-    unset ( $_SESSION ['_kissgo_page_tip'] );
     return $smarty;
 }
 
@@ -41,11 +38,11 @@ function _hook_for_admincp_menu($mm) {
     // System
     $mm->addMenu2 ( 'system', __ ( 'System' ), 'icon-th-large' );
     $mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), '#', 'icon-user' );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ) );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ) );
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'kissgo', 'users' ) );
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'kissgo', 'roles' ) );
     $mm->addMenuItemDivider ( 'system' );
     $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'kissgo', 'extension' ), 'icon-asterisk' );
-    $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preferences' ), 'icon-wrench' );
+    $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preference' ), 'icon-wrench' );
     /*// Web Site
     $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'kissgo', 'pages' ), 'icon-file' );
@@ -78,7 +75,7 @@ function _hook_add_new_menu_items($items) {
 }
 //bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
 function _hook_for_add_passport_menu_items($items) {
-    $items .= '<li><a href="#">' . __ ( 'Control Panel' ) . '</a></li>';
+    $items .= '<li><a href="' . murl ( 'passport' ) . '">' . __ ( 'Control Panel' ) . '</a></li>';
     return $items;
 }
 bind ( 'add_passport_menu_items', '_hook_for_add_passport_menu_items' );
@@ -92,11 +89,6 @@ function _hook_for_foot_toolbar($tb) {
 }
 
 bind ( 'get_foot_toolbar_buttons', '_hook_for_foot_toolbar' );
-function _hook_for_login_page($url) {
-    return murl ( 'passport' );
-}
-
-bind ( 'get_login_page_url_for_KISSGO_ADMIN', '_hook_for_login_page' );
 /**
  * 
  * 读取登录用户信息
@@ -123,28 +115,10 @@ function _kissgo_hook_for_get_user_passport($passport) {
 
 bind ( 'get_user_passport', '_kissgo_hook_for_get_user_passport' );
 /**
- * 设置页面提示
- *
- * @param
- * $tip
- * @param string $type        	
- * @param int $during        	
- */
-function set_page_tip($tip, $type = 'info', $during = 5000) {
-    $_SESSION ['_kissgo_page_tip'] = array (
-                                            'tip' => $tip, 
-                                            'type' => $type, 
-                                            'during' => $during 
-    );
-}
-
-/**
  * load administrator panel page and show it.
  *
- * @param
- * $tpl
- * @param
- * $data
+ * @param string $tpl
+ * @param array $data
  * @return SmartyView
  */
 function admin_view($tpl, $data = array(), $headers = array()) {
