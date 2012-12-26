@@ -21,7 +21,7 @@ defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS
 define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
 defined ( 'PLUGIN_PATH' ) or define ( 'PLUGIN_PATH', APP_PATH . 'plugins' . DS );
 defined ( 'APPDATA_PATH' ) or define ( 'APPDATA_PATH', APP_PATH . 'appdata' . DS ); // the application data path
-defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', WEB_ROOT . 'templates' . DS );
+defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', APP_PATH . 'templates' . DS );
 defined ( 'STATIC_DIR' ) or define ( 'STATIC_DIR', 'static' );
 defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS ); // the temporary directory path
 define ( 'NOTNULL', '_@_NOT_NULL_@_' );
