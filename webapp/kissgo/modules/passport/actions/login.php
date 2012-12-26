@@ -42,6 +42,6 @@ if (Request::isPost ()) { //处理登录
     }
     $form = new PassportForm ();
 }
-return template ( 'kissgo/passport/login.tpl', array (
-                                                        'form' => $form 
+return view ( 'kissgo/passport/login.tpl', array (
+                                                    'form' => $form 
 ) );

@@ -26,10 +26,10 @@ class CtsData implements Iterator {
     }
     
     /**
-	 * 取用于ctv标签的数据
-	 *
-	 * @return mixed
-	 */
+     * 取用于ctv标签的数据
+     *
+     * @return mixed
+     */
     public function assign() {
         if (is_array ( $this->data ) || $this->data instanceof ResultSet) {
             return empty ( $this->data ) ? array () : $this->data [0];
@@ -57,11 +57,11 @@ class CtsData implements Iterator {
     }
     
     /**
-	 * 绘制分页
-	 * @param string $render
-	 * @param array $options
-	 * @return array
-	 */
+     * 绘制分页
+     * @param string $render
+     * @param array $options
+     * @return array
+     */
     public final function onPagingRender($render, $options) {
         global $_current_page;
         $_current_page = $_current_page == null ? 1 : $_current_page;
@@ -91,9 +91,9 @@ class CtsData implements Iterator {
     }
     
     /**
-	 * 取分页
-	 * @param $paging
-	 */
+     * 取分页
+     * @param $paging
+     */
     private function getPageInfo($paging, $args) {
         $_c_url = Request::getUri ();
         $url = safe_url ( $paging ['prefix'] );
@@ -193,24 +193,6 @@ function get_data_from_cts_provider($name, $args) {
     }
 }
 /**
- * load the template depends on current theme
- *
- * @param $tpl
- * @param array $data
- * @param array $headers
- * @return SmartyView
- */
-function theme_view($tpl, $data = array(), $headers = array()) {
-    $theme = apply_filter ( 'get_current_theme', 'defaults' );
-    $_tpl = 'themes/' . $theme . '/' . $tpl;
-    if (is_file ( TEMPLATE_PATH . $_tpl )) {
-        $tpl = $_tpl;
-    } else {
-        $tpl = 'themes/defaults/' . $tpl;
-    }
-    return new SmartyView ( $data, $tpl, $headers );
-}
-/**
  * load the template view
  *
  * @param $tpl
@@ -218,7 +200,17 @@ function theme_view($tpl, $data = array(), $headers = array()) {
  * @param array $headers
  * @return SmartyView
  */
-function template($tpl, $data = array(), $headers = array()) {
+function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
+    $theme = apply_filter ( 'get_current_theme', 'defaults' );
+    $_tpl = $theme . '/' . $tpl;
+    if (is_file ( THEME_PATH . $_tpl )) {
+        $tpl = $_tpl;
+    } else {
+        $tpl = 'defaults/' . $tpl;
+    }
+    return new ThemeView ( $data, $tpl, $headers );
+}
+function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
     return new SmartyView ( $data, $tpl, $headers );
 }
 /**

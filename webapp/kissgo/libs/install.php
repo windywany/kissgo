@@ -179,7 +179,7 @@ class KissGOInstaller {
         }
     }
     public function install_core_modules() {
-        $plgmgr = PluginManager::getInstance ();
+        $plgmgr = ExtensionManager::getInstance();
         $ext = $plgmgr->getExensionInfo ( KISSGO . 'modules/kissgo/__pkg__.php', 1 );
         $ext ['unremovable'] = 1;
         $ext ['disabled'] = 0;

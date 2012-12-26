@@ -16,7 +16,10 @@ class SmartyView extends View {
      */
     private $__smarty;
 
-    public function __construct($data = array(), $tpl = '', $headers = array()) {
+    public function __construct($data = array(), $tpl = '', $headers = array('Content-Type'=>'text/html')) {
+        if(!isset($headers['Content-Type'])){
+            $headers['Content-Type'] = 'text/html';
+        }
         parent::__construct($data, $tpl, $headers);
         $basedir = TEMPLATE_PATH;
         $tpl = $basedir . $this->tpl;
@@ -51,9 +54,5 @@ class SmartyView extends View {
             $this->__smarty->assign($n, $v); //变量
         }
         return $this->__smarty->fetch($this->tpl);
-    }
-
-    public function setHeader() {
-        @header('Content-Type: text/html');
-    }
+    }    
 }

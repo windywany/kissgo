@@ -160,12 +160,12 @@ function path_is_absolute($path) {
     
     if (strlen ( $path ) == 0 || $path {0} == '.')
         return false;
-        
-        // windows allows absolute paths like this
+    
+     // windows allows absolute paths like this
     if (preg_match ( '#^[a-zA-Z]:\\\\#', $path ))
         return true;
-        
-        // a path starting with / or \ is absolute; anything else is relative
+    
+     // a path starting with / or \ is absolute; anything else is relative
     return ( bool ) preg_match ( '#^[/\\\\]#', $path );
 }
 
@@ -239,8 +239,8 @@ function sanitize_file_name($filename) {
     // Return if only one extension
     if (count ( $parts ) <= 2)
         return $filename;
-        
-        // Process multiple extensions
+    
+     // Process multiple extensions
     $filename = array_shift ( $parts );
     $extension = array_pop ( $parts );
     
@@ -308,9 +308,9 @@ function unique_filename($dir, $filename, $unique_filename_callback = null) {
     // edge case: if file is named '.ext', treat as an empty name
     if ($name === $ext)
         $name = '';
-        
-        // Increment the file number until we have a unique file to save in
-        // $dir. Use $override['unique_filename_callback'] if supplied.
+    
+     // Increment the file number until we have a unique file to save in
+    // $dir. Use $override['unique_filename_callback'] if supplied.
     if ($unique_filename_callback && is_callable ( $unique_filename_callback )) {
         $filename = $unique_filename_callback ( $dir, $name );
     } else {
@@ -704,27 +704,6 @@ function safe_url($page) {
         }
     }
 }
-
-/**
- * 记录Log信息
- *
- * @param string $message 信息
- * @param array $trace_info 栈信息
- * @param int $level 调试级别
- */
-function log_message($message, $trace_info, $level) {
-    static $log_name = array (
-                            DEBUG_INFO => 'INFO', 
-                            DEBUG_WARN => 'WARN', 
-                            DEBUG_DEBUG => 'DEBUG', 
-                            DEBUG_ERROR => 'ERROR' 
-    );
-    if ($level >= DEBUG) {
-        $msg = date ( "Y-m-d H:i:s" ) . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
-        @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
-    }
-}
-
 /**
  * 记录debug信息
  *
@@ -1025,7 +1004,7 @@ function show_message($type, $message, $redirect = '') {
             $redirect = $redirect ? $redirect : $_SERVER ['HTTP_REFERER'];
         }
         $msg ['redirect'] = $redirect;
-        $view = template ( 'common/error.tpl', $msg );
+        $view = view ( 'common/error.tpl', $msg );
     } else { //ajax        
         @header ( 'X-AJAX-MESSAGE: ' . $type );
         status_header ( 500 );

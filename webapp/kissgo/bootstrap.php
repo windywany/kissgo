@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * kissgo framework that keep it simple and stupid, go go go ~~
  *
  * @author Leo Ning
@@ -21,7 +21,8 @@ defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS
 define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
 defined ( 'PLUGIN_PATH' ) or define ( 'PLUGIN_PATH', APP_PATH . 'plugins' . DS );
 defined ( 'APPDATA_PATH' ) or define ( 'APPDATA_PATH', APP_PATH . 'appdata' . DS ); // the application data path
-defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', APP_PATH . 'templates' . DS );
+defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', APP_PATH . 'views' . DS );
+defined ( 'THEME_PATH' ) or define ( 'THEME_PATH', WEB_ROOT . 'themes' . DS );
 defined ( 'STATIC_DIR' ) or define ( 'STATIC_DIR', 'static' );
 defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS ); // the temporary directory path
 define ( 'NOTNULL', '_@_NOT_NULL_@_' );
@@ -65,9 +66,7 @@ if (function_exists ( 'memory_get_usage' ) && (( int ) @ini_get ( 'memory_limit'
 if (function_exists ( 'mb_internal_encoding' )) {
     mb_internal_encoding ( 'UTF-8' );
 }
-global $_kissgo_log_msg;
-$_kissgo_log_msg = array ();
-function _kissgo_echo_msg($message, $trace_info, $level) {
+function log_message($message, $trace_info, $level) {
     global $_kissgo_log_msg;
     static $log_name = array (
                             DEBUG_INFO => 'INFO', 
@@ -75,45 +74,43 @@ function _kissgo_echo_msg($message, $trace_info, $level) {
                             DEBUG_DEBUG => 'DEBUG', 
                             DEBUG_ERROR => 'ERROR' 
     );
-    if ($level == DEBUG_ERROR || $level == DEBUG_WARN) {
+    if ($level >= DEBUG) {
         $msg = date ( "Y-m-d H:i:s" ) . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
-        $_kissgo_log_msg [] = $msg;
+        @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
+        if ($level == DEBUG_ERROR || $level == DEBUG_DEBUG) {
+            $_kissgo_log_msg [] = $msg;
+        }
     }
 }
 function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
-    if (function_exists ( 'log_message' )) {
-        $log_message = 'log_message';
-    } else {
-        $log_message = '_kissgo_echo_msg';
-    }
     if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
-        $log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
+        log_message ( $error_str, array (
+                                        'file' => $error_file, 
+                                        'line' => $error_line 
         ), DEBUG_ERROR );
         Response::getInstance ()->close ( true );
     } else if ($error_no == E_USER_NOTICE) {
-        $log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
+        log_message ( $error_str, array (
+                                        'file' => $error_file, 
+                                        'line' => $error_line 
         ), DEBUG_INFO );
     } else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
-        $log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
+        log_message ( $error_str, array (
+                                        'file' => $error_file, 
+                                        'line' => $error_line 
         ), DEBUG_WARN );
     } else if ($error_no != E_NOTICE) {
-        $log_message ( $error_str, array (
-                                            'file' => $error_file, 
-                                            'line' => $error_line 
+        log_message ( $error_str, array (
+                                        'file' => $error_file, 
+                                        'line' => $error_line 
         ), DEBUG_DEBUG );
     }
 }
 set_error_handler ( '_kissgo_error_handler' );
 function _kissgo_exception_handler($exception) {
-    _kissgo_echo_msg ( html_entity_decode ( $exception->getMessage () ), array (
-                                                                                'file' => $exception->getFile (), 
-                                                                                'line' => $exception->getLine () 
+    log_message ( html_entity_decode ( $exception->getMessage () ), array (
+                                                                            'file' => $exception->getFile (), 
+                                                                            'line' => $exception->getLine () 
     ), DEBUG_ERROR );
     Response::getInstance ()->close ( true );
 }
@@ -160,13 +157,13 @@ class KissGoSetting implements ArrayAccess {
     }
     
     /**
-	 * 取系统设置实例
-	 *
-	 * @param string $name        	
-	 * @param
-	 * null|KissgoSetting
-	 * @return KissGoSetting
-	 */
+     * 取系统设置实例
+     *
+     * @param string $name        	
+     * @param
+     * null|KissgoSetting
+     * @return KissGoSetting
+     */
     public static function getSetting($name = 'default', $setting = null) {
         if ($setting instanceof KissGoSetting) {
             self::$INSTANCE [$name] = $setting;
@@ -192,22 +189,22 @@ class KissGoSetting implements ArrayAccess {
     }
     
     /**
-	 * 获取设置
-	 * 
-	 * @param string $name        	
-	 * @param string $default        	
-	 * @return string
-	 */
+     * 获取设置
+     * 
+     * @param string $name        	
+     * @param string $default        	
+     * @return string
+     */
     public function get($name, $default = '') {
         return isset ( $this->settings [$name] ) ? $this->settings [$name] : $default;
     }
     
     /**
-	 * 设置
-	 * 
-	 * @param string $name        	
-	 * @param mixed $value        	
-	 */
+     * 设置
+     * 
+     * @param string $name        	
+     * @param mixed $value        	
+     */
     public function set($name, $value) {
         $this->settings [$name] = $value;
     }
@@ -243,8 +240,8 @@ class KissGoSetting implements ArrayAccess {
         }
     }
     /**
-	 * 保存
-	 */
+     * 保存
+     */
     public function save() {
         if (function_exists ( 'apply_filter' )) {
             return apply_filter ( 'save_settings_' . $this->setting_name, $this->settings );

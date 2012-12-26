@@ -11,8 +11,9 @@
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 function _kissgo_default_index($view) {
-    if ($view == null && Request::getVirtualPageUrl () == '/') {
-        return theme_view ( 'index.tpl' );
+    $url = Request::getVirtualPageUrl ();
+    if ($view == null && ($url == '/' || $url == '/index.html')) {
+        return template ( 'index.tpl' );
     }
     return $view;
 }

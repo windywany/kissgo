@@ -46,14 +46,14 @@ switch ($step) {
         $_SESSION ['INSTALL_STEP'] = 'check';
         $data ['dirs'] = $installer->check_directory_rw ();
         $data ['envs'] = $installer->check_server_env ();
-        $tpl = template ( 'kissgo/install/check.tpl', $data );
+        $tpl = view ( 'kissgo/install/check.tpl', $data );
         break;
     case 'db' :
         $_SESSION ['INSTALL_STEP'] = 'db';
         $form_data = sess_get ( '_INSTALL_DB_DATA', array () );
         $form = new InstallDbForm ( $form_data );
         $data ['form'] = $form;
-        $tpl = template ( 'kissgo/install/db.tpl', $data );
+        $tpl = view ( 'kissgo/install/db.tpl', $data );
         break;
     case 'admin' :
         $_SESSION ['INSTALL_STEP'] = 'admin';
@@ -66,7 +66,7 @@ switch ($step) {
         $form_data = sess_get ( '_INSTALL_ADMIN_DATA', array () );
         $form = new InstallAdminForm ( $form_data );
         $data ['form'] = $form;
-        $tpl = template ( 'kissgo/install/admin.tpl', $data );
+        $tpl = view ( 'kissgo/install/admin.tpl', $data );
         break;
     case 'config' :
         $_SESSION ['INSTALL_STEP'] = 'config';
@@ -79,7 +79,7 @@ switch ($step) {
         $form_data = sess_get ( '_INSTALL_CONFIG_DATA', array () );
         $form = new InstallConfigForm ( $form_data );
         $data ['form'] = $form;
-        $tpl = template ( 'kissgo/install/config.tpl', $data );
+        $tpl = view ( 'kissgo/install/config.tpl', $data );
         break;
     case 'install' :
         $_SESSION ['INSTALL_STEP'] = 'install';
@@ -97,14 +97,14 @@ switch ($step) {
             $data ['db_error'] = DataSource::getLastError ();
         }
         
-        $tpl = template ( 'kissgo/install/install.tpl', $data );
+        $tpl = view ( 'kissgo/install/install.tpl', $data );
         break;
     case 'done' :
         $_SESSION ['INSTALL_STEP'] = 'done';
         if (! $_SESSION ['_INSTALL_CONFIG_FORM'] ['clean_url']) {
             $data ['base_url'] = BASE_URL . 'index.php/';
         }
-        $tpl = template ( 'kissgo/install/done.tpl', $data );
+        $tpl = view ( 'kissgo/install/done.tpl', $data );
         break;
     case 'scheme' : // create the scheme of kissgo	        
         if (isset ( $_POST ['arg'] ) && ! empty ( $_POST ['arg'] )) {
@@ -159,7 +159,7 @@ switch ($step) {
         break;
     default :
         $_SESSION ['INSTALL_STEP'] = 'welcome';
-        $tpl = template ( 'kissgo/install/welcome.tpl', $data );
+        $tpl = view ( 'kissgo/install/welcome.tpl', $data );
 }
 echo $tpl->render ();
 ?>
