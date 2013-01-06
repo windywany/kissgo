@@ -1,11 +1,11 @@
-{extends file="kissgo/admincp_no_sidebar.tpl"}
+{extends file="kissgo/admincp.tpl"}
 {block name="title"}Extensions Managerment{/block}
 {block name="breadcrumb"}
 	<li>{'Extensions'|ts}</li>
 {/block}
 {block name="admincp_body"}
-<div class="tabbable tabs-left">
-    <ul class="nav nav-tabs" style="min-height:385px;margin-top:50px;">
+<div class="tabbable">
+    <ul class="nav nav-tabs">
         <li>&nbsp;</li>						
         <li class="{if 'installed' == $group}active{/if}">
             <a class="tgre" href="{$_page_url}"><i class="icon-check"></i>已安装({$installedTotal})</a>
@@ -14,7 +14,7 @@
             <a href="{$_page_url}?group=uninstall"><i class="icon-inbox"></i>未安装({$uninstalledTotal})</a>
         </li>					
     </ul>
-    <div class="tab-content" style="padding-top:10px;">	                	
+    <div class="tab-content">	                	
         <div class="tab-pane active">	                		
             <div style="margin-bottom:20px;">	                		    
                 <span class="mg-r5 tgre">已启用({$etotal})</span> | <span class="mg-l5 torg">可升级({$upgradable})</span> | <span class="mg-l5">未启用({$dtotal})</span>	                			

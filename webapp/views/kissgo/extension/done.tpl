@@ -1,4 +1,4 @@
-{extends file="kissgo/admincp_no_sidebar.tpl"}
+{extends file="kissgo/admincp.tpl"}
 {block name="title"}Setup Extensions{/block}
 {block name="css_block"}
 <link rel="stylesheet" href="{'extension.css'|here}"/>
@@ -8,8 +8,8 @@
 	<li>{'Setup Extension'|ts} - {$extName}</li>
 {/block}
 {block name="admincp_body"}
-<div class="tabbable tabs-left">
-    <ul class="nav nav-tabs" style="min-height:385px;margin-top:50px;">
+<div class="tabbable">
+    <ul class="nav nav-tabs">
 	    <li>&nbsp;</li>						
 		<li>
 		    <a class="tgre" href="{$_page_url}"><i class="icon-check"></i>已安装</a>
@@ -22,7 +22,7 @@
 		</li>					
 	</ul>
 
-    <div class="tab-content" style="padding-top:10px;">
+    <div class="tab-content">
         <h4>{$op_title}"{$extName}"扩展</h4>                	
 	    <div class="tab-pane active">	
             <div class="alert alert-block" id="tip">

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="KissGO! group">
-    <title>{block name="title"}{'Dashboard Home'|ts}{/block} -- Powered by KissGO! {$_KISSGO_R_VERSION}</title>
+    <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$_KISSGO_R_VERSION}</title>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap.css'|static}"/>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap-responsive.css'|static}"/>
     <link rel="stylesheet" href="{'common.css'|static}"/>
@@ -33,7 +33,7 @@
                 <ul class="nav pull-right">
                 	<li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                            <i class="icon-plus"></i>{'Add'|ts}<span class="caret"></span>
+                            <i class="icon-plus"></i> {'Add'|ts}<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             {'add_new_menu_items'|fire}
@@ -41,12 +41,12 @@
                     </li>
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                            <i class="icon-user"></i>{$_PASSPORT['name']}({$_PASSPORT['account']})<span class="caret"></span>
+                            <i class="icon-user"></i> {$_PASSPORT['name']}({$_PASSPORT['account']})<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             {'add_passport_menu_items'|fire}
                             <li class="divider"><span></span></li>
-                            <li><a href="{'passport'|murl:'logout'}"><i class="icon-off"></i>{'Logout'|ts}</a></li>
+                            <li><a href="{'passport'|murl:'logout'}"><i class="icon-off"></i> {'Logout'|ts}</a></li>
                         </ul>
                     </li>
                 </ul>                
@@ -59,7 +59,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <ul class="breadcrumb">
-                <li><a href="{$admincp_url}">{'Dashboard Home'|ts}</a><span class="divider">/</span></li>
+                <li><a href="{$admincp_url}"><i class="icon-home"></i> {'Dashboard'|ts}</a><span class="divider">/</span></li>
                 {block name="breadcrumb"}{/block}
             </ul>
         </div>

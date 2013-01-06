@@ -348,9 +348,9 @@ class XssCleaner {
           *
           */
 		
-		$str = preg_replace_callback ( "/[a-z]+=([\'\"]).*?\\1/si", array ($this, '_convert_attribute' ), $str );
+		$str = preg_replace_callback ( '/[a-z]+=([\'\"]).*?\\1/si', array ($this, '_convert_attribute' ), $str );
 		
-		$str = preg_replace_callback ( "/<\w+.*?(?=>|<|$)/si", array ($this, '_html_entity_decode_callback' ), $str );
+		$str = preg_replace_callback ( '/<\w+.*?(?=>|<|$)/si', array ($this, '_html_entity_decode_callback' ), $str );
 		
 		/*
           * Remove Invisible Characters Again!
@@ -418,7 +418,7 @@ class XssCleaner {
 			$temp = '';
 			
 			for($i = 0, $wordlen = strlen ( $word ); $i < $wordlen; $i ++) {
-				$temp .= substr ( $word, $i, 1 ) . "\s*";
+				$temp .= substr ( $word, $i, 1 ) . '\s*';
 			}
 			
 			// We only want to do this when it is followed by a non-word character
@@ -435,15 +435,15 @@ class XssCleaner {
 			$original = $str;
 			
 			if (preg_match ( "/<a/i", $str )) {
-				$str = preg_replace_callback ( "#<a\s+([^>]*?)(>|$)#si", array ($this, '_js_link_removal' ), $str );
+				$str = preg_replace_callback ( '#<a\s+([^>]*?)(>|$)#si', array ($this, '_js_link_removal' ), $str );
 			}
 			
 			if (preg_match ( "/<img/i", $str )) {
-				$str = preg_replace_callback ( "#<img\s+([^>]*?)(\s?/?>|$)#si", array ($this, '_js_img_removal' ), $str );
+				$str = preg_replace_callback ( '#<img\s+([^>]*?)(\s?/?>|$)#si', array ($this, '_js_img_removal' ), $str );
 			}
 			
 			if (preg_match ( "/script/i", $str ) or preg_match ( "/xss/i", $str )) {
-				$str = preg_replace ( "#<(/*)(script|xss)(.*?)\>#si", '[removed]', $str );
+				$str = preg_replace ( '#<(/*)(script|xss)(.*?)\>#si', '[removed]', $str );
 			}
 		} while ( $original != $str );
 		
@@ -467,7 +467,7 @@ class XssCleaner {
 			unset ( $event_handlers [array_search ( 'xmlns', $event_handlers )] );
 		}
 		
-		$str = preg_replace ( "#<([^><]+?)(" . implode ( '|', $event_handlers ) . ")(\s*=\s*[^><]*)([><]*)#i", "<\\1\\4", $str );
+		$str = preg_replace ( "#<([^><]+?)(" . implode ( '|', $event_handlers ) . ')(\s*=\s*[^><]*)([><]*)#i', "<\\1\\4", $str );
 		
 		/*
           * Sanitize naughty HTML elements
@@ -566,9 +566,9 @@ class XssCleaner {
 	 * @return    string
 	 */
 	private function _remove_invisible_characters($str) {
-		static $non_displayables;
+		static $non_displayables = false;
 		
-		if (! isset ( $non_displayables )) {
+		if (!$non_displayables) {
 			// every control character except newline (dec 10), carriage return (dec 13), and horizontal tab (dec 09),
 			$non_displayables = array ('/%0[0-8bcef]/', // url encoded 00-08, 11, 12, 14, 15
 '/%1[0-9a-f]/', // url encoded 16-31
@@ -641,7 +641,7 @@ class XssCleaner {
 	 */
 	function _js_link_removal($match) {
 		$attributes = $this->_filter_attributes ( str_replace ( array ('<', '>' ), '', $match [1] ) );
-		return str_replace ( $match [1], preg_replace ( "#href=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si", "", $attributes ), $match [0] );
+		return str_replace ( $match [1], preg_replace ( '#href=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si', '', $attributes ), $match [0] );
 	}
 	
 	/**
@@ -658,7 +658,7 @@ class XssCleaner {
 	 */
 	function _js_img_removal($match) {
 		$attributes = $this->_filter_attributes ( str_replace ( array ('<', '>' ), '', $match [1] ) );
-		return str_replace ( $match [1], preg_replace ( "#src=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si", "", $attributes ), $match [0] );
+		return str_replace ( $match [1], preg_replace ( '#src=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si', '', $attributes ), $match [0] );
 	}
 	
 	// --------------------------------------------------------------------
@@ -767,7 +767,7 @@ class XssCleaner {
 		
 		if (preg_match_all ( '#\s*[a-z\-]+\s*=\s*(\042|\047)([^\\1]*?)\\1#is', $str, $matches )) {
 			foreach ( $matches [0] as $match ) {
-				$out .= preg_replace ( "#/\*.*?\*/#s", '', $match );
+				$out .= preg_replace ( '#/\*.*?\*/#s', '', $match );
 			}
 		}
 		

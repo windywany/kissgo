@@ -504,9 +504,7 @@ abstract class Model {
      * @return Model
      */
     public function limit($limit = null, $start = null) {
-        if ($start == null && function_exists('paginginfo')) {
-            $start = paginginfo() - 1;
-        } else if (!is_numeric($start)) {
+        if (!is_numeric($start)) {
             $start = 0;
         }
         if (is_numeric($start) && is_numeric($limit)) {
@@ -551,6 +549,9 @@ abstract class Model {
      * @return Model
      */
     public function sort($sort) {
+        if (! isset ( $sort ['field'] )) {
+            $sort = sortinfo ( $sort [0], $sort [1] );
+        }
         if ($sort ['dir'] == 'a') {
             $this->sortAsc($sort ['field']);
         } else {
@@ -718,7 +719,7 @@ abstract class Model {
         if (isset ($exists)) {
             $sql .= empty ($condition) ? " WHERE {$exists}" : " AND {$exists}";
         }
-        $sql__total = '';
+        
         if ($this->_countit) {
             $sql__total .= empty ($condition) ? '' : " WHERE {$condition}";
             if (isset ($exists)) {

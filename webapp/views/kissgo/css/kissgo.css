@@ -4,10 +4,10 @@ body {
 #navbar .dropdown-menu .divider {
     margin: 2px 1px;
 }
-#crumb .container-fluid {
+/*#crumb .container-fluid {
     padding-left: 120px;
     background: transparent url('../images/logo.png') no-repeat 20px 4px;
-}
+}*/
 .breadcrumb {
     margin-bottom: 5px;
 }
@@ -37,6 +37,10 @@ body {
 }
 #container-wrap.small #sidebar .nav-tabs{
 	width: 100px;
+}
+#container-wrap.small .nav-tabs > li > a, #container-wrap.small .nav-pills > li > a {
+	padding-left:5px;
+	padding-right:5px;
 }
 #sidebar .icon-chevron-right {
     float: right;

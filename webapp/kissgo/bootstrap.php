@@ -322,6 +322,7 @@ spl_autoload_register ( '_kissgo_class_loader' );
 // load applications and plugins
 global $_ksg_installed_plugins, $_ksg_installed_modules;
 ExtensionManager::getInstance ()->loadInstalledExtensions ();
+$__rqst = Request::getInstance();
 //////////////////////////////////////////////////////////////////
 fire ( 'kissgo_startted' );
 // end of file bootstrap.php

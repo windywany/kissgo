@@ -3,16 +3,18 @@
  * Id: $ID$
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
-imports ( 'kissgo/models/*' );
+
 /**
  *
  * @param Smarty $smarty        	
  */
 function set_site_global_vars($smarty) {
+    $settings = KissGoSetting::getSetting ();
     $smarty->assign ( '_SITE_URL', BASE_URL );
     $smarty->assign ( '_PASSPORT', Passport::getPassport () );
-    $settings = KissGoSetting::getSetting ();
     $smarty->assign ( '_KISSGO_R_VERSION', $settings ['VERSION'] . ' ' . $settings ['RELEASE'] );
+    $smarty->assign ( '_CUR_URI', Request::getUri () );
+    $smarty->assign ( '_CUR_URL', Request::getVirtualPageUrl () );
     return $smarty;
 }
 bind ( 'init_smarty_engine', 'set_site_global_vars' );
@@ -38,11 +40,11 @@ function _hook_for_admincp_menu($mm) {
     // System
     $mm->addMenu2 ( 'system', __ ( 'System' ), 'icon-th-large' );
     $mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), '#', 'icon-user' );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'kissgo', 'users' ) );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'kissgo', 'roles' ) );
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'kissgo', 'users' ),'icon-user' );
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'kissgo', 'roles' ) ,'icon-user');
     $mm->addMenuItemDivider ( 'system' );
-    $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'kissgo', 'extension' ), 'icon-asterisk' );
-    $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preference' ), 'icon-wrench' );
+    $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'kissgo', 'extension' ), 'icon-briefcase' );
+    $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preference' ), 'icon-adjust' );
     /*// Web Site
     $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'kissgo', 'pages' ), 'icon-file' );
@@ -96,6 +98,7 @@ bind ( 'get_foot_toolbar_buttons', '_hook_for_foot_toolbar' );
  */
 function _kissgo_hook_for_get_user_passport($passport) {
     if ($passport->isLogin ()) {
+        imports ( 'kissgo/models/*' );
         $uid = $passport ['uid'];
         $user = sess_get ( 'login_user_info_' . $uid, false );
         if (! $user) {

@@ -10,10 +10,10 @@
 			return selected;
 		case 'selectAll':
 			if ($(this).find('th.col_chk input:checkbox').attr('checked')) {
-				$(this).find('th.col_chk input:checkbox').removeAttr('checked')
+				$(this).find('.col_chk input:checkbox').removeAttr('checked')
 						.trigger('change');
 			} else {
-				return $(this).find('th.col_chk input:checkbox').attr(
+				return $(this).find('.col_chk input:checkbox').attr(
 						'checked', true).trigger('change');
 			}
 			break;

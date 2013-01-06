@@ -1,12 +1,12 @@
-{extends file="kissgo/admincp_no_sidebar.tpl"}
+{extends file="kissgo/admincp.tpl"}
 {block name="title"}Setup Extensions{/block}
 {block name="breadcrumb"}
 	<li><a href="{$_page_url}">{'Extensions'|ts}</a><span class="divider">/</span></li>
 	<li>{'Setup Extension'|ts} - {$extName}</li>
 {/block}
 {block name="admincp_body"}
-<div class="tabbable tabs-left">
-    <ul class="nav nav-tabs" style="min-height:385px;margin-top:50px;">
+<div class="tabbable">
+    <ul class="nav nav-tabs">
 	    <li>&nbsp;</li>						
 		<li>
 		    <a class="tgre" href="{$_page_url}"><i class="icon-check"></i>已安装</a>
@@ -19,7 +19,7 @@
 		</li>					
 	</ul>
 
-    <div class="tab-content" style="padding-top:10px;">	                	
+    <div class="tab-content">	                	
 	    <div class="tab-pane active">
 	        <h4>{$op_title}"{$extName}"扩展</h4>           
             <form id="install-form" action="{'kissgo'|murl:extension}" method="post">        

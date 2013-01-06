@@ -9,5 +9,5 @@ $(function() {
 		} else {
 			$('#sideTools').hide();
 		}
-	});
+	});	
 });

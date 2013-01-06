@@ -465,7 +465,25 @@ function sess_del($name, $default = '') {
     }
     return $value;
 }
-
+function rqst($name, $default = '', $xss_clean = false) {
+    global $__rqst;    
+    return $__rqst->get ( $name, $default, $xss_clean );
+}
+function irqst($name, $default = 0) {
+    return intval ( rqst ( $name, $default, true ) );
+}
+function frqst($name, $default = 0) {
+    return floatval ( rqst ( $name, $default, true ) );
+}
+function sortinfo($field = '', $dir = 'd') {
+    $info = array ();
+    $info ['field'] = rqst ( '_sf', $field );
+    $info ['dir'] = rqst ( '_sd', $dir );
+    return $info;
+}
+function sortargs($sortinfo) {
+    return '_sf=' . $sortinfo ['field'] . '&_sd=' . $sortinfo ['dir'];
+}
 /**
  * 安全ID
  *
