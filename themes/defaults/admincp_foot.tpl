@@ -12,7 +12,7 @@
         </div>
     </div>
 </div>
-{'kissgo_dashboard_footer'|fire}
-{block name="foot_js_block"}{/block}
+{'admincp_footer'|fire}
+{block name="admincp_foot_js_block"}{/block}
 </body>
 </html>

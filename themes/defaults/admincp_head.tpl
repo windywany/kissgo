@@ -10,15 +10,15 @@
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap-responsive.css'|static}"/>
     <link rel="stylesheet" href="{'common.css'|static}"/>
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
-    {block name="css_block"}{/block}
+    {block name="admincp_css_block"}{/block}
     <script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>
     <script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>
     <script type="text/javascript" src="{'jquery/plugins/validate.js'|static}"></script>
 	<script type="text/javascript" src="{'jquery/plugins/validate_addons.js'|static}"></script>
 	<script type="text/javascript" src="{'common.js'|static}"></script>
     <script type="text/javascript" src="{'js/kissgo.js'|here}"></script>
-    {'kissgo_dashboard_header'|fire}
-    {block name="head_js_block"}{/block}
+    {'admincp_header'|fire}
+    {block name="admincp_head_js_block"}{/block}
 </head>
 <body>
 <!-- head -->
