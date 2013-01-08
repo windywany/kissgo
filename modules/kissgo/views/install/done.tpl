@@ -1,4 +1,4 @@
-{extends file="kissgo/install/welcome.tpl"}
+{extends file="$ksg_module/kissgo/views/install/welcome.tpl"}
 {block name="title"}正在安装...{/block}
 {block name="body"}
 <div class="alert alert-block" id="tip">

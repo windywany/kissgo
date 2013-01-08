@@ -11,7 +11,6 @@ class Router {
     private static $INSTANCE = null;
     private static $url = '';
     private static $forward_url = '';
-    
     private function __construct() {
     }
     
@@ -44,7 +43,7 @@ class Router {
             if ($cnt == 1) {
                 $module = $chunks [0];
             } else if ($cnt == 2) {
-                list ( $module, $controller ) = $chunks;
+                list ( $module, $action ) = $chunks;
             } else if ($cnt == 3) {
                 list ( $module, $controller, $action ) = $chunks;
             } else if ($cnt > 0) {
@@ -63,10 +62,7 @@ class Router {
      * @return string a callable function
      */
     public function load_application($action, $controller = '', $module = '') {
-        $actions [3] = array (
-                            'index.php', 
-                            'do_default_' . $action 
-        );
+        $actions [3] = array ('index.php', 'do_default_' . $action );
         $module = strtolower ( $module );
         $controller = strtolower ( $controller );
         $action = strtolower ( $action );
@@ -75,26 +71,27 @@ class Router {
             if ($module === false) {
                 Response::respond ( 403 );
             }
-            $actions [1] = array (
-                                "{$module}/actions/{$controller}/{$action}.php", 
-                                "do_{$module}_{$controller}_{$action}" 
-            );
-            $actions [2] = array (
-                                "{$module}/actions/{$controller}.php", 
-                                "do_{$module}_{$controller}_{$action}" 
-            );
-            
-        /*if (! is_module_file ( $module )) {
-                $module = 'index.php';
-            }*/
+            if (! empty ( $controller )) {
+                $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$controller}_{$action}" );
+                $actions [2] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$controller}_{$action}" );
+            } else {
+                $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}_{$action}" );
+            }
+            if (! is_module_file ( $module )) {
+                unset ( $actions );
+                $actions [] = array ('index.php', 'do_default_' . $action );
+            }
         }
         ksort ( $actions );
+        $suffix = Request::isPost () ? '_post' : '_get';
         foreach ( $actions as $act ) {
             list ( $af, $func_name ) = $act;
             $app_action_file = MODULES_PATH . $af;
             if (is_file ( $app_action_file )) {
                 include $app_action_file;
-                if (function_exists ( $func_name )) {
+                if (function_exists ( $func_name . $suffix )) {
+                    return $func_name . $suffix;
+                } else if (function_exists ( $func_name )) {
                     return $func_name;
                 }
             }

@@ -67,25 +67,12 @@ class CtsData implements Iterator {
         $_current_page = $_current_page == null ? 1 : $_current_page;
         $url = explode ( '.', Request::getUri () );
         $ext = array_pop ( $url );
-        $paging = array (
-                        'prefix' => implode ( '.', $url ) . '_', 
-                        'current' => $_current_page, 
-                        'total' => $this->countTotal, 
-                        'limit' => $this->per, 
-                        'ext' => '.' . $ext 
-        );
+        $paging = array ('prefix' => implode ( '.', $url ) . '_', 'current' => $_current_page, 'total' => $this->countTotal, 'limit' => $this->per, 'ext' => '.' . $ext );
         $paging_data = apply_filter ( 'on_render_paging_by_' . $render, array (), $paging, $options );
         if (empty ( $paging_data )) {
             $paging_data = $this->getPageInfo ( $paging, $options );
         } else if (is_array ( $paging_data )) {
-            $paging_data = array_merge2 ( array (
-                                                'total' => ceil ( $this->countTotal / $this->per ), 
-                                                'ctotal' => $this->countTotal, 
-                                                'first' => '#', 
-                                                'prev' => '#', 
-                                                'next' => '#', 
-                                                'last' => '#' 
-            ), $paging_data );
+            $paging_data = array_merge2 ( array ('total' => ceil ( $this->countTotal / $this->per ), 'ctotal' => $this->countTotal, 'first' => '#', 'prev' => '#', 'next' => '#', 'last' => '#' ), $paging_data );
         }
         return $paging_data;
     }
@@ -163,10 +150,7 @@ function register_cts_provider($name, $provider, $desc = '') {
     if (! $providers) {
         $providers = KissGoSetting::getSetting ( 'cts_providers' );
     }
-    $providers [$name] = array (
-                                $provider, 
-                                $desc 
-    );
+    $providers [$name] = array ($provider, $desc );
 }
 
 /**
@@ -181,9 +165,7 @@ function get_data_from_cts_provider($name, $args) {
         $provider = $providers [$name];
         $provider = $provider [0];
         if (is_callable ( $provider )) {
-            $data = call_user_func_array ( $provider, array (
-                                                            $args 
-            ) );
+            $data = call_user_func_array ( $provider, array ($args ) );
         }
     }
     if ($data instanceof CtsData) {
@@ -208,6 +190,12 @@ function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/
     } else {
         $tpl = THEME_DIR . '/defaults/' . $tpl;
     }
+    $data ['ksg_current_template'] = $tpl;
+    $data ['ksg_current_theme'] = THEME_DIR . '/' . $theme;
+    $data ['ksg_theme_name'] = $theme;
+    $data ['ksg_theme_dir'] = THEME_DIR;
+    $data ['ksg_module'] = MODULE_DIR;
+    $data ['ksg_admincp_url'] = murl ( 'kissgo' );
     return new ThemeView ( $data, $tpl, $headers );
 }
 /**
@@ -219,8 +207,20 @@ function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/
  * @return SmartyView
  */
 function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
-    
-    return new SmartyView ( $data, $tpl, $headers );
+    $theme = apply_filter ( 'get_current_theme', 'defaults' );
+    $data ['ksg_current_template'] = $tpl;
+    $data ['ksg_current_theme'] = THEME_DIR . '/' . $theme;
+    $data ['ksg_theme_name'] = $theme;
+    $data ['ksg_theme_dir'] = THEME_DIR;
+    $data ['ksg_module'] = MODULE_DIR;
+    $admincp_layout = THEME_PATH . $theme . DS . 'admincp.tpl';
+    if (is_file ( $admincp_layout )) {
+        $data ['ksg_admincp_layout'] = THEME_DIR . '/' . $theme . '/admincp.tpl';
+    } else {
+        $data ['ksg_admincp_layout'] = THEME_DIR . '/defaults/admincp.tpl';
+    }
+    $data ['ksg_admincp_url'] = murl ( 'kissgo' );
+    return new SmartyView ( $data, MODULE_DIR . '/' . $tpl, $headers );
 }
 /**
  * 解析smarty参数.

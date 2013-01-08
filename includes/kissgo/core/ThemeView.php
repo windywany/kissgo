@@ -4,7 +4,6 @@ class ThemeView extends View {
      * @var Smarty Smarty
      */
     private $__smarty;
-    
     public function __construct($data = array(), $tpl = '', $headers = array('Content-Type'=>'text/html')) {
         if (! isset ( $headers ['Content-Type'] )) {
             $headers ['Content-Type'] = 'text/html';
@@ -16,8 +15,7 @@ class ThemeView extends View {
             $this->__smarty = new Smarty ();
             $this->__smarty->addPluginsDir ( INCLUDES . 'vendors/smarty/user_plugins' );
             $this->__smarty->template_dir = $basedir; //模板目录
-            $tpl = str_replace ( DS, '/', $this->tpl );
-            $this->data ['_current_template_file'] = $tpl;
+            $tpl = str_replace ( DS, '/', $this->tpl );            
             $tpl = explode ( '/', $tpl );
             array_pop ( $tpl );
             $sub = implode ( DS, $tpl );

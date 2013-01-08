@@ -5,5 +5,7 @@
  * Date: 12-11-2
  * Time: 下午7:43 
  */
-assert_login();
-return admin_view('kissgo/index.tpl');
+assert_login ();
+function do_kissgo_index($req, $res) {
+    return view ( 'kissgo/views/index.tpl' );
+}

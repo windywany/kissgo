@@ -15,7 +15,6 @@ class SmartyView extends View {
      * @var Smarty Smarty
      */
     private $__smarty;
-    
     public function __construct($data = array(), $tpl = '', $headers = array('Content-Type'=>'text/html')) {
         if (! isset ( $headers ['Content-Type'] )) {
             $headers ['Content-Type'] = 'text/html';
@@ -27,8 +26,7 @@ class SmartyView extends View {
             $this->__smarty = new Smarty ();
             $this->__smarty->addPluginsDir ( INCLUDES . 'vendors/smarty/user_plugins' );
             $this->__smarty->template_dir = $basedir; //模板目录
-            $tpl = str_replace ( DS, '/', $this->tpl );
-            $this->data ['_current_template_file'] = $tpl;
+            $tpl = str_replace ( DS, '/', $this->tpl );            
             $tpl = explode ( '/', $tpl );
             array_pop ( $tpl );
             $sub = implode ( DS, $tpl );
@@ -39,6 +37,7 @@ class SmartyView extends View {
                 $this->__smarty->force_compile = true;
             }
             $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );
+            $this->__smarty = apply_filter ( 'init_view_smarty_engine', $this->__smarty );
         } else {
             trigger_error ( 'The view template ' . $tpl . ' is not found', E_USER_ERROR );
         }

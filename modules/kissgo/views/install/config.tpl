@@ -1,4 +1,4 @@
-{extends file="kissgo/install/welcome.tpl"}
+{extends file="$ksg_module/kissgo/views/install/welcome.tpl"}
 {block name="title"}基本配置{/block}
 {block name="body"}
 <form class="form-horizontal well" id="config-form" method="post">

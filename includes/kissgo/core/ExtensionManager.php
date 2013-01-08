@@ -42,17 +42,12 @@ class ExtensionManager {
                 if (isset ( $plugin ['disabled'] ) && $plugin ['disabled']) {
                     continue;
                 }
-                if (! isset ( $plugin ['Plugin'] )) {
+                if (! isset ( $plugin ['Module'] )) {
                     continue;
                 }
-                if ($plugin ['type'] == 'plugin') {
-                    $this->plugins [] = $plugin ['Plugin'];
-                } else {
-                    $this->modules [] = $plugin ['Plugin'];
-                }
+                $this->modules [] = $plugin ['Module'];
             }
             $this->load ( $this->modules );
-            $this->load ( $this->plugins, 'plugin' );
         }
     }
     /**
@@ -64,7 +59,7 @@ class ExtensionManager {
         }
         $pluginsStr = array ();
         foreach ( $extensions as $o ) {
-            $pluginsStr [] = "[{$o['Plugin_ID']}]";
+            $pluginsStr [] = "[{$o['Module_ID']}]";
             foreach ( $o as $key => $val ) {
                 $val = str_replace ( '!', '！', $val );
                 $pluginsStr [] = "\t{$key} = {$val}";
@@ -78,9 +73,9 @@ class ExtensionManager {
         }
         return false;
     }
-    public function installExtension($pid, $type = "module") {
-        if (isset ( $this->uninstalled [$type] [$pid] )) {
-            $extension = $this->uninstalled [$type] [$pid];            
+    public function installExtension($pid) {
+        if (isset ( $this->uninstalled [$pid] )) {
+            $extension = $this->uninstalled [$pid];
             $extension ['disabled'] = 0;
             $extension ['Installed_Time'] = time ();
             $plugin ['unremovable'] = 0;
@@ -98,7 +93,7 @@ class ExtensionManager {
     public function upgradeExtension($pid) {
         if (isset ( $this->extensions [$pid] )) {
             $file = APP_PATH . $this->extensions [$pid] ['pkg_file'];
-            $plugin = $this->getExensionInfo ( $file, $this->extensions [$pid] ['core'], $this->extensions [$pid] ['type'] );
+            $plugin = $this->getExensionInfo ( $file );
             if ($plugin) {
                 unset ( $plugin ['upgradable'] );
                 $this->extensions [$pid] = $plugin;
@@ -130,13 +125,13 @@ class ExtensionManager {
 	 * @param boolean $installed        	
 	 * @return ArrayObject
 	 */
-    public function getExtensions($installed = true, $type = 'module') {
+    public function getExtensions($installed = true) {
         static $scaned = false;
         if (! $scaned) {
             $scaned = true;
             $this->scanExentions ();
         }
-        $extensions = $installed ? $this->installed [$type] : $this->uninstalled [$type];
+        $extensions = $installed ? $this->installed : $this->uninstalled;
         if (is_array ( $extensions )) {
             return $extensions;
         }
@@ -146,26 +141,26 @@ class ExtensionManager {
         $this->getUpgradeInfo = $upgrade;
     }
     // 加载插件信息
-    public function getExensionInfo($plugin_file, $core = 0, $type = 'module') {
+    public function getExensionInfo($plugin_file) {
         $content = file_get_contents ( $plugin_file );
         if (empty ( $content )) {
             return false;
         }
         $plugin = array ();
-        if (preg_match ( '/Plugin\s+ID\s*:\s+(.*)/', $content, $name )) {
-            $plugin ['Plugin_ID'] = trim ( $name [1] );
+        if (preg_match ( '/Module\s+ID\s*:\s+(.*)/', $content, $name )) {
+            $plugin ['Module_ID'] = trim ( $name [1] );
         } else {
-            $plugin ['Plugin_ID'] = basename ( $plugin_file, '.php' );
+            $plugin ['Module_ID'] = basename ( $plugin_file, '.php' );
         }
-        if (preg_match ( '/Plugin\s+Name\s*:\s+(.*)/', $content, $name )) {
-            $plugin ['Plugin_Name'] = trim ( $name [1] );
+        if (preg_match ( '/Module\s+Name\s*:\s+(.*)/', $content, $name )) {
+            $plugin ['Module_Name'] = trim ( $name [1] );
         } else {
-            $plugin ['Plugin_Name'] = basename ( $plugin_file, '.php' );
+            $plugin ['Module_Name'] = basename ( $plugin_file, '.php' );
         }
-        if (preg_match ( '/Plugin\s+URI\s*:\s+(.*)/', $content, $URI )) {
-            $plugin ['Plugin_URI'] = trim ( $URI [1] );
+        if (preg_match ( '/Module\s+URI\s*:\s+(.*)/', $content, $URI )) {
+            $plugin ['Module_URI'] = trim ( $URI [1] );
         } else {
-            $plugin ['Plugin_URI'] = '#';
+            $plugin ['Module_URI'] = '#';
         }
         if (preg_match ( '/Author\s*:\s+(.*)/', $content, $Author )) {
             $plugin ['Author'] = trim ( $Author [1] );
@@ -175,7 +170,7 @@ class ExtensionManager {
         if (preg_match ( '/Version\s*:\s+(.*)/', $content, $Version )) {
             $plugin ['Version'] = trim ( $Version [1] );
         } else {
-            $plugin ['Version'] = '0';
+            $plugin ['Version'] = '0.1';
         }
         if (preg_match ( '/Author\s+URI\s*:\s+(.*)/', $content, $URI )) {
             $plugin ['Author_URI'] = trim ( $URI [1] );
@@ -187,58 +182,34 @@ class ExtensionManager {
         } else {
             $plugin ['Description'] = '';
         }
-        $module_apath = $core ? KISSGO . 'modules' . DS : MODULES_PATH;
-        $module_rpath = $core ? '::' : '';
-        $plugin ['Plugin'] = str_replace ( array (
-                                                    $module_apath, 
-                                                    DS . '__pkg__.php', 
-                                                    DS 
-        ), array (
-                $module_rpath, 
-                '', 
-                '/' 
-        ), str_replace ( '/', DS, $plugin_file ) );
-        $plugin ['core'] = $core;
-        $plugin ['type'] = $type;
+        $plugin ['Module'] = str_replace ( array (MODULES_PATH, DS . '__pkg__.php', DS ), array ('', '', '/' ), str_replace ( '/', DS, $plugin_file ) );
         $plugin ['pkg_file'] = str_replace ( APP_PATH, '', $plugin_file );
         $extensions = $this->extensions;
-        if (isset ( $extensions [$plugin ['Plugin_ID']] )) {
+        if (isset ( $extensions [$plugin ['Module_ID']] )) {
             $plugin ['Installed'] = true;
-            $plugin ['disabled'] = $extensions [$plugin ['Plugin_ID']] ['disabled'];
-            $plugin ['Installed_Time'] = $extensions [$plugin ['Plugin_ID']] ['Installed_Time'];
-            $plugin ['unremovable'] = $extensions [$plugin ['Plugin_ID']] ['unremovable'];
-            $plugin ['upgradable'] = $this->isUpgradable ( $plugin, $extensions [$plugin ['Plugin_ID']] ['Version'] );
+            $plugin ['disabled'] = $extensions [$plugin ['Module_ID']] ['disabled'];
+            $plugin ['unremovable'] = $extensions [$plugin ['Module_ID']] ['unremovable'];
+            $plugin ['core'] = $extensions [$plugin ['Module_ID']] ['core'];
+            $plugin ['upgradable'] = $this->isUpgradable ( $plugin, $extensions [$plugin ['Module_ID']] ['Version'] );
             if ($this->getUpgradeInfo) {
-                $plugin ['curVersion'] = $extensions [$plugin ['Plugin_ID']] ['Version'];
+                $plugin ['curVersion'] = $extensions [$plugin ['Module_ID']] ['Version'];
             }
-            $this->installed [$type] [$plugin ['Plugin_ID']] = $plugin;
+            $this->installed [$plugin ['Module_ID']] = $plugin;
         } else {
             $plugin ['Installed'] = false;
             $plugin ['disabled'] = 0;
-            $plugin ['Installed_Time'] = 0;
-            $this->uninstalled [$type] [$plugin ['Plugin_ID']] = $plugin;
+            $this->uninstalled [$plugin ['Module_ID']] = $plugin;
         }
         return $plugin;
     }
-    public function load($extensions, $type = 'module', $pkg = false) {
-        global $_ksg_installed_modules, $_ksg_installed_plugins;
+    public function load($extensions, $pkg = false) {
+        global $_ksg_installed_modules;
         if (is_array ( $extensions )) {
             $app_init_files = array ();
             foreach ( $extensions as $app ) {
-                $app_path = $app;
-                if (preg_match ( '/^::/', $app )) {
-                    $app_path = ltrim ( $app, ':' );
-                    
-                    $app_init_files [] = str_replace ( '::', "::{$type}s/", $app ) . ($pkg ? '/__pkg__.php' : '/__init__.php');
-                } else {
-                    $app_init_files [] = ($type == 'module' ? MODULE_DIR : PLUGIN_PATH) . '/' . $app . ($pkg ? '/__pkg__.php' : '/__init__.php');
-                }
+                $app_init_files [] = MODULE_DIR . '/' . $app . ($pkg ? '/__pkg__.php' : '/__init__.php');
                 if (! $pkg) {
-                    if ($type == 'module') {
-                        $_ksg_installed_modules [] = $app_path;
-                    } else {
-                        $_ksg_installed_plugins [] = $app_path;
-                    }
+                    $_ksg_installed_modules [] = $app;
                 }
             }
             if (! empty ( $app_init_files )) {
@@ -248,27 +219,9 @@ class ExtensionManager {
     }
     // 扫描插件信息
     private function scanExentions() {
-        $coreModules = find_files ( KISSGO . 'modules', '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $coreModules )) {
-            foreach ( $coreModules as $plugin_file ) {
-                $this->getExensionInfo ( $plugin_file, 1 );
-            }
-        }
-        $coreModules = find_files ( KISSGO . 'plugins', '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $coreModules )) {
-            foreach ( $coreModules as $plugin_file ) {
-                $this->getExensionInfo ( $plugin_file, 1, 'plugin' );
-            }
-        }
-        $allPlugins = find_files ( PLUGIN_PATH, '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $allPlugins )) {
-            foreach ( $allPlugins as $plugin_file ) {
-                $this->getExensionInfo ( $plugin_file, 0, 'plugin' );
-            }
-        }
-        $allPlugins = find_files ( MODULES_PATH, '/^__pkg__\.php$/', array (), 1, 1 );
-        if (! empty ( $allPlugins )) {
-            foreach ( $allPlugins as $plugin_file ) {
+        $allModules = find_files ( MODULES_PATH, '/^__pkg__\.php$/', array (), 1, 1 );
+        if (! empty ( $allModules )) {
+            foreach ( $allModules as $plugin_file ) {
                 $this->getExensionInfo ( $plugin_file );
             }
         }

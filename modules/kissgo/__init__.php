@@ -10,11 +10,11 @@ defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
  */
 function set_site_global_vars($smarty) {
     $settings = KissGoSetting::getSetting ();
-    $smarty->assign ( '_SITE_URL', BASE_URL );
-    $smarty->assign ( '_PASSPORT', Passport::getPassport () );
-    $smarty->assign ( '_KISSGO_R_VERSION', $settings ['VERSION'] . ' ' . $settings ['RELEASE'] );
-    $smarty->assign ( '_CUR_URI', Request::getUri () );
-    $smarty->assign ( '_CUR_URL', Request::getVirtualPageUrl () );
+    $smarty->assign ( 'ksg_site_url', BASE_URL );
+    $smarty->assign ( 'ksg_passport', Passport::getPassport () );
+    $smarty->assign ( 'ksg_version', KISSGO_VERSION . ' build ' . KISSGO_BUILD );
+    $smarty->assign ( 'ksg_uri', Request::getUri () );
+    $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );
     return $smarty;
 }
 bind ( 'init_smarty_engine', 'set_site_global_vars' );
@@ -23,13 +23,12 @@ bind ( 'init_smarty_engine', 'set_site_global_vars' );
  *
  * @param Smarty $smarty        	
  */
-function set_admin_global_vars($smarty) {
-    $smarty->assign ( 'admincp_url', murl ( 'kissgo' ) );
-    $smarty->assign ( '_top_navigation_menu', apply_filter ( 'get_top_navigation_menu', new NavigationMenuManager () ) );
-    $smarty->assign ( '_foot_toolbar_btns', apply_filter ( 'get_foot_toolbar_buttons', new NavigationFootToolbar () ) );
+function set_admin_global_vars($smarty) {      
+    $smarty->assign ( 'ksg_top_navigation_menu', apply_filter ( 'get_top_navigation_menu', new NavigationMenuManager () ) );
+    $smarty->assign ( 'ksg_foot_toolbar_btns', apply_filter ( 'get_foot_toolbar_buttons', new NavigationFootToolbar () ) );
     return $smarty;
 }
-
+bind ( 'init_view_smarty_engine', 'set_admin_global_vars' );
 /**
  * 设置导航菜单
  *
@@ -40,8 +39,8 @@ function _hook_for_admincp_menu($mm) {
     // System
     $mm->addMenu2 ( 'system', __ ( 'System' ), 'icon-th-large' );
     $mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), '#', 'icon-user' );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'kissgo', 'users' ),'icon-user' );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'kissgo', 'roles' ) ,'icon-user');
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'kissgo', 'users' ), 'icon-user' );
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'kissgo', 'roles' ), 'icon-user' );
     $mm->addMenuItemDivider ( 'system' );
     $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'kissgo', 'extension' ), 'icon-briefcase' );
     $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preference' ), 'icon-adjust' );
@@ -117,15 +116,4 @@ function _kissgo_hook_for_get_user_passport($passport) {
 }
 
 bind ( 'get_user_passport', '_kissgo_hook_for_get_user_passport' );
-/**
- * load administrator panel page and show it.
- *
- * @param string $tpl
- * @param array $data
- * @return SmartyView
- */
-function admin_view($tpl, $data = array(), $headers = array()) {
-    bind ( 'init_smarty_engine', 'set_admin_global_vars' );
-    return new SmartyView ( $data, $tpl, $headers );
-}
 // end of __init__.php

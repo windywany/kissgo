@@ -15,7 +15,6 @@ defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
  */
 class KissGo implements ArrayAccess {
     private static $INSTANCE = NULL;
-    
     private function __construct() {
         if (! @ini_get ( 'zlib.output_compression' ) && @ob_get_status ()) {
             $__ksg_before_out = @ob_get_contents ();
@@ -24,10 +23,7 @@ class KissGo implements ArrayAccess {
             }
             @ob_end_clean ();
         }
-        @ob_start ( array (
-                            Response::getInstance (), 
-                            'ob_out_handler' 
-        ) );
+        @ob_start ( array (Response::getInstance (), 'ob_out_handler' ) );
         if (defined ( 'GZIP_ENABLED' ) && GZIP_ENABLED && extension_loaded ( "zlib" )) {
             $gzip = @ini_get ( 'zlib.output_compression' );
             if (! $gzip) {
@@ -60,29 +56,22 @@ class KissGo implements ArrayAccess {
             $router = Router::getInstance ();
             $action_func = $router->getAction ( $request );
             if (is_callable ( $action_func )) {
-                $view = call_user_func_array ( $action_func, array (
-                                                                    $request, 
-                                                                    $response 
-                ) );
+                $view = call_user_func_array ( $action_func, array ($request, $response ) );
             } else {
-                Response::respond(404);
+                Response::respond ( 404 );
             }
         }
         $response->output ( $view );
     }
-    
     public function offsetExists($offset) {
         return KissGoSetting::hasSetting ( $offset );
     }
-    
     public function offsetGet($offset) {
         return KissGoSetting::getSetting ( $offset );
     }
-    
     public function offsetSet($offset, $value) {
         KissGoSetting::getSetting ( $offset, $value );
     }
-    
     public function offsetUnset($offset) {
         // nothing to do
     }
@@ -102,25 +91,7 @@ class KissGo implements ArrayAccess {
             if (version_compare ( '5.4', phpversion (), '>=' )) {
                 session_set_save_handler ( $__ksg_session_handler, true );
             } else {
-                session_set_save_handler ( array (
-                                                    $__ksg_session_handler, 
-                                                    'open' 
-                ), array (
-                        $__ksg_session_handler, 
-                        'close' 
-                ), array (
-                        $__ksg_session_handler, 
-                        'read' 
-                ), array (
-                        $__ksg_session_handler, 
-                        'write' 
-                ), array (
-                        $__ksg_session_handler, 
-                        'destroy' 
-                ), array (
-                        $__ksg_session_handler, 
-                        'gc' 
-                ) );
+                session_set_save_handler ( array ($__ksg_session_handler, 'open' ), array ($__ksg_session_handler, 'close' ), array ($__ksg_session_handler, 'read' ), array ($__ksg_session_handler, 'write' ), array ($__ksg_session_handler, 'destroy' ), array ($__ksg_session_handler, 'gc' ) );
                 register_shutdown_function ( 'session_write_close' );
             }
         }

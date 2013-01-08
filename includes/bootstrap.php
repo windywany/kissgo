@@ -40,16 +40,7 @@ if (@ini_get ( 'register_globals' )) {
     if (isset ( $_REQUEST ['GLOBALS'] )) {
         die ( 'GLOBALS overwrite attempt detected' );
     }
-    $noUnset = array (
-                    'GLOBALS', 
-                    '_GET', 
-                    '_POST', 
-                    '_COOKIE', 
-                    '_REQUEST', 
-                    '_SERVER', 
-                    '_ENV', 
-                    '_FILES' 
-    );
+    $noUnset = array ('GLOBALS', '_GET', '_POST', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES' );
     $input = array_merge ( $_GET, $_POST, $_COOKIE, $_SERVER, $_ENV, $_FILES, isset ( $_SESSION ) && is_array ( $_SESSION ) ? $_SESSION : array () );
     foreach ( $input as $k => $v ) {
         if (! in_array ( $k, $noUnset ) && isset ( $GLOBALS [$k] )) {
@@ -73,12 +64,7 @@ if (function_exists ( 'mb_internal_encoding' )) {
 }
 function log_message($message, $trace_info, $level) {
     global $_kissgo_log_msg;
-    static $log_name = array (
-                            DEBUG_INFO => 'INFO', 
-                            DEBUG_WARN => 'WARN', 
-                            DEBUG_DEBUG => 'DEBUG', 
-                            DEBUG_ERROR => 'ERROR' 
-    );
+    static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
     if ($level >= DEBUG) {
         $msg = date ( "Y-m-d H:i:s" ) . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
         @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
@@ -89,34 +75,19 @@ function log_message($message, $trace_info, $level) {
 }
 function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
     if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
-        log_message ( $error_str, array (
-                                        'file' => $error_file, 
-                                        'line' => $error_line 
-        ), DEBUG_ERROR );
+        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_ERROR );
         Response::getInstance ()->close ( true );
     } else if ($error_no == E_USER_NOTICE) {
-        log_message ( $error_str, array (
-                                        'file' => $error_file, 
-                                        'line' => $error_line 
-        ), DEBUG_INFO );
+        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_INFO );
     } else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
-        log_message ( $error_str, array (
-                                        'file' => $error_file, 
-                                        'line' => $error_line 
-        ), DEBUG_WARN );
+        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_WARN );
     } else if ($error_no != E_NOTICE) {
-        log_message ( $error_str, array (
-                                        'file' => $error_file, 
-                                        'line' => $error_line 
-        ), DEBUG_DEBUG );
+        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_DEBUG );
     }
 }
 set_error_handler ( '_kissgo_error_handler' );
 function _kissgo_exception_handler($exception) {
-    log_message ( html_entity_decode ( $exception->getMessage () ), array (
-                                                                            'file' => $exception->getFile (), 
-                                                                            'line' => $exception->getLine () 
-    ), DEBUG_ERROR );
+    log_message ( html_entity_decode ( $exception->getMessage () ), array ('file' => $exception->getFile (), 'line' => $exception->getLine () ), DEBUG_ERROR );
     Response::getInstance ()->close ( true );
 }
 set_exception_handler ( '_kissgo_exception_handler' );
@@ -264,9 +235,9 @@ if (is_readable ( $_ksg_settings_file )) {
     $settings->prepareSettings ();
     unset ( $settings );
 } else if ($_kissgo_processing_installation != true) { // goto install page
-//$install_script = detect_app_base_url () . 'install.php';
-//echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$install_script}';</script></head><body></body></html>";
-// exit ();
+    $install_script = detect_app_base_url () . 'install.php';
+    echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$install_script}';</script></head><body></body></html>";
+    exit ();
 }
 unset ( $_ksg_settings_file );
 defined ( 'DEBUG' ) or define ( 'DEBUG', 3 ); // debug level
@@ -318,7 +289,7 @@ function _kissgo_class_loader($clz) {
 spl_autoload_register ( '_kissgo_class_loader' );
 ///////////////////////////////////////////////////////////////
 // load applications and plugins
-global $_ksg_installed_plugins, $_ksg_installed_modules;
+global $_ksg_installed_modules;
 ExtensionManager::getInstance ()->loadInstalledExtensions ();
 $__rqst = Request::getInstance ();
 //////////////////////////////////////////////////////////////////

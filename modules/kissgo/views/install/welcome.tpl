@@ -41,7 +41,7 @@
 				       	</div>											
 				       	{block name="body"}
 				       	<div class="well" style="height:350px;overflow-y:auto;">
-				       		{include file="kissgo/install/license.tpl"}
+				       		{include file="$ksg_module/kissgo/views/install/license.tpl"}
 				       	</div>
 				       	<form class="form-inline pull-right" onsubmit="check" method="post">
 				       		<input type="hidden" name="step" value="check"/>						   

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>{'Login'|ts}[Powered by KissGo! {$_KISSGO_R_VERSION}]</title>
+		<title>{'Login'|ts}[Powered by KissGo! {$ksg_version}]</title>
 		<link href="{'bootstrap/css/bootstrap.css'|static}" rel="stylesheet"/>
 		<link href="{'bootstrap/css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
 		<link href="{'common.css'|static}" rel="stylesheet"/>

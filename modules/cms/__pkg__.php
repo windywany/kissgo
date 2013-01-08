@@ -1,14 +1,13 @@
 <?php
 /*
- * Plugin ID: cn.usephp.cms
-* Plugin Name: KissGO CMS
-* Plugin URI: http://www.usephp.cn/modules/ext/cms.html
-* Description: KissGO! CMS。
-* Author: Leo Ning
-* Version: 1.10.2
-* Author URI: http://www.usephp.cn/
-*/
-
+ * Module ID: cn.usephp.cms
+ * Module Name: KissGO CMS
+ * Module URI: http://www.usephp.cn/modules/ext/cms.html
+ * Description: KissGO! CMS。
+ * Author: Leo Ning
+ * Version: 1.10.2
+ * Author URI: http://www.usephp.cn/
+ */
 function _install_form_cms($view) {
     return "afasdf adfa fadsfad";
 }

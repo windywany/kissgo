@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="KissGO! group">
-    <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$_KISSGO_R_VERSION}</title>
+    <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$ksg_version}</title>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap.css'|static}"/>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap-responsive.css'|static}"/>
     <link rel="stylesheet" href="{'common.css'|static}"/>
@@ -25,10 +25,10 @@
 <div id="navbar" class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
-            <a target="_blank" href="{$_SITE_URL}" class="brand">{'site_name'|cfg}<i class="icon-share"></i></a>
+            <a target="_blank" href="{$ksg_site_url}" class="brand">{'site_name'|cfg}<i class="icon-share"></i></a>
             <div class="nav-collapse">
                 <ul id="menu" class="nav">
-                    {$_top_navigation_menu->render()}                    
+                    {$ksg_top_navigation_menu->render()}                    
                 </ul>
                 <ul class="nav pull-right">
                 	<li class="dropdown">
@@ -41,7 +41,7 @@
                     </li>
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                            <i class="icon-user"></i> {$_PASSPORT['name']}({$_PASSPORT['account']})<span class="caret"></span>
+                            <i class="icon-user"></i> {$ksg_passport['name']}({$ksg_passport['account']})<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             {'add_passport_menu_items'|fire}

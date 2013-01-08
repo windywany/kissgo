@@ -1,8 +1,8 @@
 <?php
 /*
- * Plugin ID: cn.usephp.core.gui 
- * Plugin Name: KissGO GUI 
- * Plugin URI: http://www.usephp.cn/modules/core/ui.html 
+ * Module ID: cn.usephp.core.gui 
+ * Module Name: KissGO GUI 
+ * Module URI: http://www.usephp.cn/modules/core/ui.html 
  * Description: KissGO管理界面。 
  * Author: Leo Ning 
  * Version: 1.0 

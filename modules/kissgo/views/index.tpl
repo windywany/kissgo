@@ -1,4 +1,4 @@
-{extends file="kissgo/admincp.tpl"}
+{extends file=$ksg_admincp_layout}
 
 {block name="admincp_body"}
     <div style="height:1000px;">heihei</div>
