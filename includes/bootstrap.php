@@ -7,22 +7,27 @@
  *
  * $Id$
  */
-defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
-define ( 'KISSGO_VERISON', '1.0 BETA 195-1206-12' ); // the version of kissgo
+defined ( 'WEB_ROOT' ) or exit ( 'No direct script access allowed' );
+/////////////////////////////////////////////////////////////////////
+// Version configuration
+/////////////////////////////////////////////////////////////////////
+define ( 'KISSGO_VERSION', "1.0 BETA" );
+define ( 'KISSGO_BUILD', "1024" );
+// common constants 
 define ( 'DS', DIRECTORY_SEPARATOR ); // the short for directory separator
+define ( 'APP_PATH', WEB_ROOT );
+define ( 'INCLUDES', WEB_ROOT . 'includes' . DS );
+define ( 'KISSGO', INCLUDES . 'kissgo' . DS );
 define ( 'DEBUG_ERROR', 5 ); // debug levels
 define ( 'DEBUG_INFO', 4 );
 define ( 'DEBUG_WARN', 3 );
 define ( 'DEBUG_DEBUG', 2 );
-define ( 'APP_DIR', dirname ( APP_PATH ) );
-define ( 'KISSGO_DIR', dirname ( KISSGO ) );
 defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) ); // the default application name, this is used by session id
 defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS ); // the default modules path
 define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
-defined ( 'PLUGIN_PATH' ) or define ( 'PLUGIN_PATH', APP_PATH . 'plugins' . DS );
 defined ( 'APPDATA_PATH' ) or define ( 'APPDATA_PATH', APP_PATH . 'appdata' . DS ); // the application data path
-defined ( 'TEMPLATE_PATH' ) or define ( 'TEMPLATE_PATH', APP_PATH . 'views' . DS );
-defined ( 'THEME_PATH' ) or define ( 'THEME_PATH', WEB_ROOT . 'themes' . DS );
+defined ( 'THEME_PATH' ) or define ( 'THEME_PATH', WEB_ROOT );
+defined ( 'THEME_DIR' ) or define ( 'THEME_DIR', 'themes' );
 defined ( 'STATIC_DIR' ) or define ( 'STATIC_DIR', 'static' );
 defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS ); // the temporary directory path
 define ( 'NOTNULL', '_@_NOT_NULL_@_' );
@@ -251,24 +256,17 @@ class KissGoSetting implements ArrayAccess {
         return $this->settings;
     }
 }
-
-/**
- * 存取程序运行中的全局变量
- */
-class KissGoValues extends KissGoSetting {
-}
 global $_kissgo_processing_installation;
 $_ksg_settings_file = APPDATA_PATH . 'settings.php'; // the application settings script
 if (is_readable ( $_ksg_settings_file )) {
-    include $_ksg_settings_file;
-    include APP_PATH . 'version.php';
+    include_once $_ksg_settings_file;
     $settings = KissGoSetting::getSetting ();
     $settings->prepareSettings ();
     unset ( $settings );
 } else if ($_kissgo_processing_installation != true) { // goto install page
-    $install_script = detect_app_base_url () . 'install.php';
-    echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$install_script}';</script></head><body></body></html>";
-    exit ();
+//$install_script = detect_app_base_url () . 'install.php';
+//echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$install_script}';</script></head><body></body></html>";
+// exit ();
 }
 unset ( $_ksg_settings_file );
 defined ( 'DEBUG' ) or define ( 'DEBUG', 3 ); // debug level
@@ -322,7 +320,7 @@ spl_autoload_register ( '_kissgo_class_loader' );
 // load applications and plugins
 global $_ksg_installed_plugins, $_ksg_installed_modules;
 ExtensionManager::getInstance ()->loadInstalledExtensions ();
-$__rqst = Request::getInstance();
+$__rqst = Request::getInstance ();
 //////////////////////////////////////////////////////////////////
 fire ( 'kissgo_startted' );
 // end of file bootstrap.php

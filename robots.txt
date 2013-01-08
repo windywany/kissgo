@@ -1,4 +1,9 @@
 User-agent: * 
-Disallow: /application
-Disallow: /kissgo
-Disallow: /templates
+Disallow: /appdata
+Disallow: /includes
+Disallow: /locale
+Disallow: /modules
+Disallow: /themes
+Disallow: /cron.php
+Disallow: /install.php
+Disallow: /upgrade.php

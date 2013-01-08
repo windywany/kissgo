@@ -633,22 +633,11 @@ function imports() {
                     if (is_file ( $_file )) {
                         include_once $_file;
                     }
-                }
-                $_files = glob ( KISSGO . 'modules' . DS . $file . '.php' );
-                foreach ( $_files as $_file ) {
-                    if (is_file ( $_file )) {
-                        include_once $_file;
-                    }
-                }
+                }                
             } else {
                 $_file = MODULES_PATH . $file;
                 if (is_file ( $_file )) {
                     include_once $_file;
-                } else {
-                    $_file = KISSGO . 'modules' . DS . $file;
-                    if (is_file ( $_file )) {
-                        include_once $_file;
-                    }
                 }
             }
         }

@@ -116,14 +116,12 @@ class Response {
             }
         }
         $router = Router::getInstance ();
-        $action_func = $router->get_app_action ( $request, true );
+        $action_func = $router->getAction($request, true );
         if (is_callable ( $action_func )) {
             return call_user_func_array ( $action_func, array (
                                                                 $request, 
                                                                 Response::getInstance () 
             ) );
-        } else if ($action_func instanceof View) {
-            return $action_func;
         }
         return null;
     }
@@ -134,6 +132,10 @@ class Response {
 	 */
     public static function respond($status = 404) {
         status_header ( $status );
+        if($status == 404){
+            $view = template("404.tpl");
+        }
+        echo $view->render();
         exit ();
     }
     
@@ -187,6 +189,8 @@ class Response {
             $content = $this->view->render ();
             $content = apply_filter ( 'before_output_content', $content );
             echo $content;
+        }else{
+            Response::respond(404);
         }
     }
     

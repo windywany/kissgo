@@ -9,7 +9,7 @@
  * $Id$
  */
 $_kissgo_processing_installation = true;
-require_once dirname ( __FILE__ ) . '/bootstrap.php';
+require_once dirname ( __FILE__ ) . 'includes/bootstrap.php';
 if (is_file ( APPDATA_PATH . 'settings.php' )) {
     Response::redirect ( BASE_URL );
 }

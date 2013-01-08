@@ -6,15 +6,15 @@ class ThemeView extends View {
     private $__smarty;
     
     public function __construct($data = array(), $tpl = '', $headers = array('Content-Type'=>'text/html')) {
-        if(!isset($headers['Content-Type'])){
-            $headers['Content-Type'] = 'text/html';
+        if (! isset ( $headers ['Content-Type'] )) {
+            $headers ['Content-Type'] = 'text/html';
         }
         parent::__construct ( $data, $tpl, $headers );
         $basedir = THEME_PATH;
         $tpl = $basedir . $this->tpl;
         if (is_file ( $tpl )) {
             $this->__smarty = new Smarty ();
-            $this->__smarty->addPluginsDir ( KISSGO . 'vendors/smarty/user_plugins' );
+            $this->__smarty->addPluginsDir ( INCLUDES . 'vendors/smarty/user_plugins' );
             $this->__smarty->template_dir = $basedir; //模板目录
             $tpl = str_replace ( DS, '/', $this->tpl );
             $this->data ['_current_template_file'] = $tpl;

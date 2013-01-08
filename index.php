@@ -7,6 +7,7 @@
  * $Id$
  */
 //------------------------------------------------------------------------
-require_once  dirname(__FILE__) . '/bootstrap.php';
-KissGo::getInstance()->run();
+define ( 'WEB_ROOT', dirname ( __FILE__ ) . DIRECTORY_SEPARATOR );
+require_once WEB_ROOT . 'includes/bootstrap.php';
+KissGo::getInstance ()->run ();
 // end of file index.php

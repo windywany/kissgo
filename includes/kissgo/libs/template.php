@@ -198,19 +198,28 @@ function get_data_from_cts_provider($name, $args) {
  * @param $tpl
  * @param array $data
  * @param array $headers
- * @return SmartyView
+ * @return ThemeView
  */
 function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
     $theme = apply_filter ( 'get_current_theme', 'defaults' );
-    $_tpl = $theme . '/' . $tpl;
+    $_tpl = THEME_DIR . '/' . $theme . '/' . $tpl;
     if (is_file ( THEME_PATH . $_tpl )) {
         $tpl = $_tpl;
     } else {
-        $tpl = 'defaults/' . $tpl;
+        $tpl = THEME_DIR . '/defaults/' . $tpl;
     }
     return new ThemeView ( $data, $tpl, $headers );
 }
+/**
+ * load the template for module view
+ *
+ * @param $tpl
+ * @param array $data
+ * @param array $headers
+ * @return SmartyView
+ */
 function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
+    
     return new SmartyView ( $data, $tpl, $headers );
 }
 /**

@@ -6,7 +6,7 @@
 		<link href="{'bootstrap/css/bootstrap.css'|static}" rel="stylesheet"/>
 		<link href="{'bootstrap/css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
 		<link href="{'common.css'|static}" rel="stylesheet"/>
-		<link href="{'../css/login.css'|here}" rel="stylesheet"/>
+		<link href="{'css/login.css'|here}" rel="stylesheet"/>
 	</head>
 	<body>
 		<div id="login-wrap">
