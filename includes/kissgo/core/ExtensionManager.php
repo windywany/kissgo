@@ -13,11 +13,12 @@ class ExtensionManager {
     private $installed = array ();
     private $uninstalled = array ();
     private $getUpgradeInfo = false;
+    private $aliases = array ();
     /**
-	 * 获取系统唯一插件管理器实例
-	 *
-	 * @return ExtensionManager
-	 */
+     * 获取系统唯一插件管理器实例
+     *
+     * @return ExtensionManager
+     */
     public static function getInstance() {
         if (! self::$INSTANCE) {
             self::$INSTANCE = new ExtensionManager ();
@@ -35,24 +36,31 @@ class ExtensionManager {
                 log_debug ( "extensions.ini的文件格式不正确，无法加载！" );
                 return;
             }
-            if (empty ( $this->extensions )) {
-                return;
-            }
-            foreach ( $this->extensions as $name => $plugin ) {
-                if (isset ( $plugin ['disabled'] ) && $plugin ['disabled']) {
-                    continue;
-                }
-                if (! isset ( $plugin ['Module'] )) {
-                    continue;
-                }
-                $this->modules [] = $plugin ['Module'];
-            }
-            $this->load ( $this->modules );
         }
+        
+        if (empty ( $this->extensions )) {
+            return;
+        }
+        foreach ( $this->extensions as $name => $plugin ) {
+            if (isset ( $plugin ['disabled'] ) && $plugin ['disabled']) {
+                continue;
+            }
+            if (! isset ( $plugin ['Module'] )) {
+                continue;
+            }
+            $this->modules [] = $plugin ['Module'];
+            if (isset ( $plugin ['alias'] ) && ! empty ( $plugin ['alias'] )) {
+                $this->aliases ['u2m'] [$plugin ['alias']] = $plugin ['Module'];
+                $this->aliases ['m2u'] [$plugin ['Module']] = $plugin ['alias'];
+            }
+        }
+        $this->load ( $this->modules );
     }
     /**
-	 * 保存已经安装插件信息
-	 */
+     * 保存已经安装插件信息
+     * @param array
+     * @return boolean
+     */
     public function saveExtensionsData($extensions = array()) {
         if (empty ( $extensions )) {
             $extensions = $this->extensions;
@@ -73,6 +81,12 @@ class ExtensionManager {
         }
         return false;
     }
+    /**
+     * 
+     * 安装模块
+     * @param string $pid 模块ID
+     * @return boolean|string
+     */
     public function installExtension($pid) {
         if (isset ( $this->uninstalled [$pid] )) {
             $extension = $this->uninstalled [$pid];
@@ -90,6 +104,12 @@ class ExtensionManager {
             return "插件不存在或已经安装.";
         }
     }
+    /**
+     * 
+     * 升级模块
+     * @param string $pid 模块ID
+     * @return boolean
+     */
     public function upgradeExtension($pid) {
         if (isset ( $this->extensions [$pid] )) {
             $file = APP_PATH . $this->extensions [$pid] ['pkg_file'];
@@ -103,6 +123,12 @@ class ExtensionManager {
             return false;
         }
     }
+    /**
+     * 
+     * 卸载模块
+     * @param string $pid 模块ID
+     * @return boolean
+     */
     public function uninstallExtension($pid) {
         if (isset ( $this->extensions [$pid] )) {
             unset ( $this->extensions [$pid] );
@@ -111,6 +137,13 @@ class ExtensionManager {
             return false;
         }
     }
+    /**
+     * 
+     * 启用或禁用模块
+     * @param string $pid 模块ID
+     * @param boolean $enabled
+     * @return boolean
+     */
     public function enableExtension($pid, $enabled = 1) {
         if (isset ( $this->extensions [$pid] )) {
             $this->extensions [$pid] ['disabled'] = $enabled ? 0 : 1;
@@ -120,11 +153,46 @@ class ExtensionManager {
         }
     }
     /**
-	 * 取插件系统
-	 *
-	 * @param boolean $installed        	
-	 * @return ArrayObject
-	 */
+     * 
+     * 根据别名查找模块
+     * @param string $alias
+     * @return string 模块
+     */
+    public function getModuleByAlias($alias) {
+        if (isset ( $this->aliases ['u2m'] [$alias] )) {
+            return $this->aliases ['u2m'] [$alias];
+        } else {
+            return $alias;
+        }
+    }
+    /**
+     * 
+     * 取模块的别名
+     * @param string $module
+     * @return string 别名
+     */
+    public function getAlias($module) {
+        if (isset ( $this->aliases ['m2u'] [$module] )) {
+            return $this->aliases ['m2u'] [$module];
+        } else {
+            return $module;
+        }
+    }
+    /**
+     * 
+     * 模块$module是否有别名
+     * @param string $module
+     * @return boolean
+     */
+    public function hasAlias($module) {
+        return isset ( $this->aliases ['m2u'] [$module] );
+    }
+    /**
+     * 取插件列表
+     *
+     * @param boolean $installed        	
+     * @return ArrayObject
+     */
     public function getExtensions($installed = true) {
         static $scaned = false;
         if (! $scaned) {
@@ -137,10 +205,20 @@ class ExtensionManager {
         }
         return array ();
     }
+    /**
+     * 
+     * 查找模块升级信息
+     * @param boolean $upgrade
+     */
     public function enableUpgradeInfo($upgrade = true) {
         $this->getUpgradeInfo = $upgrade;
     }
-    // 加载插件信息
+    /**
+     * 
+     * 加载插件信息
+     * @param string $plugin_file
+     * @return array represents module information
+     */
     public function getExensionInfo($plugin_file) {
         $content = file_get_contents ( $plugin_file );
         if (empty ( $content )) {
@@ -182,7 +260,15 @@ class ExtensionManager {
         } else {
             $plugin ['Description'] = '';
         }
-        $plugin ['Module'] = str_replace ( array (MODULES_PATH, DS . '__pkg__.php', DS ), array ('', '', '/' ), str_replace ( '/', DS, $plugin_file ) );
+        $plugin ['Module'] = str_replace ( array (
+                                                    MODULES_PATH, 
+                                                    DS . '__pkg__.php', 
+                                                    DS 
+        ), array (
+                '', 
+                '', 
+                '/' 
+        ), str_replace ( '/', DS, $plugin_file ) );
         $plugin ['pkg_file'] = str_replace ( APP_PATH, '', $plugin_file );
         $extensions = $this->extensions;
         if (isset ( $extensions [$plugin ['Module_ID']] )) {
@@ -202,6 +288,12 @@ class ExtensionManager {
         }
         return $plugin;
     }
+    /**
+     * 
+     * 加载模块
+     * @param array $extensions
+     * @param boolean $pkg 加载模块的包描述文件，还是加载模块的初始化文件
+     */
     public function load($extensions, $pkg = false) {
         global $_ksg_installed_modules;
         if (is_array ( $extensions )) {

@@ -249,13 +249,13 @@ function access_checking($op, $resource, $redirect = '') {
 function assert_login($type = 'KISSGO_ADMIN') {
     $passport = Passport::getPassport ();
     if (! $passport->isLogin ()) {
-        $login = apply_filter ( 'get_login_page_url_for_' . $type, murl ( 'passport', 'login' ) );
+        $login = apply_filter ( 'get_login_page_url_for_' . $type, murl ( 'kissgo', 'login' ) );
         status_header ( 401 ); //需要登录验证
         if (! Request::isAjaxRequest ()) {
             $_SESSION ['go_to_the_page_when_login'] = Request::getUri ();
             echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$login}';</script></head><body></body></html>";
         } else {
-            $_SESSION ['go_to_the_page_when_login'] = $_SERVER ['HTTP_REFERER'];            
+            $_SESSION ['go_to_the_page_when_login'] = $_SERVER ['HTTP_REFERER'];
             @header ( 'X-AJAX-REDIRECT: ' . $login );
         }
         Response::getInstance ()->close ( true );

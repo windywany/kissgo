@@ -130,15 +130,8 @@ class KissGOInstaller {
         $plgmgr = ExtensionManager::getInstance ();
         $ext = $plgmgr->getExensionInfo ( MODULES_PATH . 'kissgo/__pkg__.php' );
         $ext ['unremovable'] = 1;
-        $ext ['disabled'] = 0; 
+        $ext ['disabled'] = 0;
         $ext ['core'] = 1;
-       
-        $extensions [] = $ext;
-        $ext = $plgmgr->getExensionInfo ( MODULES_PATH . 'passport/__pkg__.php' );
-        $ext ['unremovable'] = 1;
-        $ext ['disabled'] = 0;  
-        $ext ['core'] = 1;
-        
         $extensions [] = $ext;
         if ($plgmgr->saveExtensionsData ( $extensions )) {
             return true;

@@ -17,11 +17,17 @@ function _kissgo_default_index($view) {
     }
     return $view;
 }
-bind ( 'after_route', '_kissgo_default_index', 10000 );
-$view = apply_filter ( 'after_route', NULL );
-if ($view == NULL) {
-    Response::respond ( 404 );
-} else {
-    return $view;
+/**
+ * 
+ * 显示homepage
+ */
+function do_show_custom_page() {
+    bind ( 'after_route', '_kissgo_default_index', 10000 );
+    $view = apply_filter ( 'after_route', NULL );
+    if ($view == NULL) {
+        Response::respond ( 404 );
+    } else {
+        return $view;
+    }
 }
 // end of index.php

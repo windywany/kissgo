@@ -5,14 +5,14 @@
  * Date: 12-11-24
  * Time: 下午1:01
  */
-imports ( 'passport/forms/*' );
+imports ( 'kissgo/forms/*' );
 /**
  * 处理登录
  * @param Request $req
  * @param Response $res
  * @return ThemeView
  */
-function do_passport_login_post($req, $res) {
+function do_kissgo_login_post($req, $res) {
     $form = new PassportForm ();
     if ($form->validate ()) {
         imports ( 'kissgo/models/*' );
@@ -41,7 +41,7 @@ function do_passport_login_post($req, $res) {
  * @param Response $res
  * @return ThemeView
  */
-function do_passport_login_get($req, $res) {
+function do_kissgo_login_get($req, $res) {
     $me = Passport::getPassport ();
     if ($me->isLogin ()) {
         Response::redirect ( sess_get ( 'go_to_the_page_when_login', BASE_URL ) );

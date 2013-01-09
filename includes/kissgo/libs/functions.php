@@ -45,16 +45,63 @@ function get_status_header_desc($code) {
     $code = abs ( intval ( $code ) );
     
     if (! isset ( $output_header_to_desc )) {
-        $output_header_to_desc = array (100 => 'Continue', 101 => 'Switching Protocols', 102 => 'Processing', 
-
-        200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 207 => 'Multi-Status', 226 => 'IM Used', 
-
-        300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 306 => 'Reserved', 307 => 'Temporary Redirect', 
-
-        400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Timeout', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Long', 415 => 'Unsupported Media Type', 416 => 'Requested Range Not Satisfiable', 417 => 'Expectation Failed', 
-                                        422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required', 
-
-                                        500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Timeout', 505 => 'HTTP Version Not Supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 510 => 'Not Extended' );
+        $output_header_to_desc = array (
+                                        100 => 'Continue', 
+                                        101 => 'Switching Protocols', 
+                                        102 => 'Processing', 
+                                        
+                                        200 => 'OK', 
+                                        201 => 'Created', 
+                                        202 => 'Accepted', 
+                                        203 => 'Non-Authoritative Information', 
+                                        204 => 'No Content', 
+                                        205 => 'Reset Content', 
+                                        206 => 'Partial Content', 
+                                        207 => 'Multi-Status', 
+                                        226 => 'IM Used', 
+                                        
+                                        300 => 'Multiple Choices', 
+                                        301 => 'Moved Permanently', 
+                                        302 => 'Found', 
+                                        303 => 'See Other', 
+                                        304 => 'Not Modified', 
+                                        305 => 'Use Proxy', 
+                                        306 => 'Reserved', 
+                                        307 => 'Temporary Redirect', 
+                                        
+                                        400 => 'Bad Request', 
+                                        401 => 'Unauthorized', 
+                                        402 => 'Payment Required', 
+                                        403 => 'Forbidden', 
+                                        404 => 'Not Found', 
+                                        405 => 'Method Not Allowed', 
+                                        406 => 'Not Acceptable', 
+                                        407 => 'Proxy Authentication Required', 
+                                        408 => 'Request Timeout', 
+                                        409 => 'Conflict', 
+                                        410 => 'Gone', 
+                                        411 => 'Length Required', 
+                                        412 => 'Precondition Failed', 
+                                        413 => 'Request Entity Too Large', 
+                                        414 => 'Request-URI Too Long', 
+                                        415 => 'Unsupported Media Type', 
+                                        416 => 'Requested Range Not Satisfiable', 
+                                        417 => 'Expectation Failed', 
+                                        422 => 'Unprocessable Entity', 
+                                        423 => 'Locked', 
+                                        424 => 'Failed Dependency', 
+                                        426 => 'Upgrade Required', 
+                                        
+                                        500 => 'Internal Server Error', 
+                                        501 => 'Not Implemented', 
+                                        502 => 'Bad Gateway', 
+                                        503 => 'Service Unavailable', 
+                                        504 => 'Gateway Timeout', 
+                                        505 => 'HTTP Version Not Supported', 
+                                        506 => 'Variant Also Negotiates', 
+                                        507 => 'Insufficient Storage', 
+                                        510 => 'Not Extended' 
+        );
     }
     
     if (isset ( $output_header_to_desc [$code] ))
@@ -113,12 +160,12 @@ function path_is_absolute($path) {
     
     if (strlen ( $path ) == 0 || $path {0} == '.')
         return false;
-        
-        // windows allows absolute paths like this
+    
+     // windows allows absolute paths like this
     if (preg_match ( '#^[a-zA-Z]:\\\\#', $path ))
         return true;
-        
-        // a path starting with / or \ is absolute; anything else is relative
+    
+     // a path starting with / or \ is absolute; anything else is relative
     return ( bool ) preg_match ( '#^[/\\\\]#', $path );
 }
 
@@ -156,7 +203,34 @@ function path_join($base, $path) {
  * @return string The sanitized filename
  */
 function sanitize_file_name($filename) {
-    $special_chars = array ("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", chr ( 0 ) );
+    $special_chars = array (
+                            "?", 
+                            "[", 
+                            "]", 
+                            "/", 
+                            "\\", 
+                            "=", 
+                            "<", 
+                            ">", 
+                            ":", 
+                            ";", 
+                            ",", 
+                            "'", 
+                            "\"", 
+                            "&", 
+                            "$", 
+                            "#", 
+                            "*", 
+                            "(", 
+                            ")", 
+                            "|", 
+                            "~", 
+                            "`", 
+                            "!", 
+                            "{", 
+                            "}", 
+                            chr ( 0 ) 
+    );
     $filename = str_replace ( $special_chars, '', $filename );
     $filename = preg_replace ( '/[\s-]+/', '-', $filename );
     $filename = trim ( $filename, '.-_' );
@@ -165,12 +239,22 @@ function sanitize_file_name($filename) {
     // Return if only one extension
     if (count ( $parts ) <= 2)
         return $filename;
-        
-        // Process multiple extensions
+    
+     // Process multiple extensions
     $filename = array_shift ( $parts );
     $extension = array_pop ( $parts );
     
-    $mimes = array ('tmp', 'txt', 'jpg', 'gif', 'png', 'rar', 'zip', 'gzip', 'ppt' );
+    $mimes = array (
+                    'tmp', 
+                    'txt', 
+                    'jpg', 
+                    'gif', 
+                    'png', 
+                    'rar', 
+                    'zip', 
+                    'gzip', 
+                    'ppt' 
+    );
     
     // Loop over any intermediate extensions. Munge them with a trailing
     // underscore if they are a 2 - 5 character
@@ -224,9 +308,9 @@ function unique_filename($dir, $filename, $unique_filename_callback = null) {
     // edge case: if file is named '.ext', treat as an empty name
     if ($name === $ext)
         $name = '';
-        
-        // Increment the file number until we have a unique file to save in
-        // $dir. Use $override['unique_filename_callback'] if supplied.
+    
+     // Increment the file number until we have a unique file to save in
+    // $dir. Use $override['unique_filename_callback'] if supplied.
     if ($unique_filename_callback && is_callable ( $unique_filename_callback )) {
         $filename = $unique_filename_callback ( $dir, $name );
     } else {
@@ -281,7 +365,10 @@ function find_files($dir = '.', $pattern = '', $excludes = array(), $recursive =
         $fhd = @opendir ( $dir );
         if ($fhd) {
             $excludes = is_array ( $excludes ) ? $excludes : array ();
-            $_excludes = array_merge ( $excludes, array ('.', '..' ) );
+            $_excludes = array_merge ( $excludes, array (
+                                                        '.', 
+                                                        '..' 
+            ) );
             while ( ($file = readdir ( $fhd )) !== false ) {
                 if ($recursive && is_dir ( $dir . $file ) && ! in_array ( $file, $_excludes )) {
                     if ($stop == 0 || $recursive <= $stop) {
@@ -484,7 +571,9 @@ function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
  */
 function includes($files) {
     if (! is_array ( $files )) {
-        $files = array ($files );
+        $files = array (
+                        $files 
+        );
     }
     foreach ( $files as $file ) {
         $file = APP_PATH . $file;
@@ -504,7 +593,9 @@ function imports() {
     }
     foreach ( $args as $files ) {
         if (! is_array ( $files )) {
-            $files = array ($files );
+            $files = array (
+                            $files 
+            );
         }
         foreach ( $files as $file ) {
             if (! is_module_file ( $file )) {
@@ -635,16 +726,6 @@ function log_error($message) {
     $trace = debug_backtrace ();
     log_message ( $message, $trace [0], DEBUG_ERROR );
 }
-
-/**
- *
- * @param string $uri
- * @return string
- */
-function mpath($uri) {
-    return untrailingslashit ( apply_filter ( 'get_module_path_from_path', $uri ) );
-}
-
 /**
  * 将模块路径，Action,参数等数据转换成url
  * @param string $module 模块路径
@@ -653,7 +734,11 @@ function mpath($uri) {
  * @return string
  */
 function murl($module, $action = '', $args = '') {
-    $url = trailingslashit ( apply_filter ( 'get_module_url_from_path', $module ) );
+    static $em = false;
+    if (! $em) {
+        $em = ExtensionManager::getInstance ();
+    }
+    $url = trailingslashit ( $em->getAlias($module) );
     if (! empty ( $action )) {
         $url .= $action;
     }
@@ -700,7 +785,13 @@ function sortheader($text, $filed, $sort = 'd', $url = '') {
         }
     }
     ! empty ( $stext ) or $stext = '<i class="sdir"></i>';
-    $qs = preg_replace ( array ('/[&\?]?_sf=[^&]*/', '/[&\?]?_sd=[^&]*/' ), array ('', '' ), $url );
+    $qs = preg_replace ( array (
+                                '/[&\?]?_sf=[^&]*/', 
+                                '/[&\?]?_sd=[^&]*/' 
+    ), array (
+            '', 
+            '' 
+    ), $url );
     $ss = '_sf=' . $filed . '&_sd=' . $sort;
     $qs .= (strpos ( $qs, '?' ) === false ? '?' : '&') . $ss;
     return sprintf ( '<div class="sortheader"><a href="%s">%s</a>%s</div>', $qs, $text, $stext );
@@ -875,7 +966,11 @@ function merge_add($ary1, $ary2, $sep = ' ') {
  * 跳转时间,当$redirect为空时，些值无效
  */
 function show_message($type, $message, $redirect = '') {
-    static $titles = array ('error' => '出错啦!', 'warning' => '警告!', 'info' => '提示!' );
+    static $titles = array (
+                            'error' => '出错啦!', 
+                            'warning' => '警告!', 
+                            'info' => '提示!' 
+    );
     $msg ['type'] = $type;
     $msg ['message'] = $message;
     $msg ['title'] = $titles [$type];

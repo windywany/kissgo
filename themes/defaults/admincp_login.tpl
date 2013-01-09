@@ -14,7 +14,7 @@
 				<h1>登录</h1>
 			</div>
 			<div id="login-body">
-				<form id="login-form" class="well form-inline" action="{'passport'|murl:login}" method="post">
+				<form id="login-form" class="well form-inline" action="{'kissgo'|murl:login}" method="post">
 					<div id="eMsg" class="alert alert-error {if $form->isValid()}hide{/if}">
 						<button class="close">×</button>
 						<div id="eMsgdiv">{$form|form:errors}</div>
