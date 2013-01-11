@@ -10,13 +10,7 @@
 /**
  * 模型
  */
-abstract class Model {
-    /**
-     * #@+
-     *
-     * @access public
-     * @var string
-     */
+abstract class Model {    
     /**
      * 左连接
      */
@@ -34,22 +28,8 @@ abstract class Model {
      *
      * @var string
      */
-    const NOTSET = '_WNT_';
-    /**
-     * #@-
-     */
-    /**
-     * 模型使用的数据源
-     *
-     * @var DataSource
-     */
-    protected $_ds = NULL;
-    /**
-     * #@+
-     *
-     * @access protected
-     * @var string
-     */
+    const NOTSET = '_WNT_';    
+    protected $_ds = NULL;    
     /**
      * 指定模型对应的表名
      */
@@ -78,19 +58,7 @@ abstract class Model {
     /**
      * 条件语句,由where生成的查询条件
      */
-    protected $_whereString = '';
-    /**
-     * #@-
-     */
-    /**
-     * #@+
-     *
-     * @access protected
-     * @var array
-     */
-    /**
-     * 实体字段
-     */
+    protected $_whereString = '';   
     protected $_fields = array();
     /**
      * 查询选项
@@ -107,16 +75,7 @@ abstract class Model {
     /**
      * 查询总数,是否查询总数
      */
-    protected $_countit = false;
-    /**
-     * #@-
-     */
-    /**
-     * count查询总数
-     *
-     * @var int
-     * @access protected
-     */
+    protected $_countit = false;    
     protected $_total = 0; // 总数
     protected $_cfields = array();
     protected $_queryString = '';
@@ -146,72 +105,7 @@ abstract class Model {
         $this->schema();
     }
 
-    /**
-     *
-     * @param array $names
-     *            用于构建查询条件的字段名,当使用别名时请使用as
-     * @param array $data
-     *            引用传入的数据，将从表单获取的数据填充
-     * @param array $extra
-     *            查询附加说明
-     * @return array
-     */
-    public static function where_build($names, &$data = null, $extra = array()) {
-        $where = array();
-        $rst = Request::getInstance();
-        foreach ($names as $name => $value) {
-            if (is_numeric($name)) {
-                $name = $value;
-                $value = null;
-            }
-            $names = explode('as', $name);
-            if (count($names) > 1) { // uname as U.name
-                $name_as = trim(array_shift($names)); // 用于从表单取数据
-            } else {
-                unset ($name_as);
-            }
-            $names = preg_split('#\s+#', trim($names [0]));
-            $field = array_shift($names); // 用于数据库字段
-            $name = isset ($name_as) ? $name_as : $field;
-            $op = empty ($names) ? '' : ' ' . $names [0];
-            $ext = isset ($extra [$name]) ? $extra [$name] : '';
-            if (isset($rst[$name])) {
-                $value = $rst->get($name, trim($value));
-                if ($value == null || $value == '') {
-                    if (is_array($data)) {
-                        $data [$name] = '';
-                    }
-                    continue;
-                }
-                if (is_array($data)) {
-                    $data [$name] = $value;
-                }
-                switch ($ext) {
-                    case 'like' :
-                        $value = "%{$value}%";
-                        break;
-                    case 'llike' :
-                        $value = "%{$value}";
-                        break;
-                    case 'rlike' :
-                        $value = "{$value}%";
-                        break;
-                    case 'safeids' :
-                        $value = safe_ids($value, ',', true);
-                        break;
-                    default :
-                        ;
-                }
-                $where [$field . $op] = $value;
-            } else if (is_array($data)) {
-                $data [$name] = $value;
-                if (!is_null($value)) {
-                    $where [$field . $op] = $value;
-                }
-            }
-        }
-        return $where;
-    }
+    
 
     /**
      * 设置数据源
@@ -524,23 +418,7 @@ abstract class Model {
     public function groupBy($groupBy) {
         $this->_retrieveOptions ['group'] = $groupBy;
         return $this;
-    }
-
-    /**
-     * 排序
-     *
-     * @deprecated
-     *
-     *
-     * @param string $orderBy
-     *            排序语句
-     * @return Model
-     */
-    public function orderBy($orderBy) {
-        $this->_retrieveOptions ['order'] [] = $orderBy;
-        return $this;
-    }
-
+    } 
     /**
      * 排序
      *
@@ -1076,51 +954,10 @@ abstract class Model {
         } while (true);
 
         return $crumb_arry;
-    }
+    } 
 
     /**
-     * 开启事务.
-     *
-     * 在一次事务中,只需要一个model开启即可
-     *
-     * @return boolean 成功返回true,失败返回false
-     */
-    public function begin() {
-        return $this->_ds->begin();
-    }
-
-    /**
-     *
-     *
-     *
-     * 提交事务.
-     *
-     * 只需要一个model提交即可,通常由开启事务的那个model提交
-     *
-     * @return boolean 成功返回true,失败返回false
-     */
-    public function commit() {
-        return $this->_ds->commit();
-    }
-
-    /**
-     *
-     *
-     *
-     * 回滚事务.
-     *
-     * 只要一个model回滚即可,通常由开启事务的那个model回滚
-     *
-     * @return boolean 成功返回true,失败返回false
-     */
-    public function rollback() {
-        return $this->_ds->rollback();
-    }
-
-    /**
-     *
-     *
-     *
+     * 
      * 为实体类指定别名
      *
      * @param string $alias

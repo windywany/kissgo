@@ -5,24 +5,24 @@
  * Date: 12-11-24
  * Time: 下午1:01
  */
-imports ( 'kissgo/forms/*' );
+imports ( 'admin/forms/*' );
 /**
  * 处理登录
  * @param Request $req
  * @param Response $res
  * @return ThemeView
  */
-function do_kissgo_login_post($req, $res) {
+function do_admin_login_post($req, $res) {
     $form = new PassportForm ();
     if ($form->validate ()) {
-        imports ( 'kissgo/models/*' );
+        imports ( 'admin/models/*' );
         $um = new UserEntity ();
         $account = $form ['account'];
         $passwod = $form ['passwd'];
         $tryCount = sess_get ( 'login_try_count', 0 );
         $user = $um->where ( array ('account' => $account ) )->retrieve ( '*', 1 );
         
-        if (empty ( $user ) || $user ['passwd'] != md5 ( $form ['passwd'] )) {
+        if (empty ( $user ) || $user ['passwd'] != md5 ( $form ['passwd'] ) || $user ['account'] != $account) {
             $form->setError ( 'account', '用户名或密码错误.' );
         } else if (! empty ( $user ['status'] )) {
             $form->setError ( 'account', '用户已锁定，请联系管理员.' );
@@ -30,10 +30,10 @@ function do_kissgo_login_post($req, $res) {
             $loginInfo = new LoginInfo ( $user ['uid'], $form ['account'], time (), $_SERVER ['REMOTE_ADDR'] );
             $loginInfo->login ( true );
             LoginInfo::save ( $loginInfo );
-            Response::redirect ( sess_del ( 'go_to_the_page_when_login', murl ( 'kissgo' ) ) );
+            Response::redirect ( sess_del ( 'go_to_the_page_when_login', murl ( 'admin' ) ) );
         }
     }
-    return template ( 'admincp_login.tpl', array ('form' => $form ) );
+    return template ( 'adminlogin.tpl', array ('form' => $form ) );
 }
 /**
  * 显示登录页
@@ -41,7 +41,7 @@ function do_kissgo_login_post($req, $res) {
  * @param Response $res
  * @return ThemeView
  */
-function do_kissgo_login_get($req, $res) {
+function do_admin_login_get($req, $res) {
     $me = Passport::getPassport ();
     if ($me->isLogin ()) {
         Response::redirect ( sess_get ( 'go_to_the_page_when_login', BASE_URL ) );
@@ -50,5 +50,5 @@ function do_kissgo_login_get($req, $res) {
         $_SESSION ['go_to_the_page_when_login'] = $req ['from'];
     }
     $form = new PassportForm ();
-    return template ( 'admincp_login.tpl', array ('form' => $form ) );
+    return template ( 'adminlogin.tpl', array ('form' => $form ) );
 }

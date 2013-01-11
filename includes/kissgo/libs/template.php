@@ -195,7 +195,7 @@ function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/
     $data ['ksg_theme_name'] = $theme;
     $data ['ksg_theme_dir'] = THEME_DIR;
     $data ['ksg_module'] = MODULE_DIR;
-    $data ['ksg_admincp_url'] = murl ( 'kissgo' );
+    $data ['ksg_admincp_url'] = murl ( 'admin' );
     return new ThemeView ( $data, $tpl, $headers );
 }
 /**
@@ -213,13 +213,13 @@ function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html
     $data ['ksg_theme_name'] = $theme;
     $data ['ksg_theme_dir'] = THEME_DIR;
     $data ['ksg_module'] = MODULE_DIR;
-    $admincp_layout = THEME_PATH . $theme . DS . 'admincp.tpl';
+    $admincp_layout = THEME_PATH . $theme . DS . 'adminlayout.tpl';
     if (is_file ( $admincp_layout )) {
-        $data ['ksg_admincp_layout'] = THEME_DIR . '/' . $theme . '/admincp.tpl';
+        $data ['ksg_admincp_layout'] = THEME_DIR . '/' . $theme . '/adminlayout.tpl';
     } else {
-        $data ['ksg_admincp_layout'] = THEME_DIR . '/defaults/admincp.tpl';
+        $data ['ksg_admincp_layout'] = THEME_DIR . '/defaults/adminlayout.tpl';
     }
-    $data ['ksg_admincp_url'] = murl ( 'kissgo' );
+    $data ['ksg_admincp_url'] = murl ( 'admin' );
     return new SmartyView ( $data, MODULE_DIR . '/' . $tpl, $headers );
 }
 /**

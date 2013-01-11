@@ -12,7 +12,8 @@ function set_site_global_vars($smarty) {
     $settings = KissGoSetting::getSetting ();
     $smarty->assign ( 'ksg_site_url', BASE_URL );
     $smarty->assign ( 'ksg_passport', Passport::getPassport () );
-    $smarty->assign ( 'ksg_version', KISSGO_VERSION . ' build ' . KISSGO_BUILD );
+    $smarty->assign ( 'ksg_version', KISSGO_VERSION );
+    $smarty->assign ( 'ksg_build', KISSGO_BUILD );
     $smarty->assign ( 'ksg_uri', Request::getUri () );
     $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );
     return $smarty;
@@ -23,7 +24,7 @@ bind ( 'init_smarty_engine', 'set_site_global_vars' );
  *
  * @param Smarty $smarty        	
  */
-function set_admin_global_vars($smarty) {      
+function set_admin_global_vars($smarty) {
     $smarty->assign ( 'ksg_top_navigation_menu', apply_filter ( 'get_top_navigation_menu', new NavigationMenuManager () ) );
     $smarty->assign ( 'ksg_foot_toolbar_btns', apply_filter ( 'get_foot_toolbar_buttons', new NavigationFootToolbar () ) );
     return $smarty;
@@ -97,7 +98,7 @@ bind ( 'get_foot_toolbar_buttons', '_hook_for_foot_toolbar' );
  */
 function _kissgo_hook_for_get_user_passport($passport) {
     if ($passport->isLogin ()) {
-        imports ( 'kissgo/models/*' );
+        imports ( 'admin/models/*' );
         $uid = $passport ['uid'];
         $user = sess_get ( 'login_user_info_' . $uid, false );
         if (! $user) {

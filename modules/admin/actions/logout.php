@@ -5,7 +5,7 @@
  * @param Response $res
  * @author Leo Ning
  */
-function do_kissgo_logout($req, $res) {
+function do_admin_logout($req, $res) {
     session_destroy ();
-    Response::redirect ( murl ( 'kissgo', 'login' ) );
+    Response::redirect ( murl ( 'admin', 'login' ) );
 }

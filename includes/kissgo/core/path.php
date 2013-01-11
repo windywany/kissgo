@@ -8,6 +8,7 @@
  * $Id$
  */
 $__kissgo_exports [] = KISSGO . 'core';
+$__kissgo_exports [] = KISSGO . 'core/dao';
 $__kissgo_exports [] = KISSGO . 'core/ds';
 $__kissgo_exports [] = KISSGO . 'core/rs';
 if (is_dir ( INCLUDES )) {

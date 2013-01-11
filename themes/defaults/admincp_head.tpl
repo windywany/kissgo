@@ -46,7 +46,7 @@
                         <ul class="dropdown-menu">
                             {'add_passport_menu_items'|fire}
                             <li class="divider"><span></span></li>
-                            <li><a href="{'kissgo'|murl:'logout'}"><i class="icon-off"></i> {'Logout'|ts}</a></li>
+                            <li><a href="{'admin'|murl:'logout'}"><i class="icon-off"></i> {'Logout'|ts}</a></li>
                         </ul>
                     </li>
                 </ul>                

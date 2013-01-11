@@ -25,7 +25,7 @@ class ThemeView extends View {
             if (DEBUG) {
                 $this->__smarty->force_compile = true;
             }
-            $this->__smarty = apply_filter ( 'init_smarty_engine_for_theme', $this->__smarty );
+            $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );
         } else {
             trigger_error ( 'The view template ' . $tpl . ' is not found', E_USER_ERROR );
         }

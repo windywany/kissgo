@@ -14,7 +14,7 @@
 				<h1>登录</h1>
 			</div>
 			<div id="login-body">
-				<form id="login-form" class="well form-inline" action="{'kissgo'|murl:login}" method="post">
+				<form id="login-form" class="well form-inline" action="{'admin'|murl:login}" method="post">
 					<div id="eMsg" class="alert alert-error {if $form->isValid()}hide{/if}">
 						<button class="close">×</button>
 						<div id="eMsgdiv">{$form|form:errors}</div>
@@ -45,7 +45,7 @@
 		          	</div>
 				</form>
 			</div>
-			<div class="info">本系统基于<a href="http://www.kissgo.org/">KissGo! {$_KISSGO_VERSION}</a>构建,由<a href="http://www.kissgo.org/">KissGo!</a>提供动力。</div>
+			<div class="info">本系统基于<a href="http://www.kissgo.org/">KissGo! {$ksg_version}</a>构建,由<a href="http://www.kissgo.org/">KissGo!</a>提供动力。</div>
 		</div>	
 		<script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>
 		<script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>

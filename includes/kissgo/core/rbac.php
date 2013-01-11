@@ -249,7 +249,7 @@ function access_checking($op, $resource, $redirect = '') {
 function assert_login($type = 'KISSGO_ADMIN') {
     $passport = Passport::getPassport ();
     if (! $passport->isLogin ()) {
-        $login = apply_filter ( 'get_login_page_url_for_' . $type, murl ( 'kissgo', 'login' ) );
+        $login = apply_filter ( 'get_login_page_url_for_' . $type, murl ( 'admin', 'login' ) );
         status_header ( 401 ); //需要登录验证
         if (! Request::isAjaxRequest ()) {
             $_SESSION ['go_to_the_page_when_login'] = Request::getUri ();

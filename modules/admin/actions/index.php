@@ -6,6 +6,6 @@
  * Time: 下午7:43 
  */
 assert_login ();
-function do_kissgo_index($req, $res) {
-    return view ( 'kissgo/views/index.tpl' );
+function do_admin_get($req, $res) {
+    return view ( 'admin/views/index.tpl' );
 }

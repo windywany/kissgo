@@ -206,4 +206,5 @@ class MysqlDatasource extends DataSource {
         @mysql_query("SET NAMES '$this->charset'", $this->connection);
         return true;
     }
+    
 }
