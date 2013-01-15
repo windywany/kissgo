@@ -56,5 +56,5 @@ interface Idao {
      * return the full name of Idao
      * @return string
      */
-    public function getFullTableName();    
+    public function getFullTableName();
 }

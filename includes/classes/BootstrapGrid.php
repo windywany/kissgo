@@ -13,7 +13,7 @@
  * @author Leo Ning
  *
  */
-class BootstrapTable extends SimpleTable {
+class BootstrapGrid extends SimpleGrid {
 	public function __construct($data, $extraData = array(), $properties = array()) {
 		parent::__construct ( $data, $extraData, $properties );
 		$this->_properties ['class'] = 'table table-hover ' . $this->_properties ['class'];

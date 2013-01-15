@@ -12,5 +12,5 @@ abstract class DbTable extends DbView {
     }
     public function update($data, $condition) {
 
-    }
+    }    
 }

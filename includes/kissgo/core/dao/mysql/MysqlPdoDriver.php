@@ -3,9 +3,7 @@ class MysqlSqlBuilder extends BasicSqlBuilder {
     /* (non-PHPdoc)
      * @see SqlBuilder::schema()
      */
-    public function schema($schema) {
-
-    }
+    public function schema($schema) {}
     
     /* (non-PHPdoc)
      * @see SqlBuilder::select()
@@ -13,8 +11,10 @@ class MysqlSqlBuilder extends BasicSqlBuilder {
     public function select($from, $fields, $join, $condition, $group, $order, $having, $limit) {
         return "";
     }
+    public function specialChar() {
+        return '`';
+    }
 }
-
 class MysqlPdoDriver extends PdoDriver {
     public function getSqlBuilder() {
         static $builder = false;
@@ -27,6 +27,6 @@ class MysqlPdoDriver extends PdoDriver {
      * @see PdoDriver::buildOptions()
      */
     public function buildOptions($options) {
-        return array ('mysql:dbname=kissgodb;host=127.0.0.1;charset=UTF-8', 'root', '888888', null );    
+        return array ('mysql:dbname=kissgodb;host=127.0.0.1;charset=UTF-8', 'root', '888888', null );
     }
 }

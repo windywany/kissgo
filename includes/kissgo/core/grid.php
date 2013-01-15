@@ -23,7 +23,7 @@ define ('BST_OPTS','opts');
  * }
  * </code>
  */
-abstract class BaseTable {
+abstract class BaseGrid {
 	public function __construct($data, $extraData = array(), $properties = array()) {
 		$this->initialize ();
 		$this->_extraData = $extraData;
@@ -115,7 +115,7 @@ abstract class BaseTable {
 /**
  * 基本表格
  */
-class SimpleTable extends BaseTable {
+class SimpleGrid extends BaseGrid {
 	protected function drawHeader() {
 		$this->_properties ['id'] = $this->getId ();
 		$props = html_tag_properties ( $this->_properties );

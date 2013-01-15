@@ -1,5 +1,5 @@
 <?php
-class ResultCursor implements Countable {
+class ResultCursor implements Countable, Iterator, ArrayAccess {
     protected $condition = array ();
     protected $joins = array ();
     protected $fields = array ();
@@ -7,15 +7,27 @@ class ResultCursor implements Countable {
     protected $order = array ();
     protected $group = array ();
     protected $having = array ();
-    
+    /**
+     * @var Idao
+     */
     protected $dao = null;
+    /**
+     * @var PdoDriver
+     */
     protected $driver = null;
-    /**     
+    /**  
      * @var SqlBuilder
      */
     protected $builder = null;
+    /**
+     * @var PDOStatement
+     */
     protected $stmt = null;
-    protected $countStmt = null;
+    protected $total = - 1;
+    /**
+     * @var DbSQL
+     */
+    protected $sql = null;
     protected $alias = null;
     /**
      * 
@@ -164,23 +176,113 @@ class ResultCursor implements Countable {
     /**
      * 
      * get the sql depends on this Cursor
+     * @return DbSQL
      */
     public function getSelectSql() {
-        // todo filter the optinos
-        return $this->builder->select ( array ($this->dao->getFullTableName (), $this->alias ), $this->fields, $this->joins, $this->condition, $this->group, $this->order, $this->having, $this->limit );
+        //TODO filter the optinos
+        $sql = $this->builder->select ( array ($this->dao->getFullTableName (), $this->alias ), $this->fields, $this->joins, $this->condition, $this->group, $this->order, $this->having, $this->limit );
+        return $sql;
     }
     /**
      * 
      * return the size of the result
      */
     public function size() {
-        $this->getSelectSql ();
+        if (! $this->stmt) {
+            $this->execute ();
+        }
+        if ($this->stmt) {
+            return $this->stmt->rowCount ();
+        } else {
+            return 0;
+        }
     }
     /**
      * return the count total
      * @see Countable::count()
+     * @return int
      */
-    public function count() {
-        // TODO Auto-generated method stub        
+    public function count($field = null) {
+        if ($this->total < 0) {
+            $field = $field ? imtf ( $field, 'total' ) : imtf ( 'COUNT(*)', 'total' );
+            $sql = $this->builder->select ( array ($this->dao->getFullTableName (), $this->alias ), array ($field ), $this->joins, $this->condition, $this->group, null, $this->having, null );
+            try {
+                $rst = $sql->query ( $this->driver );
+                $item = $rst->fetch ( PDO::FETCH_ASSOC );
+                $this->total = $item ['total'];
+            } catch ( PDOException $e ) {
+                log_error ( $e->getMessage () );
+            }
+        }
+        return $this->total;
+    }
+    protected function execute() {
+        try {
+            $sql = $this->getSelectSql ();
+            $this->stmt = $sql->query ( $this->driver );
+        } catch ( PDOException $e ) {
+            log_error ( $e->getMessage () );
+        }
+    }
+    /* (non-PHPdoc)
+     * @see Iterator::current()
+     */
+    public function current() {
+        // TODO Auto-generated method stub
+    }
+    
+    /* (non-PHPdoc)
+     * @see Iterator::key()
+     */
+    public function key() {
+        // TODO Auto-generated method stub
+    }
+    
+    /* (non-PHPdoc)
+     * @see Iterator::next()
+     */
+    public function next() {
+        // TODO Auto-generated method stub
+    }
+    
+    /* (non-PHPdoc)
+     * @see Iterator::rewind()
+     */
+    public function rewind() {
+        // TODO Auto-generated method stub
+    }
+    
+    /* (non-PHPdoc)
+     * @see Iterator::valid()
+     */
+    public function valid() {
+        // TODO Auto-generated method stub
+    }
+    /* (non-PHPdoc)
+     * @see ArrayAccess::offsetExists()
+     */
+    public function offsetExists($offset) {
+        // TODO Auto-generated method stub
+    }
+    
+    /* (non-PHPdoc)
+     * @see ArrayAccess::offsetGet()
+     */
+    public function offsetGet($offset) {
+        // TODO Auto-generated method stub
+    }
+    
+    /* (non-PHPdoc)
+     * @see ArrayAccess::offsetSet()
+     */
+    public function offsetSet($offset, $value) {
+        // TODO Auto-generated method stub
+    }
+    
+    /* (non-PHPdoc)
+     * @see ArrayAccess::offsetUnset()
+     */
+    public function offsetUnset($offset) {
+        // TODO Auto-generated method stub
     }
 }
