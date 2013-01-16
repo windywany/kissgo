@@ -1,4 +1,9 @@
 <?php
+/**
+ * SQL 
+ * @author Leo
+ *
+ */
 class DbSQL {
     protected $values;
     protected $sql;
@@ -104,6 +109,11 @@ class DbSQL {
         return $this->sql;
     }
 }
+/**
+ * SQL 构建器
+ * @author Leo
+ *
+ */
 interface SqlBuilder {
     /**
      * 

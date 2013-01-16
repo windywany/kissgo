@@ -11,7 +11,11 @@ abstract class DbView implements Idao {
     protected $builder = null;
     protected $specialChar = '';
     public function __construct($database = 'default') {
-        $this->driver = PdoDriver::getDriver ( $database );
+        try {
+            $this->driver = PdoDriver::getDriver ( $database );
+        } catch ( PDOException $e ) {
+            trigger_error ( $e->getMessage (), E_USER_ERROR );
+        }
         $this->alias = preg_replace ( '/(Table|View)$/', '', get_class ( $this ) );
         if (! isset ( $this->table ) || empty ( $this->table )) {
             $this->table = strtolower ( $this->alias );

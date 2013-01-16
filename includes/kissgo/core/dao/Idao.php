@@ -6,6 +6,31 @@
  *
  */
 interface Idao {
+    const TYPE = 'type';
+    const TYPE_CHAR = 'char';
+    const TYPE_SERIAL = 'serial';
+    const TYPE_INT = 'int';
+    const TYPE_TEXT = 'text';
+    const TYPE_BOOL = 'bool';
+    const TYPE_BLOB = 'blob';
+    const TYPE_FLOAT = 'float';
+    const TYPE_DATE = 'date';
+    const TYPE_DATETIME = 'datetime';
+    const TYPE_TIMESTAMP = 'timestamp';
+    const TYPE_VARCHAR = 'varchar';
+    const TYPE_NUMERIC = 'numeric';
+    const LENGTH = 'length';
+    const TYPE_EXTRA = 'EXTRA';
+    const TE_NORMAL = 'normal';
+    const TE_TINNY = 'tiny';
+    const TE_MIDDEM = 'medium';
+    const TE_SMALL = 'small';
+    const TE_BIG = 'big';
+    const UNSIGNED = 'UNSIGNED';
+    const NN = 'NOT NULL';
+    const DEFT = 'DEFAULT';
+    const CMMT = 'COMMENT';
+    const AUTOUPDATE = 'AUTO_UPDATE';
     /**
      * 
      * @return PdoDriver

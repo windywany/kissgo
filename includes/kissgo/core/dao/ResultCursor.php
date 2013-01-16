@@ -1,4 +1,9 @@
 <?php
+/**
+ * 结果集
+ * @author Leo Ning
+ *
+ */
 class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
     protected $condition = array ();
     protected $joins = array ();
@@ -290,8 +295,6 @@ class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
             return array ();
         }
     }
-    
     public function offsetSet($offset, $value) {}
-    
     public function offsetUnset($offset) {}
 }
