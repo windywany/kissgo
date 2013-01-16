@@ -10,5 +10,11 @@ class DbImmutableF implements DbImmutable {
     public function setSpecialChar($char) {
         $this->char = $char;
     }
-    public function __toString() {}
+    public function __toString() {
+        $str = $this->field;
+        if ($this->alias) {
+            $str .= ' AS ' . $this->char . $this->alias . $this->char;
+        }
+        return $str;
+    }
 }

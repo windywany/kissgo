@@ -1,5 +1,5 @@
 <?php
-class ResultCursor implements Countable, Iterator, ArrayAccess {
+class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
     protected $condition = array ();
     protected $joins = array ();
     protected $fields = array ();
@@ -29,6 +29,7 @@ class ResultCursor implements Countable, Iterator, ArrayAccess {
      */
     protected $sql = null;
     protected $alias = null;
+    protected $errorInfo = null;
     /**
      * 
      * create a Cursor for fetch result from database
@@ -53,6 +54,36 @@ class ResultCursor implements Countable, Iterator, ArrayAccess {
         if ($this->countStmt) {
             $this->countStmt->closeCursor ();
         }
+    }
+    public function __get($name) {
+        if ($name == '__PdoStatement') {
+            $this->errorInfo = false;
+            if ($this->stmt == null) {
+                $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this->fields, $this->joins, $this->condition, $this->group, $this->order, $this->having, $this->limit );
+                if ($sql) {
+                    try {
+                        $this->stmt = $sql->query ( $this->driver );
+                        $this->stmt->setFetchMode ( PDO::FETCH_ASSOC );
+                    } catch ( Exception $e ) {
+                        $this->errorInfo = $this->driver->errorInfo ();
+                        log_debug ( $e->getMessage () );
+                        throw $e;
+                    }
+                }
+            }
+            if ($this->stmt) {
+                $this->__PdoStatement = $this->stmt;
+                return $this->stmt;
+            }
+            throw new Exception ( "the PdoStatment is null", 500, NULL );
+        }
+        return null;
+    }
+    public function lastErrorMsg() {
+        if ($this->errorInfo) {
+            return $this->errorInfo [2];
+        }
+        return false;
     }
     /**
      * 
@@ -175,25 +206,12 @@ class ResultCursor implements Countable, Iterator, ArrayAccess {
     }
     /**
      * 
-     * get the sql depends on this Cursor
-     * @return DbSQL
-     */
-    public function getSelectSql() {
-        //TODO filter the optinos
-        $sql = $this->builder->select ( array ($this->dao->getFullTableName (), $this->alias ), $this->fields, $this->joins, $this->condition, $this->group, $this->order, $this->having, $this->limit );
-        return $sql;
-    }
-    /**
-     * 
      * return the size of the result
      */
     public function size() {
-        if (! $this->stmt) {
-            $this->execute ();
-        }
-        if ($this->stmt) {
-            return $this->stmt->rowCount ();
-        } else {
+        try {
+            return $this->__PdoStatement->rowCount ();
+        } catch ( Exception $e ) {
             return 0;
         }
     }
@@ -205,84 +223,75 @@ class ResultCursor implements Countable, Iterator, ArrayAccess {
     public function count($field = null) {
         if ($this->total < 0) {
             $field = $field ? imtf ( $field, 'total' ) : imtf ( 'COUNT(*)', 'total' );
-            $sql = $this->builder->select ( array ($this->dao->getFullTableName (), $this->alias ), array ($field ), $this->joins, $this->condition, $this->group, null, $this->having, null );
-            try {
-                $rst = $sql->query ( $this->driver );
-                $item = $rst->fetch ( PDO::FETCH_ASSOC );
-                $this->total = $item ['total'];
-            } catch ( PDOException $e ) {
-                log_error ( $e->getMessage () );
+            $sql = $this->builder->select ( array ($this->dao, $this->alias ), array ($field ), $this->joins, $this->condition, $this->group, null, $this->having, null );
+            if ($sql != null) {
+                try {
+                    $this->errorInfo = false;
+                    $rst = $sql->query ( $this->driver );
+                    $item = $rst->fetch ( PDO::FETCH_ASSOC );
+                    $this->total = $item ['total'];
+                } catch ( PDOException $e ) {
+                    $this->errorInfo = $this->driver->errorInfo ();
+                    log_debug ( $e->getMessage () );
+                }
+            } else {
+                return false;
             }
         }
         return $this->total;
     }
-    protected function execute() {
+    
+    /* (non-PHPdoc)
+     * @see IteratorAggregate::getIterator()
+     */
+    public function getIterator() {
         try {
-            $sql = $this->getSelectSql ();
-            $this->stmt = $sql->query ( $this->driver );
-        } catch ( PDOException $e ) {
-            log_error ( $e->getMessage () );
+            rewind ( $this->__PdoStatement );
+            return $this->__PdoStatement;
+        } catch ( Exception $e ) {
+            return new ArrayIterator ( array () );
         }
     }
-    /* (non-PHPdoc)
-     * @see Iterator::current()
-     */
-    public function current() {
-        // TODO Auto-generated method stub
-    }
     
-    /* (non-PHPdoc)
-     * @see Iterator::key()
-     */
-    public function key() {
-        // TODO Auto-generated method stub
-    }
-    
-    /* (non-PHPdoc)
-     * @see Iterator::next()
-     */
-    public function next() {
-        // TODO Auto-generated method stub
-    }
-    
-    /* (non-PHPdoc)
-     * @see Iterator::rewind()
-     */
-    public function rewind() {
-        // TODO Auto-generated method stub
-    }
-    
-    /* (non-PHPdoc)
-     * @see Iterator::valid()
-     */
-    public function valid() {
-        // TODO Auto-generated method stub
-    }
     /* (non-PHPdoc)
      * @see ArrayAccess::offsetExists()
      */
     public function offsetExists($offset) {
-        // TODO Auto-generated method stub
+        if (! is_int ( $offset ) || $offset < 1) {
+            return false;
+        }
+        try {
+            rewind ( $this->__PdoStatement );
+            $rst = $this->__PdoStatement->fetch ( PDO::FETCH_CLASS, PDO::FETCH_ORI_NEXT, $offset );
+            if ($rst) {
+                return true;
+            }
+            return false;
+        } catch ( Exception $e ) {
+            return false;
+        }
     }
     
     /* (non-PHPdoc)
      * @see ArrayAccess::offsetGet()
      */
     public function offsetGet($offset) {
-        // TODO Auto-generated method stub
+        if (! is_int ( $offset ) || $offset < 0) {
+            return array ();
+        }
+        try {
+            rewind ( $this->__PdoStatement );
+            $rst = $this->__PdoStatement->fetch ( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, $offset );
+            if ($rst) {
+                return $rst;
+            }
+            return array ();
+        } catch ( Exception $e ) {
+            return array ();
+        }
     }
     
-    /* (non-PHPdoc)
-     * @see ArrayAccess::offsetSet()
-     */
-    public function offsetSet($offset, $value) {
-        // TODO Auto-generated method stub
-    }
+    public function offsetSet($offset, $value) {}
     
-    /* (non-PHPdoc)
-     * @see ArrayAccess::offsetUnset()
-     */
-    public function offsetUnset($offset) {
-        // TODO Auto-generated method stub
-    }
+    public function offsetUnset($offset) {}
 }

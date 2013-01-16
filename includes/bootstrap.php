@@ -259,7 +259,7 @@ include KISSGO . 'core/session.php';
 include KISSGO . 'core/cache.php';
 include KISSGO . 'core/views.php';
 include KISSGO . 'core/form.php';
-include KISSGO . 'core/table.php';
+include KISSGO . 'core/grid.php';
 include KISSGO . 'core/kissgo.php';
 // ////////////////////////////////////////////////////////////
 // 自动加载器

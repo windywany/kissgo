@@ -57,4 +57,10 @@ interface Idao {
      * @return string
      */
     public function getFullTableName();
+    /**
+     * 
+     * prepare select fields
+     * @param array $fields
+     */
+    public function prepareFields($fields);
 }

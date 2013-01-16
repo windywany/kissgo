@@ -21,29 +21,40 @@ class DbSQL {
      * @return PDOStatement
      */
     public function query($driver, $values = null) {
-        if ($this->prepareble) {
-            $values = $values ? $values : $this->values;
-            if (! $this->stmt) {
-                if (! empty ( $this->options )) {
-                    $this->stmt = $driver->prepare ( $this->sql, $this->options );
+        try {
+            if ($this->prepareble) {
+                $values = $values ? $values : $this->values;
+                if (! $this->stmt) {
+                    if (! empty ( $this->options )) {
+                        $this->stmt = $driver->prepare ( $this->sql, $this->options );
+                    } else {
+                        $this->stmt = $driver->prepare ( $this->sql );
+                    }
+                }
+                if ($values && is_array ( $values )) {
+                    foreach ( $values as $value ) {
+                        list ( $name, $value, $type ) = $value;
+                        $this->stmt->bindValue ( $name, $value, $type );
+                    }
+                }
+                $rst = $this->stmt->execute ();
+                if ($rst) {
+                    return $this->stmt;
                 } else {
-                    $this->stmt = $driver->prepare ( $this->sql );
+                    $info = $driver->errorInfo ();
+                    throw new PDOException ( $info [2] );
                 }
-            }
-            if ($values && is_array ( $values )) {
-                foreach ( $values as $value ) {
-                    list ( $name, $value, $type ) = $value;
-                    $this->stmt->bindValue ( $name, $value, $type );
-                }
-            }
-            $rst = $this->stmt->execute ();
-            if ($rst) {
-                return $this->stmt;
             } else {
-                return null;
+                $rst = $driver->query ( $this->sql );
+                if ($rst) {
+                    return $rst;
+                } else {
+                    $info = $driver->errorInfo ();
+                    throw new PDOException ( $info [2] );
+                }
             }
-        } else {
-            return $driver->query ( $this->sql );
+        } catch ( Exception $e ) {
+            throw $e;
         }
     }
     public function values($values = array()) {
@@ -53,29 +64,40 @@ class DbSQL {
         return $this->values;
     }
     public function execute($driver, $values = null) {
-        if ($this->prepareble) {
-            $values = $values ? $values : $this->values;
-            if (! $this->stmt) {
-                if (! empty ( $this->options )) {
-                    $this->stmt = $driver->prepare ( $this->sql, $this->options );
+        try {
+            if ($this->prepareble) {
+                $values = $values ? $values : $this->values;
+                if (! $this->stmt) {
+                    if (! empty ( $this->options )) {
+                        $this->stmt = $driver->prepare ( $this->sql, $this->options );
+                    } else {
+                        $this->stmt = $driver->prepare ( $this->sql );
+                    }
+                }
+                if ($values && is_array ( $values )) {
+                    foreach ( $values as $value ) {
+                        list ( $name, $value, $type ) = $value;
+                        $this->stmt->bindValue ( $name, $value, $type );
+                    }
+                }
+                $rst = $this->stmt->execute ();
+                if ($rst) {
+                    return $this->stmt->rowCount ();
                 } else {
-                    $this->stmt = $driver->prepare ( $this->sql );
+                    $info = $driver->errorInfo ();
+                    throw new PDOException ( $info [2] );
                 }
-            }
-            if ($values && is_array ( $values )) {
-                foreach ( $values as $value ) {
-                    list ( $name, $value, $type ) = $value;
-                    $this->stmt->bindValue ( $name, $value, $type );
-                }
-            }
-            $rst = $this->stmt->execute ();
-            if ($rst) {
-                return $this->stmt->rowCount ();
             } else {
-                return false;
+                $rst = $driver->exec ( $this->sql );
+                if ($rst === false) {
+                    $info = $driver->errorInfo ();
+                    throw new PDOException ( $info [2] );
+                } else {
+                    return $rst;
+                }
             }
-        } else {
-            return $driver->exec ( $this->sql );
+        } catch ( Exception $e ) {
+            throw $e;
         }
     }
     public function __toString() {
@@ -124,12 +146,6 @@ interface SqlBuilder {
      * @return DbSQL
      */
     public function schema($schema);
-    /**
-     * 
-     * @param array $condition
-     * @return array
-     */
-    public function condition($condition);
     /**
      * @return string
      */

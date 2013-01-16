@@ -22,6 +22,5 @@ abstract class PdoDriver extends PDO {
     public static function createSchema($dao, $database = 'default') {
 
     }
-    public abstract function getSqlBuilder();
-    public abstract function buildOptions($options);
+    public abstract function getSqlBuilder();    
 }
