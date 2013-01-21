@@ -1,16 +1,28 @@
 <?php
 abstract class DbTable extends DbView {
-    
-    public function create($data) {
-
+    /**
+     * (non-PHPdoc)
+     * @see DbView::delete()
+     * @return DeleteResult
+     */
+    public function delete($alias = null) {
+        $alias = $alias == null ? $this->alias : $alias;
+        return new DeleteResult ( $this, $alias );
     }
-    public function delete($condition) {
-
+    /**
+     * (non-PHPdoc)
+     * @see DbView::save()
+     * @return ExecuteResult
+     */
+    public function save($data, $alias = null) {
+        $alias = $alias == null ? $this->alias : $alias;
+        return new ExecuteResult ( $this, $data, $alias );
     }
-    public function save($data) {
-
+    /**
+     * (non-PHPdoc)
+     * @see Idao::lastId()
+     */
+    public function lastId($name = null) {
+        return $this->driver->lastInsertId ( $name );
     }
-    public function update($data, $condition) {
-
-    }    
 }

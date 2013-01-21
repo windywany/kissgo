@@ -7,19 +7,12 @@
 class DbSQL {
     protected $values;
     protected $sql;
-    protected $options;
-    protected $prepareble = false;
+    protected $options = array ();
     protected $stmt = null;
     public function __construct($sql, $values = null, $options = array()) {
         $this->sql = $sql;
         $this->values = $values;
         $this->options = $options;
-    }
-    public function prepareble($prepareble = '') {
-        if ($prepareble === true) {
-            $this->prepareble = $prepareble;
-        }
-        return $this->prepareble;
     }
     /**
      * @param PdoDriver $driver
@@ -27,79 +20,70 @@ class DbSQL {
      */
     public function query($driver, $values = null) {
         try {
-            if ($this->prepareble) {
-                $values = $values ? $values : $this->values;
-                if (! $this->stmt) {
-                    if (! empty ( $this->options )) {
-                        $this->stmt = $driver->prepare ( $this->sql, $this->options );
-                    } else {
-                        $this->stmt = $driver->prepare ( $this->sql );
+            $this->options [PDO::ATTR_CURSOR] = PDO::CURSOR_SCROLL;
+            $values = $values ? $values : $this->values;
+            if (! $this->stmt) {
+                $this->stmt = $driver->prepare ( $this->sql, $this->options );
+            }
+            if ($values && is_array ( $values )) {
+                foreach ( $values as $value ) {
+                    list ( $name, $val, $type ) = $value;
+                    if (! $this->stmt->bindValue ( $name, $val, $type )) {
+                        throw new PDOException ( 'Can not bind value: name:' . $name . ', value:' . $val . ', type:' . $type );
                     }
                 }
-                if ($values && is_array ( $values )) {
-                    foreach ( $values as $value ) {
-                        list ( $name, $value, $type ) = $value;
-                        $this->stmt->bindValue ( $name, $value, $type );
-                    }
-                }
-                $rst = $this->stmt->execute ();
-                if ($rst) {
-                    return $this->stmt;
-                } else {
-                    $info = $driver->errorInfo ();
-                    throw new PDOException ( $info [2] );
-                }
+            }
+            $rst = $this->stmt->execute ();
+            if ($rst) {
+                return $this->stmt;
             } else {
-                $rst = $driver->query ( $this->sql );
-                if ($rst) {
-                    return $rst;
-                } else {
-                    $info = $driver->errorInfo ();
-                    throw new PDOException ( $info [2] );
-                }
+                $info = $driver->errorInfo ();
+                throw new PDOException ( $info [2] );
             }
         } catch ( Exception $e ) {
             throw $e;
         }
     }
+    /**
+     * 取值或设置值
+     * @param array $values
+     * @return array
+     */
     public function values($values = array()) {
         if (! empty ( $values )) {
             $this->values = $values;
         }
         return $this->values;
     }
+    /**
+     * 
+     * 执行一条SQL
+     * @param PdoDriver $driver
+     * @param array $values
+     * @return int
+     */
     public function execute($driver, $values = null) {
         try {
-            if ($this->prepareble) {
-                $values = $values ? $values : $this->values;
-                if (! $this->stmt) {
-                    if (! empty ( $this->options )) {
-                        $this->stmt = $driver->prepare ( $this->sql, $this->options );
-                    } else {
-                        $this->stmt = $driver->prepare ( $this->sql );
-                    }
-                }
-                if ($values && is_array ( $values )) {
-                    foreach ( $values as $value ) {
-                        list ( $name, $value, $type ) = $value;
-                        $this->stmt->bindValue ( $name, $value, $type );
-                    }
-                }
-                $rst = $this->stmt->execute ();
-                if ($rst) {
-                    return $this->stmt->rowCount ();
+            $values = $values ? $values : $this->values;
+            if (! $this->stmt) {
+                if (! empty ( $this->options )) {
+                    $this->stmt = $driver->prepare ( $this->sql, $this->options );
                 } else {
-                    $info = $driver->errorInfo ();
-                    throw new PDOException ( $info [2] );
+                    $this->stmt = $driver->prepare ( $this->sql );
                 }
+            }
+            if ($values && is_array ( $values )) {
+                foreach ( $values as $value ) {
+                    list ( $name, $val, $type ) = $value;
+                    $this->stmt->bindValue ( $name, $val, $type );
+                }
+            }
+            $rst = $this->stmt->execute ();
+            if ($rst) {
+                return $this->stmt->rowCount ();
             } else {
-                $rst = $driver->exec ( $this->sql );
-                if ($rst === false) {
-                    $info = $driver->errorInfo ();
-                    throw new PDOException ( $info [2] );
-                } else {
-                    return $rst;
-                }
+                $info = $driver->errorInfo ();
+                throw new PDOException ( $info [2] );
             }
         } catch ( Exception $e ) {
             throw $e;
@@ -118,24 +102,18 @@ interface SqlBuilder {
     /**
      * 
      * @param array $from
-     * @param array $fields
-     * @param array $join
-     * @param array $condition
-     * @param array $group
-     * @param array $order
-     * @param array $having
-     * @param array $limit
+     * @param DbSqlHelper $sqlHelper
      * @return DbSQL
      */
-    public function select($from, $fields, $join, $condition, $group, $order, $having, $limit);
+    public function select($from, $sqlHelper);
     /**
      * 
      * @param string $table
      * @param array $data
-     * @param array $condition
+     * @param DbSqlHelper $sqlHelper
      * @return DbSQL
      */
-    public function update($table, $data, $condition);
+    public function update($table, $data, $sqlHelper);
     /**
      * 
      * @param string $table
@@ -146,16 +124,17 @@ interface SqlBuilder {
     /**
      * 
      * @param string $table
-     * @param array $condition
+     * @param DbSqlHelper $sqlHelper
      * @return DbSQL
      */
-    public function delete($table, $condition);
+    public function delete($table, $sqlHelper);
     /**
      * 
      * @param Idao $schema
      * @return DbSQL
      */
-    public function schema($schema);
+    public function schema($dao);
+    public function getColumnDef($field, $definition);
     /**
      * @return string
      */

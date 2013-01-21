@@ -23,15 +23,35 @@ abstract class DbView implements Idao {
         $this->builder = $this->driver->getSqlBuilder ();
         $this->specialChar = $this->builder->specialChar ();
     }
-    public function create($data) {
+    public function getAlias() {
+        return $this->alias;
+    }
+    /**
+     * (non-PHPdoc)
+     * @see Idao::delete()
+     */
+    public function delete($alias = null) {
         return false;
     }
-    public function delete($condition) {
-        return false;
-    }
+    /**
+     * (non-PHPdoc)
+     * @see Idao::getDriver()
+     * @return PdoDriver
+     */
     public function getDriver() {
         return $this->driver;
     }
+    /**
+     * (non-PHPdoc)
+     * @see Idao::lastId()
+     */
+    public function lastId($name = null) {
+        return - 1;
+    }
+    /**
+     * (non-PHPdoc)
+     * @see Idao::getFullTableName()
+     */
     public function getFullTableName() {
         static $fullname = false;
         if (! $fullname) {
@@ -39,43 +59,73 @@ abstract class DbView implements Idao {
         }
         return $fullname;
     }
+    /**
+     * (non-PHPdoc)
+     * @see Idao::query()
+     * @return ResultCursor
+     */
     public function query($fields = '*', $alias = null) {
         $alias = $alias == null ? $this->alias : $alias;
         return new ResultCursor ( $this, $fields, $alias );
     }
-    public function save($data) {
+    /**
+     * (non-PHPdoc)
+     * @see Idao::save()
+     */
+    public function save($data, $alias = null) {
         return false;
     }
-    public function update($data, $condition) {
+    
+    /* (non-PHPdoc)
+     * @see Idao::schema()
+     * @return DbSchema
+     */
+    public function schema() {
+        return new DbSchema ();
+    }
+    public function getCreateSql() {
         return false;
     }
     /* (non-PHPdoc)
      * @see Idao::getPrepareFields()
      */
-    public function prepareFields($fields) {
+    public static function prepareFields($fields, &$values, $specialChar, $dao = null) {
         $_fields = array ();
-        foreach ( $fields as $field ) {
+        foreach ( $fields as $key => $field ) {
             if ($field == '*') {
                 $_fields [] = '*';
                 break;
             } else if ($field instanceof DbImmutableF) {
-                $field->setSpecialChar ( $this->specialChar );
+                $field->setSpecialChar ( $specialChar );
                 $_fields [] = $field->__toString ();
+            } else if ($field instanceof ResultCursor) {
+                $sql = $field->__toString ();
+                if ($sql && is_string ( $key )) {
+                    $_fields [] = '(' . $sql . ') AS ' . $specialChar . $key . $specialChar;
+                    $params = $field->getParams ();
+                    if (! empty ( $params )) {
+                        $values->merge ( $params );
+                    }
+                }
             } else {
-                $_fd = preg_split ( '#\bas\b#i', $field );
+                $_fd = preg_split ( '#\b(as|\s+)\b#i', trim ( $field ) );
                 $alias = '';
                 if (count ( $_fd ) > 1) {
-                    $alias = ' AS ' . $this->specialChar . trim ( $_fd [1] ) . $this->specialChar;
+                    $alias = ' AS ' . $specialChar . array_pop ( $_fd ) . $specialChar;
                 }
                 $_fd = explode ( ".", $_fd [0] );
                 $table = '';
                 if (count ( $_fd ) > 1) {
+                    $table = $specialChar . trim ( $_fd [0] ) . $specialChar . ".";
                     $field = trim ( $_fd [1] );
-                    $table = $this->specialChar . trim ( $_fd [0] ) . $this->specialChar . ".";
                 } else {
                     $field = trim ( $_fd [0] );
                 }
-                $_fields [] = $table . $this->specialChar . $field . $this->specialChar . $alias;
+                if ($field != '*') {
+                    $_fields [] = $table . $specialChar . $field . $specialChar . $alias;
+                } else {
+                    $_fields [] = $table . $field . $alias;
+                }
             }
         }
         if (! empty ( $_fields )) {
@@ -83,4 +133,5 @@ abstract class DbView implements Idao {
         }
         return false;
     }
+
 }

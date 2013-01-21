@@ -4,14 +4,7 @@
  * @author Leo Ning
  *
  */
-class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
-    protected $condition = array ();
-    protected $joins = array ();
-    protected $fields = array ();
-    protected $limit = array ();
-    protected $order = array ();
-    protected $group = array ();
-    protected $having = array ();
+class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, ArrayAccess {
     /**
      * @var Idao
      */
@@ -46,7 +39,9 @@ class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
         $this->driver = $dao->getDriver ();
         $this->alias = $alias;
         $this->builder = $this->driver->getSqlBuilder ();
-        if (! is_array ( $fields )) {
+        if ($fields instanceof DbImmutableF) {
+            $this->fields = array ($fields );
+        } else if (! is_array ( $fields )) {
             $this->fields = explode ( ",", $fields );
         } else {
             $this->fields = $fields;
@@ -61,24 +56,25 @@ class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
         }
     }
     public function __get($name) {
-        if ($name == '__PdoStatement') {
+        if ($name == 'rows') {
             $this->errorInfo = false;
             if ($this->stmt == null) {
-                $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this->fields, $this->joins, $this->condition, $this->group, $this->order, $this->having, $this->limit );
+                $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this );
                 if ($sql) {
                     try {
                         $this->stmt = $sql->query ( $this->driver );
                         $this->stmt->setFetchMode ( PDO::FETCH_ASSOC );
+                        $this->params = $sql->values ();
                     } catch ( Exception $e ) {
                         $this->errorInfo = $this->driver->errorInfo ();
-                        log_debug ( $e->getMessage () );
+                        log_debug ( $e->getMessage () . ' [' . $sql . ']' );
                         throw $e;
                     }
                 }
             }
             if ($this->stmt) {
-                $this->__PdoStatement = $this->stmt;
-                return $this->stmt;
+                $this->rows = $this->stmt->fetchAll ();
+                return $this->rows;
             }
             throw new Exception ( "the PdoStatment is null", 500, NULL );
         }
@@ -92,132 +88,13 @@ class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
     }
     /**
      * 
-     * build where
-     * @param array|mixed $condition a set of condition or a value of primary key of the main table
-     * @return ResultCursor
-     */
-    public function where($condition) {
-        if (is_array ( $condition )) {
-            $this->condition += $condition;
-        }
-        return $this;
-    }
-    /**
-     * 
-     * left join
-     * @param Idao $table
-     * @param String $on
-     * @param string|null $alias
-     * @return ResultCursor
-     */
-    public function ljoin($table, $on, $alias = null) {
-        $join = array ($table, $on, ' LEFT JOIN ', $alias == null ? $table : $alias );
-        $this->joins [] = $join;
-        return $this;
-    }
-    /**
-     * 
-     * right join
-     * @param Ido $table
-     * @param string  $on
-     * @param string|null $alias
-     * @return ResultCursor
-     */
-    public function rjoin($table, $on, $alias = null) {
-        $join = array ($table, $on, ' RIGHT JOIN ', $alias == null ? $table : $alias );
-        $this->joins [] = $join;
-        return $this;
-    }
-    /**
-     * 
-     * inner join
-     * @param Idao $table
-     * @param string $on
-     * @param string|null $alias
-     * @return ResultCursor
-     */
-    public function ijoin($table, $on, $alias = null) {
-        $join = array ($table, $on, ' INNER JOIN ', $alias == null ? $table : $alias );
-        $this->joins [] = $join;
-        return $this;
-    }
-    /**
-     * 
-     * pagination 
-     * @param int $start start page, start from 1
-     * @param int $limit items per page
-     * @return ResultCursor
-     */
-    public function limit($start = 1, $limit = 10) {
-        $start = intval ( $start );
-        if ($start == 0) {
-            $start = 1;
-        }
-        $limit = intval ( $limit );
-        if ($limit == 0) {
-            $limit = 10;
-        }
-        $this->limit = array ($start, $limit );
-        return $this;
-    }
-    /**
-     * 
-     * order the result
-     * @param string $field
-     * @param string $dir
-     * @return ResultCursor
-     */
-    public function sort($field, $dir = "DES") {
-        if (! empty ( $field )) {
-            $this->order [] = array ($field, $dir == 'ASC' ? 'ASC' : 'DES' );
-        }
-        return $this;
-    }
-    /**
-     * 
-     * group by
-     * @param string $groupby
-     * @return ResultCursor
-     */
-    public function groupby($groupby) {
-        if (! empty ( $groupby )) {
-            $this->group [] = $groupby;
-        }
-        return $this;
-    }
-    /**
-     * 
-     * having
-     * @param string $having
-     * @return ResultCursor
-     */
-    public function having($having) {
-        if (! empty ( $having )) {
-            $this->having [] = $having;
-        }
-        return $this;
-    }
-    /**
-     * 
-     * add one or more fields
-     * @param string $field...
-     * @return ResultCursor
-     */
-    public function field($field, $alias = null) {
-        if (! empty ( $field )) {
-            $this->fields [] = $field . ($alias == null ? '' : ' AS ' . $alias);
-        }
-        return $this;
-    }
-    /**
-     * 
      * return the size of the result
      */
     public function size() {
         try {
-            return $this->__PdoStatement->rowCount ();
+            return count ( $this->rows );
         } catch ( Exception $e ) {
-            return 0;
+            return false;
         }
     }
     /**
@@ -228,7 +105,16 @@ class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
     public function count($field = null) {
         if ($this->total < 0) {
             $field = $field ? imtf ( $field, 'total' ) : imtf ( 'COUNT(*)', 'total' );
-            $sql = $this->builder->select ( array ($this->dao, $this->alias ), array ($field ), $this->joins, $this->condition, $this->group, null, $this->having, null );
+            if (! $this->hasHavingField ()) {
+                $field = $field ? imtf ( $field, 'total' ) : imtf ( 'COUNT(*)', 'total' );
+                $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this->getTotalHelper ( $field ) );
+            } else {
+                $field = imtf ( 'COUNT(*)', 'total' );
+                $sql1 = $this->builder->select ( array ($this->dao, $this->alias ), $this->getTotalHelper () );
+                $helper = new DbSqlHelper ();
+                $helper->field ( $field );
+                $sql = $this->builder->select ( array ($sql1, 'TMP_CNT_TABLE' ), $helper );
+            }
             if ($sql != null) {
                 try {
                     $this->errorInfo = false;
@@ -237,7 +123,7 @@ class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
                     $this->total = $item ['total'];
                 } catch ( PDOException $e ) {
                     $this->errorInfo = $this->driver->errorInfo ();
-                    log_debug ( $e->getMessage () );
+                    log_debug ( $e->getMessage () . ' [' . $sql . ']' );
                 }
             } else {
                 return false;
@@ -245,55 +131,48 @@ class ResultCursor implements Countable, IteratorAggregate, ArrayAccess {
         }
         return $this->total;
     }
-    
-    /* (non-PHPdoc)
-     * @see IteratorAggregate::getIterator()
-     */
     public function getIterator() {
         try {
-            rewind ( $this->__PdoStatement );
-            return $this->__PdoStatement;
+            return new ArrayIterator ( $this->rows );
         } catch ( Exception $e ) {
             return new ArrayIterator ( array () );
         }
     }
-    
-    /* (non-PHPdoc)
-     * @see ArrayAccess::offsetExists()
-     */
     public function offsetExists($offset) {
-        if (! is_int ( $offset ) || $offset < 1) {
-            return false;
-        }
         try {
-            rewind ( $this->__PdoStatement );
-            $rst = $this->__PdoStatement->fetch ( PDO::FETCH_CLASS, PDO::FETCH_ORI_NEXT, $offset );
-            if ($rst) {
-                return true;
-            }
-            return false;
+            return isset ( $this->rows [$offset] );
         } catch ( Exception $e ) {
             return false;
         }
     }
-    
-    /* (non-PHPdoc)
-     * @see ArrayAccess::offsetGet()
-     */
     public function offsetGet($offset) {
-        if (! is_int ( $offset ) || $offset < 0) {
-            return array ();
-        }
         try {
-            rewind ( $this->__PdoStatement );
-            $rst = $this->__PdoStatement->fetch ( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT, $offset );
-            if ($rst) {
-                return $rst;
-            }
-            return array ();
+            return $this->rows [$offset];
         } catch ( Exception $e ) {
+            echo $e->getMessage ();
             return array ();
         }
+    }
+    public function hasHavingField() {
+        foreach ( $this->fields as $key => $f ) {
+            if (! is_numeric ( $key )) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public function __toString() {
+        $str = '';
+        if (!$this->stmt) {
+            $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this );
+            if ($sql) {
+                $this->params += $sql->values ();
+                $str = $sql->__toString ();
+            }
+        } else {
+            $str = $this->stmt->queryString;
+        }
+        return $str;
     }
     public function offsetSet($offset, $value) {}
     public function offsetUnset($offset) {}

@@ -30,7 +30,10 @@ interface Idao {
     const NN = 'NOT NULL';
     const DEFT = 'DEFAULT';
     const CMMT = 'COMMENT';
-    const AUTOUPDATE = 'AUTO_UPDATE';
+    const AUTOUPDATE_DATE = 'AUTO_UPDATE_DATE';
+    const AUTOINSERT_DATE = 'AUTO_INSERT_DATE';
+    const AUTOUPDATE_UID = 'AUTO_UPDATE_UID';
+    const AUTOINSERT_UID = 'AUTO_INSERT_DATE';
     /**
      * 
      * @return PdoDriver
@@ -46,7 +49,7 @@ interface Idao {
      * @param array $data
      * @return array
      */
-    public function save($data);
+    public function save($data, $alias = null);
     /**
      * 
      * query data from database
@@ -57,35 +60,29 @@ interface Idao {
     public function query($fields = '*', $alias = null);
     /**
      * 
-     * new a record
-     * @param array $data
-     * @return array
-     */
-    public function create($data);
-    /**
-     * 
-     * update some records
-     * @param data $data
-     * @param array $condition
-     * @return int 
-     */
-    public function update($data, $condition);
-    /**
-     * 
      * delete
      * @param array $condition
      */
-    public function delete($condition);
+    public function delete($alias = null);
+    public function lastId($name = null);
     /**
      * 
      * return the full name of Idao
      * @return string
      */
     public function getFullTableName();
+    public function getAlias();
     /**
      * 
      * prepare select fields
      * @param array $fields
+     * @param DbSqlValues
      */
-    public function prepareFields($fields);
+    public static function prepareFields($fields, &$values, $specialChar, $dao = null);
+    /**
+     * 
+     * create table sql
+     * @return string
+     */
+    public function getCreateSql();
 }
