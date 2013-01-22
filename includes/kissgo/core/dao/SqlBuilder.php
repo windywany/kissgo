@@ -94,7 +94,7 @@ class DbSQL {
     }
 }
 /**
- * SQL 构建器
+ * SQL 构建器，不同的数据库需要提供不同的构建器
  * @author Leo
  *
  */
@@ -133,8 +133,7 @@ interface SqlBuilder {
      * @param Idao $schema
      * @return DbSQL
      */
-    public function schema($dao);
-    public function getColumnDef($field, $definition);
+    public function schema($dao, $engine = 'InnoDB', $charset = 'UTF8');
     /**
      * @return string
      */

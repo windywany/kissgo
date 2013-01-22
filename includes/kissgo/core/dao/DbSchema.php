@@ -20,9 +20,15 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
         return $this->primarykey;
     }
     public function addIndex($name, $fields) {
+        if (! is_array ( $fields )) {
+            $fields = array ($fields );
+        }
         $this->indexes [] = array ($name, $fields, '' );
     }
     public function addUnique($name, $fields) {
+        if (! is_array ( $fields )) {
+            $fields = array ($fields );
+        }
         $this->indexes [] = array ($name, $fields, 'UNIQUE' );
     }
     public function addPrimarykey($fields) {
@@ -41,9 +47,10 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
             $name = str_replace ( array ($char, $alias, '.' ), '', $name );
             unset ( $fields [$name] );
         }
+        $alias = $alias ? $alias . '.' : '';
         if (! empty ( $fields )) {
             foreach ( $fields as $f => $def ) {
-                $f = $alias . '.' . $f;
+                $f = $alias . $f;
                 if (in_array ( Idao::AUTOUPDATE_DATE, $def ) && in_array ( $def [Idao::TYPE], self::$DATE_TYPES )) {
                     switch ($def [Idao::TYPE]) {
                         case Idao::TYPE_DATE :
@@ -90,6 +97,9 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
                 }
             }
         }
+    }
+    public function getDescription() {
+        return $this->description;
     }
     public function getIterator() {
         return new ArrayIterator ( $this->fields );

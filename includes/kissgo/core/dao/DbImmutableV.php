@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * 不可变值
+ * @author Leo Ning
+ *
+ */
 class DbImmutableV implements DbImmutable {
     private $value;
     public function __construct($value) {

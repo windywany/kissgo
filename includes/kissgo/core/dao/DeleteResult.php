@@ -1,5 +1,11 @@
 <?php
-class DeleteResult extends DbSqlHelper {
+/**
+ * 
+ * 删除结果
+ * @author Leo Ning
+ *
+ */
+class DeleteResult extends DbSqlHelper implements Countable {
     private $dao = null;
     private $alias = null;
     private $builder = null;
@@ -17,9 +23,6 @@ class DeleteResult extends DbSqlHelper {
         $this->builder = $this->driver->getSqlBuilder ();
     }
     public function count() {
-        return $this->exec ();
-    }
-    public function exec() {
         $sql = $this->builder->delete ( array ($this->dao, $this->alias ), $this );
         if ($sql) {
             try {

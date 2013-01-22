@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * 帮助类
+ * @author Leo Ning
+ *
+ */
 class DbSqlHelper {
     protected $condition = array ();
     protected $joins = array ();

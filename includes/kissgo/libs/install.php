@@ -128,7 +128,7 @@ class KissGOInstaller {
     }
     public function install_core_modules() {
         $plgmgr = ExtensionManager::getInstance ();
-        $ext = $plgmgr->getExensionInfo ( MODULES_PATH . 'kissgo/__pkg__.php' );
+        $ext = $plgmgr->getExensionInfo ( MODULES_PATH . 'admin/__pkg__.php' );
         $ext ['unremovable'] = 1;
         $ext ['disabled'] = 0;
         $ext ['core'] = 1;
@@ -187,6 +187,7 @@ class KissGOInstaller {
      */
     public function check_directory_rw() {
         $dirs = array ('appdata' => APPDATA_PATH, 'logs' => APPDATA_PATH . 'logs', 'tmp' => TMP_PATH );
+        //TODO 添加profile支持
         $rst = array ();
         foreach ( $dirs as $dir => $path ) {
             $r = is_readable ( $path );
@@ -273,6 +274,7 @@ class KissGOInstaller {
             $env ['cls'] = 'warning';
         }
         $envs [] = $env;
+        // TODO 使用profile提供的环境检测
         return $envs;
     }
     public function check_connection($config) {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * 数据库中视图
+ * @author Leo Ning
+ *
+ */
 abstract class DbView implements Idao {
     protected $alias = '';
     /**     

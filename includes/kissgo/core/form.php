@@ -87,8 +87,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     public function getInitialData() {
         return $this->data;
     }
-    public function getSearchCondition() {
-    }
+    public function getSearchCondition() {}
     
     /**
      *
@@ -134,17 +133,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                         $body = $widget->getValidate ();
                         break;
                     default :
-                        $body = str_replace ( array (
-                                                    '{$tip_cls}', 
-                                                    '{$label}', 
-                                                    '{$widget}', 
-                                                    '{$tip}' 
-                        ), array (
-                                $widget->valid ? 'tip' : 'error', 
-                                $widget->getLabelComponent (), 
-                                $widget->getWidgetComponent (), 
-                                $widget->getTipComponent () 
-                        ), $this->getFormItemWrapper () );
+                        $body = str_replace ( array ('{$tip_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $this->getFormItemWrapper () );
                         break;
                 }
                 return $body;
@@ -173,19 +162,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $foot = $this->getFormFoot ();
             $body = '';
             foreach ( $this->widgets as $widget ) {
-                $body .= str_replace ( array (
-                                                '{$tip_cls}', 
-                                                '{$widget_wraper_cls}', 
-                                                '{$label}', 
-                                                '{$widget}', 
-                                                '{$tip}' 
-                ), array (
-                        $widget->valid ? 'tip' : 'error', 
-                        $widget->getWraperCls (), 
-                        $widget->getLabelComponent (), 
-                        $widget->getWidgetComponent (), 
-                        $widget->getTipComponent () 
-                ), $item_wrapper ) . "\n";
+                $body .= str_replace ( array ('{$tip_cls}', '{$widget_wraper_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getWraperCls (), $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $item_wrapper ) . "\n";
             }
             return $head . "\n" . $body . $foot;
         }
@@ -209,8 +186,11 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     protected function initialize($data) {
         $widgets = get_object_vars ( $this );
         $this->pos = 0;
-        $this->data = $data;
+        $this->addWidgets ( $widgets, $data );
+    }
+    public function addWidgets($widgets, $data) {
         $default_options = $this->getDefaultWidgetOptions ();
+        $this->data = array_merge ( $this->data, $data );
         if (! empty ( $widgets )) {
             foreach ( $widgets as $widget_name => $widget ) {
                 if (preg_match ( '#^_.+#', $widget_name )) {
@@ -230,14 +210,9 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                 if (isset ( $widget [FWT_BIND] )) {
                     $bind = $widget [FWT_BIND];
                     if (is_array ( $bind ) && count ( $bind ) == 1) {
-                        $widget [FWT_BIND] = array_merge ( array (
-                                                                    $this 
-                        ), $bind );
+                        $widget [FWT_BIND] = array_merge ( array ($this ), $bind );
                     } else if ($bind {0} == '@') {
-                        $widget [FWT_BIND] = array (
-                                                    $this, 
-                                                    substr ( $bind, 1 ) 
-                        );
+                        $widget [FWT_BIND] = array ($this, substr ( $bind, 1 ) );
                     }
                 }
                 if (isset ( $widget [FWT_SEARCH] )) {
@@ -265,11 +240,11 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     public function __set($name, $value) {
         $this->__properties__ [$name] = $value;
     }
-    public function addWidget($widget_name, $widget) {
+    protected function addWidget($widget_name, $widget) {
         $this->__properties__ ['widgets'] [$widget_name] = $widget;
         $this->__properties__ ['widgets_keys'] [] = $widget_name;
     }
-    public function addSearch($widget_name, $search) {
+    protected function addSearch($widget_name, $search) {
         $this->__properties__ ['searches'] [$widget_name] = $search;
     }
     public function isValid() {
@@ -292,10 +267,8 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         }
         return '';
     }
-    public function offsetSet($offset, $value) {
-    }
-    public function offsetUnset($offset) {
-    }
+    public function offsetSet($offset, $value) {}
+    public function offsetUnset($offset) {}
     protected function getDefaultWidgetOptions() {
         return array ();
     }
@@ -319,7 +292,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     public function setError($widget, $error) {
         if (isset ( $this->widgets [$widget] )) {
             $this->widgets [$widget]->setErrorMsg ( $error );
-            $this->__properties__['errors'][] = $error;            
+            $this->__properties__ ['errors'] [] = $error;
         }
     }
     protected abstract function getFormHead();
@@ -374,10 +347,7 @@ abstract class FormWidget {
                 } else if ($message) {
                     $message = __ ( $message );
                 }
-                $this->validates [$rule] = array (
-                                                'message' => $message, 
-                                                'option' => $exp 
-                );
+                $this->validates [$rule] = array ('message' => $message, 'option' => $exp );
             }
             $this->required = isset ( $this->validates ['required'] );
         }
@@ -447,10 +417,7 @@ abstract class FormWidget {
     }
     protected function getBindData() {
         if (isset ( $this->option [FWT_BIND] ) && is_callable ( $this->option [FWT_BIND] )) {
-            return call_user_func_array ( $this->option [FWT_BIND], array (
-                                                                            $this->value, 
-                                                                            $this->form->getInitialData () 
-            ) );
+            return call_user_func_array ( $this->option [FWT_BIND], array ($this->value, $this->form->getInitialData () ) );
         }
         return null;
     }
@@ -496,9 +463,7 @@ abstract class FormWidget {
         $this->error = $value;
     }
     public function getValidate() {
-        $properties = array (
-                            'validate' => '' 
-        );
+        $properties = array ('validate' => '' );
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
             if ($validator) {
@@ -579,9 +544,7 @@ class TextWidget extends FormWidget {
         }
     }
     public function getWidgetComponent() {
-        $properties = $this->getProperties ( array (
-                                                    'value' => $this->value 
-        ) );
+        $properties = $this->getProperties ( array ('value' => $this->value ) );
         return '<input type="text" ' . $properties . '/>';
     }
     public function getTipComponent() {
@@ -614,9 +577,7 @@ class PasswordWidget extends TextWidget {
 class SelectWidget extends TextWidget {
     public function getWidgetComponent() {
         $properties = $this->getProperties ();
-        $rtn = array (
-                    '<select' . $properties . '>' 
-        );
+        $rtn = array ('<select' . $properties . '>' );
         foreach ( $this->getBindData () as $key => $value ) {
             if ($this->value == $key) {
                 $rtn [] = '<option value="' . $key . '" selected="selected">' . $value . '</option>';

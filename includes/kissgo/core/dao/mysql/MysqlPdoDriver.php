@@ -18,7 +18,10 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
      * @see PdoDriver::buildOptions()
      */
     public function buildOptions($options) {
-        return array ('mysql:dbname=kissgodb;host=127.0.0.1;charset=UTF-8', 'root', '888888', null );
+        $opts = array_merge ( array ('encoding' => 'UTF8', 'host' => 'localhost', 'port' => 3306, 'user' => 'root', 'password' => 'root', 'driver_options' => array () ), $options );
+        $charset = isset ( $opts ['encoding'] ) && ! empty ( $opts ['encoding'] ) ? $opts ['encoding'] : 'UTF8';
+        $dsn = "mysql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']};charset={$opts['charset']}";
+        return array ($dsn, $opts ['user'], $opts ['password'], $opts ['driver_options'] );
     }
     public function specialChar() {
         return '`';
@@ -29,15 +32,42 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
      * @param Idao $dao
      * @return string
      */
-    public function schema($dao) {
-        $fields = array ('CREATE TABLE' );
+    public function schema($dao, $engine = 'InnoDB', $charset = 'UTF8') {
+        $sql = 'CREATE TABLE ';
         $schema = $dao->schema ();
-        $fields [] = '`' . $dao->getFullTableName () . '`';
+        $sql .= '`' . $dao->getFullTableName () . '` (';
+        $fields = array ();
         foreach ( $schema as $field => $def ) {
             $fstr = $this->getColumnDef ( $field, $def );
+            if (! $fstr) {
+                return '';
+            }
+            $fields [] = $fstr;
         }
-    
+        if (empty ( $fields )) {
+            return '';
+        }
+        
+        $primarykes = $schema->getPrimaryKey ();
+        if (! empty ( $primarykes )) {
+            $fields [] = "PRIMARY KEY (`" . implode ( '`,`', $primarykes ) . '`)';
+        }
+        
+        $indexs = $schema->getIndexes ();
+        foreach ( $indexs as $def ) {
+            $fields [] = $this->getIndexDef ( $def );
+        }
+        
+        $sql .= implode ( ',', $fields );
+        
+        $cmt = $schema->getDescription ();
+        $sql .= ")ENGINE=$engine DEFAULT CHARSET $charset COMMENT '$cmt'";
+        return $sql;
     }
+    /**
+     * (non-PHPdoc)
+     * @see SqlBuilder::delete()
+     */
     public function delete($table, $sqlHelper) {
         $values = new DbSqlValues ( $this );
         list ( $dao, $alias ) = $table;
@@ -66,6 +96,10 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         $data = $values->getValues ();
         return new DbSQL ( $sql, $data );
     }
+    /**
+     * (non-PHPdoc)
+     * @see SqlBuilder::insert()
+     */
     public function insert($table, $data) {
         list ( $dao, $alias ) = $table;
         $values = new DbSqlValues ( $this );
@@ -183,14 +217,58 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         $dbSql = new DbSQL ( $sql, $data );
         return $dbSql;
     }
-    
-    public function getColumnDef($field, $definition) {
-        $fstr = "`{$field}`";
-        foreach ( $definition as $key => $def ) {
-
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $field
+     * @param unknown_type $definition
+     */
+    private function getColumnDef($field, $definition) {
+        $fstr [] = "`{$field}`";
+        $type = $definition [Idao::TYPE];
+        $typee = isset ( $definition [Idao::TYPE_EXTRA] ) ? $definition [Idao::TYPE_EXTRA] : Idao::TE_NORMAL;
+        if ($type == Idao::TYPE_SERIAL) {
+            $definition ['auto_increment'] = true;
+        } else if ($type == Idao::TYPE_BOOL) {
+            $definition [Idao::LENGTH] = 1;
+        } else if ($type == Idao::TYPE_TIMESTAMP) {
+            $definition [] = Idao::UNSIGNED;
+        }
+        $f = $this->getType ( $type, $typee );
+        if (! $f) {
+            return false;
+        }
+        $fstr [] = $f;
+        if (isset ( $definition [Idao::LENGTH] )) {
+            $fstr [] = '(' . $definition [Idao::LENGTH] . ')';
+        }
+        if (in_array ( Idao::UNSIGNED, $definition )) {
+            $fstr [] = 'UNSIGNED';
+        }
+        if (in_array ( Idao::NN, $definition )) {
+            $fstr [] = 'NOT NULL';
+        } else {
+            $fstr [] = 'NULL';
+        }
+        if (isset ( $definition [Idao::DEFT] )) {
+            $fstr [] = 'DEFAULT ' . (in_array ( $f, array ('VARCHAR', 'CHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'TEXT', 'DATE', 'DATETIME' ) )) ? "'{$definition[Idao::DEFT]}'" : $definition [Idao::DEFT];
+        }
+        if (isset ( $definition ['auto_increment'] )) {
+            $fstr [] = 'AUTO_INCREMENT';
+        }
+        if (isset ( $definition [Idao::CMMT] )) {
+            $fstr [] = "COMMENT '{$definition[Idao::CMMT]}'";
         }
         
-        return $fstr;
+        return implode ( ' ', $fstr );
+    }
+    private function getIndexDef($def) {
+        list ( $name, $fields, $type ) = $def;
+        if (! empty ( $type )) {
+            return $type . ' KEY `' . $name . '` (`' . implode ( '`,`', $fields ) . '`)';
+        } else {
+            return 'KEY `' . $name . '` (`' . implode ( '`,`', $fields ) . '`)';
+        }
     }
     /**
      * 生成join语句
@@ -337,13 +415,14 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         }
         return $c;
     }
+    // limit statement
     private function buildLimit($limits, &$values) {
         list ( $start, $limit ) = $limits;
         $start = $values->addValue ( 'start', ($start - 1) * $limit );
         $limit = $values->addValue ( 'limit', $limit );
         return " LIMIT $start,$limit ";
     }
-    
+    // group statement
     private function buildGroupBy($groupby) {
         $_gb = array ();
         foreach ( $groupby as $gb ) {
@@ -352,7 +431,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         }
         return ' GROUP BY ' . implode ( ',', $_gb );
     }
-    
+    // order statement
     private function buildOrder($order) {
         $_or = array ();
         foreach ( $order as $o ) {
@@ -362,5 +441,16 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         }
         return ' ORDER BY ' . implode ( ',', $_or );
     }
-
+    
+    private function getType($type, $typee = 'normal') {
+        static $map = array ('varchar:normal' => 'VARCHAR', 'char:normal' => 'CHAR', 'text:tiny' => 'TINYTEXT', 'text:small' => 'TINYTEXT', 'text:medium' => 'MEDIUMTEXT', 'text:big' => 'LONGTEXT', 'text:normal' => 'TEXT', 'serial:tiny' => 'TINYINT', 'serial:small' => 'SMALLINT', 'serial:medium' => 'MEDIUMINT', 'serial:big' => 'BIGINT', 'serial:normal' => 'INT', 'int:tiny' => 'TINYINT', 'int:small' => 'SMALLINT', 'int:medium' => 'MEDIUMINT', 'int:big' => 'BIGINT', 'int:normal' => 'INT', 
+                'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'blob:big' => 'LONGBLOB', 'blob:normal' => 'BLOB', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME' );
+        $t = $type . ':' . $typee;
+        if (isset ( $map [$t] )) {
+            return $map [$t];
+        } else if (isset ( $map [$type . ':normal'] )) {
+            return $map [$type . ':normal'];
+        }
+        return false;
+    }
 }

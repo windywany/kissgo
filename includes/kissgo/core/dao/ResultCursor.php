@@ -1,6 +1,6 @@
 <?php
 /**
- * 结果集
+ * 查询结果集
  * @author Leo Ning
  *
  */
@@ -98,6 +98,49 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
         }
     }
     /**
+     * 返回结果集的数组
+     * @param string/int $field 使用指定字段值做为数组的KEY
+     * @param string/int $vfield 使用指定字段值做为数组的值，如果为空则使用整条记录做为值
+     * @return array
+     */
+    public function toArray($field = "", $vfield = "", $results = array()) {
+        try {
+            if (! empty ( $field ) || is_numeric ( $field )) {
+                foreach ( $this->rows as $key => $value ) {
+                    $key = $value [$field];
+                    $value = empty ( $vfield ) ? $value : $value [$vfield];
+                    $results [$key] = $value;
+                }
+            } else {
+                $results += $this->rows;
+            }
+        } catch ( PDOException $e ) {
+            log_debug ( $e->getMessage () );
+        }
+        return $results;
+    }
+    /**
+     * 列转行
+     * 
+     * 将$field对应的列转为一行
+     * 
+     * @param string $field 结果集中的一列字段
+     * @return array
+     */
+    public function r2c($field) {
+        $results = array ();
+        try {
+            foreach ( $this->rows as $key => $value ) {
+                if (isset ( $value [$field] )) {
+                    $results [] = $value [$field];
+                }
+            }
+        } catch ( PDOException $e ) {
+            log_debug ( $e->getMessage () );
+        }
+        return $results;
+    }
+    /**
      * return the count total
      * @see Countable::count()
      * @return int
@@ -163,7 +206,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
     }
     public function __toString() {
         $str = '';
-        if (!$this->stmt) {
+        if (! $this->stmt) {
             $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this );
             if ($sql) {
                 $this->params += $sql->values ();

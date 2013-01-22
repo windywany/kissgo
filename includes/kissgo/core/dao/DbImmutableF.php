@@ -1,4 +1,9 @@
 <?php
+/**
+ * 不可变的字段
+ * @author Leo Ning
+ *
+ */
 class DbImmutableF implements DbImmutable {
     private $field;
     private $char;

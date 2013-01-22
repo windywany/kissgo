@@ -10,16 +10,44 @@ abstract class PdoDriver extends PDO {
     public function __construct($options) {
         list ( $dsn, $user, $passwd, $attr ) = $this->buildOptions ( $options );
         parent::__construct ( $dsn, $user, $passwd, $attr );
+        $this->tbl_prefix = isset ( $options ['prefix'] ) && ! empty ( $options ['prefix'] ) ? $options ['prefix'] : '';
     }
     public function getFullTableName($name) {
         return $this->tbl_prefix . $name;
     }
-    public static function getDriver($database = 'default') {
-        $driver = 'mysql';
-        include_once dirname ( __FILE__ ) . '/mysql/MysqlPdoDriver.php';
-        $driverIns = new MysqlPdoDriver ( array ('host' => 'localhost', '' ) );
-        $driverIns->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-        return $driverIns;
+    /**
+     * 
+     * 获取数据库驱动
+     * @param string $driver
+     * @return PdoDriver
+     */
+    public static function getDriver($driver = 'default') {
+        static $ds = array ();
+        if (! isset ( $ds [$driver] )) {
+            $settings = KissGoSetting::getSetting ();
+            if (! isset ( $settings [DATABASE] )) {
+                trigger_error ( '[' . $driver . ']数据库配置不存在.', E_USER_ERROR );
+            }
+            $database_settings = $settings [DATABASE];
+            if (! isset ( $database_settings [$driver] )) {
+                trigger_error ( '[' . $driver . ']数据库配置不存在.', E_USER_ERROR );
+            }
+            $options = $database_settings [$driver];
+            $driver_path = isset ( $options ['driver'] ) && ! empty ( $options ['driver'] ) ? $options ['driver'] : 'mysql';
+            $driverClz = ucfirst ( $driver_path ) . 'PdoDriver';
+            $driverFile = dirname ( __FILE__ ) . DS . $driver_path . DS . $driverClz . '.php';
+            if (! is_file ( $driverFile )) {
+                trigger_error ( '[' . $driver . ']数据库驱动器' . $driver_path . '实现文件' . $driverFile . '不存在.', E_USER_ERROR );
+            }
+            include_once $driverFile;
+            if (! is_subclass_of ( $driverClz, 'PdoDriver' )) {
+                trigger_error ( '[' . $driver . ']数据库驱动器' . $driver_path . '不存在.', E_USER_ERROR );
+            }
+            $dr = new $driverClz ( $options );
+            $dr->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+            $ds [$driver] = $dr;
+        }
+        return $ds [$driver];
     }
     /**
      * 
@@ -39,7 +67,7 @@ abstract class PdoDriver extends PDO {
             }
             if ($sql) {
                 $rst = $driver->exec ( $sql );
-                if ($rst) {
+                if ($rst !== false) {
                     return true;
                 }
             }
@@ -71,7 +99,7 @@ abstract class PdoDriver extends PDO {
         return array ($sf, $name );
     }
     public static function compareField($field1, $field2) {
-        
+
     }
     /**
      * 

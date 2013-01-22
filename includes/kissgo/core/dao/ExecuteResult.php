@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * 执行结果(新增，更新)
+ * @author Leo Ning
+ *
+ */
 class ExecuteResult extends DbSqlHelper implements Countable {
     private $data = null;
     private $dao = null;
@@ -22,10 +28,6 @@ class ExecuteResult extends DbSqlHelper implements Countable {
     }
     
     public function count() {
-        return $this->exec ();
-    }
-    
-    public function exec() {
         $schema = $this->dao->schema ();
         if (! empty ( $this->condition )) {
             $schema->getAutoUpdateData ( $this->data, $this->alias, $this->sChar );
@@ -38,7 +40,7 @@ class ExecuteResult extends DbSqlHelper implements Countable {
         if ($sql) {
             try {
                 return $sql->execute ( $this->driver );
-            } catch ( Exception $e ) {
+            } catch ( PDOException $e ) {
                 $this->errorInfo = $this->driver->errorInfo ();
                 log_debug ( $e->getMessage () . ' [' . $sql . ']' );
                 throw $e;

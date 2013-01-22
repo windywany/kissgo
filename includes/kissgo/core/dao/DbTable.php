@@ -1,4 +1,10 @@
 <?php
+/**
+ * 
+ * 数据库表
+ * @author Leo Ning
+ *
+ */
 abstract class DbTable extends DbView {
     /**
      * (non-PHPdoc)
