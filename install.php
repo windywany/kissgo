@@ -8,7 +8,7 @@
  *
  * $Id$
  */
-define ( 'WEB_ROOT', dirname ( __FILE__ ).DIRECTORY_SEPARATOR );
+define ( 'WEB_ROOT', dirname ( __FILE__ ) . DIRECTORY_SEPARATOR );
 $_kissgo_processing_installation = true;
 require_once WEB_ROOT . 'includes/bootstrap.php';
 if (is_file ( APPDATA_PATH . 'settings.php' )) {
@@ -16,18 +16,25 @@ if (is_file ( APPDATA_PATH . 'settings.php' )) {
 }
 require_once KISSGO . 'libs/install.php';
 KissGo::startSession ();
-$steps = array ('welcome' => 'Welcome', 'check' => 'Environment Check', 'db' => 'Configurate Database', 'admin' => 'Create Administrator', 'config' => 'Configurate', 'install' => 'Install', 'done' => 'Done', 'scheme' => 'scheme', 'cu' => 'cu', 'cm' => 'cm', 'pf' => 'pf', 'save' => 'save', 'tasks' => 'tasks' );
+$steps = array ('welcome' => 'Welcome', 'profile' => 'Select Install Profile', 'check' => 'Environment Check', 'db' => 'Configurate Database', 'admin' => 'Create Administrator', 'config' => 'Configurate', 'install' => 'Install', 'done' => 'Done', 'cu' => 'cu', 'cm' => 'cm', 'save' => 'save', 'tasks' => 'tasks' );
 $step = isset ( $_POST ['step'] ) ? $_POST ['step'] : $_SESSION ['INSTALL_STEP'];
 $step = in_array ( $step, array_keys ( $steps ) ) ? $step : 'welcome';
-$settings = KissGoSetting::getSetting ();
+
 $data = array ('_KISSGO_VERSION' => KISSGO_VERSION . ' BUILD ' . KISSGO_BUILD );
 $data ['page_title'] = $steps [$step];
 $data ['base_url'] = BASE_URL;
 $data ['step'] = $step;
 $installer = new KissGOInstaller ();
 switch ($step) {
+    case 'profile' :
+        $_SESSION ['INSTALL_STEP'] = 'profile';
+        $data ['profile'] = sess_get ( 'INSTALL_PROFILE' );
+        $data ['profiles'] = ProfileManager::getProfile ();
+        $tpl = view ( 'admin/views/install/profile.tpl', $data );
+        break;
     case 'check' :
         $_SESSION ['INSTALL_STEP'] = 'check';
+        $_SESSION ['INSTALL_PROFILE'] = $_POST ['profile'];
         $data ['dirs'] = $installer->check_directory_rw ();
         $data ['envs'] = $installer->check_server_env ();
         $tpl = view ( 'admin/views/install/check.tpl', $data );
@@ -55,14 +62,15 @@ switch ($step) {
     case 'config' :
         $_SESSION ['INSTALL_STEP'] = 'config';
         if (isset ( $_POST ['from'] )) {
-            $admin_from = new InstallAdminForm ();            
+            $admin_from = new InstallAdminForm ();
             $_SESSION ['_INSTALL_ADMIN_DATA'] = $admin_from->getCleanData ();
             $admin_from->validate ();
             $_SESSION ['_INSTALL_ADMIN_FORM'] = $admin_from;
         }
         $form_data = sess_get ( '_INSTALL_CONFIG_DATA', array () );
         $form = new InstallConfigForm ( $form_data );
-        // TODO 添加profile支持
+        $profile = ProfileManager::getInstallProfile ();
+        $profile->onInitConfigForm ( $form );
         $data ['form'] = $form;
         $tpl = view ( 'admin/views/install/config.tpl', $data );
         break;
@@ -70,6 +78,8 @@ switch ($step) {
         $_SESSION ['INSTALL_STEP'] = 'install';
         if (isset ( $_POST ['from'] )) {
             $config_from = new InstallConfigForm ();
+            $profile = ProfileManager::getInstallProfile ();
+            $profile->onInitConfigForm ( $form );
             $_SESSION ['_INSTALL_CONFIG_DATA'] = $config_from->getCleanData ();
             $config_from->validate ();
             $_SESSION ['_INSTALL_CONFIG_FORM'] = $config_from;
@@ -79,7 +89,7 @@ switch ($step) {
         $data ['config_form'] = $_SESSION ['_INSTALL_CONFIG_FORM'];
         if ($data ['db_form']->isValid ()) {
             $data ['db_connection'] = $installer->check_connection ( $_SESSION ['_INSTALL_DB_DATA'] );
-            $data ['db_error'] = DataSource::getLastError ();
+            $data ['db_error'] = $installer->error;
         }
         
         $tpl = view ( 'admin/views/install/install.tpl', $data );
@@ -91,26 +101,17 @@ switch ($step) {
         }
         $tpl = view ( 'admin/views/install/done.tpl', $data );
         break;
-    case 'scheme' : // create the scheme of kissgo	        
-        if (isset ( $_POST ['arg'] ) && ! empty ( $_POST ['arg'] )) {
-            $rst = $installer->create_scheme_table ( $_POST ['arg'] );
-            $tpl = new JsonView ( array ('success' => $rst, 'msg' => $installer->error ) );
-        } else {
-            $tpl = new JsonView ( array ('success' => true, 'taskes' => $installer->get_scheme_tables () ) );
-        }
-        break;
     case 'cu' : // create administrator		
         $rst = $installer->create_administrator ();
         $tpl = new JsonView ( array ('success' => $rst, 'msg' => $installer->error ) );
         break;
-    
-    case 'pf' :
-        $rst = $installer->save_peferences ();
-        $tpl = new JsonView ( array ('success' => $rst, 'msg' => $installer->error ) );
-        break;
     case 'cm' :
-        $rst = $installer->install_core_modules ();
-        $tpl = new JsonView ( array ('success' => $rst, 'msg' => $installer->error ) );
+        if (isset ( $_POST ['arg'] ) && ! empty ( $_POST ['arg'] )) {
+            $rst = $installer->install_module ( $_POST ['arg'] );
+            $tpl = new JsonView ( array ('success' => $rst, 'msg' => $installer->error ) );
+        } else {
+            $tpl = new JsonView ( array ('success' => true, 'taskes' => $installer->get_modules () ) );
+        }
         break;
     case 'save' : // save configuration to settings.php file
         $rst = $installer->create_settings_file ();

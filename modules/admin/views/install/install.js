@@ -46,6 +46,11 @@ $(function(){
 			addDetail(task.text);
 			updatep(wt);
 			$.post('./install.php',{step:task.step,arg:task.arg || ''},function(data){
+				if(!data){
+					errMsg = '服务器返回未知数据.';
+					updates('error');
+					return;
+				}
 				if(data.success){
 					if(data.taskes){
 						var len = data.taskes.length;

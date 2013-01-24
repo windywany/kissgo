@@ -188,9 +188,16 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         $this->pos = 0;
         $this->addWidgets ( $widgets, $data );
     }
-    public function addWidgets($widgets, $data) {
+    public function addWidgets($widgets, $data = null) {
         $default_options = $this->getDefaultWidgetOptions ();
-        $this->data = array_merge ( $this->data, $data );
+        if (! is_null ( $data )) {
+            if ($this->data) {
+                $_data = $this->data;
+            } else {
+                $_data = array ();
+            }
+            $this->data = array_merge ( $data, $_data );
+        }
         if (! empty ( $widgets )) {
             foreach ( $widgets as $widget_name => $widget ) {
                 if (preg_match ( '#^_.+#', $widget_name )) {

@@ -28,11 +28,11 @@ class ExtensionManager {
     /**
      * 加载已经安装的插件
      */
-    public function loadInstalledExtensions() {
+    public function loadInstalledExtensions($load_init = true) {
         // 加载用户安装插件
         if (file_exists ( APPDATA_PATH . 'extensions.ini' )) {
             $this->extensions = parse_ini_file ( APPDATA_PATH . 'extensions.ini', true );
-            if ($this->extensions === false) {
+            if ($this->extensions === false && $load_init) {
                 log_debug ( "extensions.ini的文件格式不正确，无法加载！" );
                 return;
             }
@@ -41,20 +41,22 @@ class ExtensionManager {
         if (empty ( $this->extensions )) {
             return;
         }
-        foreach ( $this->extensions as $name => $plugin ) {
-            if (isset ( $plugin ['disabled'] ) && $plugin ['disabled']) {
-                continue;
+        if ($load_init) {
+            foreach ( $this->extensions as $name => $plugin ) {
+                if (isset ( $plugin ['disabled'] ) && $plugin ['disabled']) {
+                    continue;
+                }
+                if (! isset ( $plugin ['Module'] )) {
+                    continue;
+                }
+                $this->modules [] = $plugin ['Module'];
+                if (isset ( $plugin ['alias'] ) && ! empty ( $plugin ['alias'] )) {
+                    $this->aliases ['u2m'] [$plugin ['alias']] = $plugin ['Module'];
+                    $this->aliases ['m2u'] [$plugin ['Module']] = $plugin ['alias'];
+                }
             }
-            if (! isset ( $plugin ['Module'] )) {
-                continue;
-            }
-            $this->modules [] = $plugin ['Module'];
-            if (isset ( $plugin ['alias'] ) && ! empty ( $plugin ['alias'] )) {
-                $this->aliases ['u2m'] [$plugin ['alias']] = $plugin ['Module'];
-                $this->aliases ['m2u'] [$plugin ['Module']] = $plugin ['alias'];
-            }
+            $this->load ( $this->modules );
         }
-        $this->load ( $this->modules );
     }
     /**
      * 保存已经安装插件信息
@@ -81,24 +83,40 @@ class ExtensionManager {
         }
         return false;
     }
+    public function getExension($mid) {
+        if (isset ( $this->installed [$mid] )) {
+            return $this->installed [$mid];
+        } else if (isset ( $this->uninstalled [$mid] )) {
+            return $this->uninstalled [$mid];
+        } else {
+            return false;
+        }
+    }
     /**
      * 
      * 安装模块
      * @param string $pid 模块ID
      * @return boolean|string
      */
-    public function installExtension($pid) {
+    public function installExtension($pid, $unremovable = 0) {
         if (isset ( $this->uninstalled [$pid] )) {
             $extension = $this->uninstalled [$pid];
             $extension ['disabled'] = 0;
-            $extension ['Installed_Time'] = time ();
-            $plugin ['unremovable'] = 0;
-            $this->extensions [] = $extension;
-            $rst = $this->saveExtensionsData ();
-            if ($rst) {
-                return true;
+            $extension ['Installed'] = time ();
+            $extension ['unremovable'] = $unremovable;
+            include_once APP_PATH . $extension ['pkg_file'];
+            $rst = apply_filter ( 'on_install_module_' . $pid, true );
+            log_debug ( "on_install_module_" . $pid . '   ' . $rst );
+            if ($rst === true) {
+                $this->extensions [] = $extension;
+                $rst = $this->saveExtensionsData ();
+                if ($rst) {
+                    return true;
+                } else {
+                    return "无法保存扩展配置文件.";
+                }
             } else {
-                return "无法保存扩展配置文件.";
+                return $rst;
             }
         } else {
             return "插件不存在或已经安装.";
@@ -131,11 +149,13 @@ class ExtensionManager {
      */
     public function uninstallExtension($pid) {
         if (isset ( $this->extensions [$pid] )) {
-            unset ( $this->extensions [$pid] );
-            return $this->saveExtensionsData ();
-        } else {
-            return false;
+            $rst = apply_filter ( 'on_uninstall_module_', true );
+            if ($rst === true) {
+                unset ( $this->extensions [$pid] );
+                return $this->saveExtensionsData ();
+            }
         }
+        return false;
     }
     /**
      * 
@@ -260,15 +280,7 @@ class ExtensionManager {
         } else {
             $plugin ['Description'] = '';
         }
-        $plugin ['Module'] = str_replace ( array (
-                                                    MODULES_PATH, 
-                                                    DS . '__pkg__.php', 
-                                                    DS 
-        ), array (
-                '', 
-                '', 
-                '/' 
-        ), str_replace ( '/', DS, $plugin_file ) );
+        $plugin ['Module'] = str_replace ( array (MODULES_PATH, DS . '__pkg__.php', DS ), array ('', '', '/' ), str_replace ( '/', DS, $plugin_file ) );
         $plugin ['pkg_file'] = str_replace ( APP_PATH, '', $plugin_file );
         $extensions = $this->extensions;
         if (isset ( $extensions [$plugin ['Module_ID']] )) {

@@ -26,6 +26,7 @@
 				<div class="span3 sidebar">
 			        <ul class="nav nav-list sidenav">
 			          <li {if $step=='welcome'}class="active"{/if}><a><i class="icon-chevron-right"></i>安装协议</a></li>
+			          <li {if $step=='profile'}class="active"{/if}><a><i class="icon-chevron-right"></i>安装类型</a></li>
 			          <li {if $step=='check'}class="active"{/if}><a><i class="icon-chevron-right"></i>环境检测</a></li>
 			          <li {if $step=='db'}class="active"{/if}><a><i class="icon-chevron-right"></i>数据库配置</a></li>
 			          <li {if $step=='admin'}class="active"{/if}><a><i class="icon-chevron-right"></i>创建管理员</a></li>
@@ -44,7 +45,7 @@
 				       		{include file="$ksg_module/admin/views/install/license.tpl"}
 				       	</div>
 				       	<form class="form-inline pull-right" onsubmit="check" method="post">
-				       		<input type="hidden" name="step" value="check"/>						   
+				       		<input type="hidden" name="step" value="profile"/>						   
 						    <label class="checkbox">
 						    	<input type="checkbox" id="accept"/>我已经阅读并同意此协议
 						    </label>

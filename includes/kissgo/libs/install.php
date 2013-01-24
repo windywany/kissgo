@@ -11,8 +11,35 @@
 class KissGOInstaller {
     public $error = '';
     private $createAminSQL = "INSERT INTO `%PREFIX%user` VALUES ";
-    private $createAuthSQL = "INSERT INTO `%PREFIX%authorization` VALUES (1,'USER',1,'*','*',100,1,NULL)";
-    private $createPfSQL = "INSERT INTO `%PREFIX%preference` (option_group,option_name,option_value) VALUES ";
+    public function __construct() {
+        if (isset ( $_SESSION ['_INSTALL_DB_DATA'] )) {
+            $dbForm = new InstallDbForm ( $_SESSION ['_INSTALL_DB_DATA'] );
+            $db = $dbForm->validate ( null, true );
+        }
+        if (isset ( $_SESSION ['_INSTALL_CONFIG_DATA'] )) {
+            $configForm = new InstallConfigForm ( $_SESSION ['_INSTALL_CONFIG_DATA'] );
+            $config = $configForm->validate ( null, true );
+        }
+        $setting = KissGoSetting::getSetting ();
+        $default_setting_file = APPDATA_PATH . 'default.settings.php';
+        if (is_file ( $default_setting_file )) {
+            include_once $default_setting_file;
+        }
+        if ($config) {
+            $settings ['DEBUG'] = $config ['debug'];
+            $settings ['CLEAN_URL'] = $config ['clean_url'] ? true : false;
+            $settings ['I18N_ENABLED'] = $config ['i18n'] ? true : false;
+            $settings ['GZIP_ENABLED'] = $config ['gzip'] ? true : false;
+            $settings ['TIMEZONE'] = $config ['timezone'];
+            $settings ['SECURITY_KEY'] = $config ['security_key'];
+            $settings ['date_format'] = $config ['date_format'];
+            $settings ['site_name'] = $config ['site_name'];
+        }
+        if ($db) {
+            $db_default = array ('driver' => $db ['driver'], 'encoding' => 'UTF8','host' => $db ['host'], 'port' => $db ['port'], 'prefix' => $db ['prefix'], 'user' => $db ['dbuser'], 'password' => $db ['passwd'], 'dbname' => $db ['dbname'] );
+            $settings [DATABASE] = array ('default' => $db_default );
+        }
+    }
     /**
      * 
      * 安装任务列表
@@ -20,68 +47,70 @@ class KissGOInstaller {
      */
     public function get_install_taskes() {
         $taskes = array ();
-        $taskes [] = array ('text' => '获取数据表列表', 'step' => 'scheme', 'weight' => 6 );
-        $taskes [] = array ('text' => '创建管理员:' . $_SESSION ['_INSTALL_ADMIN_DATA'] ['name'], 'step' => 'cu', 'weight' => 7 );
-        $taskes [] = array ('text' => '保存配置信息', 'step' => 'pf', 'weight' => 7 );
-        $taskes [] = array ('text' => '安装核心模块', 'step' => 'cm', 'weight' => 10 );
-        $taskes [] = array ('text' => '创建settings.php文件', 'step' => 'save', 'weight' => 5 );
+        $taskes [] = array ('text' => '获取预装模块', 'step' => 'cm', 'weight' => 5 );
+        $taskes [] = array ('text' => '创建管理员' . $_SESSION ['_INSTALL_ADMIN_DATA'] ['name'], 'step' => 'cu', 'weight' => 5 );
+        $taskes [] = array ('text' => '保存配置文件', 'step' => 'save', 'weight' => 5 );
         return $taskes;
     }
     /**
      * 
-     * 得到要安装的表
+     * 获取要安装的所有模块
+     * @return boolean
      */
-    public function get_scheme_tables() {
-        $taskes = array ();
-        require_once KISSGO . 'libs/install_core_scheme.php';
-        $scheme = KissGoSetting::getSetting ( 'scheme' );
-        $schemes = $scheme->toArray ();
-        $count = 60 / count ( $schemes );
-        foreach ( $schemes as $table => $sql ) {
-            $taskes [] = array ('text' => '创建系统核心表:' . $table, 'step' => 'scheme', 'arg' => $table, 'weight' => $count );
+    public function get_modules() {
+        $modules = array ('cn.usephp.core.gui' => 1 );
+        $profile = ProfileManager::getInstallProfile ();
+        $third_mds = $profile->onInstallModules ();
+        if (is_array ( $third_mds )) {
+            $modules += $third_mds;
+        }
+        $count = floor ( 80.0 / count ( $modules ) );
+        $em = ExtensionManager::getInstance ();
+        $em->getExtensions ( false );
+        foreach ( $modules as $module => $unremoveble ) {
+            if (is_numeric ( $module )) {
+                $module = $unremoveble;
+                $unremoveble = 0;
+            } else {
+                $unremoveble = intval ( $unremoveble );
+            }
+            $md = $em->getExension ( $module );
+            if ($md) {
+                $taskes [] = array ('text' => '安装模块:' . $md ['Module_Name'], 'step' => 'cm', 'arg' => $unremoveble . $module, 'weight' => $count );
+            }
         }
         return $taskes;
     }
-    public function create_scheme_table($name) {
-        $dbConfig = $_SESSION ['_INSTALL_DB_DATA'];
-        $ds = $this->getDs ( $dbConfig );
-        if ($ds) {
-            require_once KISSGO . 'libs/install_core_scheme.php';
-            $scheme = KissGoSetting::getSetting ( 'scheme' );
-            $sql = isset ( $scheme [$name] ) ? $scheme [$name] : false;
-            if ($sql) {
-                $sql = str_replace ( array ('%PREFIX%', '%ENGINE%' ), array ($dbConfig ['prefix'], $dbConfig ['engine'] ), $sql );
-                $rst = $ds->execute ( "DROP TABLE IF EXISTS `{$dbConfig['prefix']}{$name}`" );
-                if ($rst === false) {
-                    $this->error = $ds->last_error_msg ();
-                    return false;
-                }
-                $rst = $ds->execute ( $sql );
-                if ($rst !== false) {
-                    return true;
-                } else {
-                    $this->error = $ds->last_error_msg ();
-                    return false;
-                }
-            } else {
-                $this->error = '建表语句不存在.';
-                return false;
-            }
+    /**
+     * 
+     * 安装模块
+     * @param string $mid
+     * @return boolean
+     */
+    public function install_module($mid) {
+        $em = ExtensionManager::getInstance ();
+        $em->getExtensions ( false );
+        $unremoveble = $mid {0};
+        $mid = substr ( $mid, 1 );
+        $rst = $em->installExtension ( $mid, $unremoveble );
+        if ($rst === true) {
+            return true;
         } else {
-            $this->error = DataSource::getLastError ();
+            $this->error = $rst;
             return false;
         }
     }
     public function create_administrator() {
-        $dbConfig = $_SESSION ['_INSTALL_DB_DATA'];
-        $ds = $this->getDs ( $dbConfig );
+        
+        $ds = $this->getDs ();
+        
         if ($ds) {
             $admin = $_SESSION ['_INSTALL_ADMIN_DATA'];
             $passwd = md5 ( $admin ['passwd'] );
             $time = time ();
             $sql = str_replace ( '%PREFIX%', $dbConfig ['prefix'], $this->createAminSQL );
             $sql .= "(1,'{$admin['name']}','{$passwd}','Administrator','{$admin['email']}',0,1,{$time},'127.0.0.1')";
-            
+            return true;
             $rst = $ds->execute ( $sql );
             if ($rst == 1) {
                 $sql = str_replace ( '%PREFIX%', $dbConfig ['prefix'], $this->createAuthSQL );
@@ -94,49 +123,6 @@ class KissGOInstaller {
             return false;
         } else {
             $this->error = DataSource::getLastError ();
-            return false;
-        }
-    }
-    public function save_peferences() {
-        $dbConfig = $_SESSION ['_INSTALL_DB_DATA'];
-        $ds = $this->getDs ( $dbConfig );
-        if ($ds) {
-            $settings = KissGoSetting::getSetting ();
-            $data [] = array ('name' => 'FULL_VERSION', 'value' => $settings ['VERSION'] . ' ' . $settings ['RELEASE'] . ' BUILD ' . $settings ['BUILD'] );
-            $data [] = array ('name' => 'VERSION', 'value' => $settings ['VERSION'] );
-            $data [] = array ('name' => 'RELEASE', 'value' => $settings ['RELEASE'] );
-            $data [] = array ('name' => 'BUILD', 'value' => $settings ['BUILD'] );
-            $data [] = array ('name' => 'R_VERSION', 'value' => $settings ['VERSION'] . ' ' . $settings ['RELEASE'] );
-            $data [] = array ('name' => 'su', 'value' => '1' );
-            $data [] = array ('name' => 'time', 'value' => time () );
-            
-            $sqls = array ();
-            foreach ( $data as $option ) {
-                $sqls [] = "('core','{$option['name']}','{$option['value']}')";
-            }
-            $sql = str_replace ( '%PREFIX%', $dbConfig ['prefix'], $this->createPfSQL ) . implode ( ',', $sqls );
-            $rst = $ds->execute ( $sql );
-            if ($rst > 0) {
-                return true;
-            }
-            $this->error = $ds->last_error_msg ();
-            return false;
-        } else {
-            $this->error = DataSource::getLastError ();
-            return false;
-        }
-    }
-    public function install_core_modules() {
-        $plgmgr = ExtensionManager::getInstance ();
-        $ext = $plgmgr->getExensionInfo ( MODULES_PATH . 'admin/__pkg__.php' );
-        $ext ['unremovable'] = 1;
-        $ext ['disabled'] = 0;
-        $ext ['core'] = 1;
-        $extensions [] = $ext;
-        if ($plgmgr->saveExtensionsData ( $extensions )) {
-            return true;
-        } else {
-            $this->error = '无法写入配置文件：[' . APPDATA_PATH . 'extensions.ini]. 请检查目录是否有可写权限.';
             return false;
         }
     }
@@ -153,32 +139,11 @@ class KissGOInstaller {
             $this->error = '基本配置有错误,请检查.';
             return false;
         }
-        $file = "<?php\n//generated by kissgo,don't edit this file manually!\ndefined('KISSGO') or exit('No direct script access allowed');\n";
-        $file .= "\$settings = KissGoSetting::getSetting();\n";
-        $file .= "\$settings['DEBUG'] = {$config['debug']};\n";
-        
-        $bool = $config ['clean_url'] ? 'true' : 'false';
-        $file .= "\$settings['CLEAN_URL'] = {$bool};\n";
-        
-        $bool = $config ['i18n'] ? 'true' : 'false';
-        $file .= "\$settings['I18N_ENABLED'] = {$bool};\n";
-        
-        $bool = $config ['gzip'] ? 'true' : 'false';
-        $file .= "\$settings['GZIP_ENABLED'] = {$bool};\n";
-        
-        $file .= "\$settings['TIMEZONE'] = '{$config['timezone']}';\n";
-        $file .= "\$settings['SECURITY_KEY'] = '{$config['security_key']}';\n";
-        $file .= "\$settings['date_format'] = '{$config['date_format']}';\n";
-        $file .= "\$settings['site_name'] = '{$config['site_name']}';\n";
-        
-        $db_default = "array('driver'=>'{$db['driver']}','encoding' => 'UTF8','pconnect' => false,'host'=>'{$db['host']}','port'=>{$db['port']},'prefix'=>'{$db['prefix']}','user'=>'{$db['dbuser']}','password'=>'{$db['passwd']}','dbname'=>'{$db['dbname']}')";
-        $file .= "\$settings[DATABASE] = array('default'=>{$db_default});\n";
-        $file .= "// end of settings.php\n?>";
-        $rst = @file_put_contents ( APPDATA_PATH . 'settings.php', $file );
-        if ($rst !== false) {
+        $rst = save_setting_to_file ( APPDATA_PATH . 'settings.php' );
+        if ($rst === true) {
             return true;
         }
-        $this->error = '无法写入配置文件：[' . APPDATA_PATH . 'settings.php]. 请检查目录是否有可写权限.';
+        $this->error = $rst;
         return false;
     }
     /**
@@ -187,7 +152,8 @@ class KissGOInstaller {
      */
     public function check_directory_rw() {
         $dirs = array ('appdata' => APPDATA_PATH, 'logs' => APPDATA_PATH . 'logs', 'tmp' => TMP_PATH );
-        //TODO 添加profile支持
+        $profile = ProfileManager::getInstallProfile ();
+        $profile->onCheckDirectory ( $dirs );
         $rst = array ();
         foreach ( $dirs as $dir => $path ) {
             $r = is_readable ( $path );
@@ -274,7 +240,10 @@ class KissGOInstaller {
             $env ['cls'] = 'warning';
         }
         $envs [] = $env;
-        // TODO 使用profile提供的环境检测
+        
+        $profile = ProfileManager::getInstallProfile ();
+        $profile->onCheckServerEnv ( $envs );
+        
         return $envs;
     }
     public function check_connection($config) {
@@ -284,11 +253,14 @@ class KissGOInstaller {
         }
         return true;
     }
-    private function getDs($config) {
-        $settings = KissGoSetting::getSetting ();
-        $settings [DATABASE] = array ('default' => array ('driver' => $config ['driver'], 'encoding' => 'UTF8', 'prefix' => '', 'host' => $config ['host'], 'port' => $config ['port'], 'user' => $config ['dbuser'], 'password' => $config ['passwd'], 'pconnect' => false, 'dbname' => $config ['dbname'] ) );
-        $ds = DataSource::getDataSource ();
-        return $ds;
+    private function getDs() {
+        try {
+            $ds = PdoDriver::getDriver ();
+            return $ds;
+        } catch ( PDOException $e ) {
+            $this->error = $e->getMessage ();
+            return false;
+        }
     }
 }
 /**
@@ -312,19 +284,19 @@ class InstallAdminForm extends BootstrapForm {
  *
  */
 class InstallDbForm extends BootstrapForm {
-    var $driver = array (FWT_WIDGET => 'select', FWT_LABEL => '数据库驱动', FWT_TIP => '使用何种方式访问数据库.', FWT_OPTIONS => array ('class' => 'span2' ), FWT_BIND => '@getDrivers', FWT_INITIAL => 'Mysql', FWT_TIP_SHOW => FWT_TIP_SHOW_S, FWT_NO_APPLY => true );
+    var $driver = array (FWT_WIDGET => 'select', FWT_LABEL => '数据库驱动', FWT_TIP => '使用何种方式访问数据库.', FWT_OPTIONS => array ('class' => 'span2' ), FWT_BIND => '@getDrivers', FWT_INITIAL => 'mysql', FWT_TIP_SHOW => FWT_TIP_SHOW_S, FWT_NO_APPLY => true );
     var $host = array (FWT_LABEL => '主机地址', FWT_TIP => '使用何种方式访问数据库.', FWT_INITIAL => 'localhost', FWT_VALIDATOR => array ('required' => '主机地址必须填写.' ) );
     var $port = array (FWT_LABEL => '端口', FWT_TIP => '数据库服务器使用的端口.', FWT_INITIAL => '3306', FWT_VALIDATOR => array ('required' => '端口必须填写.', 'num' => '端口只能是数字.' ) );
     var $dbuser = array (FWT_LABEL => '数据库用户', FWT_TIP => '可以访问数据库的用户.', FWT_INITIAL => 'root', FWT_VALIDATOR => array ('required' => '数据库用户名不能为空' ) );
     var $passwd = array (FWT_WIDGET => 'password', FWT_LABEL => '用户的密码', FWT_TIP => '可以访问数据库的用户的密码.', FWT_VALIDATOR => array ('required' => '用户的密码不能为空' ) );
     var $dbname = array (FWT_LABEL => '数据库', FWT_TIP => 'KissGO!将要使用的数据库.', FWT_INITIAL => 'kissgodb', FWT_VALIDATOR => array ('required' => '数据库不能为空' ) );
     var $prefix = array (FWT_LABEL => '表前缀', FWT_TIP => '在一个库中安装多个KissGO时,请指定前缀,例如:app_', FWT_VALIDATOR => array ('regexp(/^[a-z][\w\d]*_$/i)' => '表前缘格式错误,必须以字母开头下划线结尾.' ) );
-    var $engine = array (FWT_WIDGET => 'select', FWT_LABEL => '存储引擎', FWT_TIP => '如果你使用MySQL Cluster,请选择NDB.', FWT_OPTIONS => array ('class' => 'span2' ), FWT_INITIAL => 'MyISAM', FWT_BIND => '@getEngines', FWT_TIP_SHOW => FWT_TIP_SHOW_S, FWT_NO_APPLY => true );
+    var $engine = array (FWT_WIDGET => 'select', FWT_LABEL => '存储引擎', FWT_TIP => '仅当数据库驱动为MySQL时有效.', FWT_OPTIONS => array ('class' => 'span2' ), FWT_INITIAL => 'MyISAM', FWT_BIND => '@getEngines', FWT_TIP_SHOW => FWT_TIP_SHOW_S, FWT_NO_APPLY => true );
     protected function getDefaultWidgetOptions() {
         return array (FWT_TIP_SHOW => FWT_TIP_SHOW_S, FWT_OPTIONS => array ('class' => 'input-xlarge' ) );
     }
     public function getDrivers($value, $data) {
-        $drivers = array ('Mysql' => 'MySQL', 'PdoMysql' => 'PDO MySQL' );
+        $drivers = array ('mysql' => 'MySQL', 'psgl' => 'PostgreSQL' );
         return $drivers;
     }
     public function getEngines($value, $data) {

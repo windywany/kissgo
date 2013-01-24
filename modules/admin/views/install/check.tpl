@@ -36,8 +36,8 @@
 		<button type="submit" class="btn btn-primary" id="next-btn" disabled="disabled">数据库配置&gt;&gt;</button>
 	</form>
 	<form class="form-inline pull-right mlr10" method="post">
-		<input type="hidden" name="step" value="welcome"/>						   
-		<button type="submit" class="btn" id="prev-btn">&lt;&lt;安装协议</button>
+		<input type="hidden" name="step" value="profile"/>						   
+		<button type="submit" class="btn" id="prev-btn">&lt;&lt;安装类型</button>
 	</form>
 </div>
 <script type="text/javascript">

@@ -1,4 +1,8 @@
 <?php
+/*
+ * kissgo framework that keep it simple and stupid, go go go ~~
+ * default configuration
+ */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 $settings = KissGoSetting::getSetting ();
 ////////////////////////////////////////////////////////////////////////
@@ -7,8 +11,7 @@ $settings = KissGoSetting::getSetting ();
 ////////////////////////////////////////////////////////////////////////
 
 
-// $settings['your setting'] = your value
-
+//$settings ['your_setting'] = 'hahahahaahah';
 
 //end of default.settings.php
 ?>

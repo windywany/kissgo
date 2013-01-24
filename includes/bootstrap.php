@@ -174,7 +174,6 @@ class KissGoSetting implements ArrayAccess {
     public function get($name, $default = '') {
         return isset ( $this->settings [$name] ) ? $this->settings [$name] : $default;
     }
-    
     /**
      * 设置
      * 
@@ -183,45 +182,6 @@ class KissGoSetting implements ArrayAccess {
      */
     public function set($name, $value) {
         $this->settings [$name] = $value;
-    }
-    public function prepareSettings() {
-        if (isset ( $this->settings ['DEBUG'] )) {
-            define ( 'DEBUG', intval ( $this->settings ['DEBUG'] ) );
-        }
-        if (isset ( $this->settings ['CLEAN_URL'] )) {
-            define ( 'CLEAN_URL', ! empty ( $this->settings ['CLEAN_URL'] ) );
-        } else {
-            define ( 'CLEAN_URL', false );
-        }
-        if (isset ( $this->settings ['I18N_ENABLED'] )) {
-            define ( 'I18N_ENABLED', ! empty ( $this->settings ['I18N_ENABLED'] ) );
-        } else {
-            define ( 'I18N_ENABLED', false );
-        }
-        if (isset ( $this->settings ['GZIP_ENABLED'] )) {
-            define ( 'GZIP_ENABLED', ! empty ( $this->settings ['GZIP_ENABLED'] ) );
-        } else {
-            define ( 'GZIP_ENABLED', true );
-        }
-        if (isset ( $this->settings ['SECURITY_KEY'] ) && ! empty ( $this->settings ['SECURITY_KEY'] )) {
-            define ( 'SECURITY_KEY', $this->settings ['SECURITY_KEY'] );
-        } else {
-            define ( 'SECURITY_KEY', md5 ( __FILE__ ) );
-        }
-        if (isset ( $this->settings ['BASE_URL'] ) && ! empty ( $this->settings ['BASE_URL'] )) {
-            define ( 'BASE_URL', rtrim ( $this->settings ['BASE_URL'] ) . '/' );
-        }
-        if (isset ( $this->settings ['TIMEZONE'] ) && ! empty ( $this->settings ['TIMEZONE'] )) {
-            define ( 'TIMEZONE', $this->settings ['TIMEZONE'] );
-        }
-    }
-    /**
-     * 保存
-     */
-    public function save() {
-        if (function_exists ( 'apply_filter' )) {
-            return apply_filter ( 'save_settings_' . $this->setting_name, $this->settings );
-        }
     }
     public function toArray() {
         return $this->settings;
@@ -232,8 +192,38 @@ $_ksg_settings_file = APPDATA_PATH . 'settings.php'; // the application settings
 if (is_readable ( $_ksg_settings_file )) {
     include_once $_ksg_settings_file;
     $settings = KissGoSetting::getSetting ();
-    $settings->prepareSettings ();
-    unset ( $settings );
+    ///////////////////////////////////////
+    if (isset ( $settings ['DEBUG'] )) {
+        define ( 'DEBUG', intval ( $settings ['DEBUG'] ) );
+    }
+    if (isset ( $settings ['CLEAN_URL'] )) {
+        define ( 'CLEAN_URL', ! empty ( $settings ['CLEAN_URL'] ) );
+    } else {
+        define ( 'CLEAN_URL', false );
+    }
+    if (isset ( $settings ['I18N_ENABLED'] )) {
+        define ( 'I18N_ENABLED', ! empty ( $settings ['I18N_ENABLED'] ) );
+    } else {
+        define ( 'I18N_ENABLED', false );
+    }
+    if (isset ( $settings ['GZIP_ENABLED'] )) {
+        define ( 'GZIP_ENABLED', ! empty ( $settings ['GZIP_ENABLED'] ) );
+    } else {
+        define ( 'GZIP_ENABLED', true );
+    }
+    if (isset ( $settings ['SECURITY_KEY'] ) && ! empty ( $settings ['SECURITY_KEY'] )) {
+        define ( 'SECURITY_KEY', $settings ['SECURITY_KEY'] );
+    } else {
+        define ( 'SECURITY_KEY', md5 ( __FILE__ ) );
+    }
+    if (isset ( $settings ['BASE_URL'] ) && ! empty ( $settings ['BASE_URL'] )) {
+        define ( 'BASE_URL', rtrim ( $settings ['BASE_URL'] ) . '/' );
+    }
+    if (isset ( $settings ['TIMEZONE'] ) && ! empty ( $settings ['TIMEZONE'] )) {
+        define ( 'TIMEZONE', $settings ['TIMEZONE'] );
+    }
+
+    ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';
     echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$install_script}';</script></head><body></body></html>";

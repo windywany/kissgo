@@ -1,5 +1,3 @@
-@CHARSET "UTF-8";
-
 .container {
 	padding-bottom: 15px;
 }
@@ -88,15 +86,15 @@ th.span2 {
 }
 
 td.status {
-	background: transparent url(../images/loading.gif) no-repeat center center;
+	background: transparent url(loading.gif) no-repeat center center;
 }
 
 .success td.status {
-	background-image: url(../images/accept.png);
+	background-image: url(accept.png);
 }
 
 .error td.status {
-	background-image: url(../images/error.png);
+	background-image: url(error.png);
 }
 .control-label span{
 	color:red;
