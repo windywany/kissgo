@@ -74,7 +74,7 @@ $(function(){
 	}
 	function show_success(){
 		var tip = $('#tip').removeClass('alert-block').addClass('alert-success');
-		tip.html('<h3>恭喜！</h3>你已经成功安装了KissGO!,现在你就可以登录<a href="'+BASE_URL+'kissgo/">管理后台</a>进行操作了,祝使用愉快.');	
+		tip.html('<h3>恭喜！</h3>你已经成功安装了KissGO!,现在你就可以登录<a href="'+BASE_URL+'admin/">管理后台</a>进行操作了,祝使用愉快.');	
 		$('.page-header').find('h2').html('安装成功');
 	}
 });

@@ -20,7 +20,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
     public function buildOptions($options) {
         $opts = array_merge ( array ('encoding' => 'UTF8', 'host' => 'localhost', 'port' => 3306, 'user' => 'root', 'password' => 'root', 'driver_options' => array () ), $options );
         $charset = isset ( $opts ['encoding'] ) && ! empty ( $opts ['encoding'] ) ? $opts ['encoding'] : 'UTF8';
-        $dsn = "mysql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']};charset={$opts['charset']}";
+        $dsn = "mysql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']};charset={$charset}";
         return array ($dsn, $opts ['user'], $opts ['password'], $opts ['driver_options'] );
     }
     public function specialChar() {
