@@ -498,6 +498,7 @@ function includes($files) {
  * @internal param array|string $files
  */
 function imports() {
+    global $_kissgo_processing_installation;
     $args = func_get_args ();
     if (empty ( $args )) {
         return;
@@ -507,7 +508,7 @@ function imports() {
             $files = array ($files );
         }
         foreach ( $files as $file ) {
-            if (! is_module_file ( $file )) {
+            if ($_kissgo_processing_installation != true && ! is_module_file ( $file )) {
                 continue;
             }
             if (preg_match ( '/.+\*$/', $file )) {

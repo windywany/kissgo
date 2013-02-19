@@ -7,7 +7,6 @@
  */
 interface Idao {
     const TYPE = 'type';
-    
     const TYPE_CHAR = 'char';
     const TYPE_SERIAL = 'serial';
     const TYPE_INT = 'int';
@@ -20,16 +19,13 @@ interface Idao {
     const TYPE_TIMESTAMP = 'timestamp';
     const TYPE_VARCHAR = 'varchar';
     const TYPE_NUMERIC = 'numeric';
-    
     const LENGTH = 'length';
-    const TYPE_EXTRA = 'EXTRA';
-    
+    const TYPE_EXTRA = 'extra';
     const TE_NORMAL = 'normal';
     const TE_TINNY = 'tiny';
     const TE_MIDDEM = 'medium';
     const TE_SMALL = 'small';
     const TE_BIG = 'big';
-    
     const UNSIGNED = 'UNSIGNED';
     const NN = 'NOT NULL';
     const DEFT = 'DEFAULT';

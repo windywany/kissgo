@@ -6,6 +6,7 @@
  *
  */
 abstract class PdoDriver extends PDO {
+    public static $last_error_message = '';
     protected $tbl_prefix = '';
     public function __construct($options) {
         list ( $dsn, $user, $passwd, $attr ) = $this->buildOptions ( $options );
@@ -56,14 +57,17 @@ abstract class PdoDriver extends PDO {
      * @param string $database
      * @return boolean
      */
-    public static function createTable($dao, $database = 'default') {
+    public static function createTable($dao, $database = 'default', $engine = null) {
         try {
             $driver = PdoDriver::getDriver ( $database );
             $sql = $dao->getCreateSql ();
             if (empty ( $sql )) {
                 $fields = array ();
                 $builder = $driver->getSqlBuilder ();
-                $sql = $builder->schema ( $dao );
+                if ($engine == null) {
+                    $engine = isset ( $_SESSION ['_INSTALL_DB_DATA'] ) && $_SESSION ['_INSTALL_DB_DATA'] ['engine'] ? $_SESSION ['_INSTALL_DB_DATA'] ['engine'] : 'InnoDB';
+                }
+                $sql = $builder->schema ( $dao, $engine );
             }
             if ($sql) {
                 $rst = $driver->exec ( $sql );
@@ -73,9 +77,9 @@ abstract class PdoDriver extends PDO {
             }
             return false;
         } catch ( PDOException $e ) {
+            self::$last_error_message = $e->getMessage ();
             return false;
         }
-    
     }
     /**
      * 
@@ -98,9 +102,7 @@ abstract class PdoDriver extends PDO {
         $name = str_replace ( array ($char, '.', '(', ')' ), array ('', '_', '_', '_' ), $sf );
         return array ($sf, $name );
     }
-    public static function compareField($field1, $field2) {
-
-    }
+    public static function compareField($field1, $field2) {}
     /**
      * 
      * 

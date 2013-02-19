@@ -231,6 +231,9 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
             $definition ['auto_increment'] = true;
         } else if ($type == Idao::TYPE_BOOL) {
             $definition [Idao::LENGTH] = 1;
+            if(isset($definition[Idao::DEFT])){
+                $definition[Idao::DEFT] = $definition[Idao::DEFT]?1:0;
+            }
         } else if ($type == Idao::TYPE_TIMESTAMP) {
             $definition [] = Idao::UNSIGNED;
         }
@@ -238,9 +241,11 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         if (! $f) {
             return false;
         }
-        $fstr [] = $f;
+        
         if (isset ( $definition [Idao::LENGTH] )) {
-            $fstr [] = '(' . $definition [Idao::LENGTH] . ')';
+            $fstr [] = $f.'(' . $definition [Idao::LENGTH] . ')';
+        }else{
+            $fstr [] = $f;
         }
         if (in_array ( Idao::UNSIGNED, $definition )) {
             $fstr [] = 'UNSIGNED';
@@ -251,7 +256,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
             $fstr [] = 'NULL';
         }
         if (isset ( $definition [Idao::DEFT] )) {
-            $fstr [] = 'DEFAULT ' . (in_array ( $f, array ('VARCHAR', 'CHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'TEXT', 'DATE', 'DATETIME' ) )) ? "'{$definition[Idao::DEFT]}'" : $definition [Idao::DEFT];
+            $fstr [] = 'DEFAULT ' . ((in_array ( $f, array ('VARCHAR', 'CHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'TEXT', 'DATE', 'DATETIME' ) )) ? "'{$definition[Idao::DEFT]}'" : $definition [Idao::DEFT]);
         }
         if (isset ( $definition ['auto_increment'] )) {
             $fstr [] = 'AUTO_INCREMENT';

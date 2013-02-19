@@ -8,9 +8,31 @@
  * Version: 1.0 
  * Author URI: http://www.usephp.cn/
  */
-/*
 function on_install_module_cn_usephp_core_gui($rst) {
-    return "不能安装，就是不能安装";
+    imports ( 'admin/models/*' );
+    $rtn = true;
+    do {
+        if (!PdoDriver::createTable ( new CoreUserTable () )) {
+            $rtn = PdoDriver::$last_error_message;
+            break;
+        }
+        if (!PdoDriver::createTable ( new CoreRoleTable () )) {
+            $rtn = PdoDriver::$last_error_message;
+            break;
+        }
+        if (!PdoDriver::createTable ( new CoreUserRoleTable () )) {
+            $rtn = PdoDriver::$last_error_message;
+            break;
+        }
+        if (!PdoDriver::createTable ( new CorePreferenceTable () )) {
+            $rtn = PdoDriver::$last_error_message;
+            break;
+        }
+        if (!PdoDriver::createTable ( new CoreAccessPolicyTable () )) {
+            $rtn = PdoDriver::$last_error_message;
+            break;
+        }
+    } while ( 0 );
+    return empty ( $rtn ) ? '创建数据表时出错啦！' : $rtn;
 }
 bind ( 'on_install_module_cn.usephp.core.gui', 'on_install_module_cn_usephp_core_gui' );
-*/
