@@ -196,6 +196,28 @@ class KissGOInstaller {
             $env ['cls'] = 'error';
         }
         $envs [] = $env;
+        // pdo_mysql
+        $env ['name'] = 'pdo_mysql';
+        $env ['requirement'] = '可选';
+        if (extension_loaded ( 'pdo_mysql' )) {
+            $env ['current'] = '<span class="label label-success mr10">有</span>';
+            $env ['cls'] = 'success';
+        } else {
+            $env ['current'] = '<span class="label label-important">无</span>';
+            $env ['cls'] = 'warning';
+        }
+        $envs [] = $env;
+        // pdo_pgsql
+        $env ['name'] = 'pdo_pgsql';
+        $env ['requirement'] = '可选';
+        if (extension_loaded ( 'pdo_pgsql' )) {
+            $env ['current'] = '<span class="label label-success mr10">有</span>';
+            $env ['cls'] = 'success';
+        } else {
+            $env ['current'] = '<span class="label label-important">无</span>';
+            $env ['cls'] = 'warning';
+        }
+        $envs [] = $env;
         // gd
         $env ['name'] = 'GD';
         $env ['requirement'] = '有';
@@ -228,18 +250,7 @@ class KissGOInstaller {
             $env ['current'] = '<span class="label label-important">无</span>';
             $env ['cls'] = 'warning';
         }
-        $envs [] = $env;
-        // pdo_mysql
-        $env ['name'] = 'pdo_mysql';
-        $env ['requirement'] = '可选';
-        if (extension_loaded ( 'pdo_mysql' )) {
-            $env ['current'] = '<span class="label label-success mr10">有</span>';
-            $env ['cls'] = 'success';
-        } else {
-            $env ['current'] = '<span class="label label-important">无</span>';
-            $env ['cls'] = 'warning';
-        }
-        $envs [] = $env;
+        $envs [] = $env;        
         
         $profile = ProfileManager::getInstallProfile ();
         $profile->onCheckServerEnv ( $envs );
@@ -297,6 +308,12 @@ class InstallDbForm extends BootstrapForm {
     }
     public function getDrivers($value, $data) {
         $drivers = array ('mysql' => 'MySQL', 'psgl' => 'PostgreSQL' );
+        if(!extension_loaded ( 'pdo_pgsql' )){
+            unset($drivers['psgl']);
+        }
+        if(!extension_loaded ( 'pdo_mysql' )){
+            unset($drivers['mysql']);
+        }
         return $drivers;
     }
     public function getEngines($value, $data) {

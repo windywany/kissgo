@@ -13,8 +13,13 @@ class ProfileManager {
         if (! empty ( $profiles )) {
             foreach ( $profiles as $profile_file ) {
                 $id = basename ( dirname ( $profile_file ) );
-                $this->profiles [$id] = array ('name' => $id, 'profileClz' => ucfirst ( $id ) . 'InstallProfile' );
-                $this->profiles_opts [$id] = ucfirst ( $id );
+                include $profile_file;
+                $profileClz = ucfirst ( $id ) . 'InstallProfile';
+                $this->profiles [$id] = array ('name' => $id, 'profileClz' => $profileClz );
+                if (class_exists ( $profileClz ) && is_subclass_of ( $profileClz, 'InstallProfile' )) {
+                    $profileCls = new $profileClz ();
+                    $this->profiles_opts [$id] = array ('name' => $profileCls->getProfileName (), 'description' => $profileCls->getDescription () );
+                }
             }
         }
     }

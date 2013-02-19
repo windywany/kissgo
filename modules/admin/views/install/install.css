@@ -166,8 +166,12 @@ table caption{
   position: fixed;
   top: 180px;
 }
-.success .check{
+.success .check,.accordion-heading .active{
 	background: transparent url(ok.gif) no-repeat 50% 50%; 
+}
+.accordion-heading .active{
+	background-position:99% 50%;
+	font-weight: bold;
 }
 /* Desktop large
 ------------------------- */

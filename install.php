@@ -34,7 +34,9 @@ switch ($step) {
         break;
     case 'check' :
         $_SESSION ['INSTALL_STEP'] = 'check';
-        $_SESSION ['INSTALL_PROFILE'] = $_POST ['profile'];
+        if(isset($_POST['from'])){
+            $_SESSION ['INSTALL_PROFILE'] = $_POST ['profile'];
+        }
         $data ['dirs'] = $installer->check_directory_rw ();
         $data ['envs'] = $installer->check_server_env ();
         $tpl = view ( 'admin/views/install/check.tpl', $data );

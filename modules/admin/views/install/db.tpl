@@ -17,6 +17,13 @@
 </div>
 <script type="text/javascript">
 	$(function(){
+		$('#driver').change(function(){
+			if($(this).val() == 'mysql'){
+				$('#engine').parents('.control-group').show();
+			}else{
+				$('#engine').parents('.control-group').hide();
+			}
+		}).change();
 		$('#db-form').uvalidate();
 		$('#next-btn').click(function(){			
 			$('#db-form').submit();			

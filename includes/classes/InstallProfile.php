@@ -6,6 +6,8 @@
  *
  */
 interface InstallProfile {
+    public function getProfileName();
+    public function getDescription();
     /**
      * 
      * 需要默认安装的模块
