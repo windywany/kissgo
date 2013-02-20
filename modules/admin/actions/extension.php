@@ -83,7 +83,7 @@ function setup_extension($pid, $req) {
         }
         return view ( $tpl, $data );
     } else { //插件不存在
-        show_error_message ( "Extension $pid does not exist!", $data ['_page_url'] );
+        show_error_message ( "模块不存在或操作非法！", $data ['_page_url'] );
     }
 }
 /**

@@ -881,7 +881,7 @@ function show_message($type, $message, $redirect = '') {
             $redirect = $redirect ? $redirect : $_SERVER ['HTTP_REFERER'];
         }
         $msg ['redirect'] = $redirect;
-        $view = template('error.tpl', $msg );
+        $view = template('admin/error.tpl', $msg );
     } else { //ajax        
         @header ( 'X-AJAX-MESSAGE: ' . $type );
         status_header ( 500 );
