@@ -1,6 +1,6 @@
 $(function() {
 	var detailList = $('#detail-list'), tpl = '<tr><td class="op"></td><td class="status"></td></tr>', pgb = $('#progress-bar'), pgbv = 0;
-	var detail = addDetail('初始化安装程序');
+	var detail = addDetail('初始化'+opText+'程序');
 	var tasks = [], errMsg = '';
 	function start(){
 		$.post(INSTALL_URL, {

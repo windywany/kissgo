@@ -59,7 +59,7 @@
     <div class="container-fluid">
         <div class="row-fluid">
             <ul class="breadcrumb">
-                <li><a href="{$admincp_url}"><i class="icon-home"></i> {'Dashboard'|ts}</a><span class="divider">/</span></li>
+                <li><a href="{$ksg_admincp_url}"><i class="icon-home"></i> {'Dashboard'|ts}</a><span class="divider">/</span></li>
                 {block name="breadcrumb"}{/block}
             </ul>
         </div>

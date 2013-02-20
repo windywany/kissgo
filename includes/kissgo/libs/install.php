@@ -10,7 +10,6 @@
  */
 class KissGOInstaller {
     public $error = '';
-    private $createAminSQL = "INSERT INTO `%PREFIX%user` VALUES ";
     public function __construct() {
         if (isset ( $_SESSION ['_INSTALL_DB_DATA'] )) {
             $dbForm = new InstallDbForm ( $_SESSION ['_INSTALL_DB_DATA'] );
@@ -36,7 +35,7 @@ class KissGOInstaller {
             $settings ['site_name'] = $config ['site_name'];
         }
         if ($db) {
-            $db_default = array ('driver' => $db ['driver'], 'encoding' => 'UTF8','host' => $db ['host'], 'port' => $db ['port'], 'prefix' => $db ['prefix'], 'user' => $db ['dbuser'], 'password' => $db ['passwd'], 'dbname' => $db ['dbname'] );
+            $db_default = array ('driver' => $db ['driver'], 'encoding' => 'UTF8', 'host' => $db ['host'], 'port' => $db ['port'], 'prefix' => $db ['prefix'], 'user' => $db ['dbuser'], 'password' => $db ['passwd'], 'dbname' => $db ['dbname'] );
             $settings [DATABASE] = array ('default' => $db_default );
         }
     }
@@ -101,30 +100,36 @@ class KissGOInstaller {
         }
     }
     public function create_administrator() {
-        
-        $ds = $this->getDs ();
-        
-        if ($ds) {
-            $admin = $_SESSION ['_INSTALL_ADMIN_DATA'];
-            $passwd = md5 ( $admin ['passwd'] );
-            $time = time ();
-            $sql = str_replace ( '%PREFIX%', $dbConfig ['prefix'], $this->createAminSQL );
-            $sql .= "(1,'{$admin['name']}','{$passwd}','Administrator','{$admin['email']}',0,1,{$time},'127.0.0.1')";
-            return true;
-            $rst = $ds->execute ( $sql );
-            if ($rst == 1) {
-                $sql = str_replace ( '%PREFIX%', $dbConfig ['prefix'], $this->createAuthSQL );
-                $rst = $ds->execute ( $sql );
-                if ($rst == 1) {
-                    return true;
+        imports ( 'admin/models/*' );
+        $admin = new CoreUserTable ();
+        $tmp = $_SESSION ['_INSTALL_ADMIN_DATA'];
+        $rst = false;
+        do {
+            try {
+                $data = array ();
+                //create super administrator
+                $data ['uid'] = 1;
+                $data ['login'] = $tmp ['name'];
+                $data ['email'] = $tmp ['email'];
+                $data ['passwd'] = md5 ( $tmp ['passwd'] );
+                $data ['reserved'] = true;
+                $rst = $admin->save ( $data );
+                if (count ( $rst ) == 0) {
+                    break;
                 }
+                // assign access policy to administrator
+                $ap = new CoreAccessPolicyTable ();
+                $data = array ('atype' => 'USER', 'aid' => 1, 'resource' => '*', 'action' => '*', 'allow' => true );
+                $rst = $ap->save ( $data );
+                if (count ( $rst ) == 0) {
+                    break;
+                }
+                $rst = true;
+            } catch ( PDOException $e ) {
+                $rst = $e->getMessage ();
             }
-            $this->error = $ds->last_error_msg ();
-            return false;
-        } else {
-            $this->error = DataSource::getLastError ();
-            return false;
-        }
+        } while ( 0 );
+        return $rst;
     }
     public function create_settings_file() {
         $dbForm = new InstallDbForm ( $_SESSION ['_INSTALL_DB_DATA'] );
@@ -250,7 +255,7 @@ class KissGOInstaller {
             $env ['current'] = '<span class="label label-important">无</span>';
             $env ['cls'] = 'warning';
         }
-        $envs [] = $env;        
+        $envs [] = $env;
         
         $profile = ProfileManager::getInstallProfile ();
         $profile->onCheckServerEnv ( $envs );
@@ -308,11 +313,11 @@ class InstallDbForm extends BootstrapForm {
     }
     public function getDrivers($value, $data) {
         $drivers = array ('mysql' => 'MySQL', 'psgl' => 'PostgreSQL' );
-        if(!extension_loaded ( 'pdo_pgsql' )){
-            unset($drivers['psgl']);
+        if (! extension_loaded ( 'pdo_pgsql' )) {
+            unset ( $drivers ['psgl'] );
         }
-        if(!extension_loaded ( 'pdo_mysql' )){
-            unset($drivers['mysql']);
+        if (! extension_loaded ( 'pdo_mysql' )) {
+            unset ( $drivers ['mysql'] );
         }
         return $drivers;
     }

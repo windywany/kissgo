@@ -1,4 +1,4 @@
-{extends file="kissgo/admincp.tpl"}
+{extends file=$ksg_admincp_layout}
 {block name="title"}Extensions Managerment{/block}
 {block name="breadcrumb"}
 	<li>{'Extensions'|ts}</li>
@@ -34,14 +34,14 @@
                 {foreach from=$items item=item}
                     <tr>                        										
                         <td>
-                            <strong {if $item.disabled}style="color:gray"{/if}>{$item.Plugin_Name}</strong><br/>
-                            {if $item.core}<span class="label label-important">BuildIn</span>{/if}																				
+                            <strong {if $item.disabled}style="color:gray"{/if}>{$item.Module_Name}</strong><br/>
+                            {if $item.unremovable}<span class="label label-important">BuildIn</span>{/if}																				
                         </td>
                         <td>
                             <p>{$item.Description}</p>
                             <p class="txt-info" style="margin:5px 0 0 5px;">
-                                {$item.curVersion}{if $item.upgradable}(可升级到{$item.Version}){/if}版本| 作者 <a href="{$item.Author_URI}" target="_blank">{$item.Author}</a> |
-                                <a href="{$item.Plugin_URI}" target="_blank">访问插件主页</a>
+                                {$item.curVersion}{if $item.upgradable}(可升级到{$item.Version}){/if} 版| 作者 <a href="{$item.Author_URI}" target="_blank">{$item.Author}</a> |
+                                <a href="{$item.Module_URI}" target="_blank">访问插件主页</a>
                             </p>
                         </td>
                         <td class="tools">{'get_plugin_operation'|fire:$item}</td>	

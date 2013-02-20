@@ -213,11 +213,11 @@ function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html
     $data ['ksg_theme_name'] = $theme;
     $data ['ksg_theme_dir'] = THEME_DIR;
     $data ['ksg_module'] = MODULE_DIR;
-    $admincp_layout = THEME_PATH . $theme . DS . 'adminlayout.tpl';
+    $admincp_layout = THEME_PATH . $theme . DS . 'admin/layout.tpl';
     if (is_file ( $admincp_layout )) {
-        $data ['ksg_admincp_layout'] = THEME_DIR . '/' . $theme . '/adminlayout.tpl';
+        $data ['ksg_admincp_layout'] = THEME_DIR . '/' . $theme . '/admin/layout.tpl';
     } else {
-        $data ['ksg_admincp_layout'] = THEME_DIR . '/defaults/adminlayout.tpl';
+        $data ['ksg_admincp_layout'] = THEME_DIR . '/defaults/admin/layout.tpl';
     }
     $data ['ksg_admincp_url'] = murl ( 'admin' );
     return new SmartyView ( $data, MODULE_DIR . '/' . $tpl, $headers );

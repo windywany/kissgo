@@ -1,4 +1,4 @@
-{extends file="kissgo/admincp.tpl"}
+{extends file=$ksg_admincp_layout}
 {block name="title"}Setup Extensions{/block}
 {block name="breadcrumb"}
 	<li><a href="{$_page_url}">{'Extensions'|ts}</a><span class="divider">/</span></li>
@@ -22,7 +22,7 @@
     <div class="tab-content">	                	
 	    <div class="tab-pane active">
 	        <h4>{$op_title}"{$extName}"扩展</h4>           
-            <form id="install-form" action="{'kissgo'|murl:extension}" method="post">        
+            <form id="install-form" action="{$_page_url}" method="post">        
                 {$form}
                 <input type="hidden" name="setup" value="{$pid}"/>
                 <input type="hidden" name="type" value="{$type}"/>

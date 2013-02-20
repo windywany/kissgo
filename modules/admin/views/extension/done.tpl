@@ -1,4 +1,4 @@
-{extends file="kissgo/admincp.tpl"}
+{extends file=$ksg_admincp_layout}
 {block name="title"}Setup Extensions{/block}
 {block name="css_block"}
 <link rel="stylesheet" href="{'extension.css'|here}"/>
@@ -46,7 +46,7 @@
     </div>
 </div>
 <script type="text/javascript">    
-    var INSTALL_URL = "{'kissgo'|murl:extension}";
+    var INSTALL_URL = "{$_page_url}";
     var type = '{$type}';
     var pid  = '{$pid}';
     var operation = '{$operation}';

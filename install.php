@@ -116,7 +116,7 @@ switch ($step) {
         }
         break;
     case 'save' : // save configuration to settings.php file
-        $rst = $installer->create_settings_file ();
+        $rst = $installer->create_settings_file ();        
         $tpl = new JsonView ( array ('success' => $rst, 'msg' => $installer->error ) );
         $_SESSION ['INSTALL_STEP'] = 'welcome';
         break;

@@ -147,6 +147,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      */
     public function count($field = null) {
         if ($this->total < 0) {
+            $this->total = 0;
             $field = $field ? imtf ( $field, 'total' ) : imtf ( 'COUNT(*)', 'total' );
             if (! $this->hasHavingField ()) {
                 $field = $field ? imtf ( $field, 'total' ) : imtf ( 'COUNT(*)', 'total' );
@@ -168,8 +169,6 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
                     $this->errorInfo = $this->driver->errorInfo ();
                     log_debug ( $e->getMessage () . ' [' . $sql . ']' );
                 }
-            } else {
-                return false;
             }
         }
         return $this->total;
@@ -183,14 +182,22 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
     }
     public function offsetExists($offset) {
         try {
-            return isset ( $this->rows [$offset] );
+            if (! is_int ( $offset )) {
+                return isset ( $this->rows [0] [$offset] );
+            } else {
+                return isset ( $this->rows [$offset] );
+            }
         } catch ( Exception $e ) {
             return false;
         }
     }
     public function offsetGet($offset) {
         try {
-            return $this->rows [$offset];
+            if (! is_int ( $offset )) {
+                return $this->rows [0] [$offset];
+            } else {
+                return $this->rows [$offset];
+            }
         } catch ( Exception $e ) {
             echo $e->getMessage ();
             return array ();

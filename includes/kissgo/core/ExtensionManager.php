@@ -286,8 +286,7 @@ class ExtensionManager {
         if (isset ( $extensions [$plugin ['Module_ID']] )) {
             $plugin ['Installed'] = true;
             $plugin ['disabled'] = $extensions [$plugin ['Module_ID']] ['disabled'];
-            $plugin ['unremovable'] = $extensions [$plugin ['Module_ID']] ['unremovable'];
-            $plugin ['core'] = $extensions [$plugin ['Module_ID']] ['core'];
+            $plugin ['unremovable'] = $extensions [$plugin ['Module_ID']] ['unremovable'];            
             $plugin ['upgradable'] = $this->isUpgradable ( $plugin, $extensions [$plugin ['Module_ID']] ['Version'] );
             if ($this->getUpgradeInfo) {
                 $plugin ['curVersion'] = $extensions [$plugin ['Module_ID']] ['Version'];
@@ -296,6 +295,7 @@ class ExtensionManager {
         } else {
             $plugin ['Installed'] = false;
             $plugin ['disabled'] = 0;
+            $plugin ['curVersion'] = $plugin ['Version'];
             $this->uninstalled [$plugin ['Module_ID']] = $plugin;
         }
         return $plugin;

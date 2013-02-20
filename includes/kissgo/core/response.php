@@ -203,10 +203,7 @@ class Response {
 	 */
     public function ob_out_handler($content) {
         global $_kissgo_log_msg;
-        $this->content = apply_filter ( 'filter_output_content', $content );
-        if (! empty ( $_kissgo_log_msg )) {
-            return implode ( '<br/>', $_kissgo_log_msg ) . $this->content;
-        }
+        $this->content = apply_filter ( 'filter_output_content', $content );        
         return $this->content;
     }
     

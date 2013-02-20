@@ -15,7 +15,7 @@ function set_site_global_vars($smarty) {
     $smarty->assign ( 'ksg_version', KISSGO_VERSION );
     $smarty->assign ( 'ksg_build', KISSGO_BUILD );
     $smarty->assign ( 'ksg_uri', Request::getUri () );
-    $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );
+    $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );    
     return $smarty;
 }
 bind ( 'init_smarty_engine', 'set_site_global_vars' );
@@ -40,11 +40,11 @@ function _hook_for_admincp_menu($mm) {
     // System
     $mm->addMenu2 ( 'system', __ ( 'System' ), 'icon-th-large' );
     $mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), '#', 'icon-user' );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'kissgo', 'users' ), 'icon-user' );
-    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'kissgo', 'roles' ), 'icon-user' );
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'admin', 'users' ), 'icon-user' );
+    $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'admin', 'roles' ), 'icon-user' );
     $mm->addMenuItemDivider ( 'system' );
-    $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'kissgo', 'extension' ), 'icon-briefcase' );
-    $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'kissgo', 'preference' ), 'icon-adjust' );
+    $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'admin', 'extension' ), 'icon-briefcase' );
+    $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'admin', 'preference' ), 'icon-adjust' );
     /*// Web Site
     $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'kissgo', 'pages' ), 'icon-file' );
@@ -102,10 +102,12 @@ function _kissgo_hook_for_get_user_passport($passport) {
         $uid = $passport ['uid'];
         $user = sess_get ( 'login_user_info_' . $uid, false );
         if (! $user) {
-            $um = new UserEntity ();
-            $user = $um->read ( $uid );
-            if ($user) {
-                $_SESSION ['login_user_info_' . $uid] = $user;
+            $um = new CoreUserTable ();
+            $user = $um->query ()->where ( array ('uid' => $uid ) );
+            if (count ( $user )) {
+                $_SESSION ['login_user_info_' . $uid] = $user [0];
+            } else {
+                $user = false;
             }
         }
         if ($user) {

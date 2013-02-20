@@ -16,24 +16,32 @@ function do_admin_login_post($req, $res) {
     $form = new PassportForm ();
     if ($form->validate ()) {
         imports ( 'admin/models/*' );
-        $um = new UserEntity ();
+        $um = new CoreUserTable ();
         $account = $form ['account'];
         $passwod = $form ['passwd'];
         $tryCount = sess_get ( 'login_try_count', 0 );
-        $user = $um->where ( array ('account' => $account ) )->retrieve ( '*', 1 );
+        $where ['deleted'] = 0;
+        $id = 'login';
+        if (strpos ( $account, '@' )) {
+            $where ['email'] = $account;
+            $id = 'email';
+        } else {
+            $where ['login'] = $account;
+        }
+        $user = $um->query ()->where ( $where );
         
-        if (empty ( $user ) || $user ['passwd'] != md5 ( $form ['passwd'] ) || $user ['account'] != $account) {
+        if (count ( $user ) == 0 || $user ['passwd'] != md5 ( $form ['passwd'] ) || $user [$id] != $account) {
             $form->setError ( 'account', '用户名或密码错误.' );
-        } else if (! empty ( $user ['status'] )) {
+        } else if (empty ( $user ['status'] )) {
             $form->setError ( 'account', '用户已锁定，请联系管理员.' );
         } else {
-            $loginInfo = new LoginInfo ( $user ['uid'], $form ['account'], time (), $_SERVER ['REMOTE_ADDR'] );
+            $loginInfo = new LoginInfo ( $user ['uid'], $user ['login'], time (), $_SERVER ['REMOTE_ADDR'] );
             $loginInfo->login ( true );
             LoginInfo::save ( $loginInfo );
             Response::redirect ( sess_del ( 'go_to_the_page_when_login', murl ( 'admin' ) ) );
         }
     }
-    return template ( 'adminlogin.tpl', array ('form' => $form ) );
+    return template ( 'admin/login.tpl', array ('form' => $form ) );
 }
 /**
  * 显示登录页
@@ -50,5 +58,5 @@ function do_admin_login_get($req, $res) {
         $_SESSION ['go_to_the_page_when_login'] = $req ['from'];
     }
     $form = new PassportForm ();
-    return template ( 'adminlogin.tpl', array ('form' => $form ) );
+    return template ( 'admin/login.tpl', array ('form' => $form ) );
 }
