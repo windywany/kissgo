@@ -3,6 +3,27 @@
  * Id: $ID$
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
+/**
+ * 
+ * @param string $name preference group and name
+ * @param mixed $default
+ */
+function cfg($name, $default = '') {
+    static $cfgs = false;
+    if (! $cfgs) {
+        imports ( 'admin/models/CorePreferenceTable.php' );
+        $cpt = new CorePreferenceTable ();
+        $data = $cpt->query ();
+        $cfgs = $data->walk ( array ($cpt, 'map' ) );
+    }
+    if (strpos ( $name, '@', 1 ) === false) {
+        $name .= '@core';
+    }
+    if (isset ( $cfgs [$name] )) {
+        $default = $cfgs [$name];
+    }
+    return $default;
+}
 
 /**
  *
@@ -15,7 +36,7 @@ function set_site_global_vars($smarty) {
     $smarty->assign ( 'ksg_version', KISSGO_VERSION );
     $smarty->assign ( 'ksg_build', KISSGO_BUILD );
     $smarty->assign ( 'ksg_uri', Request::getUri () );
-    $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );    
+    $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );
     return $smarty;
 }
 bind ( 'init_smarty_engine', 'set_site_global_vars' );

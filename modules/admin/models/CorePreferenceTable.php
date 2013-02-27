@@ -20,4 +20,7 @@ class CorePreferenceTable extends DbTable {
         
         return $schema;
     }
+    public function map($key, $item) {
+        return array ($item ['name'] . '@' . $item ['group'], $item ['value'] );
+    }
 }

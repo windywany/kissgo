@@ -3,44 +3,48 @@
  * 用户管理
  */
 assert_login ();
-imports ( 'kissgo/models/*' );
+imports ( 'admin/models/*' );
+function do_admin_users_get($req, $res) {
+    $data = array ('limit' => 10 );
+    $start = irqst ( 'start', 1 ); // 分页
+    
 
-$data = array ('limit' => 10 );
-$start = rqst ( 'start', 1 ); // 分页
-
-$where = Model::where_build ( array ('uid as U.uid', 'account like', 'name like', 'email like', 'status' => 0 ), $data, array ('account' => 'like', 'email' => 'like', 'name' => 'like' ) );
-
-$data ['rid'] = irqst ( 'rid' );
-$userModel = new UserEntity ();
-$userModel->alias ( 'U' );
-if (! empty ( $data ['rid'] ) && is_numeric ( $data ['rid'] )) {
-    $userModel->join ( 'core_groupuser AS CG', "U.uid = CG.uid", Model::INNER );
-    $where ['CG.gid'] = $data ['rid'];
+    $userModel = new CoreUserTable ();
+    
+    $users = $userModel->query ( 'U.*', 'U' );
+    
+    $where = array ('deleted' => 0 );
+    
+    $where += where ( array ('U.login' => array ('like' => array ('name' => 'login', 'prefix' => '%', 'suffix' => '%' ) ) ), $data );
+    
+    $where += where ( array ('U.email' => array ('like' => array ('name' => 'email', 'prefix' => '%', 'suffix' => '%' ) ) ), $data );
+    
+    $where += where ( array ('U.status' => 'status' ), $data );
+    
+    $where += where ( array ('UR.rid' => 'rid' ), $data );
+    
+    if (isset ( $where ['UR.rid'] )) {
+        $users->ljoin ( 'user_role AS UR', 'U.uid=UR.uid' );
+    }
+    
+    $users = $users->where ( $where )->limit ( $start, $data ['limit'] )->sort ();
+    
+    $data ['totalUser'] = count ( $users );
+    
+    if ($data ['totalUser']) {
+        $data ['users'] = $users;
+    }
+    
+    $data ['stas'] = array (1 => '<span class="label label-success">正常</span>', '0' => '<span class="label">禁用</span>' );
+    $gM = new CoreRoleTable ();
+    $roles = $gM->query ()->where ( array ('deleted' => 0 ) );
+    $data ['roles'] = $roles;
+    
+    if (count ( $roles )) {
+        $data ['role_options'] = $roles->toArray ( 'rid', 'name', array ('' => '请选择角色' ) );
+    } else {
+        $data ['role_options'] = array ('0' => '请选择角色' );
+    }
+    $data ['_CUR_URL'] = murl ( 'admin', 'users' );
+    return view ( 'admin/views/user/users.tpl', $data );
 }
-$userModel->sort ( array ('uid', 'd' ) );
-$users = $userModel->where ( $where )->limit ( $this->limit, $start - 1 )->count ( true )->retrieve ( "U.*" );
-if ($users) {
-    $data ['users'] = $users;
-    $data ['totalUser'] = $users->countTotal;
-}
-
-$data ['stas'] = array (0 => '<span class="label label-success">正常</span>', '1' => '<span class="label">禁用</span>' );
-$gM = new RoleEntity ();
-$roles = $gM->select ();
-$data ['roles'] = $roles;
-
-if ($roles) {
-    $data ['role_options'] = $roles->toArray ( 'id', 'name', array ('0' => '请选择角色' ) );
-} else {
-    $data ['role_options'] = array ('0' => '请选择角色' );
-}
-//bind ( 'get_user_options', array ($this, 'get_user_options' ), 10, 2 );
-
-
-//bind ( 'get_user_bench_options', array ($this, 'get_user_bench_options' ) );
-
-
-//bind ( 'user_belongs', array ($this, 'user_belongs' ), 10, 2 );
-
-
-return admin_view ( 'kissgo/user/users.tpl', $data );

@@ -10,11 +10,12 @@
 	</head>
 	<body>
 		<div id="login-wrap">
+			
+			<div id="login-body" class="well">
 			<div class="title">
 				<h1>登录</h1>
 			</div>
-			<div id="login-body">
-				<form id="login-form" class="well form-inline" action="{'admin'|murl:login}" method="post">
+				<form id="login-form" class="form-inline" action="{'admin'|murl:login}" method="post">
 					<div id="eMsg" class="alert alert-error {if $form->isValid()}hide{/if}">
 						<button class="close">×</button>
 						<div id="eMsgdiv">{$form|form:errors}</div>
@@ -36,7 +37,7 @@
 		          		{if $captcha}
 		          		<div class="pull-left">
 			          		<div class="input-prepend input-append">
-								<span class="add-on"><i class="icon-picture"></i></span><input class="w120" id=captcha type="text" name="captcha"/><span class="add-on"><img title="看清不清,点击切换." id="captcha-img" src="{'captcha'|murl}?size=50x20"/></span>
+								<span class="add-on"><i class="icon-picture"></i></span><input class="w120" id=captcha type="text" name="captcha"/><span class="add-on"><img title="看清不清,点击切换." id="captcha-img" src="{'admin'|murl:'captcha'}?size=50x20"/></span>
 				          	</div>				          	
 			          	</div>
 			          	{/if}		          		

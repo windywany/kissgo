@@ -46,12 +46,7 @@ class Response {
 	 * 禁用浏览器缓存
 	 */
     public static function nocache() {
-        $headers = array (
-                        'Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 
-                        'Last-Modified' => gmdate ( 'D, d M Y H:i:s' ) . ' GMT', 
-                        'Cache-Control' => 'no-cache, must-revalidate, max-age=0', 
-                        'Pragma' => 'no-cache' 
-        );
+        $headers = array ('Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 'Last-Modified' => gmdate ( 'D, d M Y H:i:s' ) . ' GMT', 'Cache-Control' => 'no-cache, must-revalidate, max-age=0', 'Pragma' => 'no-cache' );
         foreach ( $headers as $header => $val ) {
             @header ( $header . ': ' . $val );
         }
@@ -116,12 +111,9 @@ class Response {
             }
         }
         $router = Router::getInstance ();
-        $action_func = $router->getAction($request, true );
+        $action_func = $router->getAction ( $request, true );
         if (is_callable ( $action_func )) {
-            return call_user_func_array ( $action_func, array (
-                                                                $request, 
-                                                                Response::getInstance () 
-            ) );
+            return call_user_func_array ( $action_func, array ($request, Response::getInstance () ) );
         }
         return null;
     }
@@ -132,10 +124,10 @@ class Response {
 	 */
     public static function respond($status = 404) {
         status_header ( $status );
-        if($status == 404){
-            $view = template("404.tpl");
+        if ($status == 404) {
+            $view = template ( "404.tpl" );
         }
-        echo $view->render();
+        echo $view->render ();
         exit ();
     }
     
@@ -151,12 +143,7 @@ class Response {
 	 */
     public static function set_cookie($name, $value = null, $expire = null, $path = null, $domain = null, $security = null) {
         $settings = KissGoSetting::getSetting ();
-        $cookie_setting = array_merge2 ( array (
-                                                'expire' => 0, 
-                                                'path' => '/', 
-                                                'domain' => ".", 
-                                                'security' => false 
-        ), $settings [COOKIE] );
+        $cookie_setting = array_merge2 ( array ('expire' => 0, 'path' => '/', 'domain' => ".", 'security' => false ), $settings [COOKIE] );
         if ($expire == null) {
             $expire = intval ( $cookie_setting ['expire'] );
         }
@@ -189,8 +176,8 @@ class Response {
             $content = $this->view->render ();
             $content = apply_filter ( 'before_output_content', $content );
             echo $content;
-        }else{
-            Response::respond(404);
+        } else {
+            Response::respond ( 404 );
         }
     }
     
@@ -201,8 +188,7 @@ class Response {
 	 * @param string $content
 	 * @return string
 	 */
-    public function ob_out_handler($content) {
-        global $_kissgo_log_msg;
+    public function ob_out_handler($content) {        
         $this->content = apply_filter ( 'filter_output_content', $content );        
         return $this->content;
     }

@@ -1,4 +1,4 @@
-{extends file="kissgo/admincp.tpl"}
+{extends file=$ksg_admincp_layout}
 {block name="title"}Users & Roles Managerment{/block}
 {block name="breadcrumb"}
 <li>{'Users'|ts}</li>
@@ -8,27 +8,24 @@
         <ul class="nav nav-tabs">
 		    <li>&nbsp;&nbsp;</li>	
 			<li class="active"><a href="{$_CUR_URL}"><i class="icon-user"></i>用户列表</a></li>
-			<li><a href="{$_CUR_URL}?edit=0"><i class="icon-plus"></i>新增用户</a></li>			    
+			<li><a href="{$_CUR_URL}/add"><i class="icon-plus"></i>新增用户</a></li>			    
         </ul>
         <div class="tab-content">
             <div class="tab-pane active">
                 <form class="form-inline" method="get" action="{$_CUR_URL}">				
 				<input type="text" class="input-medium"
-					name="account" value="{$account}" placeholder="用户名" /> 
-				<input
-					type="text" class="input-small" name="name" value="{$name}"
-					placeholder="姓名" /> 
+					name="login" value="{$login}" placeholder="账户名" /> 				
 				<input type="text" class="input-medium"
 					name="email" value="{$email}" placeholder="邮箱" /> 
-					{html_options name=rid options=$role_options selected=$rid} 
+				{html_options name=rid options=$role_options selected=$rid} 
 				<label class="radio">
 				    <input type="radio" name="status" value=""{$status|checked:''}/>全部
 				</label> 
 				<label class="radio tgre">
-				    <input type="radio" name="status" value="0"{'0'|checked:$status}/>活动
+				    <input type="radio" name="status" value="1"{'1'|checked:$status}/>活动
 				</label> 
 				<label class="radio tred"> 
-				    <input type="radio" name="status" value="1"{'1'|checked:$status}/>禁用
+				    <input type="radio" name="status" value="0"{'0'|checked:$status}/>禁用
 				</label>
 				<button type="submit" class="btn">搜索</button>
 			</form>
@@ -36,8 +33,7 @@
 				<thead>
 					<tr>
 						<th class="col_chk"><input type="checkbox"/></th>						
-						<th class="w120">{'用户名'|sorth:account}</th>
-						<th class="w120">{'姓名'|sorth:name}</th>
+						<th class="w120">{'账户名'|sorth:login}</th>						
 						<th class="w150">{'邮箱'|sorth:email}</th>
 						<th class="txt-ac w50">{'状态'|sorth:status}</th>
 						<th class="wa">角色</th>
@@ -48,8 +44,7 @@
 					{foreach from=$users item=user}
 					<tr>
 						<td class="col_chk"><input type="checkbox" value="{$user.uid}"/></td>						
-						<td>{$user.account}</td>
-						<td>{$user.name}</td>
+						<td>{$user.login}</td>						
 						<td>{$user.email}</td>
 						<td class="txt-ac">{$user.status|status:$stas}</td>
 						<td>

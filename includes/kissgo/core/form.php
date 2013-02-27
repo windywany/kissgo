@@ -301,7 +301,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $this->widgets [$widget]->setErrorMsg ( $error );
             $this->__properties__ ['errors'] [] = $error;
         }
-    }
+    }    
     protected abstract function getFormHead();
     protected abstract function getFormItemWrapper();
     protected abstract function getFormFoot();

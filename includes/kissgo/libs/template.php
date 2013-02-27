@@ -18,7 +18,7 @@ class CtsData implements Iterator {
     private $per = 10;
     public function __construct($data, $countTotal = 0, $per = 0) {
         $this->data = $data;
-        if (is_array ( $data ) || $data instanceof ResultSet) {
+        if (is_array ( $data ) || $data instanceof ResultCursor) {
             $this->total = count ( $data );
         }
         $this->countTotal = $countTotal;
@@ -31,14 +31,14 @@ class CtsData implements Iterator {
      * @return mixed
      */
     public function assign() {
-        if (is_array ( $this->data ) || $this->data instanceof ResultSet) {
+        if (is_array ( $this->data ) || $this->data instanceof ResultCursor) {
             return empty ( $this->data ) ? array () : $this->data [0];
         } else {
             return $this->data;
         }
     }
     public function current() {
-        if (is_array ( $this->data ) || $this->data instanceof ResultSet) {
+        if (is_array ( $this->data ) || $this->data instanceof ResultCursor) {
             return $this->data [$this->pos];
         }
         return null;
@@ -642,7 +642,7 @@ function smarty_modifiercompiler_params($ary, $compiler) {
  */
 function smarty_modifiercompiler_form($ary, $compiler) {
     if (count ( $ary ) < 1) {
-        trigger_error ( 'error usage of params', E_USER_WARNING );
+        trigger_error ( 'error usage of form', E_USER_WARNING );
         return "''";
     }
     $form = $ary [0];
@@ -655,4 +655,12 @@ function smarty_modifiercompiler_form($ary, $compiler) {
         return "{$form}->render('$name',null)";
     }
     return "{$form}->render()";
+}
+function smarty_modifiercompiler_render($ary, $compiler) {
+    if (count ( $ary ) < 1) {
+        trigger_error ( 'error usage of render', E_USER_WARNING );
+        return "''";
+    }
+    $render = $ary [0];
+    return "{$render}->render()";
 }

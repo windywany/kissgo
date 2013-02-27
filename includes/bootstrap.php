@@ -18,10 +18,13 @@ define ( 'DS', DIRECTORY_SEPARATOR ); // the short for directory separator
 define ( 'APP_PATH', WEB_ROOT );
 define ( 'INCLUDES', WEB_ROOT . 'includes' . DS );
 define ( 'KISSGO', INCLUDES . 'kissgo' . DS );
+
 define ( 'DEBUG_ERROR', 5 ); // debug levels
 define ( 'DEBUG_INFO', 4 );
 define ( 'DEBUG_WARN', 3 );
 define ( 'DEBUG_DEBUG', 2 );
+define ( 'DEBUG_OFF', 6 );
+
 defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) ); // the default application name, this is used by session id
 defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS ); // the default modules path
 define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
@@ -62,32 +65,51 @@ if (function_exists ( 'memory_get_usage' ) && (( int ) @ini_get ( 'memory_limit'
 if (function_exists ( 'mb_internal_encoding' )) {
     mb_internal_encoding ( 'UTF-8' );
 }
-function log_message($message, $trace_info, $level) {
-    global $_kissgo_log_msg;
+function log_message($message, $trace_info, $level, $origin = null) {
+    static $fb = false;
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
-    if ($level >= DEBUG) {
-        $msg = date ( "Y-m-d H:i:s" ) . " {$log_name[$level]} [{$trace_info['line']}] {$trace_info['file']} - {$message}\n";
+    if ($level == DEBUG_ERROR) {
+        $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info['file']} - [{$trace_info['line']}] - {$message}";
         @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
-        if ($level == DEBUG_ERROR || $level == DEBUG_DEBUG) {
-            $_kissgo_log_msg [] = $msg;
+    }
+    if ($level >= DEBUG) {
+        if (! $fb) {
+            $fb = true;
+            FB::setEnabled ( true );
+        }
+        $msg = $origin ? $origin : "{$trace_info['file']} - [{$trace_info['line']}] - {$message}";
+        switch ($level) {
+            case DEBUG_ERROR :
+                FB::error ( $msg );
+                break;
+            case DEBUG_INFO :
+                FB::info ( $msg );
+                break;
+            case DEBUG_WARN :
+                FB::warn ( $msg );
+                break;
+            case DEBUG_DEBUG :
+            default :
+                FB::log ( $msg );
         }
     }
 }
 function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
+    $trace_info = array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no );
     if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
-        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_ERROR );
+        log_message ( $error_str, $trace_info, DEBUG_ERROR, $trace_info );
         Response::getInstance ()->close ( true );
     } else if ($error_no == E_USER_NOTICE) {
-        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_INFO );
+        log_message ( $error_str, $trace_info, DEBUG_INFO, $trace_info );
     } else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
-        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_WARN );
-    } else if ($error_no != E_NOTICE) {
-        log_message ( $error_str, array ('file' => $error_file, 'line' => $error_line ), DEBUG_DEBUG );
+        log_message ( $error_str, $trace_info, DEBUG_WARN, $trace_info );
+    } else {
+        log_message ( $error_str, $trace_info, DEBUG_DEBUG );
     }
 }
 set_error_handler ( '_kissgo_error_handler' );
 function _kissgo_exception_handler($exception) {
-    log_message ( html_entity_decode ( $exception->getMessage () ), array ('file' => $exception->getFile (), 'line' => $exception->getLine () ), DEBUG_ERROR );
+    log_message ( html_entity_decode ( $exception->getMessage () ), array ('file' => $exception->getFile (), 'line' => $exception->getLine () ), DEBUG_ERROR, $exception );
     Response::getInstance ()->close ( true );
 }
 set_exception_handler ( '_kissgo_exception_handler' );
@@ -222,7 +244,7 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['TIMEZONE'] ) && ! empty ( $settings ['TIMEZONE'] )) {
         define ( 'TIMEZONE', $settings ['TIMEZONE'] );
     }
-
+    
     ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';
@@ -235,6 +257,7 @@ defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
 defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
 @date_default_timezone_set ( TIMEZONE );
 // load kissgo libs scripts
+include INCLUDES . 'vendors/firephp/fb.php';
 include KISSGO . 'libs/i18n.php';
 include KISSGO . 'libs/functions.php';
 include KISSGO . 'libs/plugin.php';

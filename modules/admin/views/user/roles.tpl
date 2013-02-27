@@ -1,4 +1,4 @@
-{extends file="kissgo/admincp.tpl"}
+{extends file=$ksg_admincp_layout}
 {block name="title"}Users & Roles Managerment{/block}
 {block name="breadcrumb"}
 	<li>{'Roles'|ts}</li>
@@ -13,8 +13,8 @@
         <div class="tab-content">
             <div class="tab-pane active">
                 <form class="form-inline" method="get" action="{$_CUR_URL}">				    
-				    <input type="text" class="input-medium" name="label" value="{$label}" placeholder="组标识">
-				    <input type="text" class="input-small" name="name" value="{$name}" placeholder="组名">				    
+				    <input type="text" class="input-medium" name="label" value="{$label}" placeholder="角色标识">
+				    <input type="text" class="input-small" name="name" value="{$name}" placeholder="角色名">				    
 				    <button type="submit" class="btn">搜索</button>
 			    </form>
                 <table id="group-list" class="table table-striped table-bordered table-condensed">
@@ -31,7 +31,7 @@
 				<tbody>
 					{foreach from=$items item=item}
 					<tr>
-						<td class="col_chk"><input type="checkbox" value="{$item.id}"/></td>						
+						<td class="col_chk"><input type="checkbox" value="{$item.rid}"/></td>						
 						<td>{$item.label}</td>
 						<td>{$item.name}</td>						
 						<td class="txt-ac">{$item.reserved|status:$reserves}</td>

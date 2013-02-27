@@ -119,6 +119,21 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
         }
         return $results;
     }
+    public function walk($callback) {
+        $results = array ();
+        try {
+            foreach ( $this->rows as $key => $value ) {
+                $walked = call_user_func_array ( $callback, array ($key, $value ) );
+                if (count ( $walked ) == 2) {
+                    list ( $keyx, $value ) = $walked;
+                    $results [$keyx] = $value;
+                }
+            }
+        } catch ( PDOException $e ) {
+            log_debug ( $e->getMessage () );
+        }
+        return $results;
+    }
     /**
      * 列转行
      * 

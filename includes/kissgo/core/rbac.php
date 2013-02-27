@@ -77,7 +77,7 @@ class Passport implements ArrayAccess {
     }
     public function isLogin($login = null) {
         if (is_null ( $login )) {
-            return $this->properties ['login'];
+            return isset ( $this->properties ['login'] ) ? $this->properties ['login'] : false;
         } else {
             $this->properties ['login'] = $login;
             return $login;
@@ -173,7 +173,7 @@ class LoginInfo {
      * @return LoginInfo
      */
     public static function load() {
-        $info = $_SESSION ['_USER_LoginInfo_'];
+        $info = isset ( $_SESSION ['_USER_LoginInfo_'] ) ? $_SESSION ['_USER_LoginInfo_'] : null;
         if ($info instanceof LoginInfo) {
             return $info;
         }

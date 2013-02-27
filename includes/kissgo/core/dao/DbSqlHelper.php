@@ -14,7 +14,6 @@ class DbSqlHelper {
     protected $group = array ();
     protected $having = array ();
     protected $params = array ();
-    
     public function getTotalHelper($field = null) {
         $helper = new DbSqlHelper ();
         $helper->condition = $this->condition;
@@ -54,6 +53,10 @@ class DbSqlHelper {
      * @return DbSqlHelper
      */
     public function ljoin($table, $on, $alias = null) {
+        if ($alias == null && is_string ( $table ) && preg_match ( '#(.+)\s+AS\s+(.+)#i', $table, $m )) {
+            $table = $m [1];
+            $alias = $m [2];
+        }
         $join = array ($table, $on, ' LEFT JOIN ', $alias == null ? $table : $alias );
         $this->joins [] = $join;
         return $this;
@@ -67,6 +70,10 @@ class DbSqlHelper {
      * @return DbSqlHelper
      */
     public function rjoin($table, $on, $alias = null) {
+        if ($alias == null && is_string ( $table ) && preg_match ( '#(.+)\s+AS\s+(.+)#i', $table, $m )) {
+            $table = $m [1];
+            $alias = $m [2];
+        }
         $join = array ($table, $on, ' RIGHT JOIN ', $alias == null ? $table : $alias );
         $this->joins [] = $join;
         return $this;
@@ -80,6 +87,10 @@ class DbSqlHelper {
      * @return DbSqlHelper
      */
     public function ijoin($table, $on, $alias = null) {
+        if ($alias == null && is_string ( $table ) && preg_match ( '#(.+)\s+AS\s+(.+)#i', $table, $m )) {
+            $table = $m [1];
+            $alias = $m [2];
+        }
         $join = array ($table, $on, ' INNER JOIN ', $alias == null ? $table : $alias );
         $this->joins [] = $join;
         return $this;
@@ -110,9 +121,15 @@ class DbSqlHelper {
      * @param string $dir
      * @return DbSqlHelper
      */
-    public function sort($field, $dir = "DESC") {
+    public function sort($field = null, $dir = "DESC") {
         if (! empty ( $field )) {
             $this->order [] = array ($field, $dir == 'ASC' ? 'ASC' : 'DESC' );
+        } else {
+            $field = rqst ( '_sf' );
+            $dir = rqst ( '_sd', 'd' );
+            if ($field) {
+                $this->order [] = array ($field, $dir == 'a' ? 'ASC' : 'DESC' );
+            }
         }
         return $this;
     }

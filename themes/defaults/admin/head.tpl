@@ -2,9 +2,9 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="KissGO! group">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="KissGO! group"/>
     <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$ksg_version}</title>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap.css'|static}"/>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap-responsive.css'|static}"/>
@@ -28,7 +28,7 @@
             <a target="_blank" href="{$ksg_site_url}" class="brand">{'site_name'|cfg}<i class="icon-share"></i></a>
             <div class="nav-collapse">
                 <ul id="menu" class="nav">
-                    {$ksg_top_navigation_menu->render()}                    
+                    {$ksg_top_navigation_menu|render}                    
                 </ul>
                 <ul class="nav pull-right">
                 	<li class="dropdown">

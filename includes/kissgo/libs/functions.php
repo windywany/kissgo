@@ -52,9 +52,9 @@ function get_status_header_desc($code) {
         300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 306 => 'Reserved', 307 => 'Temporary Redirect', 
 
         400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Timeout', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Long', 415 => 'Unsupported Media Type', 416 => 'Requested Range Not Satisfiable', 417 => 'Expectation Failed', 
-                422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required', 
+                                        422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required', 
 
-                500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Timeout', 505 => 'HTTP Version Not Supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 510 => 'Not Extended' );
+                                        500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Timeout', 505 => 'HTTP Version Not Supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 510 => 'Not Extended' );
     }
     
     if (isset ( $output_header_to_desc [$code] ))
@@ -113,12 +113,12 @@ function path_is_absolute($path) {
     
     if (strlen ( $path ) == 0 || $path {0} == '.')
         return false;
-    
-     // windows allows absolute paths like this
+        
+        // windows allows absolute paths like this
     if (preg_match ( '#^[a-zA-Z]:\\\\#', $path ))
         return true;
-    
-     // a path starting with / or \ is absolute; anything else is relative
+        
+        // a path starting with / or \ is absolute; anything else is relative
     return ( bool ) preg_match ( '#^[/\\\\]#', $path );
 }
 
@@ -165,8 +165,8 @@ function sanitize_file_name($filename) {
     // Return if only one extension
     if (count ( $parts ) <= 2)
         return $filename;
-    
-     // Process multiple extensions
+        
+        // Process multiple extensions
     $filename = array_shift ( $parts );
     $extension = array_pop ( $parts );
     
@@ -224,9 +224,9 @@ function unique_filename($dir, $filename, $unique_filename_callback = null) {
     // edge case: if file is named '.ext', treat as an empty name
     if ($name === $ext)
         $name = '';
-    
-     // Increment the file number until we have a unique file to save in
-    // $dir. Use $override['unique_filename_callback'] if supplied.
+        
+        // Increment the file number until we have a unique file to save in
+        // $dir. Use $override['unique_filename_callback'] if supplied.
     if ($unique_filename_callback && is_callable ( $unique_filename_callback )) {
         $filename = $unique_filename_callback ( $dir, $name );
     } else {
@@ -604,7 +604,7 @@ function safe_url($page) {
  */
 function log_debug($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_DEBUG );
+    log_message ( $message, $trace [0], DEBUG_DEBUG, $trace );
 }
 
 /**
@@ -614,7 +614,7 @@ function log_debug($message) {
  */
 function log_info($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_INFO );
+    log_message ( $message, $trace [0], DEBUG_INFO, $trace );
 }
 
 /**
@@ -624,7 +624,7 @@ function log_info($message) {
  */
 function log_warn($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_WARN );
+    log_message ( $message, $trace [0], DEBUG_WARN, $trace );
 }
 
 /**
@@ -634,7 +634,7 @@ function log_warn($message) {
  */
 function log_error($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_ERROR );
+    log_message ( $message, $trace [0], DEBUG_ERROR, $trace );
 }
 /**
  * 将模块路径，Action,参数等数据转换成url
@@ -881,7 +881,7 @@ function show_message($type, $message, $redirect = '') {
             $redirect = $redirect ? $redirect : $_SERVER ['HTTP_REFERER'];
         }
         $msg ['redirect'] = $redirect;
-        $view = template('admin/error.tpl', $msg );
+        $view = template ( 'admin/error.tpl', $msg );
     } else { //ajax        
         @header ( 'X-AJAX-MESSAGE: ' . $type );
         status_header ( 500 );
@@ -956,5 +956,89 @@ function imtv($value) {
 }
 function imtf($field, $alias = null) {
     return new DbImmutableF ( $field, $alias );
+}
+/**
+ * generates a condition array that can be used by DbSqlHelper::where
+ * @param array $keys fields
+ *  example:
+ *  <code>
+ *      array(
+ *          'field_name'=>array(
+ *              'like'=>array(
+ *                  'name'=>'the name of form',
+ *                  'default'=>'default value',
+ *                  'append'=>'append string to the value'
+ *               )
+ *          ),
+ *          'field_name1'=>array(
+ *              '>'=>array('name'....),
+ *              '<'=>array('name'....)
+ *          ),
+ *          'field_name2'=>array(
+ *              array('name'=>....)
+ *          )
+ *      )
+ *  </code>
+ * @param array $data
+ * @return array generated condition array
+ */
+function where($keys, &$data = null) {
+    static $req = false;
+    if (! $req) {
+        $req = Request::getInstance ( true );
+    }
+    $data = is_array ( $data ) ? $data : array ();
+    $where = array ();
+    foreach ( $keys as $key => $def ) {
+        if (! is_array ( $def )) {
+            $def = array ($def );
+        }
+        foreach ( $def as $op => $extra ) {
+            if (! is_numeric ( $op )) {
+                $key .= ' ' . $op;
+            }
+            $default = null;
+            $suffix = null;
+            $prefix = null;
+            if (is_array ( $extra )) {
+                if (! isset ( $extra ['name'] )) {
+                    continue;
+                }
+                $name = $extra ['name'];
+                if (isset ( $extra ['default'] )) {
+                    $default = $extra ['default'];
+                }
+                if (isset ( $extra ['suffix'] )) {
+                    $suffix = $extra ['suffix'];
+                }
+                if (isset ( $extra ['prefix'] )) {
+                    $prefix = $extra ['prefix'];
+                }
+            } else {
+                $name = $extra;
+            }
+            $value = null;
+            if (! isset ( $req [$name] ) && $default != null) {
+                $value = $req [$name];
+            } else if (isset ( $req [$name] )) {
+                $value = $req [$name];
+            }
+            
+            if (empty ( $value ) && $value != '0') {
+                continue;
+            }
+            
+            $data [$name] = $value;
+            if ($prefix != null) {
+                $value = $prefix . $value;
+            }
+            if ($suffix != null) {
+                $value .= $suffix;
+            }
+            
+            $where [$key] = $value;
+        }
+    }
+    return $where;
 }
 // end of file functions.php
