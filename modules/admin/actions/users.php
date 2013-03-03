@@ -48,3 +48,6 @@ function do_admin_users_get($req, $res) {
     $data ['_CUR_URL'] = murl ( 'admin', 'users' );
     return view ( 'admin/views/user/users.tpl', $data );
 }
+function do_admin_users_post($req, $res) {
+    return do_admin_users_get ( $req, $res );
+}

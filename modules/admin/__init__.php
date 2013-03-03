@@ -24,7 +24,12 @@ function cfg($name, $default = '') {
     }
     return $default;
 }
-
+function show_page_tip($message, $type = '') {
+    if ($message) {
+        $_SESSION ['_ksg_page_tip_info'] = $message;
+        $_SESSION ['_ksg_page_tip_info_cls'] = 'alert-' . $type;
+    }
+}
 /**
  *
  * @param Smarty $smarty        	
@@ -37,6 +42,8 @@ function set_site_global_vars($smarty) {
     $smarty->assign ( 'ksg_build', KISSGO_BUILD );
     $smarty->assign ( 'ksg_uri', Request::getUri () );
     $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );
+    $smarty->assign ( '_ksg_page_tip_info', sess_del ( '_ksg_page_tip_info', false ) );
+    $smarty->assign ( '_ksg_page_tip_info_cls', sess_del ( '_ksg_page_tip_info_cls', '' ) );
     return $smarty;
 }
 bind ( 'init_smarty_engine', 'set_site_global_vars' );
@@ -119,10 +126,10 @@ bind ( 'get_foot_toolbar_buttons', '_hook_for_foot_toolbar' );
  */
 function _kissgo_hook_for_get_user_passport($passport) {
     if ($passport->isLogin ()) {
-        imports ( 'admin/models/*' );
         $uid = $passport ['uid'];
         $user = sess_get ( 'login_user_info_' . $uid, false );
         if (! $user) {
+            imports ( 'admin/models/*' );
             $um = new CoreUserTable ();
             $user = $um->query ()->where ( array ('uid' => $uid ) );
             if (count ( $user )) {
@@ -132,7 +139,6 @@ function _kissgo_hook_for_get_user_passport($passport) {
             }
         }
         if ($user) {
-            $passport ['name'] = $user ['name'];
             $passport ['email'] = $user ['email'];
         }
     }

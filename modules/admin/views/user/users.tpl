@@ -1,6 +1,6 @@
 {extends file=$ksg_admincp_layout}
-{block name="title"}Users & Roles Managerment{/block}
-{block name="breadcrumb"}
+{block name="title"}{'Users & Roles Managerment'|ts}{/block}
+{block name="breadcrumb" nocache}
 <li>{'Users'|ts}</li>
 {/block}
 {block name="admincp_body"}

@@ -96,7 +96,6 @@ function do_admin_login_get($req, $res) {
         $_SESSION ['login_need_captcha'] = true;
     } else {
         $_SESSION ['login_need_captcha'] = false;
-    }
-    log_debug ( "你好我是宁广丰" );
+    }    
     return template ( 'admin/login.tpl', $data );
 }

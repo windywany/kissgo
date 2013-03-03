@@ -1,15 +1,28 @@
 body {
-    padding: 40px 0 35px 0;    
+    padding: 70px 0 35px 0;
+	min-width:1000px;
 }
 #navbar .dropdown-menu .divider {
     margin: 2px 1px;
 }
-/*#crumb .container-fluid {
-    padding-left: 120px;
-    background: transparent url('../images/logo.png') no-repeat 20px 4px;
-}*/
+.navbar-inner{
+	min-height: 30px;
+}
+.navbar .brand{
+	padding: 5px 20px;
+}
+.navbar .nav > li > a {
+	padding: 5px 15px;
+}
 .breadcrumb {
-    margin-bottom: 5px;
+    padding: 5px 15px;
+	margin: 0px;
+}
+.breadcrumb .btn,.breadcrumb .btn-group {
+	margin-top: -2px;
+}
+.breadcrumb .btn-mini {
+	font-size:12px;
 }
 #crumb .container-fluid, #container .container-fluid{
 	padding-right: 25px;
