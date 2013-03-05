@@ -1,11 +1,16 @@
 <?php
+assert_login ();
 /**
  * 
- * @param unknown_type $req
- * @param unknown_type $res
+ * @param Request $req
+ * @param Response $res
  * @return SmartyView
  */
 function do_admin_users_add_get($req, $res) {
     imports ( 'admin/forms/UserForm.php' );
-    return view ( 'admin/views/user/adduser.tpl', array ('form' => new UserForm () ) );
+    
+    $data ['_CUR_URL'] = murl ( 'admin', 'users' );
+    
+    $data ['form'] = new UserForm ();
+    return view ( 'admin/views/user/adduser.tpl', $data );
 }

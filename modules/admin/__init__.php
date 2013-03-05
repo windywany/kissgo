@@ -146,4 +146,8 @@ function _kissgo_hook_for_get_user_passport($passport) {
 }
 
 bind ( 'get_user_passport', '_kissgo_hook_for_get_user_passport' );
+function do_ajax_validate_check($req) {
+    echo 'true';
+}
+bind ( 'do_ajax_validate_callback', 'do_ajax_validate_check' );
 // end of __init__.php

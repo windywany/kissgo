@@ -39,6 +39,10 @@ define ( 'FWT_TIP_SHOW_S', 's' );
 abstract class BaseForm implements ArrayAccess, Iterator {
     private $__properties__ = array ();
     public function __construct($data = array(), $options = array(), $title = '') {
+        if ($data == true) {
+            $sess_id = '__FORM_' . get_class ( $this );
+            $data = sess_get ( $sess_id, array () );
+        }
         $this->initialize ( $data );
         $this->title = $title;
         $this->validator = new BaseValidator ();
@@ -48,6 +52,10 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $this->id = get_class ( $this );
         }
         $this->options = $options;
+    }
+    public function persist() {
+        $sess_id = '__FORM_' . get_class ( $this );
+        $_SESSION [$sess_id] = $this->__properties__ ['__cleandata'];
     }
     public function getCleanData($widget = null, $default = '') {
         static $clean_data = false;
@@ -133,7 +141,11 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                         $body = $widget->getValidate ();
                         break;
                     default :
-                        $body = str_replace ( array ('{$tip_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $this->getFormItemWrapper () );
+                        if($widget instanceof HiddenWidget){
+                            $body = $widget->getWidgetComponent();
+                        }else{
+                            $body = str_replace ( array ('{$tip_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $this->getFormItemWrapper () );
+                        }
                         break;
                 }
                 return $body;
@@ -162,7 +174,11 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $foot = $this->getFormFoot ();
             $body = '';
             foreach ( $this->widgets as $widget ) {
-                $body .= str_replace ( array ('{$tip_cls}', '{$widget_wraper_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getWraperCls (), $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $item_wrapper ) . "\n";
+                if($widget instanceof HiddenWidget){
+                    $body .= $widget->getWidgetComponent();
+                }else{
+                    $body .= str_replace ( array ('{$tip_cls}', '{$widget_wraper_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getWraperCls (), $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $item_wrapper ) . "\n";
+                }
             }
             return $head . "\n" . $body . $foot;
         }
@@ -301,7 +317,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $this->widgets [$widget]->setErrorMsg ( $error );
             $this->__properties__ ['errors'] [] = $error;
         }
-    }    
+    }
     protected abstract function getFormHead();
     protected abstract function getFormItemWrapper();
     protected abstract function getFormFoot();
@@ -333,6 +349,7 @@ abstract class FormWidget {
         $this->option = $option;
         $this->form = $form;
         $this->value = $value;
+        $formCls = get_class($form);
         if (! isset ( $option [FWT_ID] ) || empty ( $option [FWT_ID] )) {
             $this->option [FWT_ID] = $option [FWT_NAME];
         }
@@ -354,7 +371,7 @@ abstract class FormWidget {
                 } else if ($message) {
                     $message = __ ( $message );
                 }
-                $this->validates [$rule] = array ('message' => $message, 'option' => $exp );
+                $this->validates [$rule] = array ('message' => $message, 'option' => $exp,'form'=> $formCls);
             }
             $this->required = isset ( $this->validates ['required'] );
         }
@@ -664,6 +681,21 @@ class TextareaWidget extends TextWidget {
     public function getWidgetComponent() {
         $properties = $this->getProperties ();
         return '<textarea ' . $properties . '>' . $this->value . '</textarea>';
+    }
+}
+/**
+ * 隐藏
+ */
+class HiddenWidget extends TextWidget {
+    public function getWidgetComponent() {
+        $properties = $this->getProperties ( array ('value' => $this->value ) );
+        return '<input type="hidden" ' . $properties . '/>';
+    }
+    public function getLabelComponent() {
+        return '';
+    }
+    public function getTipComponent() {
+        return '';
     }
 }
 // end of form.php

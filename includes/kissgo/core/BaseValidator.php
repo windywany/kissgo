@@ -10,7 +10,6 @@
  */
 class BaseValidator implements IValidator {
     protected static $extra_methods = array ();
-    
     public function yield(&$properties, $rules) {
         $rs = array ();
         $ms = array ();
@@ -20,7 +19,12 @@ class BaseValidator implements IValidator {
                     $rs [] = $m . ':true';
                     break;
                 case 'callback' :
-                    $exp ['option'] = str_replace ( '$scope->', 'v_', $exp ['option'] );
+                    if ($exp ['option'] [0] == '@') {
+                        $m = 'remote';
+                        $exp ['option'] = str_replace ( '@', '\''.BASE_URL . 'ajax.php?op=validate_callback&scope='.$exp['form'].'&scope=', $exp ['option'] ).'\'';
+                    } else {
+                        $exp ['option'] = str_replace ( '$scope->', 'v_', $exp ['option'] );
+                    }                
                 case 'min' :
                 case 'max' :
                 case 'minlength' :
@@ -72,13 +76,11 @@ class BaseValidator implements IValidator {
             }
         }
     }
-    
     public static function add_method($rule, $callable) {
         if (is_callable ( $callable )) {
             self::$extra_methods [$rule] = $callable;
         }
     }
-    
     public function valid($value, $data, $rules, $scope) {
         foreach ( $rules as $rule => $option ) {
             $valid = true;
@@ -88,13 +90,7 @@ class BaseValidator implements IValidator {
             } else if (isset ( self::$extra_methods [$rule] )) {
                 $valid_m = self::$extra_methods [$rule];
                 if (is_callable ( $valid_m )) {
-                    $valid = call_user_func_array ( $valid_m, array (
-                                                                    $value, 
-                                                                    $option ['option'], 
-                                                                    $data, 
-                                                                    $scope, 
-                                                                    $option ['message'] 
-                    ) );
+                    $valid = call_user_func_array ( $valid_m, array ($value, $option ['option'], $data, $scope, $option ['message'] ) );
                 }
             }
             if ($valid !== true) {
@@ -135,7 +131,6 @@ class BaseValidator implements IValidator {
         } else {
             return empty ( $message ) ? __ ( 'This field is required.' ) : $message;
         }
-    
     }
     
     //相等
@@ -182,7 +177,6 @@ class BaseValidator implements IValidator {
             return empty ( $message ) ? __ ( 'Please enter a valid number.' ) : $message;
         }
     }
-    
     protected function v_number($value, $exp, $data, $scope, $message) {
         return $this->v_num ( $value, $exp, $data, $scope, $message );
     }
@@ -380,18 +374,11 @@ class BaseValidator implements IValidator {
     
     //用户自定义校验函数
     protected function v_callback($value, $exp, $data, $scope, $message) {
-        if (preg_match ( '#^\$scope->#', $exp )) {
-            $exp = array (
-                        $scope, 
-                        str_replace ( '$scope->', '', $exp ) 
-            );
+        if (preg_match ( '#^(\$scope->|@)#', $exp )) {
+            $exp = array ($scope, str_replace ( '$scope->', '', $exp ) );
         }
         if (is_callable ( $exp )) {
-            return call_user_func_array ( $exp, array (
-                                                        $value, 
-                                                        $data, 
-                                                        $message 
-            ) );
+            return call_user_func_array ( $exp, array ($value, $data, $message ) );
         }
         return empty ( $message ) ? __ ( 'error callback' ) : $message;
     }
@@ -489,7 +476,6 @@ class BaseValidator implements IValidator {
         }
         return empty ( $message ) ? __ ( 'Please enter a valid datetime.' ) : $message;
     }
-    
     protected function emp($value) {
         return strlen ( trim ( $value ) ) == 0;
     }

@@ -507,10 +507,11 @@ span.error{
 	margin-left:2px;
 	color: red;
 	background: transparent url(images/verror.png) no-repeat left center;
-	padding-left:18px;
+	padding:2px 18px;
 }
 span.valid{
 	margin-left:2px;	
+	padding:2px 18px;
 	background: transparent url(images/vaccept.png) no-repeat left center;
 }
 span.tip{
@@ -518,6 +519,9 @@ span.tip{
 	color: #888;
 	background: transparent url(images/tip_info.png) no-repeat left center;
 	padding-left:18px;
+}
+.control-label span{
+	color:red;
 }
 #xui-messagebox .modal-body{
 	background:transparent url(images/msg-tip.png) no-repeat 10px 10px;

@@ -1,5 +1,5 @@
 $(function() {
-	var form = $('#user-form');
+	var form = $('#role-form');
 	form.uvalidate();
 
 	$('#btn-save').click(submit);

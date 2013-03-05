@@ -51,7 +51,9 @@ class Response {
             @header ( $header . ': ' . $val );
         }
     }
-    
+    public static function back() {
+        self::redirect ( $_SERVER ['HTTP_REFERER'] );
+    }
     /**
 	 * 跳转
 	 *
@@ -188,8 +190,8 @@ class Response {
 	 * @param string $content
 	 * @return string
 	 */
-    public function ob_out_handler($content) {        
-        $this->content = apply_filter ( 'filter_output_content', $content );        
+    public function ob_out_handler($content) {
+        $this->content = apply_filter ( 'filter_output_content', $content );
         return $this->content;
     }
     

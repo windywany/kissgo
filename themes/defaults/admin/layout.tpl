@@ -68,15 +68,16 @@
         </div>
     </div>
 </div>
-{if $_ksg_page_tip_info}
-    <div class="alert {$_ksg_page_tip_info_cls}">
-        <button class="close" data-dismiss="alert">×</button>
-        {$_ksg_page_tip_info}
-    </div>
-{/if}
+
 <!-- container -->
 <div id="container">
     <div id="body" class="container-fluid">
+    {if $_ksg_page_tip_info}
+        <div class="alert {$_ksg_page_tip_info_cls}">
+            <button class="close" data-dismiss="alert">×</button>
+            {$_ksg_page_tip_info}
+        </div>
+    {/if}
     {block name="admincp_body"}{/block}
     </div>
 </div>

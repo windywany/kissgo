@@ -1,5 +1,5 @@
 {extends file=$ksg_admincp_layout}
-{block name="title"}Users & Roles Managerment{/block}
+{block name="title"}{'Users & Roles Managerment'|ts}{/block}
 {block name="breadcrumb"}
 	<li>{'Roles'|ts}</li>
 {/block}
@@ -8,7 +8,7 @@
         <ul class="nav nav-tabs">
 		    <li>&nbsp;&nbsp;</li>	
 			<li class="active"><a href="{$_CUR_URL}"><i class="icon-user"></i> 角色列表</a></li>
-			<li><a href="{$_CUR_URL}?edit=0"><i class="icon-plus"></i> 新增角色</a></li>			    
+			<li><a href="{$_CUR_URL}/add"><i class="icon-plus"></i> 新增角色</a></li>			    
         </ul>
         <div class="tab-content">
             <div class="tab-pane active">
@@ -60,4 +60,7 @@
             </div>    
         </div>
 </div>       			    
+{/block}
+{block name="admincp_foot_js_block"}
+<script type="text/javascript" src="{'list.js'|here}"></script>
 {/block}

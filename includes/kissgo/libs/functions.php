@@ -992,6 +992,11 @@ function where($keys, &$data = null) {
     foreach ( $keys as $key => $def ) {
         if (! is_array ( $def )) {
             $def = array ($def );
+        } else if (isset ( $def ['name'] )) {
+            $filed = $def ['name'];
+            unset ( $def ['name'] );
+        } else {
+            $filed = $key;
         }
         foreach ( $def as $op => $extra ) {
             if (! is_numeric ( $op )) {
@@ -1002,9 +1007,10 @@ function where($keys, &$data = null) {
             $prefix = null;
             if (is_array ( $extra )) {
                 if (! isset ( $extra ['name'] )) {
-                    continue;
+                    $name = $filed;
+                } else {
+                    $name = $extra ['name'];
                 }
-                $name = $extra ['name'];
                 if (isset ( $extra ['default'] )) {
                     $default = $extra ['default'];
                 }

@@ -6,13 +6,25 @@
 {/block}
 
 {block name="toolbar"}
-    <button id="btn-save-user" data-name="s" class="btn btn-mini btn-success">{'Save'|ts}</button>
-    <button id="btn-save-close-user" data-name="sc" class="btn btn-mini btn-primary">{'Save & Close'|ts}</button>
+    <button id="btn-save" data-name="s" class="btn btn-mini btn-success">{'Save'|ts}</button>
+    <button id="btn-save-close" data-name="sc" class="btn btn-mini btn-primary">{'Save & Close'|ts}</button>
     <a href="{'admin'|murl:users}" class="btn  btn-mini">{'Cancel'|ts}</a>
 {/block}
 
 {block name="admincp_body"}
-{include 'modules/admin/views/user/user_form.tpl'}
+<div class="tabbable">
+        <ul class="nav nav-tabs">
+		    <li>&nbsp;&nbsp;</li>	
+			<li><a href="{$_CUR_URL}"><i class="icon-user"></i>用户列表</a></li>
+			<li><a href="{$_CUR_URL}/add"><i class="icon-plus"></i>新增用户</a></li>	
+			<li class="active"><a href="#"><i class="icon-edit"></i>编辑用户</a></li>			    
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active">
+                {include 'modules/admin/views/user/user_form.tpl'}
+            </div>
+        </div>
+</div>
 {/block}
 
 {block name="admincp_foot_js_block"}
