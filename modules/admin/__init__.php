@@ -3,6 +3,7 @@
  * Id: $ID$
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
+imports ( 'admin/validator_callbacks.php' );
 /**
  * 
  * @param string $name preference group and name
@@ -147,7 +148,22 @@ function _kissgo_hook_for_get_user_passport($passport) {
 
 bind ( 'get_user_passport', '_kissgo_hook_for_get_user_passport' );
 function do_ajax_validate_check($req) {
-    echo 'true';
+    if (! isset ( $req ['__cb'] )) {
+        echo 'false';
+    } else {
+        $cb = $req ['__cb'];
+        $rst = false;
+        if (is_callable ( $cb )) {
+            $rst = call_user_func_array ( $cb, array (null, $req, null ) );
+        }
+        if ($rst === true) {
+            echo 'true';
+        } else if ($rst === false) {
+            echo 'false';
+        } else {
+            echo $rst;
+        }
+    }
 }
-bind ( 'do_ajax_validate_callback', 'do_ajax_validate_check' );
+bind ( 'do_ajax_ajax_validate', 'do_ajax_validate_check' );
 // end of __init__.php

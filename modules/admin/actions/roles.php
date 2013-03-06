@@ -38,11 +38,13 @@ function do_admin_roles_get($req, $res) {
  */
 function do_admin_roles_post($req, $res) {
     imports ( 'admin/forms/RoleForm.php' );
+    
     $form = new RoleForm ();
+    
     if ($form->validate ()) {
         show_page_tip ( __ ( 'Congratulations, the role data have been saved successfully!' ), 'success' );
-        
-        return view ( 'admin/views/role/roles.tpl', array () );
+        $form->destroy ();
+        Response::redirect ( murl ( 'admin', 'roles' ) );
     } else {
         show_page_tip ( __ ( 'Sorry, some error occurred when saving role data.' ), 'error' );
         $form->persist ();

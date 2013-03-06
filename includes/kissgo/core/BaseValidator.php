@@ -10,7 +10,7 @@
  */
 class BaseValidator implements IValidator {
     protected static $extra_methods = array ();
-    public function yield(&$properties, $rules) {
+    public function yield(&$properties, $rules, $data = array()) {
         $rs = array ();
         $ms = array ();
         foreach ( $rules as $m => $exp ) {
@@ -21,10 +21,22 @@ class BaseValidator implements IValidator {
                 case 'callback' :
                     if ($exp ['option'] [0] == '@') {
                         $m = 'remote';
-                        $exp ['option'] = str_replace ( '@', '\''.BASE_URL . 'ajax.php?op=validate_callback&scope='.$exp['form'].'&scope=', $exp ['option'] ).'\'';
+                        $exps = substr ( $exp ['option'], 1 );
+                        $exps = explode ( ',', $exps );
+                        $url = '\'' . BASE_URL . 'ajax.php?__op=ajax_validate&__cb=' . $exps [0];
+                        if (count ( $exps ) > 1) {
+                            array_shift ( $exps );
+                            foreach ( $exps as $f ) {
+                                if (isset ( $data [$f] )) {
+                                    $url .= "&{$f}=" . urlencode ( $data [$f] );
+                                }
+                            }
+                        }
+                        $url .= '\'';
+                        $exp ['option'] = $url;
                     } else {
                         $exp ['option'] = str_replace ( '$scope->', 'v_', $exp ['option'] );
-                    }                
+                    }
                 case 'min' :
                 case 'max' :
                 case 'minlength' :
@@ -374,8 +386,15 @@ class BaseValidator implements IValidator {
     
     //用户自定义校验函数
     protected function v_callback($value, $exp, $data, $scope, $message) {
-        if (preg_match ( '#^(\$scope->|@)#', $exp )) {
+        if (preg_match ( '#^\$scope->#', $exp )) {
             $exp = array ($scope, str_replace ( '$scope->', '', $exp ) );
+        }
+        if ($exp [0] == '@') {
+            $exp = substr ( $exp, 1 );
+            $exps = explode ( ',', $exp );
+            if (count ( $exps ) > 1) {
+                $exp = $exps [0];
+            }
         }
         if (is_callable ( $exp )) {
             return call_user_func_array ( $exp, array ($value, $data, $message ) );

@@ -57,6 +57,10 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         $sess_id = '__FORM_' . get_class ( $this );
         $_SESSION [$sess_id] = $this->__properties__ ['__cleandata'];
     }
+    public function destroy(){
+        $sess_id = '__FORM_' . get_class ( $this );
+        $_SESSION [$sess_id] = null;
+    }
     public function getCleanData($widget = null, $default = '') {
         static $clean_data = false;
         if (! $clean_data) {
@@ -94,6 +98,13 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     }
     public function getInitialData() {
         return $this->data;
+    }
+    public function getData(){
+        if(isset($this->__properties__ ['__cleandata'])){
+            return $this->__properties__ ['__cleandata'];
+        }else{
+            return $this->data;
+        }
     }
     public function getSearchCondition() {}
     
@@ -253,6 +264,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                     $value = $data [$key];
                 } else if (isset ( $widget [FWT_INITIAL] )) {
                     $value = $widget [FWT_INITIAL];
+                    $this->__properties__ ['data'][$widget_name] = $value;
                 }
                 $widget_object = new $widget_class ( $widget, $value, $this );
                 $this->addWidget ( $widget_name, $widget_object );
@@ -418,7 +430,7 @@ abstract class FormWidget {
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
             if ($validator) {
-                $validator->yield ( $properties, $this->validates );
+                $validator->yield ( $properties, $this->validates,$this->form->getData() );
             }
         }
         return html_tag_properties ( $properties );
@@ -491,7 +503,7 @@ abstract class FormWidget {
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
             if ($validator) {
-                $validator->yield ( $properties, $this->validates );
+                $validator->yield ( $properties, $this->validates,$this->form->getData() );
             }
         }
         return $properties ['validate'];
