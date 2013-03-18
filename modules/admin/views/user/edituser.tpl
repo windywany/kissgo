@@ -6,9 +6,9 @@
 {/block}
 
 {block name="toolbar"}
-    <button id="btn-save" data-name="s" class="btn btn-mini btn-success">{'Save'|ts}</button>
-    <button id="btn-save-close" data-name="sc" class="btn btn-mini btn-primary">{'Save & Close'|ts}</button>
-    <a href="{'admin'|murl:users}" class="btn  btn-mini">{'Cancel'|ts}</a>
+    <button id="btn-save" data-name="s" value="1" class="btn btn-mini btn-success"><i class="icon-ok-circle"></i> {'Save'|ts}</button>
+    <button id="btn-save-close" data-name="sc" value="1" class="btn btn-mini btn-primary"><i class="icon-check"></i> {'Save & Close'|ts}</button>
+    <a href="{'admin'|murl:users}" class="btn btn-mini btn-warning"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
 {/block}
 
 {block name="admincp_body"}
@@ -21,7 +21,7 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane active">
-                {include 'modules/admin/views/user/user_form.tpl'}
+                {include 'modules/admin/views/user/form.tpl'}
             </div>
         </div>
 </div>

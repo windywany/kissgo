@@ -51,8 +51,8 @@ class Response {
             @header ( $header . ': ' . $val );
         }
     }
-    public static function back() {
-        self::redirect ( $_SERVER ['HTTP_REFERER'] );
+    public static function back($args = null) {
+        self::redirect ( $_SERVER ['HTTP_REFERER'], $args );
     }
     /**
 	 * 跳转
@@ -65,6 +65,13 @@ class Response {
         global $is_IIS;
         if (! $location) {
             return;
+        }
+        if (! empty ( $args ) && is_array ( $args )) {
+            $_args = array ();
+            foreach ( $args as $n => $v ) {
+                $_args [] = $n . '=' . urlencode ( $v );
+            }
+            $args = implode ( '&', $_args );
         }
         if (! empty ( $args ) && is_string ( $args )) {
             if (strpos ( $location, '?' ) !== false) {

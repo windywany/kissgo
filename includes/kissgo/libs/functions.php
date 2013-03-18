@@ -7,6 +7,41 @@
  *
  * $Id$
  */
+function thefilename($filename) {
+    $encode = mb_detect_encoding ( $filename, "UTF-8,GBK,GB2312,BIG5,ISO-8859-1" );
+    if ($encode != 'UTF-8') {
+        $filename = mb_convert_encoding ( $filename, "UTF-8", $encode );
+    }
+    return $filename;
+}
+/**
+ * 发送邮件
+ *
+ * @param array $to
+ * 接收人
+ * @param string $subject
+ * 主题
+ * @param string $content
+ * 正文
+ * @param array $attachments
+ * 附件
+ * @param
+ * string 正文类型
+ * @return boolean true发送成功,如果失败false
+ */
+function sendmail($to, $subject, $message, $attachments = array(), $type = '') {
+    global $__mailer;
+    if ($__mailer == null) {
+        $__mailer = apply_filter ( 'get_sys_mailer', $__mailer );
+    }
+    if ($__mailer && $__mailer instanceof IMailer) {
+        if (! empty ( $type )) {
+            $__mailer->setMessageType ( $type );
+        }
+        return $__mailer->send ( $to, $subject, $message, $attachments );
+    }
+    return false;
+}
 /**
  * Set HTTP status header.
  *
@@ -321,7 +356,103 @@ function rmdirs($dir) {
     }
     return true;
 }
-
+/**
+ * Retrieve list of allowed mime types and file extensions.
+ *
+ *
+ * @return array Array of mime types keyed by the file extension regex
+ * corresponding to those types.
+ */
+function get_allowed_mime_types() {
+    static $mimes = false;
+    if (! $mimes) {
+        // Accepted MIME types are set here as PCRE unless provided.
+        $mimes = apply_filter ( 'upload_mimes', array ('jpg|jpeg|jpe' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png', 'bmp' => 'image/bmp', 'tif|tiff' => 'image/tiff', 'ico' => 'image/x-icon', 'asf|asx|wax|wmv|wmx' => 'video/asf', 'avi' => 'video/avi', 'divx' => 'video/divx', 'flv' => 'video/x-flv', 'mov|qt' => 'video/quicktime', 'mpeg|mpg|mpe' => 'video/mpeg', 'txt|asc|c|cc|h' => 'text/plain', 'csv' => 'text/csv', 'tsv' => 'text/tab-separated-values', 
+                                                                'ics' => 'text/calendar', 'rtx' => 'text/richtext', 'css' => 'text/css', 'htm|html' => 'text/html', 'mp3|m4a|m4b' => 'audio/mpeg', 'mp4|m4v' => 'video/mp4', 'ra|ram' => 'audio/x-realaudio', 'wav' => 'audio/wav', 'ogg|oga' => 'audio/ogg', 'ogv' => 'video/ogg', 'mid|midi' => 'audio/midi', 'wma' => 'audio/wma', 'mka' => 'audio/x-matroska', 'mkv' => 'video/x-matroska', 'rtf' => 'application/rtf', 'js' => 'application/javascript', 
+                                                                'pdf' => 'application/pdf', 'doc|docx' => 'application/msword', 'pot|pps|ppt|pptx|ppam|pptm|sldm|ppsm|potm' => 'application/vnd.ms-powerpoint', 'wri' => 'application/vnd.ms-write', 'xla|xls|xlsx|xlt|xlw|xlam|xlsb|xlsm|xltm' => 'application/vnd.ms-excel', 'mdb' => 'application/vnd.ms-access', 'mpp' => 'application/vnd.ms-project', 'docm|dotm' => 'application/vnd.ms-word', 
+                                                                'pptx|sldx|ppsx|potx' => 'application/vnd.openxmlformats-officedocument.presentationml', 'xlsx|xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml', 'docx|dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml', 'onetoc|onetoc2|onetmp|onepkg' => 'application/onenote', 'swf' => 'application/x-shockwave-flash', 'class' => 'application/java', 'tar' => 'application/x-tar', 'zip' => 'application/zip', 
+                                                                'gz|gzip' => 'application/x-gzip', 'rar' => 'application/rar', '7z' => 'application/x-7z-compressed', 'exe' => 'application/x-msdownload',                                                                 // openoffice
+                                                                // formats
+                                                                'odt' => 'application/vnd.oasis.opendocument.text', 'odp' => 'application/vnd.oasis.opendocument.presentation', 'ods' => 'application/vnd.oasis.opendocument.spreadsheet', 'odg' => 'application/vnd.oasis.opendocument.graphics', 'odc' => 'application/vnd.oasis.opendocument.chart', 'odb' => 'application/vnd.oasis.opendocument.database', 
+                                                                'odf' => 'application/vnd.oasis.opendocument.formula' ) );
+    }
+    return $mimes;
+}
+/**
+ * 根据宽高生成缩略图文件名
+ *
+ * @param string $filename
+ * 原始文件名
+ * @param int $w
+ * @param int $h
+ * @return string
+ */
+function get_thumbnail_filename($filename, $w, $h) {
+    $pos = strrpos ( $filename, '.' );
+    if ($pos === false) {
+        return false;
+    }
+    $shortname = substr ( $filename, 0, $pos );
+    $ext = substr ( $filename, $pos );
+    return $shortname . "-{$w}x{$h}{$ext}";
+}
+function the_thumbnail_src($src, $w, $h) {
+    $thumbfile = get_thumbnail_filename ( $src, $w, $h );
+    if (file_exists ( WEB_ROOT . $thumbfile )) {
+        return BASE_URL . $thumbfile;
+    } else {
+        return BASE_URL . $src;
+    }
+}
+/**
+ *
+ * 只保留URL中部分参数
+ *
+ * @param string $url
+ * @param array $include
+ * 要保留的参数
+ * @return string
+ */
+function keepargs($url, $include = array()) {
+    $urls = explode ( '?', $url );
+    if (count ( $urls ) < 2) {
+        return $url;
+    }
+    $kargs = array ();
+    foreach ( $include as $arg ) {
+        if (preg_match ( '/' . $arg . '=([^&]+)/', $urls [1], $m )) {
+            $kargs [] = $m [0];
+        }
+    }
+    if (! empty ( $kargs )) {
+        $urls [1] = implode ( '&', $kargs );
+        return implode ( '?', $urls );
+    } else {
+        return $urls [0];
+    }
+}
+/**
+ *
+ * 去除URL中的参数
+ *
+ * @param
+ * string url
+ * @param
+ * array 要去除的参数
+ * @return string
+ */
+function unkeepargs($url, $exclude = array()) {
+    $regex = array ();
+    $rpm = array ();
+    if (is_string ( $exclude )) {
+        $exclude = array ($exclude );
+    }
+    foreach ( $exclude as $ex ) {
+        $regex [] = '/&?' . $ex . '=[^&]*/';
+        $rpm [] = '';
+    }
+    return preg_replace ( $regex, $rpm, $url );
+}
 /**
  * 从SESSION中取值
  *

@@ -523,6 +523,9 @@ span.tip{
 .control-label span{
 	color:red;
 }
+.ui-tabwrap .tab-content{
+	overflow:inherit;
+}
 #xui-messagebox .modal-body{
 	background:transparent url(images/msg-tip.png) no-repeat 10px 10px;
 	min-height:120px;
@@ -539,4 +542,34 @@ span.tip{
 #xui-messagebox .modal-body.warning{
 	background-image:url(images/msg-war.png);
 	color:red;
+}
+.ui-form {
+  position: relative;
+  padding: 39px 19px 14px;
+  *padding-top: 19px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+.ui-form + .prettyprint {
+  margin-top: -20px;
+  padding-top: 15px;
+}
+
+.ui-form > p:last-child {
+  margin-bottom: 0;
+}
+.ui-form .table,
+.ui-form .progress,
+.ui-form .well,
+.ui-form .alert,
+.ui-form .hero-unit,
+.ui-form .pagination,
+.ui-form .navbar,
+.ui-form > .nav,
+.ui-form blockquote {
+  margin-bottom: 5px;
 }

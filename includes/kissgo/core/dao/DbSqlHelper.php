@@ -121,15 +121,13 @@ class DbSqlHelper {
      * @param string $dir
      * @return DbSqlHelper
      */
-    public function sort($field = null, $dir = "DESC") {
-        if (! empty ( $field )) {
-            $this->order [] = array ($field, $dir == 'ASC' ? 'ASC' : 'DESC' );
-        } else {
-            $field = rqst ( '_sf' );
-            $dir = rqst ( '_sd', 'd' );
-            if ($field) {
-                $this->order [] = array ($field, $dir == 'a' ? 'ASC' : 'DESC' );
-            }
+    public function sort($field = null, $dir = "d") {
+        $fieldx = rqst ( '_sf', false );
+        $dir = rqst ( '_sd', $dir );
+        if ($fieldx) {
+            $this->order [] = array ($fieldx, $dir == 'a' ? 'ASC' : 'DESC' );
+        } else if (! empty ( $field )) {
+            $this->order [] = array ($field, $dir == 'a' ? 'ASC' : 'DESC' );
         }
         return $this;
     }

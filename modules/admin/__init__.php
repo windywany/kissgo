@@ -74,28 +74,31 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItemDivider ( 'system' );
     $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'admin', 'extension' ), 'icon-briefcase' );
     $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'admin', 'preference' ), 'icon-adjust' );
-    /*// Web Site
+    $mm->addMenuItemDivider ( 'system' );
+    $mm->addMenuItem ( 'system', 'menuitem-cm-builder', __ ( 'Model Builder' ), murl ( 'admin', 'cmb' ), 'icon-tint' );
+    $mm->addMenuItem ( 'system', 'menuitem-fm-builder', __ ( 'Form Builder' ), murl ( 'admin', 'fmb' ), 'icon-tint' );
+   // Web Site
     $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'kissgo', 'pages' ), 'icon-file' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'kissgo', 'comments' ), 'icon-comment' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-category', __ ( 'Categories' ), murl ( 'kissgo', 'categoris' ), 'icon-briefcase' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'admin', 'pages' ), 'icon-file' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'comments' ), 'icon-comment' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-category', __ ( 'Categories' ), murl ( 'admin', 'categoris' ), 'icon-briefcase' );
     $mm->addMenuItemDivider ( 'menu-website' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'kissgo', 'pagetypes' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-themes', __ ( 'Themes & Templates' ), murl ( 'kissgo', 'themes' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'kissgo', 'menus' ), 'icon-list' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'pagetypes' ), 'icon-list' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-themes', __ ( 'Themes & Templates' ), murl ( 'admin', 'themes' ), 'icon-list' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItemDivider ( 'menu-website' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Attachments' ), murl ( 'kissgo', 'attachs' ), 'icon-picture' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Attachments' ), murl ( 'admin', 'attachs' ), 'icon-picture' );
     // Components
     $mm->addMenu2 ( 'menu-components', __ ( 'Components' ), 'icon-cog' );
-    $mm->addMenuItem ( 'menu-components', 'menuitem-codes', __ ( 'Code Fragments' ), murl ( 'kissgo', 'fragments' ), 'icon-list-alt' );
-    $mm->addMenuItem ( 'menu-components', 'menuitem-links', __ ( 'Links' ), murl ( 'kissgo', 'links' ), 'icon-retweet' );
-    $mm->addMenuItem ( 'menu-components', 'menuitem-tags', __ ( 'Tags' ), murl ( 'kissgo', 'tags' ), 'icon-tags' );
-    $mm->addMenuItem ( 'menu-components', 'menuitem-props', __ ( 'Properties' ), murl ( 'kissgo', 'properties' ), 'icon-tag' );
+    $mm->addMenuItem ( 'menu-components', 'menuitem-codes', __ ( 'Code Fragments' ), murl ( 'admin', 'fragments' ), 'icon-list-alt' );
+    $mm->addMenuItem ( 'menu-components', 'menuitem-links', __ ( 'Links' ), murl ( 'admin', 'links' ), 'icon-retweet' );
+    $mm->addMenuItem ( 'menu-components', 'menuitem-tags', __ ( 'Tags' ), murl ( 'admin', 'tags' ), 'icon-tags' );
+    $mm->addMenuItem ( 'menu-components', 'menuitem-props', __ ( 'Properties' ), murl ( 'admin', 'properties' ), 'icon-tag' );
     $mm->addMenuItem ( 'menu-components', 'menuitem-enums', __ ( 'Enums' ), '', 'icon-book' );
-    $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-authors', __ ( 'Authors' ), murl ( 'kissgo', 'authors' ), 'icon-book' );
-    $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-origins', __ ( 'Origins' ), murl ( 'kissgo', 'origins' ), 'icon-book' );
-    $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-keywords', __ ( 'Keywords' ), murl ( 'kissgo', 'keywords' ), 'icon-book' );
-    */
+    $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-authors', __ ( 'Authors' ), murl ( 'admin', 'authors' ), 'icon-book' );
+    $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-origins', __ ( 'Origins' ), murl ( 'admin', 'origins' ), 'icon-book' );
+    $mm->addSubItem ( 'menu-components/menuitem-enums', 'subitems-enums-keywords', __ ( 'Keywords' ), murl ( 'admin', 'keywords' ), 'icon-book' );
+    
     return $mm;
 }
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );

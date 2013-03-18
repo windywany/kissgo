@@ -13,17 +13,17 @@
 				$(this).find('.col_chk input:checkbox').removeAttr('checked')
 						.trigger('change');
 			} else {
-				return $(this).find('.col_chk input:checkbox').attr(
-						'checked', true).trigger('change');
+				return $(this).find('.col_chk input:checkbox').attr('checked',
+						true).trigger('change');
 			}
 			break;
 		default:
 			$(this).each(
 					function(i, tb) {
 						var $tb = $(tb), tbody = $tb.find('tbody');
-						$tb.find('th.col_chk').delegate(
-								'input:checkbox',
+						$tb.find('th.col_chk').on(
 								'change',
+								'input:checkbox',
 								function() {
 									if ($(this).attr('checked')) {
 										tbody.find('td.col_chk input:checkbox')
@@ -35,7 +35,7 @@
 														'change');
 									}
 								});
-						$tb.find('td.has-row-actions').live(
+						$tb.find('td.has-row-actions').on(
 								'mouseover mouseout',
 								function(e) {
 									if (e.type == 'mouseout') {
@@ -225,17 +225,17 @@
 				var ajaxMsg = $.trim(self.ajaxReq
 						.getResponseHeader('X-AJAX-MESSAGE'));
 				if (ajaxAuth && $.isFunction(options.transit)) {
-						options.transit(ajaxAuth, ajaxRes);					
-				} else if(ajaxMsg){
+					options.transit(ajaxAuth, ajaxRes);
+				} else if (ajaxMsg) {
 					var txt = {};
-					try{
-						eval("txt = ("+xhr.responseText+")");
-						$.showMessageBox(txt.type,txt.title,txt.message);	
-					}catch(e){
+					try {
+						eval("txt = (" + xhr.responseText + ")");
+						$.showMessageBox(txt.type, txt.title, txt.message);
+					} catch (e) {
 						if ($.isFunction(options.error)) {
 							options.error(xhr, error);
 						}
-					}					
+					}
 				} else if (ajaxRes) {
 					if ($.isFunction(options.error)) {
 						options.error(xhr, error);
@@ -318,10 +318,10 @@
 				this.defaults.name = name;
 			},
 			get : function(elem, opts) {
-				var settings = $.extend({}, this.defaults, opts);				
+				var settings = $.extend({}, this.defaults, opts);
 				if (!settings.single.length)
 					settings.single = 'metadata';
-				var data = $.data(elem, settings.single);				
+				var data = $.data(elem, settings.single);
 				if (data)
 					return data;
 				data = "{}";
@@ -355,24 +355,25 @@
 		$.fn.uvalidate = function(options) {
 			options = $.extend({
 				errorElement : 'span',
-				errorPlacement : function(label, element) {						
+				errorPlacement : function(label, element) {
 					var ccls = undefined;
 					var espan = element.next('span');
-					if (espan.length > 0 && !espan.attr('generated')) {	
+					if (espan.length > 0 && !espan.attr('generated')) {
 						ccls = espan.attr('data-style');
 						espan.remove();
 					}
-					label.attr('data-content',element.attr('data-content'));
+					label.attr('data-content', element.attr('data-content'));
 					label.addClass(ccls).appendTo(element.parent(".controls"));
 				},
-				success : function(label,element) {	
-					var cls = this.errorClass,$e = $(element);
-					if(!$e.hasClass(cls)){
-						label.addClass(this.validClass).html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+				success : function(label, element) {
+					var cls = this.errorClass, $e = $(element);
+					if (!$e.hasClass(cls)) {
+						label.addClass(this.validClass).html(
+								'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 					}
 				},
 				hideErrors : function(labels) {
-					var tip = '',$label=null,vcls = this.validClass;
+					var tip = '', $label = null, vcls = this.validClass;
 					$.each(labels, function(i, label) {
 						$label = $(label);
 						tip = $label.attr('data-content');
@@ -386,12 +387,13 @@
 			}, options);
 			return $(this).validate(options);
 		};
-		$.validator.prototype.hideErrors = function() {			
-			if(this.settings.hideErrors && $.isFunction(this.settings.hideErrors)){
+		$.validator.prototype.hideErrors = function() {
+			if (this.settings.hideErrors
+					&& $.isFunction(this.settings.hideErrors)) {
 				this.settings.hideErrors(this.toHide);
-			}else{
-				this.addWrapper( this.toHide ).hide();
-			}			
+			} else {
+				this.addWrapper(this.toHide).hide();
+			}
 		};
 	}
 	if ($.datepicker) {
@@ -412,9 +414,9 @@
 	$.showMessageBoxTpl += '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div>';
 	$.showMessageBoxTpl += '<div class="modal-body" id="xui-messagebox-body"></div>';
 	$.showMessageBoxTpl += '<div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">确定</button></div></div>';
-	$.showMessageBox = function(type, title, message){
+	$.showMessageBox = function(type, title, message) {
 		var msgbox = $('#xui-messagebox');
-		if(msgbox.length == 0){
+		if (msgbox.length == 0) {
 			msgbox = $($.showMessageBoxTpl);
 			msgbox.appendTo($('body'));
 		}
@@ -422,4 +424,10 @@
 		msgbox.find('#xui-messagebox-body').addClass(type).html(message);
 		msgbox.modal('show');
 	};
+	$(function() {
+		$('table.ui-table').uiTable();
+		setTimeout(function() {
+			$(".alert").alert('close');
+		}, 10000);
+	});
 })(jQuery);

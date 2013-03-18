@@ -39,27 +39,50 @@ define ( 'FWT_TIP_SHOW_S', 's' );
 abstract class BaseForm implements ArrayAccess, Iterator {
     private $__properties__ = array ();
     public function __construct($data = array(), $options = array(), $title = '') {
-        if ($data == true) {
+        if ($data === true) {
             $sess_id = '__FORM_' . get_class ( $this );
             $data = sess_get ( $sess_id, array () );
         }
-        $this->initialize ( $data );
-        $this->title = $title;
-        $this->validator = new BaseValidator ();
-        if (isset ( $options ['id'] )) {
-            $this->id = $options ['id'];
+        if ($data !== null) {
+            $this->initialize ( $data );
+            $this->title = $title;
+            $this->validator = new BaseValidator ();
+            if (isset ( $options ['id'] )) {
+                $this->id = $options ['id'];
+            } else {
+                $this->id = get_class ( $this );
+            }
+            $this->options = $options;
         } else {
-            $this->id = get_class ( $this );
+            $this->destroy ();
         }
-        $this->options = $options;
     }
     public function persist() {
         $sess_id = '__FORM_' . get_class ( $this );
         $_SESSION [$sess_id] = $this->__properties__ ['__cleandata'];
     }
-    public function destroy(){
+    public function setValue($name, $value) {
+        $this->__properties__ ['__cleandata'] [$name] = $value;
+    }
+    public function destroy() {
         $sess_id = '__FORM_' . get_class ( $this );
         $_SESSION [$sess_id] = null;
+    }
+    /**
+     * 
+     * @param string $widget
+     * @return FormWidget
+     */
+    public function getWidget($widget) {
+        if (isset ( $this->__properties__ ['widgets'] [$widget] )) {
+            return $this->__properties__ ['widgets'] [$widget];
+        }
+        return null;
+    }
+    public function removeWidget($widget) {
+        if (isset ( $this->__properties__ ['widgets'] [$widget] )) {
+            unset ( $this->__properties__ ['widgets'] [$widget] );
+        }
     }
     public function getCleanData($widget = null, $default = '') {
         static $clean_data = false;
@@ -99,14 +122,13 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     public function getInitialData() {
         return $this->data;
     }
-    public function getData(){
-        if(isset($this->__properties__ ['__cleandata'])){
+    public function getData() {
+        if (isset ( $this->__properties__ ['__cleandata'] )) {
             return $this->__properties__ ['__cleandata'];
-        }else{
+        } else {
             return $this->data;
         }
     }
-    public function getSearchCondition() {}
     
     /**
      *
@@ -152,9 +174,9 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                         $body = $widget->getValidate ();
                         break;
                     default :
-                        if($widget instanceof HiddenWidget){
-                            $body = $widget->getWidgetComponent();
-                        }else{
+                        if ($widget instanceof HiddenWidget) {
+                            $body = $widget->getWidgetComponent ();
+                        } else {
                             $body = str_replace ( array ('{$tip_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $this->getFormItemWrapper () );
                         }
                         break;
@@ -185,9 +207,9 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $foot = $this->getFormFoot ();
             $body = '';
             foreach ( $this->widgets as $widget ) {
-                if($widget instanceof HiddenWidget){
-                    $body .= $widget->getWidgetComponent();
-                }else{
+                if ($widget instanceof HiddenWidget) {
+                    $body .= $widget->getWidgetComponent ();
+                } else {
                     $body .= str_replace ( array ('{$tip_cls}', '{$widget_wraper_cls}', '{$label}', '{$widget}', '{$tip}' ), array ($widget->valid ? 'tip' : 'error', $widget->getWraperCls (), $widget->getLabelComponent (), $widget->getWidgetComponent (), $widget->getTipComponent () ), $item_wrapper ) . "\n";
                 }
             }
@@ -249,9 +271,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                         $widget [FWT_BIND] = array ($this, substr ( $bind, 1 ) );
                     }
                 }
-                if (isset ( $widget [FWT_SEARCH] )) {
-                    $this->addSearch ( $widget_name, $widget [FWT_SEARCH] );
-                }
                 $widget [FWT_NAME] = $widget_name;
                 if (! isset ( $widget [FWT_LABEL] )) {
                     $widget [FWT_LABEL] = ucfirst ( $widget_name );
@@ -264,7 +283,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                     $value = $data [$key];
                 } else if (isset ( $widget [FWT_INITIAL] )) {
                     $value = $widget [FWT_INITIAL];
-                    $this->__properties__ ['data'][$widget_name] = $value;
+                    $this->__properties__ ['data'] [$widget_name] = $value;
                 }
                 $widget_object = new $widget_class ( $widget, $value, $this );
                 $this->addWidget ( $widget_name, $widget_object );
@@ -278,9 +297,6 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     protected function addWidget($widget_name, $widget) {
         $this->__properties__ ['widgets'] [$widget_name] = $widget;
         $this->__properties__ ['widgets_keys'] [] = $widget_name;
-    }
-    protected function addSearch($widget_name, $search) {
-        $this->__properties__ ['searches'] [$widget_name] = $search;
     }
     public function isValid() {
         return count ( $this->errors ) > 0 ? false : true;
@@ -357,11 +373,12 @@ abstract class FormWidget {
     protected $value = null;
     protected $validates = array ();
     protected $required = false;
+    protected $formCls;
     public function __construct($option, $value = '', $form) {
         $this->option = $option;
         $this->form = $form;
         $this->value = $value;
-        $formCls = get_class($form);
+        $this->formCls = get_class ( $form );
         if (! isset ( $option [FWT_ID] ) || empty ( $option [FWT_ID] )) {
             $this->option [FWT_ID] = $option [FWT_NAME];
         }
@@ -371,21 +388,36 @@ abstract class FormWidget {
                     $rule = $message;
                     $message = '';
                 }
-                $exp = '';
-                if (preg_match ( '#([a-z_][a-z_0-9]+)(\s*\((.*)\))#', $rule, $rules )) {
-                    $rule = $rules [1];
-                    if (isset ( $rules [3] )) {
-                        $exp = $rules [3];
-                    }
-                }
-                if ($message && strlen ( $exp ) > 0) {
-                    $message = __ ( $message, $exp );
-                } else if ($message) {
-                    $message = __ ( $message );
-                }
-                $this->validates [$rule] = array ('message' => $message, 'option' => $exp,'form'=> $formCls);
+                $this->addValidate ( $rule, $message );
             }
-            $this->required = isset ( $this->validates ['required'] );
+        }
+    }
+    public function addValidate($rule, $message) {
+        $exp = '';
+        if (preg_match ( '#([a-z_][a-z_0-9]+)(\s*\((.*)\))#i', $rule, $rules )) {
+            $rule = $rules [1];
+            if (isset ( $rules [3] )) {
+                $exp = $rules [3];
+            }
+        }
+        if ($message && strlen ( $exp ) > 0) {
+            $message = __ ( $message, $exp );
+        } else if ($message) {
+            $message = __ ( $message );
+        }
+        $this->validates [$rule] = array ('message' => $message, 'option' => $exp, 'form' => $this->formCls );
+        $this->required = isset ( $this->validates ['required'] ) ? true : false;
+    }
+    public function removeValidate($rule) {
+        unset ( $this->validates [$rule] );
+        $this->required = isset ( $this->validates ['required'] ) ? true : false;
+    }
+    public function setTip($tip, $inline = true, $pos = null) {
+        $this->option [FWT_TIP] = $tip;
+        if ($inline) {
+            $this->option [FWT_TIP_SHOW] = FWT_TIP_SHOW_S;
+        } else {
+            $this->option [FWT_TIP_SHOW] = $pos;
         }
     }
     protected function getProperties($properties = array(), $append = true) {
@@ -430,7 +462,7 @@ abstract class FormWidget {
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
             if ($validator) {
-                $validator->yield ( $properties, $this->validates,$this->form->getData() );
+                $validator->yield ( $properties, $this->validates, $this->form->getData () );
             }
         }
         return html_tag_properties ( $properties );
@@ -503,7 +535,7 @@ abstract class FormWidget {
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
             if ($validator) {
-                $validator->yield ( $properties, $this->validates,$this->form->getData() );
+                $validator->yield ( $properties, $this->validates, $this->form->getData () );
             }
         }
         return $properties ['validate'];

@@ -4,7 +4,7 @@
 <li>{'Users'|ts}</li>
 {/block}
 {block name="admincp_body"}
-<div class="tabbable">
+<div class="tabbable ui-tabwrap">
         <ul class="nav nav-tabs">
 		    <li>&nbsp;&nbsp;</li>	
 			<li class="active"><a href="{$_CUR_URL}"><i class="icon-user"></i>用户列表</a></li>
@@ -29,7 +29,7 @@
 				</label>
 				<button type="submit" class="btn">搜索</button>
 			</form>
-            <table id="user-list" class="table table-striped table-bordered table-condensed">
+            <table id="user-list" class="table table-striped table-bordered table-condensed ui-table">
 				<thead>
 					<tr>
 						<th class="col_chk"><input type="checkbox"/></th>						
@@ -44,8 +44,8 @@
 					{foreach from=$users item=user}
 					<tr>
 						<td class="col_chk"><input type="checkbox" value="{$user.uid}"/></td>						
-						<td>{$user.login}</td>						
-						<td>{$user.email}</td>
+						<td><a href="{$_CUR_URL}/edit?uid={$user.uid}">{$user.login}</a></td>						
+						<td><a href="{$_CUR_URL}/edit?uid={$user.uid}">{$user.email}</a></td>
 						<td class="txt-ac">{$user.status|status:$stas}</td>
 						<td>
 							{'user_belongs'|fire:$user}
@@ -61,13 +61,13 @@
 				</tbody>
 			</table>
 			<div class="form-horizontal">				
-					<div class="btn-group">
-						<button class="btn" id="btn-selectall" href="#"><i class="icon-check"></i>全选/反选</button>
-			          	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-			          	<ul class="dropdown-menu">			            
-			            	{'get_user_bench_options'|fire}			            		            
-			          	</ul>
-			    	</div>				
+			    <div class="btn-group">
+				    <button class="btn" id="btn-selectall"><i class="icon-check"></i>全选/反选</button>
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">			            
+                    {'get_user_bench_options'|fire}			            		            
+                    </ul>
+                </div>				
 				<div class="pagination pull-right">
 					{$totalUser|paging:$limit}
 			    </div>
@@ -78,12 +78,12 @@
     <div class="modal hide" id="group-form">
 		  	<div class="modal-header">
 			    <button class="close" data-dismiss="modal">×</button>
-			    <h3>选择用户组</h3>
+			    <h3>选择角色</h3>
 		  	</div>
 			  <div class="modal-body" style="max-height:300px;overflow:auto;">
 			  	<ul>
 			  		{foreach from=$roles item=g}
-			    	<li><label class="checkbox"><input type="checkbox" value="{$g.id}" rel="{$g.label}"/>{$g.name}({$g.label})</label></li>
+			    	<li><label class="checkbox"><input type="checkbox" value="{$g.rid}" rel="{$g.label}"/>{$g.name}({$g.label})</label></li>
 			    	{/foreach}
 			    </ul>
 			  </div>

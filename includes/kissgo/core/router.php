@@ -85,6 +85,7 @@ class Router {
                 $actions [2] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$controller}", true );
             } else {
                 $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}", true );
+                $actions [2] = array ("{$module}/actions/{$action}/index.php", "do_{$module}", true );
             }
             if (! is_module_file ( $module )) {
                 unset ( $actions );

@@ -11,6 +11,6 @@ function do_admin_users_add_get($req, $res) {
     
     $data ['_CUR_URL'] = murl ( 'admin', 'users' );
     
-    $data ['form'] = new UserForm ();
+    $data ['form'] = new UserForm (true);
     return view ( 'admin/views/user/adduser.tpl', $data );
 }

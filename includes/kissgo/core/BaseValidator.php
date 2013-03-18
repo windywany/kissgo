@@ -42,8 +42,6 @@ class BaseValidator implements IValidator {
                 case 'minlength' :
                 case 'maxlength' :
                 case 'notEqual' :
-                case 'equalTo' :
-                case 'notEqualTo' :
                 case 'gt' :
                 case 'ge' :
                 case 'lt' :
@@ -57,6 +55,8 @@ class BaseValidator implements IValidator {
                 case 'ge2' :
                 case 'lt2' :
                 case 'le2' :
+                case 'equalTo' :
+                case 'notEqualTo' :
                     $rs [] = $m . ':\'#' . $exp ['option'] . '\'';
                     break;
                 case 'range' :

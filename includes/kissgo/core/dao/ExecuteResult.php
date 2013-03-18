@@ -12,6 +12,7 @@ class ExecuteResult extends DbSqlHelper implements Countable {
     private $builder = null;
     private $driver = null;
     private $sChar = null;
+    public $isNew = false;
     /**
      * 
      * 
@@ -26,7 +27,7 @@ class ExecuteResult extends DbSqlHelper implements Countable {
         $this->builder = $this->driver->getSqlBuilder ();
         $this->sChar = $this->builder->specialChar ();
     }
-    
+       
     public function count() {
         $schema = $this->dao->schema ();
         if (! empty ( $this->condition )) {
@@ -36,6 +37,7 @@ class ExecuteResult extends DbSqlHelper implements Countable {
             $schema->getAutoInsertData ( $this->data );
             $schema->getAutoUpdateData ( $this->data, '', '' );
             $sql = $this->builder->insert ( array ($this->dao, $this->alias ), $this->data );
+            $this->isNew = true;
         }
         if ($sql) {
             try {
