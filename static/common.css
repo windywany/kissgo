@@ -1,4 +1,4 @@
-ol, ul {
+ul {
 	list-style: none;
 	outline: none;
 }
@@ -440,6 +440,10 @@ i.handl {
 .closed .inside {
 	display: none;
 }
+.stuffbox .form-horizontal .control-group{
+	margin-bottom: 5px;
+}
+
 .quicktags {
 	border-color: #CCCCCC #CCCCCC #DFDFDF;
 	border-style: solid;
