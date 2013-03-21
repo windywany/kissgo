@@ -69,7 +69,7 @@ function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
     if ($level == DEBUG_ERROR) {
-        $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info['file']} - [{$trace_info['line']}] - {$message}";
+        $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info['file']} - [{$trace_info['line']}] - {$message}\n";
         @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
     }
     if ($level >= DEBUG) {
@@ -296,7 +296,7 @@ function _kissgo_class_loader($clz) {
     }
     $file = apply_filter ( 'auto_load_class', '', $clz );
     if ($file && file_exists ( $file )) {
-        include $file;
+        include $file;       
     }
 }
 spl_autoload_register ( '_kissgo_class_loader' );

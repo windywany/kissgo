@@ -14,7 +14,7 @@ class PlUploader implements IUploader {
 	 */
     public function save($file) {
         $path = (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : 'uploads') . date ( '/Y/m/' );
-        $destdir = WEB_ROOT . DS . STATIC_DIR . $path;
+        $destdir = WEB_ROOT . DS . STATIC_DIR . DS . $path;
         $tmp_file = $file->tmpname;
         $fileinfo = stat ( $tmp_file );
         $maxSize = $this->getMaxSize ();

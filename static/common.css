@@ -364,8 +364,9 @@ i.handl {
 .refval {
 	color: #3A87AD
 }
-.stuffbox {
-	background: #fff;
+.stuffbox {	
+	background-color: #F5F5F5;
+    background-image: -moz-linear-gradient(center top , #F9F9F9, #F5F5F5);
 	border-color: #DFDFDF;
 	border-radius: 3px 3px 3px 3px;
 	box-shadow: 0 1px 0 #FFFFFF inset;
@@ -375,6 +376,9 @@ i.handl {
 	margin-bottom: 20px;
 	padding: 0;
 	position: relative;
+}
+.bk_fff{
+	background: #fff;
 }
 .stuffbox h3 {
 	font-size: 15px;

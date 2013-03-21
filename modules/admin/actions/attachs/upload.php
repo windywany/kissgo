@@ -1,9 +1,57 @@
 <?php
-/*
- * 上传
+/**
+ * get uploading page
  */
 assert_login ();
 function do_admin_attachs_upload_get($req, $res) {
     $data ['_CUR_URL'] = murl ( 'admin', 'attachs' );
     return view ( 'admin/views/attachs/upload.tpl', $data );
+}
+/**
+ * finish uploading
+ * @param unknown_type $req
+ * @param unknown_type $res
+ */
+function do_admin_attachs_upload_post($req, $res) {
+    $tmpdir = TMP_PATH . "plupload";
+    $count = irqst ( 'uploader_count', 0 );
+    $errors = array ();
+    if ($count > 0) {
+        @set_time_limit ( 0 );
+        //$atM = new WebAttachmentModel ();
+        $uploader = apply_filter ( 'get_uploader', new PlUploader () ); //得到文件上传器
+        //$data ['create_uid'] = $I->uid;
+        $data ['create_time'] = time ();
+        for($i = 0; $i < $count; $i ++) {
+            $tmpfile = new UploadTmpFile ( $i, $tmpdir );
+            $rst = false;
+            if ($tmpfile->isuploaded () && $uploader->allowed ( $tmpfile->file_ext )) {
+                $rst = $uploader->save ( $tmpfile );
+            }
+            if ($rst !== false) { //保存文件成功
+                $data ['type'] = $tmpfile->getType ();
+                $data ['mine_type'] = $tmpfile->mimeType;
+                $data ['url'] = $rst [0];
+                $data ['name'] = $tmpfile->title;
+                $data ['ext'] = trim ( $tmpfile->file_ext, '.' );
+                $data ['alt_text'] = $tmpfile->alt_text;
+                //$atM->save ( $data );
+                //生成缩略图与添加水印
+                if (in_array ( $tmpfile->file_ext, array ('.jpg', '.gif', 'jpeg', 'png' ) )) {
+                    $imageUtil = new ImageUtil ( $rst [1] );
+                    $imageUtil->thumbnail ( array (array (80, 60 ), array (280, 180 ) ) );
+                }
+            } else {
+                log_error ( "文件上传失败: " . $uploader->get_last_error () );
+                $errors [] = "文件上传失败: " . $uploader->get_last_error ();
+            }
+            $tmpfile->delete ();
+        }
+    }
+    if (count ( $errors ) > 0) {
+        show_page_tip ( '<p>' . implode ( '</p><p>', $errors ) . '</p>', 'error' );
+    } else {
+        show_page_tip ( '文件上传完成.' );
+    }
+    Response::redirect ( murl ( 'admin', 'attachs' ) );
 }

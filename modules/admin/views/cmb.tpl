@@ -23,7 +23,7 @@
     			<div class="span3">
     				<div class="stuffbox">
     					<h3>Model</h3>
-    					<div class="inside form-horizontal">
+    					<div class="inside">
     						{$model_form|form}
     					</div>
     				</div>
@@ -36,9 +36,10 @@
     			</div>
     			<div class="span9">
     				<div class="stuffbox">
-    					<h3>Definition <div class="handlediv"></div></h3>
+    				    <div class="handlediv"><br/></div>
+    					<h3>Definition</h3>
     					<div class="inside">
-    						
+    						afdasdfasd
     					</div>
     				</div>
     				<div class="stuffbox">

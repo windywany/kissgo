@@ -589,15 +589,7 @@ class BootstrapForm extends BaseForm {
         return $wrapper;
     }
     protected function getFormFoot() {
-        return '<script type="text/javascript">
-			$(function(){
-				$(\'body\').popover({
-					selector: "[rel=popover]",
-					html: true,
-					trigger:"focus"
-				});
-			});
-		</script>';
+        return '';
     }
 }
 /**

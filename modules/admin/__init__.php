@@ -25,7 +25,7 @@ function cfg($name, $default = '') {
     }
     return $default;
 }
-function show_page_tip($message, $type = '') {
+function show_page_tip($message, $type = 'success') {
     if ($message) {
         $_SESSION ['_ksg_page_tip_info'] = $message;
         $_SESSION ['_ksg_page_tip_info_cls'] = 'alert-' . $type;

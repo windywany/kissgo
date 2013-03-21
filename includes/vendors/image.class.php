@@ -1,6 +1,6 @@
 <?php
-interface image_plugin {
-	
+
+interface image_plugin {	
 	public function attachToOwner($owner);
 	public function getTypeId();
 	public function getSubTypeId();
@@ -609,11 +609,12 @@ class image {
 function __image_class_load($file, $clz) {
 	$m = array ();
 	if (preg_match ( '/^image_fx_(.+)/', $clz, $m )) {
-		return VENDOR_PATH . 'fx' . DS . $m [1] . '.class.php';
+		return dirname(__FILE__).DS . 'fx' . DS . $m [1] . '.class.php';
 	} else if (preg_match ( '/^image_draw_(.+)/', $clz, $m )) {
-		return VENDOR_PATH . 'draw' . DS . $m [1] . '.class.php';
+		return dirname(__FILE__).DS . 'draw' . DS . $m [1] . '.class.php';
 	}
 	return $file;
 }
-bind ( 'auto_class_load', '__image_class_load', 10, 2 );
+bind ( 'auto_load_class', '__image_class_load', 10, 2 );
 
+?>

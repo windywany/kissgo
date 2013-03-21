@@ -95,6 +95,12 @@
         </div>
     </div>
 </div>
+<div id="overlay">
+    <div id="overlay-body">
+        <img src="{'images/overlay.gif'|here}">
+        <div class="msg">处理中...</div>
+    </div>
+</div>
 {'admincp_footer'|fire}
 {block name="admincp_foot_js_block"}{/block}
 </body>

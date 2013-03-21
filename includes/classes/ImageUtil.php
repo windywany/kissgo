@@ -4,6 +4,7 @@
  * @author LeoNing
  *
  */
+include_once INCLUDES . '/vendors/image.class.php';
 class ImageUtil {
     private $file;
     public function __construct($file) {
@@ -52,6 +53,11 @@ class ImageUtil {
 	 * 位置
 	 */
     public function watermark($mark, $pos) {}
+    /**
+     * delete thumbnail
+     * @param unknown_type $filename
+     * @return boolean
+     */
     public static function deleteThumbnail($filename) {
         $pos = strrpos ( $filename, '.' );
         if ($pos === false) {
@@ -61,11 +67,11 @@ class ImageUtil {
         $ext = substr ( $filename, $pos );
         
         $filep = $shortname . '-*' . $ext;
-        dlog ( "file deleted pattern : " . $filep );
+        log_error ( "file deleted pattern : " . $filep );
         $files = glob ( $filep );
         if ($files) {
             foreach ( $files as $f ) {
-                dlog ( $f );
+                log_error ( $f );
                 @unlink ( $f );
             }
         }
@@ -87,7 +93,7 @@ class ImageUtil {
         $tmpNames = array ();
         $savePath = trim ( (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : 'uploads'), '/' ) . date ( '/Y/m/' );
         
-        if (! file_exists ( WWW_ROOT . $savePath ) && ! mkdir ( WWW_ROOT . $savePath, 0777, true )) {
+        if (! file_exists ( WEB_ROOT . $savePath ) && ! mkdir ( WEB_ROOT . $savePath, 0777, true )) {
             return false;
         }
         
@@ -125,7 +131,7 @@ class ImageUtil {
             
             $tmpName = $savePath . rand ( 1, 10000 ) . time () . strrchr ( $imgUrl, '.' );
             try {
-                $fp2 = @fopen ( WWW_ROOT . $tmpName, "a" );
+                $fp2 = @fopen ( WEB_ROOT . $tmpName, "a" );
                 if (fwrite ( $fp2, $img )) {
                     fclose ( $fp2 );
                     $tmpNames [$imgUrl] = array ('url' => $tmpName, 'ext' => trim ( $fileType, '.' ), 'type' => 'image', 'mine_type' => $heads ['Content-Type'], 'name' => "", 'alt_text' => '' );

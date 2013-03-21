@@ -6,14 +6,18 @@
 <link href="{'jquery/plugins/plupload/css/jquery.plupload.queue.css'|static}" rel="stylesheet"/>
 <style type="text/css">
     #uploader {
-    	width: 100%;
-    	height: 450px;
-    }
+    	width: 100%;    	
+    }    
     .plupload_wrapper {
     	font: 12px Verdana, sans-serif;
     }
     .plupload_scroll .plupload_filelist {
-    	height: 300px;
+    	background:none;
+    	min-height: 300px;
+        overflow-y:auto;
+        border-color: #AAAAAA;
+        border-style: dashed;
+        border-width: 0 1px;
     }
     .plupload_filelist_header .plupload_file_name {
     	width: 205px;
@@ -26,23 +30,30 @@
     .plupload_filt_alt,.plupload_filt_name {
     	float: left;
     	margin-left: 10px;
-    	width: 150px;
+    	width: 200px;
+    }
+    .plupload_filt_alt{
+	    width: 300px;
     }
     .plupload_filt_alt input ,.plupload_filt_name input{
     	margin-bottom: 0;
     	font-size: 12px;
-    }
-    .plupload_scroll .plupload_filelist{
-	    overflow-y:auto;
-    }
+        width:90%;
+    }    
     .plupload_header{
 	    background:none;
-    }
-    
+    }    
     .plupload_header_content {    
 	     background:none;
         color:#000;
         padding-left:10px;
+    }
+    .plupload_filelist_header, .plupload_filelist_footer{
+	    background-color:#F5F5F5;
+        border:none;
+    }
+    .plupload_filelist li{
+    	background:none;
     }
 </style>
 {/block}
@@ -98,9 +109,9 @@ $(function() {
 	});
 	
 	$("#uploader").pluploadQueue({		
-		runtimes : 'flash,html4',		
-		url : './?Ctlr=PlUpload',
-		max_file_size : '10mb',
+		runtimes : 'html5,flash,silverlight,html4',		
+		url : '{$_CUR_URL}/plupload',
+		max_file_size : '100mb',
 		max_file_count: 100, // user can add no more then 20 files at a time
 		chunk_size : '1mb',
 		unique_names : true,
@@ -117,7 +128,8 @@ $(function() {
 			{ title : "多媒体", extensions : "mp3,avi,mp4,flv,swf" }
 		],
 		// Flash settings
-		flash_swf_url : "{'jquery/plugins/plupload/plupload.flash.swf'|static}"
+		flash_swf_url : "{'jquery/plugins/plupload/plupload.flash.swf'|static}",
+		silverlight_xap_url : "{'jquery/plugins/plupload/plupload.silverlight.xap'|static}"
 	});
 	var uploader = $('#uploader').pluploadQueue();	
 	uploader.bind('UploadComplete',function(uper,fs){

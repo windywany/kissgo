@@ -426,8 +426,30 @@
 	};
 	$(function() {
 		$('table.ui-table').uiTable();
+		$('.stuffbox').on('click','.handlediv',function(){
+			var $this = $(this), $box = $this.parents('.stuffbox');
+			$box.toggleClass('closed');
+		});
+		$.fn.popover && $('body').popover({
+				selector: "[rel=popover]",
+				html: true,
+				trigger:"focus"
+		});
 		setTimeout(function() {
 			$(".alert").alert('close');
 		}, 10000);
 	});
 })(jQuery);
+
+function showWaitMask(text, keep) {
+    text = text ? text : '处理中...';
+    var ov = $('#overlay'), msg = ov.find('div.msg');
+    ov.show();
+    if (!keep) {
+        msg.html(text);
+    }
+}
+
+function hideWaitMask() {
+    $('#overlay').fadeOut(350);
+}
