@@ -33,7 +33,7 @@ interface Idao {
     const AUTOUPDATE_DATE = 'AUTO_UPDATE_DATE';
     const AUTOINSERT_DATE = 'AUTO_INSERT_DATE';
     const AUTOUPDATE_UID = 'AUTO_UPDATE_UID';
-    const AUTOINSERT_UID = 'AUTO_INSERT_DATE';
+    const AUTOINSERT_UID = 'AUTO_INSERT_UID';
     /**
      * 
      * @return PdoDriver

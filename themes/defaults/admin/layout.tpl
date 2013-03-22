@@ -7,12 +7,15 @@
     <meta name="author" content="KissGO! group"/>
     <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$ksg_version}</title>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap.css'|static}"/>
+    <link rel="stylesheet" href="{'bootstrap/css/bootstrap-modal.css'|static}"/>
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap-responsive.css'|static}"/>
     <link rel="stylesheet" href="{'common.css'|static}"/>
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
     {block name="admincp_css_block"}{/block}
-    <script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>
+    <script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>    
     <script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>
+    <script type="text/javascript" src="{'bootstrap/bootstrap-modalmanager.js'|static}"></script>
+    <script type="text/javascript" src="{'bootstrap/bootstrap-modal.js'|static}"></script>
     <script type="text/javascript" src="{'jquery/plugins/validate.js'|static}"></script>
 	<script type="text/javascript" src="{'jquery/plugins/validate_addons.js'|static}"></script>
 	<script type="text/javascript" src="{'common.js'|static}"></script>
@@ -21,6 +24,7 @@
     {block name="admincp_head_js_block"}{/block}
 </head>
 <body>
+<div class="page-container">
 <!-- head -->
 <div id="navbar" class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -94,6 +98,7 @@
             <p>&copy; <a href="http://www.kissgo.org/" target="_blank">KissGO! {$ksg_version}</a> 2012</p>
         </div>
     </div>
+</div>
 </div>
 <div id="overlay">
     <div id="overlay-body">

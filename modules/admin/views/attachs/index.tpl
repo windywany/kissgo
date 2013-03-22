@@ -2,6 +2,10 @@
 
 {block name="title"}{'Attachments'|ts}{/block}
 
+{block name="admincp_css_block"}
+<link href="{'bootstrap/css/datepicker.css'|static}" rel="stylesheet"/>
+{/block}
+
 {block name="breadcrumb"}
 	<li>{'Attachments'|ts}</li>	
 {/block}
@@ -13,11 +17,23 @@
 			    <li><a href="{$_CUR_URL}/upload"><i class="icon-upload"></i>上传</a></li>			    
 		    </ul>		    
 		    <div class="txt-ar">
-				<form class="form-inline pull-left" method="get" action=".">				    
-				    <input type="text" class="input-medium" name="name" value="{$name}" placeholder="文件"/>
-				    <input type="text" class="w70 datepicker" name="time1" value="{$time1}" placeholder="日期"/>
-				    <input type="text" class="w70 datepicker" name="time2" value="{$time2}" placeholder="日期"/>
-				    <select name="type" class="w100">{html_options options=$type_options selected=$type}</select>
+				<form class="form-inline pull-left" method="get" action=".">
+					<div class="input-prepend">
+						<span class="add-on">文件</span>
+				    	<input type="text" class="input-medium" name="name" value="{$name}" placeholder="文件"/>
+				    </div>
+				    <div class="input-append date datepicker" id="time1">
+				    	<input type="text" class="w90" name="time1" value="{$time1}" placeholder="日期" readonly/>
+				    	<span class="add-on"><i class="icon-calendar"></i></span>
+				    </div>
+				    <div class="input-append date datepicker" id="time2">
+				    	<input type="text" class="w90" name="time2" value="{$time2}" placeholder="日期" readonly/>
+				    	<span class="add-on"><i class="icon-calendar"></i></span>
+				    </div>
+				    <div class="input-prepend">
+						<span class="add-on">类型</span>
+				    	<select name="type" class="w100">{html_options options=$type_options selected=$type}</select>
+				    </div>
 				    <button type="submit" class="btn">搜索</button>
 			    </form>
 		    </div>		    
@@ -86,4 +102,23 @@
 					{$total|paging:$limit}
 			    </div>
 		    </div>
+{/block}
+{block name="admincp_foot_js_block"}
+	<script type="text/javascript" src="{'bootstrap/bootstrap-datepicker.js'|static}"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.datepicker').datepicker(
+					{
+        				'format':'yyyy-mm-dd',
+        				 autoclose:true
+    				}).on('changeDate', function(ev){
+				var date = ev.date,target = $(ev.target).attr('id');
+				if(target == 'time1'){
+					$('#time2').datepicker('setStartDate',date);
+				}else{
+					$('#time1').datepicker('setEndDate',date);
+				}
+			});
+		});
+	</script>
 {/block}

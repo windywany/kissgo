@@ -350,17 +350,7 @@ i.handl {
 	background-position: right center;
 	background-repeat: no-repeat;
 }
-.workspace h1.title {
-	font-size: 18px;
-	font-weight: bold;
-}
 
-.workspace h1.ico {
-	padding-left: 36px;
-	background-color: transparent;
-	background-repeat: no-repeat;
-	background-position: left center;
-}
 .refval {
 	color: #3A87AD
 }
@@ -434,6 +424,7 @@ i.handl {
 	top: 7px;
 	right: 35px;
 	display: none;
+	cursor: pointer;
 }
 .stuffbox:hover a.tools {
 	display: block;
@@ -447,7 +438,16 @@ i.handl {
 .stuffbox .form-horizontal .control-group{
 	margin-bottom: 5px;
 }
-
+.stuffbox .inside .tab-content{
+	background:#fff;
+	border-width:1px 1px 0;
+	border-style:solid;
+	border-color:#ddd;
+	padding: 10px;
+}
+.stuffbox .inside .nav{
+	margin-bottom:5px;
+}
 .quicktags {
 	border-color: #CCCCCC #CCCCCC #DFDFDF;
 	border-style: solid;
