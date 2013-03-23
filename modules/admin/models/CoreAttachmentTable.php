@@ -2,27 +2,26 @@
 class CoreAttachmentTable extends DbTable {
     var $table = 'attachment';
     public function schema() {
-        $schema = new DbSchema ( "attachments" );
-        $schema->addPrimarykey ( 'attachment_id' );
-        $schema->addIndex ( 'IDX_TYPE', 'type' );
-        $schema->addIndex ( 'IDX_CREATE_TIME', 'create_time' );
-        $schema ['attachment_id'] = array ();
-        /*
-         `attachment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-          `create_uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上传用户',
-          `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上传时间',
-          `linked` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '是否被引用',
-          `hasthumbnail` smallint(4) unsigned NOT NULL DEFAULT '0' COMMENT '缩略图的数量',
-          `type` varchar(16) DEFAULT NULL COMMENT '附件类型',
-          `mine_type` varchar(32) DEFAULT NULL COMMENT '附件多媒体类型',
-          `name` varchar(256) DEFAULT NULL COMMENT '附件媒体名',
-          `ext` varchar(10) DEFAULT NULL COMMENT '扩展名',
-          `alt_text` varchar(64) DEFAULT NULL COMMENT 'alt文本',
-          `url` varchar(256) DEFAULT NULL COMMENT '文件URL，相对与根',
-          PRIMARY KEY (`attachment_id`),
-          KEY `IDX_TYPE` (`type`),
-          KEY `IDX_CREATE_TIME` (`create_time`)
-         */
+        $schema = new DbSchema ( 'attachments' );
+        
+        $schema->addPrimarykey ( array ('attachment_id' ) );
+        
+        $schema->addIndex ( 'IDX_IDX_TYPE', array ('type' ) );
+        $schema->addIndex ( 'IDX_IDX_CREATE_TIME', array ('create_time' ) );
+        
+        $schema ['attachment_id'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
+        $schema ['create_uid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '上传用户' );
+        $schema ['create_time'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '上传时间' );
+        $schema ['linked'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '是否被引用' );
+        $schema ['hasthumbnail'] = array ('type' => 'int', 'extra' => 'small', Idao::LENGTH => 4, Idao::DEFT => 0, Idao::CMMT => '缩略图的数量' );
+        $schema ['type'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 16, Idao::CMMT => '附件类型' );
+        $schema ['mine_type'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 32, Idao::CMMT => '附件多媒体类型' );
+        $schema ['name'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 256, Idao::CMMT => '附件媒体名' );
+        $schema ['alt_text'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 64, Idao::CMMT => 'alt文本' );
+        $schema ['url'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 1024, Idao::CMMT => '文件URL，相对与根' );
+        $schema ['ext'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 10, Idao::CMMT => '扩展名' );
+
         return $schema;
     }
 }
+
