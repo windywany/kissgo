@@ -31,8 +31,7 @@ class ImageUtil {
                         continue;
                     }
                     $image = new image ( $this->file );
-                    $fx = $image->attach ( new image_fx_resize ( $width, $height ) );
-                    $tfile = get_thumbnail_filename ( $this->file, $width, $height );
+                    $fx = $image->attach ( new image_fx_resize ( $width, $height ) );                   
                     $rst = $image->save ( $tfile );
                     if (! $rst) {
                         log_error ( '生成缩略图失败:' . $tfile );
@@ -127,8 +126,7 @@ class ImageUtil {
             $allowSize = 1024 * $config ['fileSize'];
             if ($uriSize > $allowSize) {
                 continue;
-            }
-            
+            }            
             $tmpName = $savePath . rand ( 1, 10000 ) . time () . strrchr ( $imgUrl, '.' );
             try {
                 $fp2 = @fopen ( WEB_ROOT . $tmpName, "a" );

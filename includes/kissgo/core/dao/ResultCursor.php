@@ -26,8 +26,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      * @var DbSQL
      */
     protected $sql = null;
-    protected $alias = null;
-    protected $errorInfo = null;
+    protected $alias = null;    
     /**
      * 
      * create a Cursor for fetch result from database

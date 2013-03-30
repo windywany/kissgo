@@ -308,7 +308,11 @@ function smarty_modifiercompiler_static($params, $compiler) {
     $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
     return "BASE_URL.'{$url}'." . $params [0];
 }
-
+function smarty_modifiercompiler_img($params, $compiler) {
+    $tpl = defined ( 'STATIC_DIR' ) ? STATIC_DIR : 'static';
+    $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
+    return "BASE_URL.'{$url}'." . $params [0];
+}
 /**
  * Smarty url modifier plugin
  *

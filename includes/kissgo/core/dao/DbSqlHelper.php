@@ -14,6 +14,7 @@ class DbSqlHelper {
     protected $group = array ();
     protected $having = array ();
     protected $params = array ();
+    public $errorInfo = '';
     public function getTotalHelper($field = null) {
         $helper = new DbSqlHelper ();
         $helper->condition = $this->condition;

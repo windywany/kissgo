@@ -241,7 +241,15 @@ function access_checking($op, $resource, $redirect = '') {
         show_error_message ( __ ( 'You do not have permission to perform %s operator on the resource %s!', $op, $resource ), $redirect );
     }
 }
-
+/**
+ * get the user's passport
+ * @param int $uid
+ * @return Passport 
+ */
+function whoami($uid = 0){
+    $passport = Passport::getPassport ($uid);
+    return $passport;
+}
 /**
  * 保证登录，如果用户未登录，则跳转到登录页面
  * @param string $type 用户登录类型,默认为KISSGO_ADMIN

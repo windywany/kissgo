@@ -72,9 +72,11 @@ function do_admin_attachs_plupload_post($req, $res) {
                 // Read binary input stream and append it to temp file
                 $in = fopen ( $_FILES ['file'] ['tmp_name'], "rb" );
                 if ($in) {
-                    while ( $buff = fread ( $in, 4096 ) ) {
-                        fwrite ( $out, $buff );
-                    }
+                    do {
+                        $buff = fread ( $in, 4096 );
+                        if ($buff)
+                            fwrite ( $out, $buff );
+                    } while ( $buff );
                 } else {
                     die ( '{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}' );
                 }
@@ -95,8 +97,11 @@ function do_admin_attachs_plupload_post($req, $res) {
             $in = fopen ( "php://input", "rb" );
             
             if ($in) {
-                while ( $buff = fread ( $in, 4096 ) )
-                    fwrite ( $out, $buff );
+                do {
+                    $buff = fread ( $in, 4096 );
+                    if ($buff)
+                        fwrite ( $out, $buff );
+                } while ( $buff );
             } else {
                 die ( '{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}' );
             }

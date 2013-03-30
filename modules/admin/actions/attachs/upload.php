@@ -13,14 +13,16 @@ function do_admin_attachs_upload_get($req, $res) {
  * @param unknown_type $res
  */
 function do_admin_attachs_upload_post($req, $res) {
+    imports ( 'admin/models/CoreAttachmentTable.php' );
     $tmpdir = TMP_PATH . "plupload";
     $count = irqst ( 'uploader_count', 0 );
     $errors = array ();
+    $I = whoami ();
     if ($count > 0) {
         @set_time_limit ( 0 );
-        //$atM = new WebAttachmentModel ();
+        $atM = new CoreAttachmentTable ();
         $uploader = apply_filter ( 'get_uploader', new PlUploader () ); //得到文件上传器
-        //$data ['create_uid'] = $I->uid;
+        $data ['create_uid'] = $I ['uid'];
         $data ['create_time'] = time ();
         for($i = 0; $i < $count; $i ++) {
             $tmpfile = new UploadTmpFile ( $i, $tmpdir );
@@ -35,11 +37,16 @@ function do_admin_attachs_upload_post($req, $res) {
                 $data ['name'] = $tmpfile->title;
                 $data ['ext'] = trim ( $tmpfile->file_ext, '.' );
                 $data ['alt_text'] = $tmpfile->alt_text;
-                //$atM->save ( $data );
-                //生成缩略图与添加水印
-                if (in_array ( $tmpfile->file_ext, array ('.jpg', '.gif', 'jpeg', 'png' ) )) {
-                    $imageUtil = new ImageUtil ( $rst [1] );
-                    $imageUtil->thumbnail ( array (array (80, 60 ), array (280, 180 ) ) );
+                $ret = $atM->save ( $data );
+                if (count ( $ret ) > 0) {
+                    //生成缩略图与添加水印
+                    if (in_array ( $tmpfile->file_ext, array ('.jpg', '.gif', 'jpeg', 'png' ) )) {
+                        $uploader->thumbnail ( $rst [0], array (array (80, 60 ), array (260, 180 ), array (300, 200 ) ) );
+                        $uploader->watermark ( $rst [0], '' );
+                    }
+                } else {
+                    $errors [] = "文件上传失败: " . $ret->errorInfo;
+                    $uploader->delete ( $rst [1] );
                 }
             } else {
                 log_error ( "文件上传失败: " . $uploader->get_last_error () );

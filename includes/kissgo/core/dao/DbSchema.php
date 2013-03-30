@@ -42,6 +42,7 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
         return $this->fields;
     }
     public function getAutoUpdateData(&$data, $alias = '', $char = '`') {
+        $I = whoami ();
         $fields = array_merge ( array (), $this->fields );
         foreach ( $data as $name => $field ) {
             $name = str_replace ( array ($char, $alias, '.' ), '', $name );
@@ -51,7 +52,7 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
         if (! empty ( $fields )) {
             foreach ( $fields as $f => $def ) {
                 $f = $alias . $f;
-                if (in_array ( Idao::AUTOUPDATE_DATE, $def ) && in_array ( $def [Idao::TYPE], self::$DATE_TYPES )) {
+                if (in_array ( Idao::AUTOUPDATE_DATE, $def, true ) && in_array ( $def [Idao::TYPE], self::$DATE_TYPES )) {
                     switch ($def [Idao::TYPE]) {
                         case Idao::TYPE_DATE :
                             $data [$f] = date ( 'Y-m-d' );
@@ -65,20 +66,21 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
                         default :
                             break;
                     }
-                } else if (in_array ( Idao::AUTOUPDATE_UID, $def ) && $def [Idao::TYPE] == Idao::TYPE_INT) {
-                    $data [$f] = apply_filter ( 'get_current_uid', 0 );
+                } else if (in_array ( Idao::AUTOUPDATE_UID, $def, true ) && $def [Idao::TYPE] == Idao::TYPE_INT) {
+                    $data [$f] = $I ['uid'];
                 }
             }
         }
     }
     public function getAutoInsertData(&$data) {
+        $I = whoami ();
         $fields = array_merge ( array (), $this->fields );
         foreach ( $data as $name => $field ) {
             unset ( $fields [$name] );
         }
         if (! empty ( $fields )) {
             foreach ( $fields as $f => $def ) {
-                if (in_array ( Idao::AUTOINSERT_DATE, $def ) && in_array ( $def [Idao::TYPE], self::$DATE_TYPES )) {
+                if (in_array ( Idao::AUTOINSERT_DATE, $def, true ) && in_array ( $def [Idao::TYPE], self::$DATE_TYPES )) {
                     switch ($def [Idao::TYPE]) {
                         case Idao::TYPE_DATE :
                             $data [$f] = date ( 'Y-m-d' );
@@ -92,8 +94,8 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
                         default :
                             break;
                     }
-                } else if (in_array ( Idao::AUTOINSERT_UID, $def ) && $def [Idao::TYPE] == Idao::TYPE_INT) {
-                    $data [$f] = apply_filter ( 'get_current_uid', 0 );
+                } else if (in_array ( Idao::AUTOINSERT_UID, $def, true ) && $def [Idao::TYPE] == Idao::TYPE_INT) {
+                    $data [$f] = $I ['uid'];
                 }
             }
         }

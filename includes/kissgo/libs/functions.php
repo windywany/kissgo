@@ -398,10 +398,11 @@ function get_thumbnail_filename($filename, $w, $h) {
 }
 function the_thumbnail_src($src, $w, $h) {
     $thumbfile = get_thumbnail_filename ( $src, $w, $h );
-    if (file_exists ( WEB_ROOT . $thumbfile )) {
-        return BASE_URL . $thumbfile;
+    //TODO check whether the file exists or not, then decide which url will be return
+    if (file_exists ( WEB_ROOT . STATIC_DIR . DS . $thumbfile )) {
+        return BASE_URL . STATIC_DIR . '/' . $thumbfile;
     } else {
-        return BASE_URL . $src;
+        return BASE_URL . STATIC_DIR . '/' . $src;
     }
 }
 /**
@@ -1098,7 +1099,8 @@ function imtf($field, $alias = null) {
  *              'like'=>array(
  *                  'name'=>'the name of form',
  *                  'default'=>'default value',
- *                  'append'=>'append string to the value'
+ *                  'suffix'=>'append string to the value',
+ *                  'prefix'=>'preppend string to the value'
  *               )
  *          ),
  *          'field_name1'=>array(
@@ -1122,6 +1124,7 @@ function where($keys, &$data = null) {
     $where = array ();
     foreach ( $keys as $key => $def ) {
         if (! is_array ( $def )) {
+            $key = $filed = $def;
             $def = array ($def );
         } else if (isset ( $def ['name'] )) {
             $filed = $def ['name'];
@@ -1130,8 +1133,31 @@ function where($keys, &$data = null) {
             $filed = $key;
         }
         foreach ( $def as $op => $extra ) {
+            $extra = is_array ( $extra ) ? $extra : array ($extra );
             if (! is_numeric ( $op )) {
-                $key .= ' ' . $op;
+                switch ($op) {
+                    case 'like' :
+                        if (! isset ( $extra ['suffix'] )) {
+                            $extra ['suffix'] = '%';
+                        }
+                        if (! isset ( $extra ['prefix'] )) {
+                            $extra ['prefix'] = '%';
+                        }
+                        break;
+                    case 'llike' :
+                        if (! isset ( $extra ['suffix'] )) {
+                            $extra ['suffix'] = '%';
+                        }
+                        $op = 'like';
+                        break;
+                    case 'rlike' :
+                        if (! isset ( $extra ['prefix'] )) {
+                            $extra ['prefix'] = '%';
+                        }
+                        $op = 'like';
+                        break;
+                }
+                $key = $filed . ' ' . $op;
             }
             $default = null;
             $suffix = null;
