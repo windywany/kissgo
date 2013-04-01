@@ -64,6 +64,10 @@ interface Idao {
      * @param array $condition
      */
     public function delete($alias = null);
+    public function exist($data);
+    public function insert($data);
+    public function update($data, $where);
+    public function remove($where);
     public function lastId($name = null);
     /**
      * 

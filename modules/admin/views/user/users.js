@@ -1,4 +1,6 @@
 $(function() {
+	var curl = $('#user-list-url').attr('href');
+	
     $('#btn-selectall').click(function() {
         $('#user-list').uiTable('selectAll');
     });
@@ -33,10 +35,7 @@ $(function() {
         window.btnAddGroup = $(this);
         window.uid = btnAddGroup.attr('href').replace('#', '');
         $('#group-form input:checkbox').removeAttr('checked');
-        $('#group-form').modal({
-            backdrop : false,
-            show : true
-        });
+        $('#group-form').modal();
     });
 
     $('#btn-done').click(function() {
@@ -49,7 +48,7 @@ $(function() {
         if(gids.length) {
             btnAddGroup.find('i').removeClass('icon-remove-sign').addClass('icon-loading-14');
             $.eajax({
-                url : './?Ctlr=AddToGroup&uid=' + uid + '&gids=' + gids,
+                url : curl+'/a2g?uid=' + uid + '&gids=' + gids,
                 success : function(data) {
                     if(data.success) {
                         for(var i = 0; i < j; i++) {
@@ -75,7 +74,7 @@ $(function() {
             var uid = ids[0], gid = ids[1];
             $(this).find('i').removeClass('icon-remove-sign').addClass('icon-loading-14');
             $.eajax({
-                url : './?Ctlr=RemoveFromGroup&uid=' + uid + '&gid=' + gid,
+                url : curl+'/dfg?uid=' + uid + '&gid=' + gid,
                 success : function(data) {
                     if(data.success) {
                         g.parents('span').fadeOut(500, function() {

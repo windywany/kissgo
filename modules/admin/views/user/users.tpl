@@ -7,7 +7,7 @@
 <div class="tabbable ui-tabwrap">
         <ul class="nav nav-tabs">
 		    <li>&nbsp;&nbsp;</li>	
-			<li class="active"><a href="{$_CUR_URL}"><i class="icon-user"></i>用户列表</a></li>
+			<li class="active"><a href="{$_CUR_URL}" id="user-list-url"><i class="icon-user"></i>用户列表</a></li>
 			<li><a href="{$_CUR_URL}/add"><i class="icon-plus"></i>新增用户</a></li>			    
         </ul>
         <div class="tab-content">
@@ -75,7 +75,7 @@
             </div>
         </div>
     </div>
-    <div class="modal hide" id="group-form">
+    <div class="modal hide fade" tabindex="-1" id="group-form" data-backdrop="static" data-keyboard="false">
 		  	<div class="modal-header">
 			    <button class="close" data-dismiss="modal">×</button>
 			    <h3>选择角色</h3>

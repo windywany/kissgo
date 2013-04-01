@@ -14,8 +14,6 @@ class ExecuteResult extends DbSqlHelper implements Countable {
     private $sChar = null;
     public $isNew = false;
     /**
-     * 
-     * 
      * @param array $data
      * @param Idao $dao
      */
@@ -27,7 +25,9 @@ class ExecuteResult extends DbSqlHelper implements Countable {
         $this->builder = $this->driver->getSqlBuilder ();
         $this->sChar = $this->builder->specialChar ();
     }
-       
+    public function getData() {
+        return $this->data;
+    }
     public function count() {
         $schema = $this->dao->schema ();
         if (! empty ( $this->condition )) {
@@ -41,7 +41,14 @@ class ExecuteResult extends DbSqlHelper implements Countable {
         }
         if ($sql) {
             try {
-                return $sql->execute ( $this->driver );
+                $rst = $sql->execute ( $this->driver );
+                if ($this->isNew && $rst == 1) {
+                    $pk = $schema->getSerialPk ();
+                    if ($pk) {
+                        $this->data [$pk] = $this->driver->lastInsertId ( $pk );
+                    }
+                }
+                return $rst;
             } catch ( PDOException $e ) {
                 $this->errorInfo = $this->driver->errorInfo ();
                 log_debug ( $e->getMessage () . ' [' . $sql . ']' );
@@ -50,5 +57,4 @@ class ExecuteResult extends DbSqlHelper implements Countable {
         }
         return 0;
     }
-
 }

@@ -26,6 +26,33 @@ abstract class DbTable extends DbView {
     }
     /**
      * (non-PHPdoc)
+     * @see DbView::insert()
+     */
+    public function insert($data) {
+        $saver = $this->save ( $data );
+        if (count ( $saver ) > 0) {
+            return $saver->getData ();
+        }
+        return false;
+    }
+    /**
+     * (non-PHPdoc)
+     * @see DbView::remove()
+     */
+    public function remove($where) {
+        $deletor = $this->delete ()->where ( $where );
+        return count ( $deletor ) >= 0;
+    }
+    /**
+     * (non-PHPdoc)
+     * @see DbView::update()
+     */
+    public function update($data, $where) {
+        $saver = $this->save ( $data )->where ( $where );
+        return count ( $saver ) >= 0;
+    }
+    /**
+     * (non-PHPdoc)
      * @see Idao::lastId()
      */
     public function lastId($name = null) {

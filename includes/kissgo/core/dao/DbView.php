@@ -75,10 +75,32 @@ abstract class DbView implements Idao {
         return new ResultCursor ( $this, $fields, $alias );
     }
     /**
+     * 
+     * @param unknown_type $data
+     * @return boolean
+     */
+    public function exist($data) {
+        try {
+            $rst = $this->query ( 'rid' )->where ( $data );
+            return count ( $rst ) > 0;
+        } catch ( PDOException $e ) {
+            return false;
+        }
+    }
+    /**
      * (non-PHPdoc)
      * @see Idao::save()
      */
     public function save($data, $alias = null) {
+        return false;
+    }
+    public function insert($data) {
+        return false;
+    }
+    public function remove($where) {
+        return false;
+    }
+    public function update($data, $where) {
         return false;
     }
     
@@ -139,5 +161,4 @@ abstract class DbView implements Idao {
         }
         return false;
     }
-
 }

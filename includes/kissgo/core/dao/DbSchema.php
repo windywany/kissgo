@@ -19,6 +19,15 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
     public function getPrimaryKey() {
         return $this->primarykey;
     }
+    public function getSerialPk() {
+        if (count ( $this->primarykey ) == 1) {
+            $def = $this->fields [$this->primarykey [0]];
+            if ($def ['type'] == Idao::TYPE_SERIAL) {
+                return $this->primarykey [0];
+            }
+        }
+        return false;
+    }
     public function addIndex($name, $fields) {
         if (! is_array ( $fields )) {
             $fields = array ($fields );
@@ -96,6 +105,8 @@ class DbSchema implements IteratorAggregate, ArrayAccess {
                     }
                 } else if (in_array ( Idao::AUTOINSERT_UID, $def, true ) && $def [Idao::TYPE] == Idao::TYPE_INT) {
                     $data [$f] = $I ['uid'];
+                } else if (isset ( $def [Idao::DEFT] )) {
+                    $data [$f] = $def [Idao::DEFT];
                 }
             }
         }

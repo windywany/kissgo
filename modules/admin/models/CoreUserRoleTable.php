@@ -13,11 +13,21 @@ class CoreUserRoleTable extends DbTable {
         
         $schema ['rid'] = array ('type' => 'int', Idao::UNSIGNED, Idao::TYPE_EXTRA => Idao::TE_SMALL );
         $schema ['uid'] = array ('type' => 'int', Idao::UNSIGNED );
-        $schema ['sort'] = array ('type' => 'int', Idao::UNSIGNED, 'extra' => Idao::TE_SMALL, Idao::NN );
+        $schema ['sort'] = array ('type' => 'int', Idao::UNSIGNED, 'extra' => Idao::TE_SMALL, Idao::NN, Idao::DEFT => 0 );
         
         return $schema;
     }
     public function getGroups($uid) {
         return $this->query ( 'ROLE.*', 'CUR' )->ljoin ( 'role', 'CUR.rid=ROLE.rid', 'ROLE' )->where ( array ('uid' => $uid ) );
+    }
+    public function addToGroup($uid, $gids) {
+        foreach ( $gids as $gid ) {
+            $data ['rid'] = $gid;
+            $data ['uid'] = $uid;
+            if (! $this->exist ( $data )) {
+                $this->insert ( $data );
+            }
+        }
+        return true;
     }
 }
