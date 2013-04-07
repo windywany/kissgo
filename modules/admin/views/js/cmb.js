@@ -18,6 +18,8 @@ $(function() {
 		$('#fe_length').val('');
 		$('#fe_nn').removeAttr('checked');
 		$('#fe_unsigned').removeAttr('checked');
+		$('#fe_ai').removeAttr('checked');
+		$('#fe_au').removeAttr('checked');
 		$('#fe_comment').val('');
 	});
 	$('#idx-editor').on('hidden', function() {
@@ -79,6 +81,20 @@ $(function() {
 				if (fds.unsigned) {
 					f_str.push("Idao::UNSIGNED");
 				}
+				if (fds.ai) {
+					if(types[0] == 'int'){
+						f_str.push("Idao::AUTOINSERT_UID");
+					}else{
+						f_str.push("Idao::AUTOINSERT_DATE");
+					}					
+				}
+				if (fds.au) {
+					if(types[0] == 'int'){
+						f_str.push("Idao::AUTOUPDATE_UID");
+					}else{
+						f_str.push("Idao::AUTOUPDATE_DATE");
+					}					
+				}
 				if (fds.deft.length > 0) {
 					f_str.push(" Idao::DEFT => " + fds.deft);
 				}
@@ -107,8 +123,10 @@ $(function() {
 		field.length = $('#fe_length').val();
 		field.nn = $('#fe_nn').attr('checked');
 		field.unsigned = $('#fe_unsigned').attr('checked');
+		field.ai = $('#fe_ai').attr('checked');
+		field.au = $('#fe_au').attr('checked');
 		field.comment = $('#fe_comment').val();
-
+		
 		if (field.id) {
 			row = $('#cmb-f-row-' + field.id);
 		} else {
@@ -122,6 +140,8 @@ $(function() {
 		row.find('.fe-default').text(field.deft);
 		row.find('.fe-length').text(field.length);
 		row.find('.fe-nn').text(field.nn ? 'Y' : 'N');
+		row.find('.fe-ai').text(field.ai ? 'Y' : 'N');
+		row.find('.fe-au').text(field.au ? 'Y' : 'N');
 		row.find('.fe-unsigned').text(field.unsigned ? 'Y' : 'N');
 		row.find('.fe-comment').text(field.comment);
 		row.data('definition', field);
@@ -137,6 +157,8 @@ $(function() {
 			$('#fe_length').val(field.length);
 			field.nn ? $('#fe_nn').attr('checked', true) : $('#fe_nn').removeAttr('checked');
 			field.unsigned ? $('#fe_unsigned').attr('checked', true) : $('#fe_unsigned').removeAttr('checked');
+			field.ai ? $('#fe_ai').attr('checked', true) : $('#fe_ai').removeAttr('checked');
+			field.au ? $('#fe_au').attr('checked', true) : $('#fe_au').removeAttr('checked');
 			$('#fe_comment').val(field.comment);
 			$('#field-editor').modal();
 		} else if (confirm('Are you sure?')) {

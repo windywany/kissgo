@@ -39,6 +39,8 @@
                       			  		<th class="w50">Length</th>
                       			  		<th class="w50">NN</th>
                       			  		<th class="w50">UNSIGNED</th>
+                      			  		<th class="w50" title="Auto Insert">AI</th>
+                      			  		<th class="w50" title="Auto Update">AU</th>
                       			  		<th class="w180">Default</th>                      			  		
                       			  		<th class="wa">Comment</th>
                       			  		<th class="w120"></th>
@@ -51,6 +53,8 @@
                                   		<td class="fe-length"></td>
                                   		<td class="fe-nn"></td>
                                   		<td class="fe-unsigned"></td>
+                                  		<td class="fe-ai"></td>
+                                  		<td class="fe-au"></td>
                                   		<td class="fe-default"></td>
                                   		<td class="fe-comment"></td>
                                   		<td>
@@ -118,7 +122,8 @@
     				<option value="{$type@key}">{$type@key}</option>
     				{/foreach}
     			</select>
-    			<label class="checkbox"><input id="fe_nn" type="checkbox"/> NN</label>    			
+    			<label class="checkbox"><input id="fe_nn" type="checkbox"/> NN</label> 
+    			<label class="checkbox"><input id="fe_ai" type="checkbox"/> Auto Insert</label>   			
     		</div>
     		<div class="span6">
     			<label for="fe_default">Default</label>
@@ -126,6 +131,7 @@
     			<label for="fe_length">Length</label>
     			<input id="fe_length" type="text" class="span12"/>
     			<label class="checkbox"><input id="fe_unsigned" type="checkbox"/> UNSIGNED</label> 
+    			<label class="checkbox"><input id="fe_au" type="checkbox"/> Auto Update</label>
     		</div>
     		<div class="span12" style="margin-left:0px;">
     			<label for="fe_comment">Comment</label>
