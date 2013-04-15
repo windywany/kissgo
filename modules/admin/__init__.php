@@ -75,8 +75,7 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'admin', 'extension' ), 'icon-briefcase' );
     $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'admin', 'preference' ), 'icon-adjust' );
     $mm->addMenuItemDivider ( 'system' );
-    $mm->addMenuItem ( 'system', 'menuitem-cm-builder', __ ( 'Model Builder' ), murl ( 'admin', 'cmb' ), 'icon-tint' );
-    $mm->addMenuItem ( 'system', 'menuitem-fm-builder', __ ( 'Form Builder' ), murl ( 'admin', 'fmb' ), 'icon-tint' );
+    $mm->addMenuItem ( 'system', 'menuitem-cm-builder', __ ( 'Model Builder' ), murl ( 'admin', 'cmb' ), 'icon-tint' );    
    // Web Site
     $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'admin', 'pages' ), 'icon-file' );

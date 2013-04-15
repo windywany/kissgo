@@ -32,6 +32,10 @@ function on_install_module_cn_usephp_core_gui($rst) {
             $rtn = PdoDriver::$last_error_message;
             break;
         }
+        if (!PdoDriver::createTable ( new CoreAttachmentTable())) {
+            $rtn = PdoDriver::$last_error_message;
+            break;
+        }
     } while ( 0 );
     return empty ( $rtn ) ? '创建数据表时出错啦！' : $rtn;
 }
