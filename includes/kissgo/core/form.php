@@ -257,7 +257,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                 }
                 $widget_class = isset ( $widget [FWT_WIDGET] ) && ! empty ( $widget [FWT_WIDGET] ) ? $widget [FWT_WIDGET] : 'Text';
                 $widget_class = ucfirst ( $widget_class ) . 'Widget';
-                if (! class_exists ( $widget_class ) || ! is_subclass_of ( $widget_class, 'FormWidget' )) {
+                if (! class_exists ( $widget_class ) || ! is_subclass_of2 ( $widget_class, 'FormWidget' )) {
                     continue;
                 }
                 

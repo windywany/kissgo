@@ -16,7 +16,7 @@ class ProfileManager {
                 include $profile_file;
                 $profileClz = ucfirst ( $id ) . 'InstallProfile';
                 $this->profiles [$id] = array ('name' => $id, 'profileClz' => $profileClz );
-                if (class_exists ( $profileClz ) && is_subclass_of ( $profileClz, 'InstallProfile' )) {
+                if (class_exists ( $profileClz ) && is_subclass_of2 ( $profileClz, 'InstallProfile' )) {
                     $profileCls = new $profileClz ();
                     $this->profiles_opts [$id] = array ('name' => $profileCls->getProfileName (), 'description' => $profileCls->getDescription () );
                 }

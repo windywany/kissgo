@@ -41,7 +41,7 @@ abstract class PdoDriver extends PDO {
                 trigger_error ( '[' . $driver . ']数据库驱动器' . $driver_path . '实现文件' . $driverFile . '不存在.', E_USER_ERROR );
             }
             include_once $driverFile;
-            if (! is_subclass_of ( $driverClz, 'PdoDriver' )) {
+            if (! is_subclass_of2 ( $driverClz, 'PdoDriver' )) {
                 trigger_error ( '[' . $driver . ']数据库驱动器' . $driver_path . '不存在.', E_USER_ERROR );
             }
             $dr = new $driverClz ( $options );
