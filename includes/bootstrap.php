@@ -65,55 +65,6 @@ if (function_exists ( 'memory_get_usage' ) && (( int ) @ini_get ( 'memory_limit'
 if (function_exists ( 'mb_internal_encoding' )) {
     mb_internal_encoding ( 'UTF-8' );
 }
-function log_message($message, $trace_info, $level, $origin = null) {
-    static $fb = false;
-    static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
-    if ($level == DEBUG_ERROR) {
-        $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info['file']} - [{$trace_info['line']}] - {$message}\n";
-        @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
-    }
-    if ($level >= DEBUG) {
-        if (! $fb) {
-            $fb = true;
-            FB::setEnabled ( true );
-        }
-        $msg = $origin ? $origin : "{$trace_info['file']} - [{$trace_info['line']}] - {$message}";
-        switch ($level) {
-            case DEBUG_ERROR :
-                FB::error ( $msg );
-                break;
-            case DEBUG_INFO :
-                FB::info ( $msg );
-                break;
-            case DEBUG_WARN :
-                FB::warn ( $msg );
-                break;
-            case DEBUG_DEBUG :
-            default :
-                FB::log ( $msg );
-        }
-    }
-}
-function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
-    $trace_info = array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no );
-    if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
-        log_message ( $error_str, $trace_info, DEBUG_ERROR, $trace_info );
-        Response::getInstance ()->close ( true );
-    } else if ($error_no == E_USER_NOTICE) {
-        log_message ( $error_str, $trace_info, DEBUG_INFO, $trace_info );
-    } else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
-        log_message ( $error_str, $trace_info, DEBUG_WARN, $trace_info );
-    } else {
-        log_message ( $error_str, $trace_info, DEBUG_DEBUG );
-    }
-}
-set_error_handler ( '_kissgo_error_handler' );
-function _kissgo_exception_handler($exception) {
-    log_message ( html_entity_decode ( $exception->getMessage () ), array ('file' => $exception->getFile (), 'line' => $exception->getLine () ), DEBUG_ERROR, $exception );
-    Response::getInstance ()->close ( true );
-}
-set_exception_handler ( '_kissgo_exception_handler' );
-
 if (version_compare ( phpversion (), '5.3', '<' )) {
     @set_magic_quotes_runtime ( 0 );
 }
@@ -244,7 +195,10 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['TIMEZONE'] ) && ! empty ( $settings ['TIMEZONE'] )) {
         define ( 'TIMEZONE', $settings ['TIMEZONE'] );
     }
-    
+    if (isset ( $settings ['DEBUG_FIREPHP'] ) && ! empty ( $settings ['DEBUG_FIREPHP'] )) {
+        define ( 'DEBUG_FIREPHP', $settings ['DEBUG_FIREPHP'] );
+    }
+
     ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';
@@ -252,10 +206,59 @@ if (is_readable ( $_ksg_settings_file )) {
     exit ();
 }
 unset ( $_ksg_settings_file );
-defined ( 'DEBUG' ) or define ( 'DEBUG', 3 ); // debug level
+defined ( 'DEBUG' ) or define ( 'DEBUG', DEBUG_ERROR ); // debug level
 defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
 defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
 @date_default_timezone_set ( TIMEZONE );
+
+function log_message($message, $trace_info, $level, $origin = null) {
+    static $fb = false;
+    static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
+    if ($level >= DEBUG_WARN) {
+        $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info['file']} - [{$trace_info['line']}] - {$message}\n";
+        @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
+    }
+    if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
+        if (! $fb) {
+            $fb = true;
+            FB::setEnabled ( true );
+        }
+        $msg = $origin ? $origin : "{$trace_info['file']} - [{$trace_info['line']}] - {$message}";
+        switch ($level) {
+            case DEBUG_ERROR :
+                FB::error ( $msg );
+                break;
+            case DEBUG_INFO :
+                FB::info ( $msg );
+                break;
+            case DEBUG_WARN :
+                FB::warn ( $msg );
+                break;
+        }
+    }
+}
+if (DEBUG > DEBUG_DEBUG) {
+    error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+    function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
+        $trace_info = array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no );
+        if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
+            log_message ( $error_str, $trace_info, DEBUG_ERROR, $trace_info );
+            Response::getInstance ()->close ( true );
+        } else if ($error_no == E_USER_NOTICE) {
+            log_message ( $error_str, $trace_info, DEBUG_INFO, $trace_info );
+        } else if ($error_no == E_USER_WARNING || $error_no == E_WARNING) {
+            log_message ( $error_str, $trace_info, DEBUG_WARN, $trace_info );
+        }
+    }
+    set_error_handler ( '_kissgo_error_handler' );
+    function _kissgo_exception_handler($exception) {
+        log_message ( html_entity_decode ( $exception->getMessage () ), array ('file' => $exception->getFile (), 'line' => $exception->getLine () ), DEBUG_ERROR, $exception );
+        Response::getInstance ()->close ( true );
+    }
+    set_exception_handler ( '_kissgo_exception_handler' );
+}else{
+    error_reporting(E_ALL & ~E_NOTICE);
+}
 // load kissgo libs scripts
 include INCLUDES . 'vendors/firephp/fb.php';
 include KISSGO . 'libs/i18n.php';
@@ -296,7 +299,7 @@ function _kissgo_class_loader($clz) {
     }
     $file = apply_filter ( 'auto_load_class', '', $clz );
     if ($file && file_exists ( $file )) {
-        include $file;       
+        include $file;
     }
 }
 spl_autoload_register ( '_kissgo_class_loader' );
