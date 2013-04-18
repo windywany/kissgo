@@ -19,6 +19,7 @@ function thefilename($filename) {
  * reimplements is_subclass_of function
  * @param mixed $object
  * @param string $class_name
+ * @return boolean
  */
 function is_subclass_of2($object, $class_name) {
     if (version_compare ( '5.3.7', phpversion (), '>' )) {
@@ -26,7 +27,7 @@ function is_subclass_of2($object, $class_name) {
             return true;
         } else {
             $intefaces = class_implements ( $object );
-            return $intefaces && in_array ( $class_name, is_string ( $object ) ? $object : get_class ( $object ) );
+            return $intefaces && isset($intefaces[$class_name]);
         }
     } else {
         return is_subclass_of ( $object, $class_name );
