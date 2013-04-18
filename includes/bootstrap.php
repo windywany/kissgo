@@ -238,7 +238,7 @@ function log_message($message, $trace_info, $level, $origin = null) {
     }
 }
 if (DEBUG > DEBUG_DEBUG) {
-    error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+    error_reporting ( E_ALL & ~ E_NOTICE & ~ E_WARNING );
     function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
         $trace_info = array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no );
         if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
@@ -256,11 +256,13 @@ if (DEBUG > DEBUG_DEBUG) {
         Response::getInstance ()->close ( true );
     }
     set_exception_handler ( '_kissgo_exception_handler' );
-}else{
-    error_reporting(E_ALL & ~E_NOTICE);
+} else {
+    error_reporting ( E_ALL & ~ E_NOTICE );
 }
 // load kissgo libs scripts
-include INCLUDES . 'vendors/firephp/fb.php';
+if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
+    include INCLUDES . 'vendors/firephp/fb.php';
+}
 include KISSGO . 'libs/i18n.php';
 include KISSGO . 'libs/functions.php';
 include KISSGO . 'libs/plugin.php';
