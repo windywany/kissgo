@@ -29,6 +29,7 @@ class ExtensionManager {
      * 加载已经安装的插件
      */
     public function loadInstalledExtensions($load_init = true) {
+        global $__kissgo_exports;
         // 加载用户安装插件
         if (file_exists ( APPDATA_PATH . 'extensions.ini' )) {
             $this->extensions = parse_ini_file ( APPDATA_PATH . 'extensions.ini', true );
@@ -42,6 +43,7 @@ class ExtensionManager {
             return;
         }
         if ($load_init) {
+            $ps = array ('models', 'forms', 'libs', 'classes', 'common', 'includes' );
             foreach ( $this->extensions as $name => $plugin ) {
                 if (isset ( $plugin ['disabled'] ) && $plugin ['disabled']) {
                     continue;
@@ -53,6 +55,12 @@ class ExtensionManager {
                 if (isset ( $plugin ['alias'] ) && ! empty ( $plugin ['alias'] )) {
                     $this->aliases ['u2m'] [$plugin ['alias']] = $plugin ['Module'];
                     $this->aliases ['m2u'] [$plugin ['Module']] = $plugin ['alias'];
+                }
+                foreach ( $ps as $p ) {
+                    $path = MODULES_PATH . $plugin ['Module'] . DS . $p;
+                    if (is_dir ( $path )) {
+                        $__kissgo_exports [] = $path;
+                    }
                 }
             }
             $this->load ( $this->modules );
@@ -286,7 +294,7 @@ class ExtensionManager {
         if (isset ( $extensions [$plugin ['Module_ID']] )) {
             $plugin ['Installed'] = true;
             $plugin ['disabled'] = $extensions [$plugin ['Module_ID']] ['disabled'];
-            $plugin ['unremovable'] = $extensions [$plugin ['Module_ID']] ['unremovable'];            
+            $plugin ['unremovable'] = $extensions [$plugin ['Module_ID']] ['unremovable'];
             $plugin ['upgradable'] = $this->isUpgradable ( $plugin, $extensions [$plugin ['Module_ID']] ['Version'] );
             if ($this->getUpgradeInfo) {
                 $plugin ['curVersion'] = $extensions [$plugin ['Module_ID']] ['Version'];

@@ -334,9 +334,9 @@ class InstallDbForm extends BootstrapForm {
  */
 class InstallConfigForm extends BootstrapForm {
     var $site_name = array (FWT_LABEL => '网站名称', FWT_TIP => '网站的主要名称.', FWT_INITIAL => '我的网站', FWT_VALIDATOR => array ('required' => '网站名称不能为空，必须填写.' ) );
-    var $security_key = array (FWT_LABEL => '安全码', FWT_TIP => '用于加密一些比较敏感的COOKIE数据或加密与其它服务器交换的数.', FWT_INITIAL => '', FWT_VALIDATOR => array ('required' => '安全码不能为空，必须填写.', 'minlength(32)' => '为了保证安全,安全码长度不能小于32个字符.' ), FWT_OPTIONS => array ('class' => 'input-xxlarge' ), FWT_TIP_SHOW => FWT_TIP_SHOW_T, FWT_NO_APPLY => true );
+    var $security_key = array (FWT_LABEL => '安全码', FWT_TIP => '用于加密一些比较敏感的COOKIE数据或加密与其它服务器交换的数.', FWT_INITIAL_FUN => '@getSecurityCode', FWT_VALIDATOR => array ('required' => '安全码不能为空，必须填写.', 'minlength(32)' => '为了保证安全,安全码长度不能小于32个字符.' ), FWT_OPTIONS => array ('class' => 'input-xxlarge' ), FWT_TIP_SHOW => FWT_TIP_SHOW_T, FWT_NO_APPLY => true );
     var $gzip = array (FWT_WIDGET => 'scheckbox', FWT_LABEL => '启用GZIP压缩', FWT_TIP => '启用GZIP压缩以节省网络流利与加快传输速度.' );
-    var $clean_url = array (FWT_WIDGET => 'scheckbox', FWT_LABEL => '启用重写', FWT_TIP => '需要服务器支持.' );
+    var $clean_url = array (FWT_WIDGET => 'scheckbox', FWT_LABEL => '启用伪静态', FWT_TIP => '需要服务器支持.', FWT_INITIAL_FUN => '@isSupportedCleanURL' );
     var $i18n = array (FWT_WIDGET => 'scheckbox', FWT_LABEL => '启用多语言支持' );
     var $timezone = array (FWT_WIDGET => 'select', FWT_LABEL => '选择时区', FWT_TIP => '选择系统将使用的时区.', FWT_OPTIONS => array ('class' => 'span2' ), FWT_INITIAL => 'Asia/Shanghai', FWT_BIND => '@getTimezones' );
     var $date_format = array (FWT_WIDGET => 'select', FWT_LABEL => '日期格式', FWT_TIP => '系统将以此格式显示日期.', FWT_OPTIONS => array ('class' => 'span2' ), FWT_INITIAL => 'Y-m-d', FWT_BIND => '@getDateFormats' );
@@ -355,6 +355,23 @@ class InstallConfigForm extends BootstrapForm {
     public function getDebugLevels() {
         $levels = array (DEBUG_DEBUG => '调试(记录所有日志)', DEBUG_WARN => '警告(记录除调试之外的日志)', DEBUG_INFO => '信息(记录信息与错误日志)', DEBUG_ERROR => '错误(仅记录错误日志)' );
         return $levels;
+    }
+    public function getSecurityCode() {
+        return randstr ( 48 );
+    }
+    public function isSupportedCleanURL() {
+        $headers = get_headers ( detect_app_base_url ( true ) . 'install.test.clean.url' );
+        if (preg_match ( '#.*OK$#', $headers [0] ))
+            return 1;
+        return 0;
+    }
+    public function init_clean_url(&$widget, &$value) {
+        if (! $value) {
+            $widget [FWT_OPTIONS] ['disabled'] = 'disabled';
+            $widget [FWT_TIP] = '您的服务器不支持伪静态.';
+        }else{
+            $widget [FWT_TIP] = '您的服务器支持伪静态,建议开启.';
+        }
     }
 }
 //end of install.php file

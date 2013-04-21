@@ -48,21 +48,3 @@ function do_admin_captcha_get($req, $res) {
     $ImageFun ( $im );
     @imagedestroy ( $im );
 }
-function randstr($len = 6, $format = "ALL") {
-    switch ($format) {
-        case "CHAR" :
-            $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            break;
-        case "NUMBER" :
-            $chars = "0123456789";
-            break;
-        case "ALL" :
-        default :
-            $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    }
-    $string = "";
-    while ( strlen ( $string ) < $len ) {
-        $string .= substr ( $chars, mt_rand () % strlen ( $chars ), 1 );
-    }
-    return $string;
-}

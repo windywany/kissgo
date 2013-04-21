@@ -179,5 +179,5 @@
 </div>
 {/block}
 {block name="admincp_foot_js_block"}
-	<script type="text/javascript" src="{'js/cmb.js'|here}"></script>
+	<script type="text/javascript" src="{'cmb.js'|here}"></script>
 {/block}

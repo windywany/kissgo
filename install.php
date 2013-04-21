@@ -124,9 +124,12 @@ switch ($step) {
         $taskes = $installer->get_install_taskes ();
         $tpl = new JsonView ( array ('success' => true, 'taskes' => $taskes ) );
         break;
-    default :
+    case 'welcome':
         $_SESSION ['INSTALL_STEP'] = 'welcome';
         $tpl = view ( 'admin/views/install/welcome.tpl', $data );
+        break;
+    default :
+        exit('ok');
 }
 echo $tpl->render ();
 ?>

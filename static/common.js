@@ -429,15 +429,7 @@
 		$('.stuffbox').on('click','.handlediv',function(){
 			var $this = $(this), $box = $this.parents('.stuffbox');
 			$box.toggleClass('closed');
-		});
-		$.fn.popover && $('body').popover({
-				selector: "[rel=popover]",
-				html: true,
-				trigger:"focus"
-		});
-		setTimeout(function() {
-			$(".alert").alert('close');
-		}, 10000);
+		});				
 	});
 })(jQuery);
 

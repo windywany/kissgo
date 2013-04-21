@@ -19,6 +19,7 @@ define ( 'FWT_NO_APPLY', 'not_apply_default' );
 define ( 'FWT_SEARCH', 'search' );
 define ( 'FWT_OPTIONS', 'options' );
 define ( 'FWT_INITIAL', 'initial' );
+define ( 'FWT_INITIAL_FUN', 'initial_fun' );
 define ( 'FWT_BLOCK_TIP', 'blockTip' );
 define ( 'FWT_TIP_SHOW', 'tip_show' );
 define ( 'FWT_TIP_SHOW_T', 'top' );
@@ -284,6 +285,20 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                 } else if (isset ( $widget [FWT_INITIAL] )) {
                     $value = $widget [FWT_INITIAL];
                     $this->__properties__ ['data'] [$widget_name] = $value;
+                } else if (isset ( $widget [FWT_INITIAL_FUN] )) {
+                    $initial_fun = $widget [FWT_INITIAL_FUN];
+                    if (is_array ( $initial_fun ) && count ( $initial_fun ) == 1) {
+                        $initial_fun = array_merge ( array ($this ), $initial_fun );
+                    } else if ($initial_fun {0} == '@') {
+                        $initial_fun = array ($this, substr ( $initial_fun, 1 ) );
+                    }
+                    if (is_callable ( $initial_fun )) {
+                        $value = call_user_func_array ( $initial_fun, array () );
+                        $this->__properties__ ['data'] [$widget_name] = $value;
+                    }
+                }
+                if (method_exists ( $this, 'init_' . $widget_name )) {
+                    call_user_method_array ( 'init_' . $widget_name, $this, array (&$widget, &$value ) );
                 }
                 $widget_object = new $widget_class ( $widget, $value, $this );
                 $this->addWidget ( $widget_name, $widget_object );
@@ -487,7 +502,7 @@ abstract class FormWidget {
         if (isset ( $this->option [FWT_BIND] ) && is_callable ( $this->option [FWT_BIND] )) {
             return call_user_func_array ( $this->option [FWT_BIND], array ($this->value, $this->form->getInitialData () ) );
         }
-        return null;
+        return array ();
     }
     
     /**
@@ -569,6 +584,7 @@ class TableForm extends BaseForm {
  *
  */
 class BootstrapForm extends BaseForm {
+    private static $echoed = false;
     protected function getFormHead() {
         return "";
     }
@@ -589,7 +605,10 @@ class BootstrapForm extends BaseForm {
         return $wrapper;
     }
     protected function getFormFoot() {
-        return '';
+        if (! self::$echoed) {
+            self::$echoed = true;
+            return '<script type="text/javascript">$(function(){$.fn.popover && $(\'body\').popover({selector: "[rel=popover]",html: true,trigger:"focus"});});</script>';
+        }
     }
 }
 /**

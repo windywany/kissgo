@@ -69,11 +69,28 @@ if (version_compare ( phpversion (), '5.3', '<' )) {
     @set_magic_quotes_runtime ( 0 );
 }
 @ini_set ( 'magic_quotes_sybase', 0 ); // no magic quotes
-function detect_app_base_url() {
+function detect_app_base_url($full = false) {
     $script_name = $_SERVER ['SCRIPT_NAME'];
     $script_name = trim ( str_replace ( WEB_ROOT, '', $script_name ), '/' );
     $script_names = explode ( '/', $script_name );
     array_pop ( $script_names );
+    $base = '/';
+    if ($full) {
+        $port = $_SERVER ['SERVER_PORT'];
+        $https = empty($_SERVER ['HTTPS'])?false:true;
+        if (!empty($https) && $https != 'off' ) {
+            $http = 'https://';
+        } else {
+            $http = 'http://';
+        }
+        if (($https && $port != 443) || (! $https && $port != 80)) {
+            $port = ':' . $port;
+        } else {
+            $port = '';
+        }
+        $base = $http . $_SERVER ['HTTP_HOST'] . $port . $base;
+    }
+    
     if (! empty ( $script_names ) && ! is_file ( WEB_ROOT . $script_name )) {
         $web_roots = explode ( '/', trim ( str_replace ( DS, '/', WEB_ROOT ), '/' ) );
         $matchs = array ();
@@ -88,10 +105,10 @@ function detect_app_base_url() {
             }
         }
         if ($pos > 0) {
-            return '/' . implode ( '/', $matchs ) . '/';
+            $base .= implode ( '/', $matchs ) . '/';
         }
     }
-    return '/';
+    return $base;
 }
 /**
  * 应用程序设置类
@@ -198,7 +215,7 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['DEBUG_FIREPHP'] ) && ! empty ( $settings ['DEBUG_FIREPHP'] )) {
         define ( 'DEBUG_FIREPHP', $settings ['DEBUG_FIREPHP'] );
     }
-
+    
     ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';
@@ -210,7 +227,6 @@ defined ( 'DEBUG' ) or define ( 'DEBUG', DEBUG_ERROR ); // debug level
 defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
 defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
 @date_default_timezone_set ( TIMEZONE );
-
 function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
@@ -238,7 +254,8 @@ function log_message($message, $trace_info, $level, $origin = null) {
     }
 }
 if (DEBUG > DEBUG_DEBUG) {
-    error_reporting ( E_ALL & ~ E_NOTICE & ~ E_WARNING );
+    error_reporting ( E_ALL & ~ E_NOTICE & ~ E_WARNING & ~E_DEPRECATED & ~E_STRICT);
+    @ini_set( 'display_errors', 0 );
     function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
         $trace_info = array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no );
         if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
@@ -258,6 +275,7 @@ if (DEBUG > DEBUG_DEBUG) {
     set_exception_handler ( '_kissgo_exception_handler' );
 } else {
     error_reporting ( E_ALL & ~ E_NOTICE );
+    @ini_set( 'display_errors', 1 );
 }
 // load kissgo libs scripts
 if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
