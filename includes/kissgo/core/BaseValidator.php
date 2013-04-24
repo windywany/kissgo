@@ -61,7 +61,7 @@ class BaseValidator implements IValidator {
                     break;
                 case 'range' :
                 case 'rangelength' :
-                    $rs [] = $m . ':[' . $exp ['option'] [0] . ', ' . $exp ['option'] [0] . ']';
+                    $rs [] = $m . ':[' . $exp ['option'] [0] . ', ' . $exp ['option'] [1] . ']';
                     break;
                 case 'num' :
                     $m = 'number';
