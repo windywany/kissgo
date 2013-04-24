@@ -61,7 +61,8 @@ class BaseValidator implements IValidator {
                     break;
                 case 'range' :
                 case 'rangelength' :
-                    $rs [] = $m . ':[' . $exp ['option'] [0] . ', ' . $exp ['option'] [1] . ']';
+                    $lens = explode(",", $exp ['option']);
+                    $rs [] = $m . ':[' . intval($lens[0]) . ', ' . intval($lens[1]) . ']';
                     break;
                 case 'num' :
                     $m = 'number';
