@@ -753,7 +753,7 @@ function safe_url($page) {
  */
 function log_debug($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_DEBUG, $trace );
+    log_message ( $message, $trace, DEBUG_DEBUG, $trace );
 }
 
 /**
@@ -763,7 +763,7 @@ function log_debug($message) {
  */
 function log_info($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_INFO, $trace );
+    log_message ( $message, $trace, DEBUG_INFO, $trace );
 }
 
 /**
@@ -773,7 +773,7 @@ function log_info($message) {
  */
 function log_warn($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_WARN, $trace );
+    log_message ( $message, $trace, DEBUG_WARN, $trace );
 }
 
 /**
@@ -783,7 +783,7 @@ function log_warn($message) {
  */
 function log_error($message) {
     $trace = debug_backtrace ();
-    log_message ( $message, $trace [0], DEBUG_ERROR, $trace );
+    log_message ( $message, $trace, DEBUG_ERROR, $trace );
 }
 /**
  * 将模块路径，Action,参数等数据转换成url

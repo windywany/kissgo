@@ -51,8 +51,7 @@ class ExecuteResult extends DbSqlHelper implements Countable {
                 return $rst;
             } catch ( PDOException $e ) {
                 $this->errorInfo = $this->driver->errorInfo ();
-                log_debug ( $e->getMessage () . ' [' . $sql . ']' );
-                //throw $e;
+                log_debug ( $e->getMessage () . ' [' . $sql . ']' );                
             }
         }
         return 0;

@@ -77,8 +77,8 @@ function detect_app_base_url($full = false) {
     $base = '/';
     if ($full) {
         $port = $_SERVER ['SERVER_PORT'];
-        $https = empty($_SERVER ['HTTPS'])?false:true;
-        if (!empty($https) && $https != 'off' ) {
+        $https = empty ( $_SERVER ['HTTPS'] ) ? false : true;
+        if (! empty ( $https ) && $https != 'off') {
             $http = 'https://';
         } else {
             $http = 'http://';
@@ -230,16 +230,24 @@ defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
 function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
-    if ($level >= DEBUG_WARN) {
-        $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info['file']} - [{$trace_info['line']}] - {$message}\n";
-        @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
+    if ($level < DEBUG_OFF) {
+        if (DEBUG == DEBUG_DEBUG) {
+            trigger_error ( $message, E_USER_WARNING );
+            echo "<pre>";
+            ksort ( $trace_info, SORT_NUMERIC );
+            print_r ( $trace_info );
+            echo "</pre>";
+        } else {
+            $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}\n";
+            @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
+        }
     }
     if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
         if (! $fb) {
             $fb = true;
             FB::setEnabled ( true );
         }
-        $msg = $origin ? $origin : "{$trace_info['file']} - [{$trace_info['line']}] - {$message}";
+        $msg = $origin ? $origin : "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}";
         switch ($level) {
             case DEBUG_ERROR :
                 FB::error ( $msg );
@@ -254,10 +262,10 @@ function log_message($message, $trace_info, $level, $origin = null) {
     }
 }
 if (DEBUG > DEBUG_DEBUG) {
-    error_reporting ( E_ALL & ~ E_NOTICE & ~ E_WARNING & ~E_DEPRECATED & ~E_STRICT);
-    @ini_set( 'display_errors', 0 );
+    error_reporting ( E_ALL & ~ E_NOTICE & ~ E_WARNING & ~ E_DEPRECATED & ~ E_STRICT );
+    @ini_set ( 'display_errors', 0 );
     function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
-        $trace_info = array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no );
+        $trace_info = array (0 => array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no ) );
         if ($error_no == E_USER_ERROR || $error_no == E_ERROR) {
             log_message ( $error_str, $trace_info, DEBUG_ERROR, $trace_info );
             Response::getInstance ()->close ( true );
@@ -269,13 +277,13 @@ if (DEBUG > DEBUG_DEBUG) {
     }
     set_error_handler ( '_kissgo_error_handler' );
     function _kissgo_exception_handler($exception) {
-        log_message ( html_entity_decode ( $exception->getMessage () ), array ('file' => $exception->getFile (), 'line' => $exception->getLine () ), DEBUG_ERROR, $exception );
+        log_message ( html_entity_decode ( $exception->getMessage () ), array (array ('file' => $exception->getFile (), 'line' => $exception->getLine () ) ), DEBUG_ERROR, $exception );
         Response::getInstance ()->close ( true );
     }
     set_exception_handler ( '_kissgo_exception_handler' );
 } else {
     error_reporting ( E_ALL & ~ E_NOTICE );
-    @ini_set( 'display_errors', 1 );
+    @ini_set ( 'display_errors', 1 );
 }
 // load kissgo libs scripts
 if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
