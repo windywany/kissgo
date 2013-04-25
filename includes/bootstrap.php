@@ -231,38 +231,35 @@ function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
     if ($level < DEBUG_OFF) {
-        if (DEBUG == DEBUG_DEBUG) {
-            trigger_error ( $message, E_USER_WARNING );
-            echo "<pre>";
-            ksort ( $trace_info, SORT_NUMERIC );
-            print_r ( $trace_info );
-            echo "</pre>";
-        } else {
+        if ($level >= DEBUG_DEBUG) {
             $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}\n";
             @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
         }
-    }
-    if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
-        if (! $fb) {
-            $fb = true;
-            FB::setEnabled ( true );
+        if (DEBUG == DEBUG_DEBUG) {
+            trigger_error ( $message, E_USER_WARNING );
         }
-        $msg = $origin ? $origin : "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}";
-        switch ($level) {
-            case DEBUG_ERROR :
-                FB::error ( $msg );
-                break;
-            case DEBUG_INFO :
-                FB::info ( $msg );
-                break;
-            case DEBUG_WARN :
-                FB::warn ( $msg );
-                break;
+        if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
+            if (! $fb) {
+                $fb = true;
+                FB::setEnabled ( true );
+            }
+            $msg = $origin ? $origin : "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}";
+            switch ($level) {
+                case DEBUG_ERROR :
+                    FB::error ( $msg );
+                    break;
+                case DEBUG_INFO :
+                    FB::info ( $msg );
+                    break;
+                case DEBUG_WARN :
+                    FB::warn ( $msg );
+                    break;
+            }
         }
     }
 }
 if (DEBUG > DEBUG_DEBUG) {
-    error_reporting ( E_ALL & ~ E_NOTICE & ~ E_WARNING & ~ E_DEPRECATED & ~ E_STRICT );
+    error_reporting ( E_ALL & ~ E_NOTICE & ~ E_DEPRECATED & ~ E_STRICT );
     @ini_set ( 'display_errors', 0 );
     function _kissgo_error_handler($error_no, $error_str, $error_file, $error_line) {
         $trace_info = array (0 => array ('file' => $error_file, 'line' => $error_line, 'message' => $error_str, 'error no' => $error_no ) );

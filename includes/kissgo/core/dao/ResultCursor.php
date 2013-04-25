@@ -26,7 +26,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      * @var DbSQL
      */
     protected $sql = null;
-    protected $alias = null;    
+    protected $alias = null;
     /**
      * 
      * create a Cursor for fetch result from database
@@ -60,22 +60,16 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
             if ($this->stmt == null) {
                 $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this );
                 if ($sql) {
-                    try {
-                        $this->stmt = $sql->query ( $this->driver );
-                        $this->stmt->setFetchMode ( PDO::FETCH_ASSOC );
-                        $this->params = $sql->values ();
-                    } catch ( Exception $e ) {
-                        $this->errorInfo = $this->driver->errorInfo ();
-                        log_debug ( $e->getMessage () . ' [' . $sql . ']' );
-                        throw $e;
-                    }
+                    $this->stmt = $sql->query ( $this->driver );
                 }
             }
             if ($this->stmt) {
+                $this->stmt->setFetchMode ( PDO::FETCH_ASSOC );
+                $this->params = $sql->values ();
                 $this->rows = $this->stmt->fetchAll ();
                 return $this->rows;
             }
-            throw new Exception ( "the PdoStatment is null", 500, NULL );
+            db_error ( "the PdoStatment is null" );
         }
         return null;
     }
@@ -90,11 +84,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      * return the size of the result
      */
     public function size() {
-        try {
-            return count ( $this->rows );
-        } catch ( Exception $e ) {
-            return false;
-        }
+        return count ( $this->rows );
     }
     /**
      * 返回结果集的数组
@@ -103,33 +93,25 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      * @return array
      */
     public function toArray($field = "", $vfield = "", $results = array()) {
-        try {
-            if (! empty ( $field ) || is_numeric ( $field )) {
-                foreach ( $this->rows as $key => $value ) {
-                    $key = $value [$field];
-                    $value = empty ( $vfield ) ? $value : $value [$vfield];
-                    $results [$key] = $value;
-                }
-            } else {
-                $results += $this->rows;
+        if (! empty ( $field ) || is_numeric ( $field )) {
+            foreach ( $this->rows as $key => $value ) {
+                $key = $value [$field];
+                $value = empty ( $vfield ) ? $value : $value [$vfield];
+                $results [$key] = $value;
             }
-        } catch ( PDOException $e ) {
-            log_debug ( $e->getMessage () );
+        } else {
+            $results += $this->rows;
         }
         return $results;
     }
     public function walk($callback) {
         $results = array ();
-        try {
-            foreach ( $this->rows as $key => $value ) {
-                $walked = call_user_func_array ( $callback, array ($key, $value ) );
-                if (count ( $walked ) == 2) {
-                    list ( $keyx, $value ) = $walked;
-                    $results [$keyx] = $value;
-                }
+        foreach ( $this->rows as $key => $value ) {
+            $walked = call_user_func_array ( $callback, array ($key, $value ) );
+            if (count ( $walked ) == 2) {
+                list ( $keyx, $value ) = $walked;
+                $results [$keyx] = $value;
             }
-        } catch ( PDOException $e ) {
-            log_debug ( $e->getMessage () );
         }
         return $results;
     }
@@ -143,14 +125,10 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      */
     public function r2c($field) {
         $results = array ();
-        try {
-            foreach ( $this->rows as $key => $value ) {
-                if (isset ( $value [$field] )) {
-                    $results [] = $value [$field];
-                }
+        foreach ( $this->rows as $key => $value ) {
+            if (isset ( $value [$field] )) {
+                $results [] = $value [$field];
             }
-        } catch ( PDOException $e ) {
-            log_debug ( $e->getMessage () );
         }
         return $results;
     }
@@ -174,14 +152,11 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
                 $sql = $this->builder->select ( array ($sql1, 'TMP_CNT_TABLE' ), $helper );
             }
             if ($sql != null) {
-                try {
-                    $this->errorInfo = false;
-                    $rst = $sql->query ( $this->driver );
+                $this->errorInfo = false;
+                $rst = $sql->query ( $this->driver );
+                if ($rst) {
                     $item = $rst->fetch ( PDO::FETCH_ASSOC );
                     $this->total = $item ['total'];
-                } catch ( PDOException $e ) {
-                    $this->errorInfo = $this->driver->errorInfo ();
-                    log_debug ( $e->getMessage () . ' [' . $sql . ']' );
                 }
             }
         }

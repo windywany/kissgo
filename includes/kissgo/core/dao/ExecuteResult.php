@@ -40,19 +40,14 @@ class ExecuteResult extends DbSqlHelper implements Countable {
             $this->isNew = true;
         }
         if ($sql) {
-            try {
-                $rst = $sql->execute ( $this->driver );
-                if ($this->isNew && $rst == 1) {
-                    $pk = $schema->getSerialPk ();
-                    if ($pk) {
-                        $this->data [$pk] = $this->driver->lastInsertId ( $pk );
-                    }
+            $rst = $sql->execute ( $this->driver );
+            if ($this->isNew && $rst == 1) {
+                $pk = $schema->getSerialPk ();
+                if ($pk) {
+                    $this->data [$pk] = $this->driver->lastInsertId ( $pk );
                 }
-                return $rst;
-            } catch ( PDOException $e ) {
-                $this->errorInfo = $this->driver->errorInfo ();
-                log_debug ( $e->getMessage () . ' [' . $sql . ']' );                
             }
+            return $rst;
         }
         return 0;
     }

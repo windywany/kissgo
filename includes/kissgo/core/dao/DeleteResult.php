@@ -25,12 +25,7 @@ class DeleteResult extends DbSqlHelper implements Countable {
     public function count() {
         $sql = $this->builder->delete ( array ($this->dao, $this->alias ), $this );
         if ($sql) {
-            try {
-                return $sql->execute ( $this->driver );
-            } catch ( Exception $e ) {
-                $this->errorInfo = $this->driver->errorInfo ();
-                log_debug ( $e->getMessage () . ' [' . $sql . ']' );               
-            }
+            return $sql->execute ( $this->driver );
         }
         return 0;
     }

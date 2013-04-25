@@ -90,3 +90,19 @@ interface Idao {
      */
     public function getCreateSql();
 }
+$__kissgo_db_error = array ();
+/**
+ * set or get the database error
+ * @param mixed $error
+ * @return mixed
+ */
+function db_error($error = null) {
+    global $__kissgo_db_error;
+    if (is_string ( $error )) {
+        $__kissgo_db_error [] = $error;
+        log_warn ( $error );
+    } else if (! empty ( $__kissgo_db_error )) {
+        $msg = implode ( "\n", $__kissgo_db_error );
+        return $error === true ? nl2br ( $msg ) : $msg;
+    }
+}

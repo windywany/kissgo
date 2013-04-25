@@ -69,7 +69,7 @@ class Response {
         if (! empty ( $args ) && is_array ( $args )) {
             $_args = array ();
             foreach ( $args as $n => $v ) {
-                $_args [] = $n . '=' . urlencode ( $v );
+                $_args [$n] = $n . '=' . urlencode ( $v );
             }
             $args = implode ( '&', $_args );
         }
@@ -197,8 +197,8 @@ class Response {
 	 * @param string $content
 	 * @return string
 	 */
-    public function ob_out_handler($content) {
-        $this->content = apply_filter ( 'filter_output_content', $content );
+    public function ob_out_handler($content) {        
+        $this->content = apply_filter ( 'filter_output_content', $content );        
         return $this->content;
     }
     

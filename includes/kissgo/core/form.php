@@ -39,6 +39,16 @@ define ( 'FWT_TIP_SHOW_S', 's' );
  */
 abstract class BaseForm implements ArrayAccess, Iterator {
     private $__properties__ = array ();
+    private $__title__ = '';
+    private $__options__ = array ();
+    private $__id__ = '';
+    private $__validator__ = null;
+    private $__data__ = array ();
+    private $__widgets__ = array ();
+    private $__pos__ = 0;
+    private $__widgets___count = 0;
+    private $__widgets___keys = array ();
+    private $__errors__ = array();
     public function __construct($data = array(), $options = array(), $title = '') {
         if ($data === true) {
             $sess_id = '__FORM_' . get_class ( $this );
@@ -46,14 +56,14 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         }
         if ($data !== null) {
             $this->initialize ( $data );
-            $this->title = $title;
-            $this->validator = new BaseValidator ();
+            $this->__title__ = $title;
+            $this->__validator__ = new BaseValidator ();
             if (isset ( $options ['id'] )) {
-                $this->id = $options ['id'];
+                $this->__id__ = $options ['id'];
             } else {
-                $this->id = get_class ( $this );
+                $this->__id__ = get_class ( $this );
             }
-            $this->options = $options;
+            $this->__options__ = $options;
         } else {
             $this->destroy ();
         }
@@ -75,14 +85,14 @@ abstract class BaseForm implements ArrayAccess, Iterator {
      * @return FormWidget
      */
     public function getWidget($widget) {
-        if (isset ( $this->__properties__ ['widgets'] [$widget] )) {
-            return $this->__properties__ ['widgets'] [$widget];
+        if (isset ( $this->__widgets__ [$widget] )) {
+            return $this->__widgets__ [$widget];
         }
         return null;
     }
     public function removeWidget($widget) {
-        if (isset ( $this->__properties__ ['widgets'] [$widget] )) {
-            unset ( $this->__properties__ ['widgets'] [$widget] );
+        if (isset ( $this->__widgets__ [$widget] )) {
+            unset ( $this->__widgets__ [$widget] );
         }
     }
     public function getCleanData($widget = null, $default = '') {
@@ -90,7 +100,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         if (! $clean_data) {
             $request = Request::getInstance ( true );
             $clean_data = array ();
-            foreach ( $this->widgets as $name => $widget_object ) {
+            foreach ( $this->__widgets__ as $name => $widget_object ) {
                 $key = $this->{$name} [FWT_FIELD];
                 $clean_data [$key] = $widget_object->getValue ( $request );
             }
@@ -112,22 +122,22 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         return $clean_data;
     }
     public function getOptions() {
-        return $this->options;
+        return $this->__options__;
     }
     public function getId() {
-        return $this->id;
+        return $this->__id__;
     }
     public function getTitle() {
-        return $this->title;
+        return $this->__title__;
     }
     public function getInitialData() {
-        return $this->data;
+        return $this->__data__;
     }
     public function getData() {
         if (isset ( $this->__properties__ ['__cleandata'] )) {
             return $this->__properties__ ['__cleandata'];
         } else {
-            return $this->data;
+            return $this->__data__;
         }
     }
     
@@ -139,9 +149,9 @@ abstract class BaseForm implements ArrayAccess, Iterator {
      */
     public function useValidator($validator = null) {
         if ($validator instanceof IValidator) {
-            return $this->validator = $validator;
+            return $this->__validator__ = $validator;
         }
-        return $this->validator;
+        return $this->__validator__;
     }
     
     /**
@@ -153,8 +163,8 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     public function render($name = null, $component = null) {
         $body = '';
         if (! is_null ( $name ) && ! is_null ( $component )) {
-            if (isset ( $this->widgets [$name] )) {
-                $widget = $this->widgets [$name];
+            if (isset ( $this->__widgets__ [$name] )) {
+                $widget = $this->__widgets__ [$name];
                 switch ($component) {
                     case 'label' :
                         $body = $widget->getLabelComponent ();
@@ -189,13 +199,13 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         } else if ($component == null && ! is_null ( $name )) {
             switch ($name) {
                 case 'errors' :
-                    if (count ( $this->errors ) > 0) {
-                        $body = '<p class="form-error">' . implode ( '</p><p class="form-error">', $this->errors ) . '</p>';
+                    if (count ( $this->__errors__ ) > 0) {
+                        $body = '<p class="form-error">' . implode ( '</p><p class="form-error">', $this->__errors__ ) . '</p>';
                     }
                     break;
                 case 'options' :
-                    if ($this->options) {
-                        $body = html_tag_properties ( $this->options );
+                    if ($this->__options__) {
+                        $body = html_tag_properties ( $this->__options__ );
                     }
                     break;
                 default :
@@ -207,7 +217,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $item_wrapper = $this->getFormItemWrapper ();
             $foot = $this->getFormFoot ();
             $body = '';
-            foreach ( $this->widgets as $widget ) {
+            foreach ( $this->__widgets__ as $widget ) {
                 if ($widget instanceof HiddenWidget) {
                     $body .= $widget->getWidgetComponent ();
                 } else {
@@ -221,32 +231,32 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         if (! $initail) {
             $clean_data = $this->getCleanData ();
         } else {
-            $clean_data = $this->data;
+            $clean_data = $this->__data__;
         }
         $errors = array ();
         $scope = is_object ( $scope ) ? $scope : $this;
-        foreach ( $this->widgets as $widget ) {
+        foreach ( $this->__widgets__ as $widget ) {
             if (! $widget->valid ( $clean_data, $scope )) {
                 $errors [] = $widget->error;
             }
         }
-        $this->errors = $errors;
+        $this->__errors__ = $errors;
         return count ( $errors ) > 0 ? false : $clean_data;
     }
     protected function initialize($data) {
         $widgets = get_object_vars ( $this );
-        $this->pos = 0;
+        $this->__pos__ = 0;
         $this->addWidgets ( $widgets, $data );
     }
     public function addWidgets($widgets, $data = null) {
         $default_options = $this->getDefaultWidgetOptions ();
         if (! is_null ( $data )) {
-            if ($this->data) {
-                $_data = $this->data;
+            if ($this->__data__) {
+                $_data = $this->__data__;
             } else {
                 $_data = array ();
             }
-            $this->data = array_merge ( $data, $_data );
+            $this->__data__ = array_merge ( $data, $_data );
         }
         if (! empty ( $widgets )) {
             foreach ( $widgets as $widget_name => $widget ) {
@@ -284,7 +294,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                     $value = $data [$key];
                 } else if (isset ( $widget [FWT_INITIAL] )) {
                     $value = $widget [FWT_INITIAL];
-                    $this->__properties__ ['data'] [$widget_name] = $value;
+                    $this->__data__ [$widget_name] = $value;
                 } else if (isset ( $widget [FWT_INITIAL_FUN] )) {
                     $initial_fun = $widget [FWT_INITIAL_FUN];
                     if (is_array ( $initial_fun ) && count ( $initial_fun ) == 1) {
@@ -294,7 +304,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                     }
                     if (is_callable ( $initial_fun )) {
                         $value = call_user_func_array ( $initial_fun, array () );
-                        $this->__properties__ ['data'] [$widget_name] = $value;
+                        $this->__data__ [$widget_name] = $value;
                     }
                 }
                 if (method_exists ( $this, 'init_' . $widget_name )) {
@@ -303,18 +313,18 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                 $widget_object = new $widget_class ( $widget, $value, $this );
                 $this->addWidget ( $widget_name, $widget_object );
             }
-            $this->__properties__ ['widgets_count'] = count ( $this->widgets_keys );
+            $this->__widgets___count = count ( $this->__widgets___keys );
         }
     }
     public function __set($name, $value) {
         $this->__properties__ [$name] = $value;
     }
     protected function addWidget($widget_name, $widget) {
-        $this->__properties__ ['widgets'] [$widget_name] = $widget;
-        $this->__properties__ ['widgets_keys'] [] = $widget_name;
+        $this->__widgets__ [$widget_name] = $widget;
+        $this->__widgets___keys [] = $widget_name;
     }
     public function isValid() {
-        return count ( $this->errors ) > 0 ? false : true;
+        return count ( $this->__errors__ ) > 0 ? false : true;
     }
     public function __get($name) {
         if (isset ( $this->__properties__ [$name] )) {
@@ -339,26 +349,26 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         return array ();
     }
     public function current() {
-        return $this->widgets [$this->widgets_keys [$this->pos]];
+        return $this->__widgets__ [$this->__widgets___keys [$this->__pos__]];
     }
     public function key() {
-        return $this->widgets_keys [$this->pos];
+        return $this->__widgets___keys [$this->__pos__];
     }
     public function next() {
-        if ($this->pos < $this->widgets_count) {
-            $this->pos ++;
+        if ($this->__pos__ < $this->__widgets___count) {
+            $this->__pos__ ++;
         }
     }
     public function valid() {
-        return $this->pos >= 0 && $this->pos < $this->widgets_count;
+        return $this->__pos__ >= 0 && $this->__pos__ < $this->__widgets___count;
     }
     public function rewind() {
-        $this->pos = 0;
+        $this->__pos__ = 0;
     }
     public function setError($widget, $error) {
-        if (isset ( $this->widgets [$widget] )) {
-            $this->widgets [$widget]->setErrorMsg ( $error );
-            $this->__properties__ ['errors'] [] = $error;
+        if (isset ( $this->__widgets__ [$widget] )) {
+            $this->__widgets__ [$widget]->setErrorMsg ( $error );
+            $this->__errors__ [] = $error;
         }
     }
     protected abstract function getFormHead();
@@ -594,7 +604,7 @@ class BootstrapForm extends BaseForm {
             // '{$error_class}', '{$widget_wraper_cls}','{$label}', '{$widget}', '{$tip}'
             $wrapper = '<div class="control-group">{$label}';
             $wrapper .= '<div class="{$widget_wraper_cls}">{$widget}';
-            $ops = $this->options;
+            $ops = $this->__options__;
             if (isset ( $ops ['blockTip'] ) && $ops ['blockTip']) {
                 $wrapper .= '<span class="{$tip_cls} help-block" data-style="help-block">{$tip}</span>';
             } else {

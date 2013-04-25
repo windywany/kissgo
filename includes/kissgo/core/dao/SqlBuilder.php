@@ -19,9 +19,9 @@ class DbSQL {
      * @return PDOStatement
      */
     public function query($driver, $values = null) {
+        $values = $values ? $values : $this->values;
         try {
             $this->options [PDO::ATTR_CURSOR] = PDO::CURSOR_SCROLL;
-            $values = $values ? $values : $this->values;
             if (! $this->stmt) {
                 $this->stmt = $driver->prepare ( $this->sql, $this->options );
             }
@@ -29,7 +29,7 @@ class DbSQL {
                 foreach ( $values as $value ) {
                     list ( $name, $val, $type ) = $value;
                     if (! $this->stmt->bindValue ( $name, $val, $type )) {
-                        throw new PDOException ( 'Can not bind value: name:' . $name . ', value:' . $val . ', type:' . $type );
+                        db_error ( 'Can not bind value: name:' . $name . ', value:' . $val . ', type:' . $type );
                     }
                 }
             }
@@ -38,11 +38,12 @@ class DbSQL {
                 return $this->stmt;
             } else {
                 $info = $driver->errorInfo ();
-                throw new PDOException ( $info [2] );
+                db_error ( $info [2] . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
             }
         } catch ( Exception $e ) {
-            throw $e;
+            db_error ( $e->getMessage () . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
         }
+        return array ();
     }
     /**
      * 取值或设置值
@@ -63,8 +64,8 @@ class DbSQL {
      * @return int
      */
     public function execute($driver, $values = null) {
+        $values = $values ? $values : $this->values;
         try {
-            $values = $values ? $values : $this->values;
             if (! $this->stmt) {
                 if (! empty ( $this->options )) {
                     $this->stmt = $driver->prepare ( $this->sql, $this->options );
@@ -83,11 +84,12 @@ class DbSQL {
                 return $this->stmt->rowCount ();
             } else {
                 $info = $driver->errorInfo ();
-                throw new PDOException ( $info [2] );
+                db_error ( $info [2] . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
             }
         } catch ( Exception $e ) {
-            throw $e;
+            db_error ( $e->getMessage () . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
         }
+        return false;
     }
     public function __toString() {
         return $this->sql;
