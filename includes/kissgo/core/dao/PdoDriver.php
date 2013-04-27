@@ -58,6 +58,7 @@ abstract class PdoDriver extends PDO {
      * @return boolean
      */
     public static function createTable($dao, $database = 'default', $engine = null) {
+        $sql = '';
         try {
             $driver = PdoDriver::getDriver ( $database );
             $sql = $dao->getCreateSql ();
@@ -74,10 +75,12 @@ abstract class PdoDriver extends PDO {
                 if ($rst !== false) {
                     return true;
                 }
+            } else {
+                db_error ( 'Cannot create SQL for creating table' );
             }
             return false;
         } catch ( PDOException $e ) {
-            self::$last_error_message = $e->getMessage ();
+            db_error ( $e->getMessage () . ($sql ? $sql : '') );
             return false;
         }
     }

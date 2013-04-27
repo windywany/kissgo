@@ -21,6 +21,7 @@ $(function() {
 		$('#fe_ai').removeAttr('checked');
 		$('#fe_au').removeAttr('checked');
 		$('#fe_comment').val('');
+		$('#fe_enum_values').val('');
 	});
 	$('#idx-editor').on('hidden', function() {
 		$('#ie_id').val('');
@@ -81,6 +82,7 @@ $(function() {
 				if (fds.unsigned) {
 					f_str.push("Idao::UNSIGNED");
 				}
+				
 				if (fds.ai) {
 					if(types[0] == 'int'){
 						f_str.push("Idao::AUTOINSERT_UID");
@@ -94,6 +96,9 @@ $(function() {
 					}else{
 						f_str.push("Idao::AUTOUPDATE_DATE");
 					}					
+				}
+				if(fds.enum_values.length>0){
+					f_str.push(" Idao::ENUM_VALUES => \"" + fds.enum_values+"\"");
 				}
 				if (fds.deft.length > 0) {
 					f_str.push(" Idao::DEFT => " + fds.deft);
@@ -123,6 +128,10 @@ $(function() {
 		field.length = $('#fe_length').val();
 		field.nn = $('#fe_nn').attr('checked');
 		field.unsigned = $('#fe_unsigned').attr('checked');
+		field.enum_values = $('#fe_enum_values').val();
+		if(!field.enum_values){
+			field.enum_values = '';
+		}
 		field.ai = $('#fe_ai').attr('checked');
 		field.au = $('#fe_au').attr('checked');
 		field.comment = $('#fe_comment').val();
@@ -155,10 +164,11 @@ $(function() {
 			$('#fe_type').val(field.type);
 			$('#fe_default').val(field.deft);
 			$('#fe_length').val(field.length);
+			$('#fe_enum_values').val(field.enum_values);
 			field.nn ? $('#fe_nn').attr('checked', true) : $('#fe_nn').removeAttr('checked');
 			field.unsigned ? $('#fe_unsigned').attr('checked', true) : $('#fe_unsigned').removeAttr('checked');
 			field.ai ? $('#fe_ai').attr('checked', true) : $('#fe_ai').removeAttr('checked');
-			field.au ? $('#fe_au').attr('checked', true) : $('#fe_au').removeAttr('checked');
+			field.au ? $('#fe_au').attr('checked', true) : $('#fe_au').removeAttr('checked');			
 			$('#fe_comment').val(field.comment);
 			$('#field-editor').modal();
 		} else if (confirm('Are you sure?')) {
@@ -202,6 +212,15 @@ $(function() {
 			$(this).parents('tr').remove();
 		}
 		return false;
+	});
+	$('#fe_type').change(function(){
+		var v = $(this).val();		
+		if(v == 'enum:normal'){
+			$('#fe_enum_values_wrapper').removeClass('hidden');
+			$('#fe_enum_values').val('');
+		}else{
+			$('#fe_enum_values_wrapper').addClass('hidden');
+		}
 	});
 	function getFields(fds) {
 		var _fs = [], ln = fields.length, k = 0;

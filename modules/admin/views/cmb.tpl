@@ -121,19 +121,33 @@
     				{foreach from=$types item=type}
     				<option value="{$type@key}">{$type@key}</option>
     				{/foreach}
-    			</select>
-    			<label class="checkbox"><input id="fe_nn" type="checkbox"/> NN</label> 
-    			<label class="checkbox"><input id="fe_ai" type="checkbox"/> Auto Insert</label>   			
+    			</select>    			   			
     		</div>
     		<div class="span6">
     			<label for="fe_default">Default</label>
     			<input id="fe_default" type="text" class="span12"/>
     			<label for="fe_length">Length</label>
-    			<input id="fe_length" type="text" class="span12"/>
+    			<input id="fe_length" type="text" class="span12"/>    			
+    		</div>
+    	</div>
+    	<div class="row-fluid hidden" id="fe_enum_values_wrapper">
+    		<div class="span12">
+    			<label for="fe_enum_values">Enum Values(use ',' to split values)</label>
+    			<input id="fe_enum_values" type="text" class="span12"/>
+    		</div>
+    	</div>
+    	<div class="row-fluid">
+    		<div class="span6">
+    			<label class="checkbox"><input id="fe_nn" type="checkbox"/> NN</label> 
+    			<label class="checkbox"><input id="fe_ai" type="checkbox"/> Auto Insert</label>
+    		</div>
+    		<div class="span6">
     			<label class="checkbox"><input id="fe_unsigned" type="checkbox"/> UNSIGNED</label> 
     			<label class="checkbox"><input id="fe_au" type="checkbox"/> Auto Update</label>
     		</div>
-    		<div class="span12" style="margin-left:0px;">
+    	</div>
+    	<div class="row-fluid">
+    		<div class="span12">
     			<label for="fe_comment">Comment</label>
     			<textarea id="fe_comment" rows="3" class="span12"></textarea>
     		</div>

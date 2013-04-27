@@ -18,6 +18,7 @@ interface Idao {
     const TYPE_DATETIME = 'datetime';
     const TYPE_TIMESTAMP = 'timestamp';
     const TYPE_VARCHAR = 'varchar';
+    const TYPE_ENUM = 'enum';
     const TYPE_NUMERIC = 'numeric';
     const LENGTH = 'length';
     const TYPE_EXTRA = 'extra';
@@ -34,6 +35,7 @@ interface Idao {
     const AUTOINSERT_DATE = 'AUTO_INSERT_DATE';
     const AUTOUPDATE_UID = 'AUTO_UPDATE_UID';
     const AUTOINSERT_UID = 'AUTO_INSERT_UID';
+    const ENUM_VALUES = 'ENUM_VALUE_LIST';
     /**
      * 
      * @return PdoDriver

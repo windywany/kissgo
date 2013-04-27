@@ -231,8 +231,8 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
             $definition ['auto_increment'] = true;
         } else if ($type == Idao::TYPE_BOOL) {
             $definition [Idao::LENGTH] = 1;
-            if(isset($definition[Idao::DEFT])){
-                $definition[Idao::DEFT] = $definition[Idao::DEFT]?1:0;
+            if (isset ( $definition [Idao::DEFT] )) {
+                $definition [Idao::DEFT] = $definition [Idao::DEFT] ? 1 : 0;
             }
         } else if ($type == Idao::TYPE_TIMESTAMP) {
             $definition [] = Idao::UNSIGNED;
@@ -241,10 +241,16 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         if (! $f) {
             return false;
         }
-        
-        if (isset ( $definition [Idao::LENGTH] )) {
-            $fstr [] = $f.'(' . $definition [Idao::LENGTH] . ')';
-        }else{
+        if ($f == 'ENUM') {
+            if (! isset ( $definition [Idao::ENUM_VALUES] ) || empty ( $definition [Idao::ENUM_VALUES] )) {
+                return false;
+            }
+            $values = explode ( ',', $definition [Idao::ENUM_VALUES] );
+            array_walk ( $values, array ($this, 'sanitize' ) );
+            $fstr [] = $f . '(' . implode ( ',', $values ) . ')';
+        } else if (isset ( $definition [Idao::LENGTH] )) {
+            $fstr [] = $f . '(' . $definition [Idao::LENGTH] . ')';
+        } else {
             $fstr [] = $f;
         }
         if (in_array ( Idao::UNSIGNED, $definition )) {
@@ -256,7 +262,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
             $fstr [] = 'NULL';
         }
         if (isset ( $definition [Idao::DEFT] )) {
-            $fstr [] = 'DEFAULT ' . ((in_array ( $f, array ('VARCHAR', 'CHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'TEXT', 'DATE', 'DATETIME' ) )) ? "'{$definition[Idao::DEFT]}'" : $definition [Idao::DEFT]);
+            $fstr [] = 'DEFAULT ' . ((in_array ( $f, array ('VARCHAR', 'CHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'TEXT', 'DATE', 'DATETIME', 'ENUM' ) )) ? "'{$definition[Idao::DEFT]}'" : $definition [Idao::DEFT]);
         }
         if (isset ( $definition ['auto_increment'] )) {
             $fstr [] = 'AUTO_INCREMENT';
@@ -449,7 +455,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
     
     private function getType($type, $typee = 'normal') {
         static $map = array ('varchar:normal' => 'VARCHAR', 'char:normal' => 'CHAR', 'text:tiny' => 'TINYTEXT', 'text:small' => 'TINYTEXT', 'text:medium' => 'MEDIUMTEXT', 'text:big' => 'LONGTEXT', 'text:normal' => 'TEXT', 'serial:tiny' => 'TINYINT', 'serial:small' => 'SMALLINT', 'serial:medium' => 'MEDIUMINT', 'serial:big' => 'BIGINT', 'serial:normal' => 'INT', 'int:tiny' => 'TINYINT', 'int:small' => 'SMALLINT', 'int:medium' => 'MEDIUMINT', 'int:big' => 'BIGINT', 'int:normal' => 'INT', 
-                'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'blob:big' => 'LONGBLOB', 'blob:normal' => 'BLOB', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME' );
+                'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'blob:big' => 'LONGBLOB', 'blob:normal' => 'BLOB', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME', 'enum:normal' => 'ENUM' );
         $t = $type . ':' . $typee;
         if (isset ( $map [$t] )) {
             return $map [$t];
@@ -457,5 +463,8 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
             return $map [$type . ':normal'];
         }
         return false;
+    }
+    public function sanitize(&$items, $key) {
+        $items = "'" . str_replace ( array ('\'', '"' ), '', trim ( $items ) ) . "'";
     }
 }
