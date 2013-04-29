@@ -81,11 +81,11 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'admin', 'pages' ), 'icon-file' );
     
     $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'comments' ), 'icon-comment' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-category', __ ( 'Categories' ), murl ( 'admin', 'categoris' ), 'icon-briefcase' );
+    
     $mm->addMenuItem ( 'menu-website', 'menuitem-tags', __ ( 'Tags & Flags' ), murl ( 'admin', 'tags' ), 'icon-tags' );
     $mm->addMenuItemDivider ( 'menu-website' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'pagetypes' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-themes', __ ( 'Themes & Templates' ), murl ( 'admin', 'themes' ), 'icon-list' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'node/theme' ), 'icon-picture' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );    
     $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-enums', __ ( 'Enums' ), murl ( 'admin', 'enums' ), 'icon-book' );
     $mm->addMenuItemDivider ( 'menu-website' );
@@ -102,9 +102,9 @@ function _hook_add_new_menu_items($items) {
     $items .= '<li><a href="#">new page</a></li>';
     return $items;
 }
-//bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
+bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
 function _hook_for_add_passport_menu_items($items) {
-    $items .= '<li><a href="' . murl ( 'passport' ) . '">' . __ ( 'Control Panel' ) . '</a></li>';
+    $items .= '<li><a href="' . murl ( 'admin', 'account' ) . '"><i class="icon-user"></i> ' . __ ( 'Control Panel' ) . '</a></li>';
     return $items;
 }
 bind ( 'add_passport_menu_items', '_hook_for_add_passport_menu_items' );

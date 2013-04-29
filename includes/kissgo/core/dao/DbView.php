@@ -74,6 +74,11 @@ abstract class DbView implements Idao {
         $alias = $alias == null ? $this->alias : $alias;
         return new ResultCursor ( $this, $fields, $alias );
     }
+    public function read($where) {
+        $rst = new ResultCursor ( $this, "*", $this->alias );
+        $rst->where ( $where )->limit ( 1, 1 );
+        return $rst [0];
+    }
     /**
      * 
      * @param unknown_type $data

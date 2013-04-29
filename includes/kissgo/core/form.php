@@ -48,7 +48,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     private $__pos__ = 0;
     private $__widgets___count = 0;
     private $__widgets___keys = array ();
-    private $__errors__ = array();
+    private $__errors__ = array ();
     public function __construct($data = array(), $options = array(), $title = '') {
         if ($data === true) {
             $sess_id = '__FORM_' . get_class ( $this );
@@ -64,6 +64,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                 $this->__id__ = get_class ( $this );
             }
             $this->__options__ = $options;
+            $this->valid ();
         } else {
             $this->destroy ();
         }
@@ -132,6 +133,9 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     }
     public function getInitialData() {
         return $this->__data__;
+    }
+    public function getError() {
+        return $this->__errors__;
     }
     public function getData() {
         if (isset ( $this->__properties__ ['__cleandata'] )) {
@@ -574,7 +578,7 @@ abstract class FormWidget {
 }
 
 /**
- *
+ * 基于table的表单
  */
 class TableForm extends BaseForm {
     protected function getFormHead() {
@@ -588,8 +592,24 @@ class TableForm extends BaseForm {
     }
 }
 /**
+ * 仅用于获取或验证数据
+ * @author Leo
+ *
+ */
+class DataForm extends BaseForm {
+    protected function getFormFoot() {
+        return '';
+    }
+    protected function getFormHead() {
+        return '';
+    }
+    protected function getFormItemWrapper() {
+        return '';
+    }
+}
+/**
  * 
- * bootstrap form
+ * based bootstrap form
  * @author guangfeng.ning
  *
  */

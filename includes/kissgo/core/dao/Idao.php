@@ -53,6 +53,11 @@ interface Idao {
      */
     public function save($data, $alias = null);
     /**
+     * read one record
+     * @param unknown_type $where
+     */
+    public function read($where);
+    /**
      * 
      * query data from database
      * @param string $fields

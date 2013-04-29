@@ -71,7 +71,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
             }
             db_error ( "the PdoStatment is null" );
         }
-        return null;
+        return array();
     }
     public function lastErrorMsg() {
         if ($this->errorInfo) {

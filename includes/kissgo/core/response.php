@@ -52,7 +52,15 @@ class Response {
         }
     }
     public static function back($args = null) {
+        $_SESSION ['__IS_BACK'] = true;
         self::redirect ( $_SERVER ['HTTP_REFERER'], $args );
+    }
+    /**
+     * 
+     * @return boolean
+     */
+    public static function isBack() {
+        return sess_del ( '__IS_BACK', false );
     }
     /**
 	 * 跳转
@@ -197,8 +205,8 @@ class Response {
 	 * @param string $content
 	 * @return string
 	 */
-    public function ob_out_handler($content) {        
-        $this->content = apply_filter ( 'filter_output_content', $content );        
+    public function ob_out_handler($content) {
+        $this->content = apply_filter ( 'filter_output_content', $content );
         return $this->content;
     }
     
