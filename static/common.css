@@ -501,11 +501,12 @@ i.handl {
 }
 .quicktags-editor {
 	-moz-box-sizing: border-box;
-	border: 0 none;
+	box-sizing: border-box;
+	border: 0;
 	font-family: Consolas, Monaco, monospace;
 	line-height: 150%;
-	outline: medium none;
-	padding: 10px;
+	outline: none;
+	padding: 5px;
 	resize: vertical;
 	width: 99.9%;
 	margin: 1px;

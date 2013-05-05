@@ -110,7 +110,7 @@
 <div class="modal hide fade" tabindex="-1" id="reply-cmt-box" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button class="close" data-dismiss="modal">×</button>
-        <h3>回复评论</h3>
+        <h3 id="reply-cmt-box-title">回复评论</h3>
     </div>
     <div class="modal-body" style="max-height:500px;">
         <div class="row-fluid">

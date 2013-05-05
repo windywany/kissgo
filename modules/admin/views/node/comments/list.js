@@ -13,6 +13,7 @@ $(function() {
 		$('#comment').val('');
 		$('#author').val('');
 		$('div.when-edit').hide();
+		$('#reply-cmt-box-title').html('回复评论');
 		$('#reply-cmt-box').modal('show');
 		return false;
 	});
@@ -28,6 +29,7 @@ $(function() {
 		$('#url').val(pt.find('input[name=url]').val());
 		$('#email').val(pt.find('input[name=email]').val());
 		$('div.when-edit').show();
+		$('#reply-cmt-box-title').html('编辑评论');
 		$('#reply-cmt-box').modal('show');
 		return false;
 	});
