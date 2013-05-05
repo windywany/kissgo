@@ -85,12 +85,12 @@ abstract class DbView implements Idao {
      * @return boolean
      */
     public function exist($data) {
-        try {
-            $rst = $this->query ( '*' )->where ( $data );
-            return count ( $rst ) > 0;
-        } catch ( PDOException $e ) {
-            return false;
-        }
+        $rst = $this->query ( '*' )->where ( $data );
+        return count ( $rst ) > 0;
+    }
+    public function count($where, $field = '*') {
+        $rst = $this->query ( $field )->where ( $where );
+        return count ( $rst );
     }
     /**
      * (non-PHPdoc)

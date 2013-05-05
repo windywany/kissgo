@@ -22,7 +22,7 @@ class ThemeView extends View {
             $this->__smarty->compile_dir = TMP_PATH . 'themes_c' . DS . $sub; //模板编译目录
             $this->__smarty->cache_dir = TMP_PATH . 'themes_cache' . DS . $sub; //模板缓存目录
             $this->__smarty->_dir_perms = 0775;
-            if (DEBUG) {
+            if (DEBUG == DEBUG_DEBUG) {
                 $this->__smarty->force_compile = true;
             }
             $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );

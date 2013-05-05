@@ -215,7 +215,9 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['DEBUG_FIREPHP'] ) && ! empty ( $settings ['DEBUG_FIREPHP'] )) {
         define ( 'DEBUG_FIREPHP', $settings ['DEBUG_FIREPHP'] );
     }
-    
+    if (isset ( $settings ['THEME'] ) && ! empty ( $settings ['THEME'] )) {
+        define ( 'THEME', $settings ['THEME'] );
+    }
     ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';
@@ -226,6 +228,7 @@ unset ( $_ksg_settings_file );
 defined ( 'DEBUG' ) or define ( 'DEBUG', DEBUG_ERROR ); // debug level
 defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
 defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
+defined ( 'THEME' ) or define ( 'THEME', 'defaults' );
 @date_default_timezone_set ( TIMEZONE );
 function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;

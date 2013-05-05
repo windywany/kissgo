@@ -167,6 +167,10 @@ class DbSqlHelper {
             if ($field instanceof DbImmutableF) {
                 $this->fields [] = $field;
             } else if ($field instanceof ResultCursor) {
+                if(empty($alias)){
+                    db_error('the alias cannot be null when you use ResultCursor as a field.');
+                    $alias = '_field__'.count($this->fields);
+                }
                 $this->fields [$alias] = $field;
             } else {
                 $this->fields [] = $field . ($alias == null ? '' : ' AS ' . $alias);

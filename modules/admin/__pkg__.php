@@ -10,45 +10,29 @@
  */
 function on_install_module_cn_usephp_core_gui($rst) {
     imports ( 'admin/models/*' );
+    $models = array ('CoreUserTable', 'CoreRoleTable', 'CoreUserRoleTable', 'CorePreferenceTable', 'CoreAccessPolicyTable', 'CoreAttachmentTable', 'TagTable', 'NodeTagsTable', 'EnumTable', 'NodeTypeTable', 'NodeTemplateTable' );
+    $models [] = 'NodeTable';
+    $models [] = 'NodeCommentTable';
     $rtn = true;
-    do {
-        if (! PdoDriver::createTable ( new CoreUserTable () )) {
+    foreach ( $models as $model ) {
+        if (! PdoDriver::createTable ( new $model () )) {
             $rtn = db_error ();
             break;
         }
-        if (! PdoDriver::createTable ( new CoreRoleTable () )) {
-            $rtn = db_error ();
-            break;
+    }
+    
+    if (! empty ( $rtn )) {
+        $types = array (array ('type' => 'index', 'name' => '首页', 'creatable' => 0, 'template' => 'index.tpl', 'note' => '网站首页' ) );
+        $types [] = array ('type' => 'plain', 'name' => '简单页面', 'template' => 'page.tpl', 'note' => '简单页面' );
+        $nt = new NodeTypeTable ();
+        foreach ( $types as $type ) {
+            if (! $nt->insert ( $type )) {
+                $rtn = db_error ();
+                break;
+            }
         }
-        if (! PdoDriver::createTable ( new CoreUserRoleTable () )) {
-            $rtn = db_error ();
-            break;
-        }
-        if (! PdoDriver::createTable ( new CorePreferenceTable () )) {
-            $rtn = db_error ();
-            break;
-        }
-        if (! PdoDriver::createTable ( new CoreAccessPolicyTable () )) {
-            $rtn = db_error ();
-            break;
-        }
-        if (! PdoDriver::createTable ( new CoreAttachmentTable () )) {
-            $rtn = db_error ();
-            break;
-        }
-        if (! PdoDriver::createTable ( new TagTable () )) {
-            $rtn = db_error ();
-            break;
-        }
-        if (! PdoDriver::createTable ( new NodeTagsTable () )) {
-            $rtn = db_error ();
-            break;
-        }
-        if (! PdoDriver::createTable ( new EnumTable () )) {
-            $rtn = db_error ();
-            break;
-        }
-    } while ( 0 );
-    return empty ( $rtn ) ? '创建数据表时出错啦！' : $rtn;
+    }
+    
+    return empty ( $rtn ) ? '安装核心模块出错啦！' : $rtn;
 }
 bind ( 'on_install_module_cn.usephp.core.gui', 'on_install_module_cn_usephp_core_gui' );

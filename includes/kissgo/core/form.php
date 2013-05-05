@@ -134,8 +134,15 @@ abstract class BaseForm implements ArrayAccess, Iterator {
     public function getInitialData() {
         return $this->__data__;
     }
-    public function getError() {
-        return $this->__errors__;
+    public function getError($implode = null) {
+        if ($implode != null) {
+            if (! empty ( $this->__errors__ )) {
+                return implode ( $implode, $this->__errors__ );
+            }
+            return '';
+        } else {
+            return $this->__errors__;
+        }
     }
     public function getData() {
         if (isset ( $this->__properties__ ['__cleandata'] )) {

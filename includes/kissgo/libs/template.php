@@ -174,6 +174,14 @@ function get_data_from_cts_provider($name, $args) {
         return new CtsData ( array () );
     }
 }
+function get_theme_resource_uri($args) {
+    if (isset ( $args [1] )) {
+        $url = $args [1];
+    } else {
+        $url = get_theme();
+    }
+    return BASE_URL . THEME_DIR . '/' . $url . '/' . $args [0];
+}
 /**
  * load the template view
  *
@@ -183,7 +191,7 @@ function get_data_from_cts_provider($name, $args) {
  * @return ThemeView
  */
 function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
-    $theme = apply_filter ( 'get_current_theme', 'defaults' );
+    $theme = get_theme();
     $_tpl = THEME_DIR . '/' . $theme . '/' . $tpl;
     if (is_file ( THEME_PATH . $_tpl )) {
         $tpl = $_tpl;
@@ -207,7 +215,7 @@ function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/
  * @return SmartyView
  */
 function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
-    $theme = apply_filter ( 'get_current_theme', 'defaults' );
+    $theme = get_theme();
     $data ['ksg_current_template'] = $tpl;
     $data ['ksg_current_theme'] = THEME_DIR . '/' . $theme;
     $data ['ksg_theme_name'] = $theme;
@@ -307,6 +315,10 @@ function smarty_modifiercompiler_static($params, $compiler) {
     $tpl = defined ( 'STATIC_DIR' ) ? STATIC_DIR : 'static';
     $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
     return "BASE_URL.'{$url}'." . $params [0];
+}
+function smarty_modifiercompiler_theme($params, $compiler) {    
+    $params = smarty_argstr ( $params );
+    return "get_theme_resource_uri($params)";
 }
 function smarty_modifiercompiler_img($params, $compiler) {
     $tpl = defined ( 'STATIC_DIR' ) ? STATIC_DIR : 'static';
@@ -498,7 +510,7 @@ function smarty_modifiercompiler_paging($value, $compiler) {
     if (isset ( $value [2] )) {
         $param = $value [2]; // 分类参数
     } else {
-        $param = "'pid'";
+        $param = "'start'";
     }
     if (isset ( $value [3] )) {
         $pno = $value [3]; // 分类参数

@@ -11,7 +11,10 @@
     <link rel="stylesheet" href="{'bootstrap/css/bootstrap-responsive.css'|static}"/>
     <link rel="stylesheet" href="{'common.css'|static}"/>
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
-    {block name="admincp_css_block"}{/block}
+    {block name="admincp_css_block"}{/block} 
+    <script type="text/javascript">
+       Kissgo = { 'BASE': "{$ksg_site_url}" , 'AJAX':'{$ksg_site_url}ajax.php' };
+    </script>    
     <script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>    
     <script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>
     <script type="text/javascript" src="{'bootstrap/bootstrap-modalmanager.js'|static}"></script>
@@ -20,8 +23,8 @@
 	<script type="text/javascript" src="{'jquery/plugins/validate_addons.js'|static}"></script>
 	<script type="text/javascript" src="{'common.js'|static}"></script>
     <script type="text/javascript" src="{'js/kissgo.js'|here}"></script>
-    {'admincp_header'|fire}
     {block name="admincp_head_js_block"}{/block}
+    {'admincp_header'|fire}    
 </head>
 <body>
 <div class="page-container">
@@ -106,7 +109,7 @@
         <div class="msg">处理中...</div>
     </div>
 </div>
-{'admincp_footer'|fire}
 {block name="admincp_foot_js_block"}{/block}
+{'admincp_footer'|fire}
 </body>
 </html>

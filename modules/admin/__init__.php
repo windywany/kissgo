@@ -80,12 +80,12 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'admin', 'pages' ), 'icon-file' );
     
-    $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'comments' ), 'icon-comment' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'pages/comments' ), 'icon-comment' );
     
     $mm->addMenuItem ( 'menu-website', 'menuitem-tags', __ ( 'Tags & Flags' ), murl ( 'admin', 'tags' ), 'icon-tags' );
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'node/theme' ), 'icon-picture' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );    
+    $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-enums', __ ( 'Enums' ), murl ( 'admin', 'enums' ), 'icon-book' );
     $mm->addMenuItemDivider ( 'menu-website' );
@@ -164,4 +164,29 @@ function do_ajax_validate_check($req) {
     }
 }
 bind ( 'do_ajax_ajax_validate', 'do_ajax_validate_check' );
+function do_ajax_browser_template_files($req) {
+    $theme = rqst ( 'theme', THEME );
+    $id = rqst ( 'id', '' );
+    $path = THEME_PATH . THEME_DIR . DS . $theme . $id;
+    $hd = opendir ( $path );
+    $dirs = array ();
+    $files = array ();
+    if ($hd) {
+        while ( ($f = readdir ( $hd )) != false ) {
+            if (is_dir ( $path . DS . $f ) && $f != '.' && $f != '..') {
+                $dirs [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => true );
+            }
+            if (is_file ( $path . DS . $f ) && preg_match ( '/.+\.tpl$/', $f )) {
+                $files [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => false );
+            }
+        }
+        closedir ( $hd );
+        ksort ( $dirs );
+        ksort ( $files );
+        $dirs = $dirs + $files;
+        $dirs = array_values ( $dirs );
+    }
+    echo json_encode ( $dirs );
+}
+bind ( 'do_ajax_browser_template_files', 'do_ajax_browser_template_files' );
 // end of __init__.php

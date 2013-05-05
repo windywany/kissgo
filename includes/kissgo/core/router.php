@@ -54,13 +54,10 @@ class Router {
                 $module = $chunks [0];
             } else if ($cnt == 2) {
                 list ( $module, $action ) = $chunks;
-            } else if ($cnt == 3) {
-                list ( $module, $controller, $action ) = $chunks;
-            } else if ($cnt > 0) {
+            } else if ($cnt >= 3) {
                 $module = array_shift ( $chunks );
-                $controller = array_shift ( $chunks );
-                $action = array_shift ( $chunks );
-                $request ['_params'] = $chunks;
+                $action = array_pop ( $chunks );
+                $controller = implode ( '/', $chunks );
             }
         }
         return $this->load_application ( $action, $controller, $module );
@@ -81,8 +78,9 @@ class Router {
         if ($alias) {
             $module = self::$extensionManager->getModuleByAlias ( $alias );
             if (! empty ( $controller )) {
-                $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$controller}", true );
-                $actions [2] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$controller}", true );
+                $ctrl_func = str_replace('/', '_', $controller);
+                $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true );
+                $actions [2] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true );
             } else {
                 $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}", true );
                 $actions [2] = array ("{$module}/actions/{$action}/index.php", "do_{$module}", true );

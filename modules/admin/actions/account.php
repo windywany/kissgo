@@ -71,7 +71,7 @@ function save_account_base($rtn) {
         unset ( $user ['uid'] );
         $userModel = new CoreUserTable ();
         $rst = $userModel->save ( $user )->where ( $where );
-        if (count ( $rst ) == 1) {
+        if (count ( $rst ) !== false) {
             show_page_tip ( '<strong>恭喜,</strong>用户账户修改成功.' );
             return true;
         } else {

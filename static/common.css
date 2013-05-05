@@ -464,11 +464,13 @@ i.handl {
 	border-bottom-color: #CCCCCC;
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
-	min-height: 30px;
+	max-height: 30px;
 	padding: 2px 8px 0;
 	background-color: #E9E9E9;
 	background-image: -moz-linear-gradient(center bottom , #DDDDDD, #E9E9E9);
+	
 }
+
 .quicktags-toolbar input {
 	background-color: #EEEEEE;
 	background-image: -moz-linear-gradient(center bottom , #E3E3E3, #FFFFFF);
@@ -507,6 +509,7 @@ i.handl {
 	resize: vertical;
 	width: 99.9%;
 	margin: 1px;
+	box-shadow:none;
 }
 
 textarea.error, input.error{

@@ -72,6 +72,7 @@ interface Idao {
      */
     public function delete($alias = null);
     public function exist($data);
+    public function count($where);
     public function insert($data);
     public function update($data, $where);
     public function remove($where);

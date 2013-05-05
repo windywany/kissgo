@@ -323,7 +323,20 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         $c = array ();
         $first = true;
         foreach ( $conditions as $field => $condition ) {
-            if (! is_numeric ( $field )) {
+            $inline_or = false;
+            if ($field === '||') {
+                $c [] = 'OR';
+                $c [] = '(';
+                $c [] = $this->buildWhere ( $condition, $values );
+                $c [] = ')';
+                continue;
+            } else if ($field === '&&') {
+                $c [] = 'AND';
+                $c [] = '(';
+                $c [] = $this->buildWhere ( $condition, $values );
+                $c [] = ')';
+                continue;
+            } else if (! is_numeric ( $field )) {
                 if ($field {0} == '@') {
                     $eop = strtoupper ( substr ( $field, 1 ) );
                     switch ($eop) {
@@ -351,11 +364,14 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
                             }
                     }
                     continue;
+                } else if ($field {0} == '|') {
+                    $inline_or = true;
+                    $field = substr ( $field, 1 );
                 }
             } else if (is_string ( $condition )) {
                 $field = $condition;
                 $condition = '';
-            }
+            }            
             $and_ors = preg_split ( '/[\s]+/', trim ( $field ) );
             $and_ors = count ( $and_ors ) >= 2 ? $and_ors : array ($and_ors [0], '=' );
             $field = array_shift ( $and_ors ); // 字段
@@ -364,8 +380,10 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
                 $field = $m [1];
                 $op = $m [2];
             }
-            if (! $first) {
+            if (! $first && ! $inline_or) {
                 $c [] = 'AND';
+            } else if ($inline_or) {
+                $c [] = 'OR';                
             }
             if (is_array ( $condition ) && ! in_array ( $op, array ('BETWEEN', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL' ) )) { // 如果是嵌套条件 
                 if (! is_numeric ( $field )) {
@@ -452,10 +470,9 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         }
         return ' ORDER BY ' . implode ( ',', $_or );
     }
-    
     private function getType($type, $typee = 'normal') {
         static $map = array ('varchar:normal' => 'VARCHAR', 'char:normal' => 'CHAR', 'text:tiny' => 'TINYTEXT', 'text:small' => 'TINYTEXT', 'text:medium' => 'MEDIUMTEXT', 'text:big' => 'LONGTEXT', 'text:normal' => 'TEXT', 'serial:tiny' => 'TINYINT', 'serial:small' => 'SMALLINT', 'serial:medium' => 'MEDIUMINT', 'serial:big' => 'BIGINT', 'serial:normal' => 'INT', 'int:tiny' => 'TINYINT', 'int:small' => 'SMALLINT', 'int:medium' => 'MEDIUMINT', 'int:big' => 'BIGINT', 'int:normal' => 'INT', 
-                'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'blob:big' => 'LONGBLOB', 'blob:normal' => 'BLOB', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME', 'enum:normal' => 'ENUM' );
+                            'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'blob:big' => 'LONGBLOB', 'blob:normal' => 'BLOB', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME', 'enum:normal' => 'ENUM' );
         $t = $type . ':' . $typee;
         if (isset ( $map [$t] )) {
             return $map [$t];

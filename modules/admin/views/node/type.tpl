@@ -17,9 +17,9 @@
 				<thead>
 					<tr>
 						<th class="col_chk"><input type="checkbox"/></th>
-						<th class="w150">{'页面类型'|sorth:type}</th>
-						<th class="w200">{'页面类型名称'|sorth:name}</th>
-						<th class="wa">默认模板文件名</th>						
+						<th class="w100">{'页面类型'|sorth:type}</th>
+						<th class="w150">{'页面类型名称'|sorth:name}</th>
+						<th class="w400">默认模板文件名</th>						
 						<th class="wa">说明</th>						
 					</tr>
 				</thead>
@@ -27,7 +27,7 @@
 					{foreach from=$items item=item}
 					<tr>
 						<td class="col_chk"><input type="checkbox" value="{$item.id}"/></td>
-						<td>{$item.type}</td>
+						<td><span class="label {if $item.creatable}label-success{/if}">{$item.type}</span></td>
 						<td>{$item.name}</td>	
 						<td class="has-row-actions">
 						    <span class="label label-info type-tpl">{$item.template}</span>
@@ -55,24 +55,6 @@
         </div>
     </div>
 </div>
-
-
-<div class="modal hide fade" tabindex="-1" id="page-type-form" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <button class="close" data-dismiss="modal">×</button>
-        <h3>编辑页面类型</h3>
-    </div>
-    
-    <div class="modal-body" style="max-height:300px;overflow:auto;">
-	    		  	
-    </div>
-			  
-    <div class="modal-footer">
-        <a href="#" class="btn" id="btn-close-form">关闭</a>
-        <a href="#" class="btn btn-primary" id="btn-done">确定</a>
-    </div>
-</div>
-	
 {/block}
 {block name="admincp_foot_js_block"}
 <script type="text/javascript" src="{'type.js'|here}"></script>

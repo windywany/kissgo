@@ -4,5 +4,6 @@
  */
 assert_login ();
 function do_admin_pages_get($req, $res) {
-    return "pages";
+    $data ['_CUR_URL'] = murl ( 'admin', 'pages' );
+    return view ( 'admin/views/node/list.tpl', $data );
 }
