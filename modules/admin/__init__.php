@@ -99,7 +99,12 @@ function _hook_for_admincp_menu($mm) {
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
 // add new menu items
 function _hook_add_new_menu_items($items) {
-    $items .= '<li><a href="#">new page</a></li>';
+    $url = murl ( 'admin', 'pages/create' );
+    $nodeTypeTable = new NodeTypeTable ();
+    $types = $nodeTypeTable->query ( 'type,name' )->where ( array ('creatable' => 1 ) );
+    foreach ( $types as $type ) {
+        $items .= '<li><a href="' . $url . '?type=' . $type ['type'] . '"><i class="icon-file"></i> ' . $type ['name'] . '</a></li>';
+    }
     return $items;
 }
 bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
@@ -108,16 +113,7 @@ function _hook_for_add_passport_menu_items($items) {
     return $items;
 }
 bind ( 'add_passport_menu_items', '_hook_for_add_passport_menu_items' );
-/**
- * 设置底部按键
- *
- * @param NavigationFootToolbar $tb        	
- */
-function _hook_for_foot_toolbar($tb) {
-    return $tb;
-}
 
-bind ( 'get_foot_toolbar_buttons', '_hook_for_foot_toolbar' );
 /**
  * 
  * 读取登录用户信息
@@ -128,7 +124,6 @@ function _kissgo_hook_for_get_user_passport($passport) {
         $uid = $passport ['uid'];
         $user = sess_get ( 'login_user_info_' . $uid, false );
         if (! $user) {
-            imports ( 'admin/models/*' );
             $um = new CoreUserTable ();
             $user = $um->query ()->where ( array ('uid' => $uid ) );
             if (count ( $user )) {
@@ -145,6 +140,7 @@ function _kissgo_hook_for_get_user_passport($passport) {
 }
 
 bind ( 'get_user_passport', '_kissgo_hook_for_get_user_passport' );
+//ajax validate
 function do_ajax_validate_check($req) {
     if (! isset ( $req ['__cb'] )) {
         echo 'false';
@@ -164,6 +160,7 @@ function do_ajax_validate_check($req) {
     }
 }
 bind ( 'do_ajax_ajax_validate', 'do_ajax_validate_check' );
+// 浏览模板文件
 function do_ajax_browser_template_files($req) {
     $theme = rqst ( 'theme', THEME );
     $id = rqst ( 'id', '' );
@@ -189,4 +186,28 @@ function do_ajax_browser_template_files($req) {
     echo json_encode ( $dirs );
 }
 bind ( 'do_ajax_browser_template_files', 'do_ajax_browser_template_files' );
+// 读取标签
+function do_ajax_tags_autocomplete($req) {
+    $q = rqst ( 'q', '' );
+    $p = irqst ( 'p', 1 );
+    $tagTable = new TagTable ();
+    $more = true;
+    $where = array ('type' => 0 );
+    $tags = $tagTable->query ( 'TG.tag_id as id, tag as text', 'TG' );
+    if (empty ( $q )) {
+        $more = false;
+    } else {
+        $where ['tag LIKE'] = "%{$q}%";
+    }
+    $nodeTagTable = new NodeTagsTable ();
+    $hots = $nodeTagTable->query ( imtf ( "COUNT(NT.tag_id)", 'total' ), 'NT' )->where ( array ('NT.tag_id' => imtv ( 'TG.tag_id' ) ) );
+    $tags->field ( $hots, 'hots' );
+    $tags->where ( $where )->limit ( $p, 10 )->sort ( 'hots', 'd' );
+    if ($more) {
+        $more = $tags->size () > 0;
+    }
+    $data = array ('more' => $more, 'results' => $tags->toArray () );
+    echo json_encode ( $data );
+}
+bind ( 'do_ajax_tags_autocomplete', 'do_ajax_tags_autocomplete' );
 // end of __init__.php

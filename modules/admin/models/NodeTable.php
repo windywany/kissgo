@@ -23,7 +23,7 @@ class NodeTable extends DbTable {
         $schema ['title'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 128, Idao::CMMT => '页面的标题' );
         $schema ['subtitle'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 128, Idao::CMMT => '二级标题' );
         $schema ['ontopto'] = array ('type' => 'date', 'extra' => 'normal', Idao::CMMT => '在该日期以前，一直置顶' );
-        $schema ['node_type'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 16, Idao::CMMT => '页面类型,用于主题中确定默认模板' );
+        $schema ['node_type'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::NN, Idao::LENGTH => 16, Idao::CMMT => '页面类型,用于主题中确定默认模板' );
         $schema ['template'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 512, Idao::CMMT => '模板文件' );
         $schema ['keywords'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 256, Idao::CMMT => '页面的keywords' );
         $schema ['description'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 512, Idao::CMMT => '页面的描述' );
@@ -35,5 +35,5 @@ class NodeTable extends DbTable {
         $schema ['summary'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 256, Idao::CMMT => '内容摘要' );
         $schema ['content'] = array ('type' => 'text', 'extra' => 'big', Idao::CMMT => '页面内容' );
         return $schema;
-    }
+    }    
 }

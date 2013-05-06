@@ -12,7 +12,7 @@ class TagTable extends DbTable {
         $schema->addUnique ( 'UDX_TAG_TAG', array ('tag' ) );
         $schema ['tag_id'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
         $schema ['tag'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 16, Idao::NN );
-        $schema ['type'] = array ('type' => 'int', 'extra' => 'small', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '0:flag; 1:tag' );
+        $schema ['type'] = array ('type' => 'int', 'extra' => 'small', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '1:flag; 0:tag' );
         return $schema;
     }
     public function getFlags() {

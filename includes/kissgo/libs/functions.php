@@ -716,8 +716,8 @@ function array_merge2($base, $arr) {
  * @param string $url
  * @return string
  */
-function safe_url($page) {
-    global $_CURRENT_PAGE;
+function safe_url($node) {
+    global $_CURRENT_NODE;
     static $domain = false, $protocol = false, $port = '';
     if (! $domain) {
         $domain = preg_match ( '#^https?://#i', BASE_URL ) ? preg_replace ( '#^https?://#i', '', trim ( BASE_URL, '/' ) ) : $_SERVER ['HTTP_HOST'];
@@ -725,11 +725,11 @@ function safe_url($page) {
         $protocol = isset ( $_SERVER ['HTTPS'] ) ? 'https://' : 'http://';
         $port = intval ( $_SERVER ['SERVER_PORT'] ) == 80 ? '' : ':' . $_SERVER ['SERVER_PORT'];
     }
-    if (is_string ( $page )) {
-        $url = $page;
-        $page = $_CURRENT_PAGE;
+    if (is_string ( $node )) {
+        $url = $node;
+        $node = $_CURRENT_NODE;
     } else {
-        $url = $page ['url'];
+        $url = $node ['url'];
     }
     if (preg_match ( '/index\.html?$/i', $url )) {
         $url = preg_replace ( '/index\.html?$/i', '', $url );
@@ -738,11 +738,11 @@ function safe_url($page) {
         return $url;
     } else {
         $url = ltrim ( $url, '/' );
-        if (isset ( $page ['bind'] ) && ! empty ( $page ['bind'] )) { //绑定了二级域名
-            if (! empty ( $page ['domain_home'] ) || ! empty ( $page ['home'] )) { //是二级域名的首页啦，要清空url
+        if (isset ( $node ['bind'] ) && ! empty ( $node ['bind'] )) { //绑定了二级域名
+            if (! empty ( $node ['domain_home'] ) || ! empty ( $node ['home'] )) { //是二级域名的首页啦，要清空url
                 $url = '';
             }
-            return $protocol . $page ['bind'] . $domain . $port . '/' . $url;
+            return $protocol . $node ['bind'] . $domain . $port . '/' . $url;
         } else {
             return BASE_URL . $url;
         }

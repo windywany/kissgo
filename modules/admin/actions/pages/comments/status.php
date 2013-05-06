@@ -19,7 +19,17 @@ function do_admin_pages_comments_status_get($req, $res) {
     } else {
         $s = rqst ( 's', 'new' );
         $s = in_array ( $s, $status ) ? $s : 'new';
-        $rst = $cmM->update ( array ('status' => $s ), array ('id IN' => $ids ) );
+        $data ['status'] = $s;
+        
+        if ($s == 'pass') {
+            $I = whoami ();
+            $data ['approved_uid'] = $I ['uid'];
+            $data ['approved_time'] = time ();
+        } else {
+            $data ['approved_uid'] = 0;
+            $data ['approved_time'] = 0;
+        }
+        $rst = $cmM->update ( $data, array ('id IN' => $ids ) );
     }
     if ($rst === false) {
         show_page_tip ( '<strong>Oops!</strong><br/>出错啦:' . db_error ( true ), 'error' );

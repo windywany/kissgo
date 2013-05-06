@@ -15,6 +15,11 @@ class DbSqlHelper {
     protected $having = array ();
     protected $params = array ();
     public $errorInfo = '';
+    /**
+     * 
+     * @param mixed $field
+     * @return DbSqlHelper
+     */
     public function getTotalHelper($field = null) {
         $helper = new DbSqlHelper ();
         $helper->condition = $this->condition;
@@ -167,9 +172,9 @@ class DbSqlHelper {
             if ($field instanceof DbImmutableF) {
                 $this->fields [] = $field;
             } else if ($field instanceof ResultCursor) {
-                if(empty($alias)){
-                    db_error('the alias cannot be null when you use ResultCursor as a field.');
-                    $alias = '_field__'.count($this->fields);
+                if (empty ( $alias )) {
+                    db_error ( 'the alias cannot be null when you use ResultCursor as a field.' );
+                    $alias = '_field__' . count ( $this->fields );
                 }
                 $this->fields [$alias] = $field;
             } else {
