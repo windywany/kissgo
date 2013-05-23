@@ -11,5 +11,7 @@ function do_admin_pages_create_get($req, $res) {
     }
     $type = $req ['type'];
     $data ['type'] = $type;
+    $data ['useEditor'] = true;
+    $data ['widgets'] = apply_filter ( 'get_page_editor_widgets', '', array ('type' => $type ) );
     return view ( 'admin/views/node/editor/editor.tpl', $data );
 }

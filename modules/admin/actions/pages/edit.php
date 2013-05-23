@@ -18,5 +18,7 @@ function do_admin_pages_edit_get($req, $res) {
     }
     $data ['node'] = $node;
     $data ['type'] = $node ['node_type'];
+    $data ['useEditor'] = true;
+    $data ['widgets'] = apply_filter ( 'get_page_editor_widgets', '', $node );
     return view ( 'admin/views/node/editor/editor.tpl', $data );
 }

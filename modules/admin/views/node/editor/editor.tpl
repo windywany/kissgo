@@ -14,16 +14,54 @@
 {/block}
 
 {block name="admincp_body"}
-<ul class="nav nav-tabs">
-    <li>&nbsp;&nbsp;</li>
-    <li class="active"><a href="{$_CUR_URL}"><i class="icon-file"></i> 草稿箱({$draftTotal})</a></li>
-    
-</ul>
-<div class="tab-content">
-</div>
+<form action="{'admin'|murl:pages}" method="POST" id="node-form">
+    <input type="hidden" name="type" value="{$type}"/>
+    <div class="row-fluid">
+        <div class="span8">
+            <input type="text" class="title1" name="title" placeholder="页面标题"/>
+        </div>
+        <div class="span4">
+            <input type="text" class="title1" name="subtitle" placeholder="页面副标题"/>
+        </div>
+    </div>
+        
+    {if $useEditor}
+    <div id="ueditor-wrapper">
+        <div class="ueditor-toolbar"></div>
+        <script type="text/plain" id="myEditor">{$node.content}</script>        
+    </div>
+    <br/>
+    {/if}
+    <div class="accordion" id="page-widgets">        
+        {$widgets}        
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseSEO">SEO</a>
+            </div>
+            <div id="collapseSEO" class="accordion-body collapse">
+              <div class="accordion-inner">
+              Anim pariatur cliche...
+              </div>
+            </div>
+        </div>
+        
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseAdvanced">高级</a>
+            </div>
+            <div id="collapseAdvanced" class="accordion-body collapse">
+              <div class="accordion-inner">
+                Anim pariatur cliche...
+              </div>
+            </div>
+        </div>
+    </div>
+</form>
 {/block}
 
 {block name="admincp_foot_js_block"}
 <script type="text/javascript" src="{'bootstrap/select2/select2.min.js'|static}"></script>
+<script type="text/javascript" src="{'ueditor/config.js'|static}"></script>
+<script type="text/javascript" src="{'ueditor/editor.js'|static}"></script> 
 <script type="text/javascript" src="{'editor.js'|here}"></script>
 {/block}

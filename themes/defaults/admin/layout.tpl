@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
     {block name="admincp_css_block"}{/block} 
     <script type="text/javascript">
-       Kissgo = { 'BASE': "{$ksg_site_url}" , 'AJAX':'{$ksg_site_url}ajax.php' };
+       window.Kissgo = { 'BASE': "{$ksg_site_url}" , 'AJAX':'{$ksg_site_url}ajax.php' };
+       window.UEDITOR_HOME_URL = "{'ueditor/'|static}";
     </script>    
     <script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>    
     <script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>

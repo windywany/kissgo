@@ -60,6 +60,11 @@ function do_admin_pages_get($req, $res) {
     
     return view ( 'admin/views/node/list.tpl', $data );
 }
+
+function do_admin_pages_post($req, $res) {
+    
+}
+
 /**
  * node hooks
  * @author Leo
