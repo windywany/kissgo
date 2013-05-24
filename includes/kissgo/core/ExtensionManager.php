@@ -31,14 +31,20 @@ class ExtensionManager {
     public function loadInstalledExtensions($load_init = true) {
         global $__kissgo_exports;
         // 加载用户安装插件
-        if (file_exists ( APPDATA_PATH . 'extensions.ini' )) {
+        $cacheKey = '_extensions_info';
+        $cachedExtensions = InnerCacher::get ( $cacheKey );
+        if ($cachedExtensions) {
+            $this->extensions = $cachedExtensions;
+        } else if (file_exists ( APPDATA_PATH . 'extensions.ini' )) {
             $this->extensions = parse_ini_file ( APPDATA_PATH . 'extensions.ini', true );
+            if ($this->extensions !== false) {
+                InnerCacher::add ( $cacheKey, $this->extensions );
+            }
             if ($this->extensions === false && $load_init) {
                 log_debug ( "extensions.ini的文件格式不正确，无法加载！" );
                 return;
             }
         }
-        
         if (empty ( $this->extensions )) {
             return;
         }

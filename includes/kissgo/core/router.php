@@ -43,6 +43,11 @@ class Router {
      */
     public function getAction($request) {
         self::$url = $url = $request ['_url'];
+        $actionInfo = InnerCacher::get ( md5 ( $url ) );
+        if ($actionInfo) {
+            include_once $actionInfo ['file'];
+            return $actionInfo ['func'];
+        }
         $action = 'index';
         $controller = '';
         if ($url == '/') {
@@ -78,7 +83,7 @@ class Router {
         if ($alias) {
             $module = self::$extensionManager->getModuleByAlias ( $alias );
             if (! empty ( $controller )) {
-                $ctrl_func = str_replace('/', '_', $controller);
+                $ctrl_func = str_replace ( '/', '_', $controller );
                 $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true );
                 $actions [2] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true );
             } else {
@@ -107,8 +112,10 @@ class Router {
                 }
                 include_once $app_action_file;
                 foreach ( $cb_suffixes as $suffix ) {
-                    if (function_exists ( $func_name . $suffix )) {
-                        return $func_name . $suffix;
+                    $cb_func = $func_name . $suffix;
+                    if (function_exists ( $cb_func )) {
+                        InnerCacher::add ( md5 ( self::$url ), array ('file' => $app_action_file, 'func' => $cb_func ) );
+                        return $cb_func;
                     }
                 }
             }

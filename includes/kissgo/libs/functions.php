@@ -7,6 +7,12 @@
  *
  * $Id$
  */
+/**
+ * 
+ * covert the charset of filename to UTF-8
+ * @param string $filename
+ * @return string
+ */
 function thefilename($filename) {
     $encode = mb_detect_encoding ( $filename, "UTF-8,GBK,GB2312,BIG5,ISO-8859-1" );
     if ($encode != 'UTF-8') {

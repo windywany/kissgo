@@ -13,7 +13,7 @@ defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
  * 核心类，主控类,
  * 可以像使用map一样使用KissGo的实例来取应用的配置
  */
-class KissGo implements ArrayAccess {
+class KissGo{
     private static $INSTANCE = NULL;
     private function __construct() {
         if (! @ini_get ( 'zlib.output_compression' ) && @ob_get_status ()) {
@@ -63,19 +63,6 @@ class KissGo implements ArrayAccess {
         }
         $response->output ( $view );
     }
-    public function offsetExists($offset) {
-        return KissGoSetting::hasSetting ( $offset );
-    }
-    public function offsetGet($offset) {
-        return KissGoSetting::getSetting ( $offset );
-    }
-    public function offsetSet($offset, $value) {
-        KissGoSetting::getSetting ( $offset, $value );
-    }
-    public function offsetUnset($offset) {
-        // nothing to do
-    }
-    
     /**
      *
      * 初始化并启动 session，然后你就可以使用$_SESSION来存取SESSION

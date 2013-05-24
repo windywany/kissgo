@@ -26,18 +26,20 @@ class SmartyView extends View {
             $this->__smarty = new Smarty ();
             $this->__smarty->addPluginsDir ( INCLUDES . 'vendors/smarty/user_plugins' );
             $this->__smarty->template_dir = $basedir; //模板目录
-            $tpl = str_replace ( DS, '/', $this->tpl );            
+            $tpl = str_replace ( DS, '/', $this->tpl );
             $tpl = explode ( '/', $tpl );
             array_pop ( $tpl );
             $sub = implode ( DS, $tpl );
             $this->__smarty->compile_dir = TMP_PATH . 'tpls_c' . DS . $sub; //模板编译目录
             $this->__smarty->cache_dir = TMP_PATH . 'tpls_cache' . DS . $sub; //模板缓存目录
+            $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );
+            $this->__smarty = apply_filter ( 'init_view_smarty_engine', $this->__smarty );
+            $this->__smarty->compile_check = true;
             $this->__smarty->_dir_perms = 0775;
             if (DEBUG == DEBUG_DEBUG) {
                 $this->__smarty->force_compile = true;
+                $this->__smarty->caching = 0;
             }
-            $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );
-            $this->__smarty = apply_filter ( 'init_view_smarty_engine', $this->__smarty );
         } else {
             trigger_error ( 'The view template ' . $tpl . ' is not found', E_USER_ERROR );
         }

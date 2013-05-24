@@ -20,12 +20,14 @@ class ThemeView extends View {
             array_pop ( $tpl );
             $sub = implode ( DS, $tpl );
             $this->__smarty->compile_dir = TMP_PATH . 'themes_c' . DS . $sub; //模板编译目录
-            $this->__smarty->cache_dir = TMP_PATH . 'themes_cache' . DS . $sub; //模板缓存目录
-            $this->__smarty->_dir_perms = 0775;
+            $this->__smarty->cache_dir = TMP_PATH . 'themes_cache' . DS . $sub; //模板缓存目录                       
+            $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );
+            $this->__smarty->compile_check = true;
+            $this->__smarty->_dir_perms = 0775; 
             if (DEBUG == DEBUG_DEBUG) {
                 $this->__smarty->force_compile = true;
+                $this->__smarty->caching = 0;
             }
-            $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );
         } else {
             trigger_error ( 'The view template ' . $tpl . ' is not found', E_USER_ERROR );
         }

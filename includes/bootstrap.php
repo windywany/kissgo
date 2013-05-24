@@ -36,7 +36,6 @@ defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS ); // t
 define ( 'NOTNULL', '_@_NOT_NULL_@_' );
 define ( 'DATABASE', '__DATABASE__' );
 define ( 'COOKIE', '__COOKIE__' );
-define ( 'CACHE', '__CACHE__' );
 define ( 'DATE_FORMAT', '_DATE_FORMAT_' );
 // 过滤输入
 if (@ini_get ( 'register_globals' )) {
@@ -218,6 +217,7 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['THEME'] ) && ! empty ( $settings ['THEME'] )) {
         define ( 'THEME', $settings ['THEME'] );
     }
+
     ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';
@@ -230,6 +230,11 @@ defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
 defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
 defined ( 'THEME' ) or define ( 'THEME', 'defaults' );
 @date_default_timezone_set ( TIMEZONE );
+if (isset ( $_GET ['__url'] )) {
+    define ( 'REQUEST_URL', $_GET ['__url'] );
+}
+include KISSGO . 'core/cache.php'; // load cache instant
+// log function
 function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
@@ -237,9 +242,6 @@ function log_message($message, $trace_info, $level, $origin = null) {
         if ($level >= DEBUG_DEBUG) {
             $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}\n";
             @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
-        }
-        if (DEBUG == DEBUG_DEBUG) {
-            trigger_error ( $message, E_USER_WARNING );
         }
         if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
             if (! $fb) {
@@ -258,6 +260,8 @@ function log_message($message, $trace_info, $level, $origin = null) {
                     FB::warn ( $msg );
                     break;
             }
+        } else if (DEBUG == DEBUG_DEBUG) {
+            trigger_error ( $message, E_USER_WARNING );
         }
     }
 }
@@ -300,7 +304,6 @@ include KISSGO . 'core/response.php';
 include KISSGO . 'core/rbac.php';
 include KISSGO . 'core/router.php';
 include KISSGO . 'core/session.php';
-include KISSGO . 'core/cache.php';
 include KISSGO . 'core/views.php';
 include KISSGO . 'core/form.php';
 include KISSGO . 'core/grid.php';
@@ -318,16 +321,24 @@ include KISSGO . 'core/kissgo.php';
  */
 function _kissgo_class_loader($clz) {
     global $__kissgo_exports;
+    $key = '_class_' . $clz;
+    $clz_file = InnerCacher::get ( $key );
+    if ($clz_file) {
+        include $clz_file;
+        return;
+    }
     foreach ( $__kissgo_exports as $path ) {
         $clz_file = $path . DS . $clz . '.php';
         if (is_file ( $clz_file )) {
+            InnerCacher::add ( $key, $clz_file );
             include $clz_file;
             return;
         }
     }
-    $file = apply_filter ( 'auto_load_class', '', $clz );
-    if ($file && file_exists ( $file )) {
-        include $file;
+    $clz_file = apply_filter ( 'auto_load_class', '', $clz );
+    if ($clz_file && file_exists ( $clz_file )) {
+        InnerCacher::add ( $key, $clz_file );
+        include $clz_file;
     }
 }
 spl_autoload_register ( '_kissgo_class_loader' );
