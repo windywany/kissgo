@@ -424,10 +424,10 @@ function get_thumbnail_filename($filename, $w, $h) {
 function the_thumbnail_src($src, $w, $h) {
     $thumbfile = get_thumbnail_filename ( $src, $w, $h );
     //TODO check whether the file exists or not, then decide which url will be return
-    if (file_exists ( WEB_ROOT . STATIC_DIR . DS . $thumbfile )) {
-        return BASE_URL . STATIC_DIR . '/' . $thumbfile;
+    if (file_exists ( WEB_ROOT . $thumbfile )) {
+        return BASE_URL . $thumbfile;
     } else {
-        return BASE_URL . STATIC_DIR . '/' . $src;
+        return BASE_URL  . $src;
     }
 }
 /**
@@ -695,7 +695,7 @@ function is_module_file($file) {
     if (isset ( $results [$file] )) {
         return $results [$file];
     }
-    if (! empty ( $file ) && is_array ( $_ksg_installed_modules ) && ! empty ( $_ksg_installed_modules )) {
+    if (! empty ( $file ) && ! empty ( $_ksg_installed_modules )) {
         $module = explode ( "/", $file );
         $results [$file] = in_array ( $module [0], $_ksg_installed_modules );
         return $results [$file];

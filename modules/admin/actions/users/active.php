@@ -5,8 +5,7 @@
  * @date 2013-03-11 21:36
  */
 assert_login ();
-function do_admin_users_active_get($req, $res) {
-    imports ( 'admin/models/CoreUserTable.php' );
+function do_admin_users_active_get($req, $res) {    
     if ($req ['uids']) {
         $where ['uid IN'] = safe_ids ( rqst ( 'uids' ), ',', true );
     } else {

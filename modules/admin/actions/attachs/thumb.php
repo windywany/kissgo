@@ -1,7 +1,6 @@
 <?php
 assert_login ();
-function do_admin_attachs_thumb_get($req, $res) {
-    imports ( 'admin/models/CoreAttachmentTable.php' );
+function do_admin_attachs_thumb_get($req, $res) {    
     $data ['success'] = false;
     $aid = safe_ids ( rqst ( 'aid' ), ',', true );
     if ($aid) {

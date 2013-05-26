@@ -58,7 +58,7 @@
 						<td class="col_chk"><input type="checkbox" class="chkbx" aid="{$item.url}" value="{$item.attachment_id}"/></td>						
 						<td class="has-row-actions">
 							<div class="thumbnail pull-left mg-r5">								
-								<a href="{$item.url|img}" title="{$item.name}" {if $item.type == 'image'}rel="prettyPhoto[pp_gal]"{/if}>								
+								<a href="{$item.url|uploaded}" title="{$item.name}" {if $item.type == 'image'}rel="prettyPhoto[pp_gal]"{/if}>								
 									<img class="attach" src="{'attach_icon'|fire:$item}" title="{$item.alt_text}" alt="{$item.alt_text}"/>
 								</a>								
 							</div>

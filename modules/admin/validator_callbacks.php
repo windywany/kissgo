@@ -1,4 +1,5 @@
 <?php
+defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 /**
  * 检验角色名是否已经存在
  * @param string|null $value
@@ -6,8 +7,7 @@
  * @param string|null $message
  * @return
  */
-function check_role_name($value = null, $data = null, $message = null) {
-    imports ( 'admin/models/CoreRoleTable.php' );
+function check_role_name($value = null, $data = null, $message = null) {    
     $where ['deleted'] = 0;
     $where ['label'] = $data ['label'];
     if ($data ['rid']) {
@@ -27,8 +27,7 @@ function check_role_name($value = null, $data = null, $message = null) {
  * @param string|null $message
  * @return
  */
-function check_user_login($value = null, $data = null, $message = '') {
-    imports ( 'admin/models/CoreUserTable.php' );
+function check_user_login($value = null, $data = null, $message = '') {    
     $where ['deleted'] = 0;
     $where ['login'] = $data ['login'];
     if ($data ['uid']) {
@@ -48,8 +47,7 @@ function check_user_login($value = null, $data = null, $message = '') {
  * @param string|null $message
  * @return
  */
-function check_user_email($value = null, $data = null, $message = '') {
-    imports ( 'admin/models/CoreUserTable.php' );
+function check_user_email($value = null, $data = null, $message = '') {    
     $where ['deleted'] = 0;
     $where ['email'] = $data ['email'];
     if ($data ['uid']) {

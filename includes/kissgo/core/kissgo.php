@@ -13,9 +13,33 @@ defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
  * 核心类，主控类,
  * 可以像使用map一样使用KissGo的实例来取应用的配置
  */
-class KissGo{
-    private static $INSTANCE = NULL;
-    private function __construct() {
+class KissGo {
+    private function __construct() {}
+    /**
+     * 运行，分发请求
+     */
+    public static function run() {
+        self::startSession ();
+        $request = Request::getInstance ();
+        $response = Response::getInstance ();
+        $view = apply_filter ( 'before_route', false );
+        if ($view === false) {
+            $router = Router::getInstance ();
+            $action_func = $router->getAction ( $request );
+            if (is_callable ( $action_func )) {
+                $view = call_user_func_array ( $action_func, array ($request, $response ) );
+            } else {
+                Response::respond ( 404 );
+            }
+        }
+        $response->output ( $view );
+    }
+    public static function initEngine() {
+        static $inited = false;
+        if ($inited) {
+            return;
+        }
+        $inited = true;
         if (! @ini_get ( 'zlib.output_compression' ) && @ob_get_status ()) {
             $__ksg_before_out = @ob_get_contents ();
             if ($__ksg_before_out) {
@@ -30,38 +54,6 @@ class KissGo{
                 @ini_set ( 'zlib.output_compression', 1 );
             }
         }
-    }
-    
-    /**
-     * 得到全局唯一的KissGo实例
-     *
-     * @return KissGo
-     */
-    public static function getInstance() {
-        if (self::$INSTANCE == NULL) {
-            self::$INSTANCE = new KissGo ();
-        }
-        return self::$INSTANCE;
-    }
-    
-    /**
-     * 运行，分发请求
-     */
-    public function run() {
-        KissGo::startSession ();
-        $request = Request::getInstance ();
-        $response = Response::getInstance ();
-        $view = apply_filter ( 'before_route', false );
-        if ($view === false) {
-            $router = Router::getInstance ();
-            $action_func = $router->getAction ( $request );
-            if (is_callable ( $action_func )) {
-                $view = call_user_func_array ( $action_func, array ($request, $response ) );
-            } else {
-                Response::respond ( 404 );
-            }
-        }
-        $response->output ( $view );
     }
     /**
      *
@@ -98,5 +90,5 @@ class KissGo{
         session_start ();
     }
 }
-KissGo::getInstance ();
+KissGo::initEngine ();
 // end of file kissgo.php

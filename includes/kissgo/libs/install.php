@@ -156,7 +156,8 @@ class KissGOInstaller {
      * @return array
      */
     public function check_directory_rw() {
-        $dirs = array ('appdata' => APPDATA_PATH, 'logs' => APPDATA_PATH . 'logs', 'tmp' => TMP_PATH );
+        $uploads = (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : 'uploads');
+        $dirs = array ('appdata' => APPDATA_PATH, 'logs' => APPDATA_PATH . 'logs', 'tmp' => TMP_PATH, 'uploads' => WEB_ROOT . $uploads );
         $profile = ProfileManager::getInstallProfile ();
         $profile->onCheckDirectory ( $dirs );
         $rst = array ();
@@ -369,7 +370,7 @@ class InstallConfigForm extends BootstrapForm {
         if (! $value) {
             $widget [FWT_OPTIONS] ['disabled'] = 'disabled';
             $widget [FWT_TIP] = '您的服务器不支持伪静态.';
-        }else{
+        } else {
             $widget [FWT_TIP] = '您的服务器支持伪静态,建议开启.';
         }
     }

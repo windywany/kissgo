@@ -12,8 +12,7 @@ function do_admin_attachs_upload_get($req, $res) {
  * @param unknown_type $req
  * @param unknown_type $res
  */
-function do_admin_attachs_upload_post($req, $res) {
-    imports ( 'admin/models/CoreAttachmentTable.php' );
+function do_admin_attachs_upload_post($req, $res) {    
     $tmpdir = TMP_PATH . "plupload";
     $count = irqst ( 'uploader_count', 0 );
     $errors = array ();

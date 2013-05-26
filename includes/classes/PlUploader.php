@@ -14,7 +14,7 @@ class PlUploader implements IUploader {
 	 */
     public function save($file) {
         $path = (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : 'uploads') . date ( '/Y/m/' );
-        $destdir = WEB_ROOT . STATIC_DIR . DS . $path;
+        $destdir = WEB_ROOT . $path;
         $tmp_file = $file->tmpname;
         $fileinfo = stat ( $tmp_file );
         $maxSize = $this->getMaxSize ();
@@ -59,7 +59,7 @@ class PlUploader implements IUploader {
         return in_array ( $ext, $types );
     }
     public function thumbnail($file, $sizes) {
-        $imageUtil = new ImageUtil ( WEB_ROOT . STATIC_DIR . DS . $file );
+        $imageUtil = new ImageUtil ( WEB_ROOT . $file );
         return $imageUtil->thumbnail ( $sizes );
     }
     public function watermark($file, $watermark) {
@@ -67,7 +67,7 @@ class PlUploader implements IUploader {
         return true;
     }
     public function delete($file) {
-        $file = WEB_ROOT . STATIC_DIR . DS . $file;
+        $file = WEB_ROOT . $file;
         if (file_exists ( $file )) {
             if (@unlink ( $file )) {
                 ImageUtil::deleteThumbnail ( $file );

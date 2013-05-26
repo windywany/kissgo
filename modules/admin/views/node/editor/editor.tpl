@@ -24,14 +24,7 @@
             <input type="text" class="title1" name="subtitle" placeholder="页面副标题"/>
         </div>
     </div>
-        
-    {if $useEditor}
-    <div id="ueditor-wrapper">
-        <div class="ueditor-toolbar"></div>
-        <script type="text/plain" id="myEditor">{$node.content}</script>        
-    </div>
-    <br/>
-    {/if}
+    
     <div class="accordion" id="page-widgets">        
         {$widgets}        
         <div class="accordion-group">
@@ -61,7 +54,5 @@
 
 {block name="admincp_foot_js_block"}
 <script type="text/javascript" src="{'bootstrap/select2/select2.min.js'|static}"></script>
-<script type="text/javascript" src="{'ueditor/config.js'|static}"></script>
-<script type="text/javascript" src="{'ueditor/editor.js'|static}"></script> 
 <script type="text/javascript" src="{'editor.js'|here}"></script>
 {/block}

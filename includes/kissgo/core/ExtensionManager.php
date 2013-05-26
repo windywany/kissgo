@@ -14,6 +14,7 @@ class ExtensionManager {
     private $uninstalled = array ();
     private $getUpgradeInfo = false;
     private $aliases = array ();
+    private static $cacheKey = '_extensions_info';
     /**
      * 获取系统唯一插件管理器实例
      *
@@ -30,15 +31,14 @@ class ExtensionManager {
      */
     public function loadInstalledExtensions($load_init = true) {
         global $__kissgo_exports;
-        // 加载用户安装插件
-        $cacheKey = '_extensions_info';
-        $cachedExtensions = InnerCacher::get ( $cacheKey );
+        // 加载用户安装插件        
+        $cachedExtensions = InnerCacher::get ( self::$cacheKey );
         if ($cachedExtensions) {
             $this->extensions = $cachedExtensions;
         } else if (file_exists ( APPDATA_PATH . 'extensions.ini' )) {
             $this->extensions = parse_ini_file ( APPDATA_PATH . 'extensions.ini', true );
             if ($this->extensions !== false) {
-                InnerCacher::add ( $cacheKey, $this->extensions );
+                InnerCacher::add ( self::$cacheKey, $this->extensions );
             }
             if ($this->extensions === false && $load_init) {
                 log_debug ( "extensions.ini的文件格式不正确，无法加载！" );
@@ -91,6 +91,7 @@ class ExtensionManager {
         }
         $pluginsStr = implode ( "\n", $pluginsStr );
         if (@file_put_contents ( APPDATA_PATH . 'extensions.ini', $pluginsStr ) !== false) {
+            InnerCacher::remove(self::$cacheKey);
             return true;
         } else {
             log_debug ( '保存插件配置文件时出错.' );

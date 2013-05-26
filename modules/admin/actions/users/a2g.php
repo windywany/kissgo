@@ -3,8 +3,7 @@
  * add user to groups
  */
 assert_login ();
-function do_admin_users_a2g_get($req, $res) {
-    imports ( 'admin/models/CoreUserRoleTable.php' );
+function do_admin_users_a2g_get($req, $res) {    
     $uid = irqst ( 'uid' );
     $gids = safe_ids ( rqst ( 'gids' ), ',', true );
     $data ['success'] = true;

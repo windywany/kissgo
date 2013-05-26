@@ -27,19 +27,15 @@ class Cache implements ArrayAccess {
         }
         return $cache;
     }
-    
     public function offsetExists($offset) {
         return $this->has_key ( $offset, $this->current_group );
     }
-    
     public function offsetGet($offset) {
         return $this->get ( $offset, $this->current_group );
     }
-    
     public function offsetSet($offset, $value) {
         $this->add ( $offset, $value, $this->expire, $this->current_group );
     }
-    
     public function offsetUnset($offset) {
         $this->delete ( $offset, $this->current_group );
     }
@@ -51,9 +47,7 @@ class Cache implements ArrayAccess {
      * @param int $expire 缓存时间
      * @param string $group 缓存组
      */
-    public function add($key, $value, $expire = 0, $group = 'default') {
-
-    }
+    public function add($key, $value, $expire = 0, $group = 'default') {}
     
     /**
      * 从缓存中取数据
@@ -70,17 +64,13 @@ class Cache implements ArrayAccess {
      * @param string $key 缓存唯一键值
      * @param string $group 缓存组
      */
-    public function delete($key, $group = 'default') {
-
-    }
+    public function delete($key, $group = 'default') {}
     
     /**
      * 清空组内所有缓存
      * @param string $group 缓存组
      */
-    public function clear($check = true, $group = 'default') {
-
-    }
+    public function clear($check = true, $group = 'default') {}
     
     /**
      * @param string $key
@@ -150,7 +140,6 @@ class InnerCacher {
             }
         }
     }
-    
     public static function add($key, $data) {
         return self::$CACHE->add ( $key, $data );
     }

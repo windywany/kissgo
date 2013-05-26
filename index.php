@@ -9,5 +9,5 @@
 //------------------------------------------------------------------------
 define ( 'WEB_ROOT', dirname ( __FILE__ ) . DIRECTORY_SEPARATOR );
 require_once WEB_ROOT . 'includes/bootstrap.php';
-KissGo::getInstance ()->run ();
+KissGo::run ();
 // end of file index.php

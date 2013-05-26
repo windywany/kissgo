@@ -9,8 +9,7 @@ assert_login ();
  * @param unknown_type $res
  * @return SmartyView
  */
-function do_admin_attachs_get($req, $res) {
-    imports ( 'admin/models/CoreAttachmentTable.php' );
+function do_admin_attachs_get($req, $res) {    
     $data ['limit'] = 15;
     $data ['_CUR_URL'] = murl ( 'admin', 'attachs' );
     $data ['type_options'] = array_merge ( array ('' => '-请选择-' ), UploadTmpFile::getAttachmentTypes () );

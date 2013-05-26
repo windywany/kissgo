@@ -196,8 +196,6 @@ class LoginInfo {
  */
 interface IRbac {
     const USER = 'USER'; //用户
-    
-
     /**
      * Can I do some operation on resource? If I can return true, else return false
      *

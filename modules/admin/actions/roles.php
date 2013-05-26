@@ -11,8 +11,7 @@ assert_login ();
  * @param Response $res
  * @return SmartyView
  */
-function do_admin_roles_get($req, $res) {
-    imports ( 'admin/forms/RoleForm.php', 'admin/models/CoreRoleTable.php' );
+function do_admin_roles_get($req, $res) {    
     $data = array ('limit' => 10 );
     $start = irqst ( 'start', 1 ); // 分页
     
@@ -42,8 +41,6 @@ function do_admin_roles_get($req, $res) {
  * @param Response $res
  */
 function do_admin_roles_post($req, $res) {
-    imports ( 'admin/forms/RoleForm.php', 'admin/models/CoreRoleTable.php' );
-    
     $form = new RoleForm ();
     $msg = __ ( 'Sorry, some error occurred during validating role data.' );
     if ($form->validate ()) {

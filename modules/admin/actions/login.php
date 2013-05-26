@@ -5,7 +5,6 @@
  * Date: 12-11-24
  * Time: 下午1:01
  */
-imports ( 'admin/forms/*' );
 /**
  * 处理登录
  * @param Request $req
@@ -32,8 +31,7 @@ function do_admin_login_post($req, $res) {
                 $tryCount = 0;
             }
         }
-        if ($goon) {
-            imports ( 'admin/models/*' );
+        if ($goon) {            
             $um = new CoreUserTable ();
             $account = $form ['account'];
             $passwod = $form ['passwd'];

@@ -325,6 +325,9 @@ function smarty_modifiercompiler_img($params, $compiler) {
     $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
     return "BASE_URL.'{$url}'." . $params [0];
 }
+function smarty_modifiercompiler_uploaded($params, $compiler) {    
+    return "BASE_URL." . $params [0];
+}
 /**
  * Smarty url modifier plugin
  *

@@ -4,8 +4,7 @@
  * @author Leo Ning
 */
 assert_login ();
-function do_admin_users_dfg_get($req, $res) {
-    imports ( 'admin/models/CoreUserRoleTable.php' );
+function do_admin_users_dfg_get($req, $res) {    
     $uid = irqst ( 'uid' );
     $gid = irqst ( 'gid' );
     $where ['uid'] = $uid;

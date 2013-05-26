@@ -5,8 +5,7 @@ assert_login ();
  * @param Request $req
  * @param Response $res
  */
-function do_admin_roles_edit_get($req, $res) {
-    imports ( 'admin/forms/RoleForm.php', 'admin/models/CoreRoleTable.php' );
+function do_admin_roles_edit_get($req, $res) {    
     $data ['_CUR_URL'] = murl ( 'admin', 'roles' );
     $rid = 0;
     if (isset ( $req ['rid'] )) {

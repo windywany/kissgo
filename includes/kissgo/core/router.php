@@ -10,6 +10,7 @@
 class Router {
     private static $INSTANCE = null;
     private static $url = '';
+    private static $cacheKey = '';
     private static $forward_url = '';
     private static $extensionManager;
     private function __construct() {
@@ -43,7 +44,8 @@ class Router {
      */
     public function getAction($request) {
         self::$url = $url = $request ['_url'];
-        $actionInfo = InnerCacher::get ( md5 ( $url ) );
+        self::$cacheKey = md5 ( $_SERVER ['REQUEST_METHOD'] . ' ' . $url );
+        $actionInfo = InnerCacher::get ( self::$cacheKey );
         if ($actionInfo) {
             include_once $actionInfo ['file'];
             return $actionInfo ['func'];
@@ -114,7 +116,7 @@ class Router {
                 foreach ( $cb_suffixes as $suffix ) {
                     $cb_func = $func_name . $suffix;
                     if (function_exists ( $cb_func )) {
-                        InnerCacher::add ( md5 ( self::$url ), array ('file' => $app_action_file, 'func' => $cb_func ) );
+                        InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func ) );
                         return $cb_func;
                     }
                 }

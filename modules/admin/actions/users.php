@@ -9,8 +9,7 @@ assert_login ();
  * @param unknown_type $res
  * @return SmartyView
  */
-function do_admin_users_get($req, $res) {
-    imports ( 'admin/models/CoreRoleTable.php', 'admin/forms/UserForm.php', 'admin/models/CoreUserTable.php' );
+function do_admin_users_get($req, $res) {    
     $data = array ('limit' => 10 );
     $start = irqst ( 'start', 1 ); // 分页
     new UserForm ( null );
@@ -62,9 +61,7 @@ function do_admin_users_get($req, $res) {
  * @param Request $req
  * @param Reponse $res
  */
-function do_admin_users_post($req, $res) {
-    imports ( 'admin/forms/UserForm.php', 'admin/models/CoreUserTable.php' );
-    
+function do_admin_users_post($req, $res) {    
     $form = new UserForm ();
     $msg = __ ( 'Sorry, some error occurred during validating user data.' );
     if ($req ['uid']) { //编辑时去除密码的required检验
@@ -152,8 +149,7 @@ function admin_get_user_bench_options($options) {
 }
 function admin_user_belongs($lists, $user) {
     static $guM = null;
-    if ($guM == null) {
-        imports ( 'admin/models/CoreUserRoleTable.php' );
+    if ($guM == null) {        
         $guM = new CoreUserRoleTable ();
     }
     $uid = $user ['uid'];

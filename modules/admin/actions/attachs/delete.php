@@ -1,7 +1,6 @@
 <?php
 assert_login ();
-function do_admin_attachs_delete_get($req, $res) {
-    imports ( 'admin/models/CoreAttachmentTable.php' );
+function do_admin_attachs_delete_get($req, $res) {    
     $aids = safe_ids ( rqst ( 'aid' ), ',', true );
     if (! empty ( $aids )) {
         $atM = new CoreAttachmentTable ();

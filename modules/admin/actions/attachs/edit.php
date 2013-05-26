@@ -3,8 +3,7 @@
  * 编辑修改
  */
 assert_login ();
-function do_admin_attachs_edit_get($req, $res) {
-    imports ( 'admin/models/CoreAttachmentTable.php' );
+function do_admin_attachs_edit_get($req, $res) {    
     $data = array ('success' => false );
     $aid = irqst ( 'aid' );
     $name = rqst ( 'name' );

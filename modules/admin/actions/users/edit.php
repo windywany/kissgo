@@ -6,8 +6,7 @@ assert_login ();
  * @param Response $res
  * @return SmartyView
  */
-function do_admin_users_edit_get($req, $res) {
-    imports ( 'admin/forms/UserForm.php', 'admin/models/CoreUserTable.php' );
+function do_admin_users_edit_get($req, $res) {    
     $data ['_CUR_URL'] = murl ( 'admin', 'users' );
     $uid = 0;
     if (isset ( $req ['uid'] )) {

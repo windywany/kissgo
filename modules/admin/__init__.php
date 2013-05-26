@@ -11,8 +11,7 @@ imports ( 'admin/validator_callbacks.php' );
  */
 function cfg($name, $default = '') {
     static $cfgs = false;
-    if (! $cfgs) {
-        imports ( 'admin/models/CorePreferenceTable.php' );
+    if (! $cfgs) {        
         $cpt = new CorePreferenceTable ();
         $data = $cpt->query ();
         $cfgs = $data->walk ( array ($cpt, 'map' ) );
@@ -97,7 +96,7 @@ function _hook_for_admincp_menu($mm) {
     return $mm;
 }
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
-// add new menu items
+/* add new menu items
 function _hook_add_new_menu_items($items) {
     $url = murl ( 'admin', 'pages/create' );
     $nodeTypeTable = new NodeTypeTable ();
@@ -108,6 +107,7 @@ function _hook_add_new_menu_items($items) {
     return $items;
 }
 bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
+*/
 function _hook_for_add_passport_menu_items($items) {
     $items .= '<li><a href="' . murl ( 'admin', 'account' ) . '"><i class="icon-user"></i> ' . __ ( 'Control Panel' ) . '</a></li>';
     return $items;

@@ -43,9 +43,9 @@
 								<th class="col_chk"><input type="checkbox"/></th>
 								<th class="w50 txt-ac">{'#'|sorth:nid}</th>
 								<th class="wa">{'详细'|sorth:create_time}</th>								
-								<th class="w80 txt-ac">{'类型'|sorth:page_type}</th>															
+								<th class="w80 txt-ac">{'类型'|sorth:node_type}</th>															
 								<th class="w120 txt-ac">标签</th>
-								<th class="w120 txt-ac">{'更新'|sorth:upate_time}</th>														
+								<th class="w120 txt-ac">{'更新'|sorth:update_time}</th>														
 							</tr>
 						</thead>
 						<tbody>

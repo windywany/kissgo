@@ -3,7 +3,6 @@
  * 选项
  */
 assert_login ();
-imports ( 'admin/models/*' );
 function do_admin_preference_get($req, $res) {
     $group = rqst ( '_g', 'base' );
     $data = array ();
