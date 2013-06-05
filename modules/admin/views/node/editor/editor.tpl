@@ -8,8 +8,8 @@
 {/block}
 
 {block name="toolbar"}
-    <button id="btn-save" data-name="s" value="1" class="btn btn-mini btn-success"><i class="icon-ok-circle"></i> {'Save'|ts}</button>
-    <button id="btn-save-close" data-name="sc" value="1" class="btn btn-mini btn-primary"><i class="icon-check"></i> {'Save & Close'|ts}</button>    
+    <a data-name="s" class="btn btn-mini btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>
+    <a data-name="sc" class="btn btn-mini btn-primary btn-save-close"><i class="icon-check"></i> {'Save & Close'|ts}</a>    
     <a href="{'admin'|murl:'pages'}" class="btn btn-mini btn-warning"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
 {/block}
 
@@ -26,12 +26,12 @@
     </div>
     
     <div class="accordion" id="page-widgets">        
-        {$widgets}        
+        
         <div class="accordion-group">
             <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseSEO">SEO</a>
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseBase">基本</a>
             </div>
-            <div id="collapseSEO" class="accordion-body collapse">
+            <div id="collapseBase" class="accordion-body collapse in">
               <div class="accordion-inner">
               Anim pariatur cliche...
               </div>
@@ -40,14 +40,34 @@
         
         <div class="accordion-group">
             <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseAdvanced">高级</a>
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseNavi">导航</a>
             </div>
-            <div id="collapseAdvanced" class="accordion-body collapse">
+            <div id="collapseNavi" class="accordion-body collapse">
               <div class="accordion-inner">
-                Anim pariatur cliche...
+              Anim pariatur cliche...
+              </div>
+            </div>
+        </div>  
+             
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseSEO">SEO(搜索优化)</a>
+            </div>
+            <div id="collapseSEO" class="accordion-body collapse">
+              <div class="accordion-inner">
+              Anim pariatur cliche...
               </div>
             </div>
         </div>
+        
+        {$widgets}
+        
+    </div>
+    
+    <div class="form-actions" style="text-align:center;padding:10px">
+        <a data-name="s" class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>
+        <a data-name="sc" class="btn btn-primary btn-save-close"><i class="icon-check"></i> {'Save & Close'|ts}</a>    
+        <a href="{'admin'|murl:'pages'}" class="btn btn-warning"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
     </div>
 </form>
 {/block}

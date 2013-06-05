@@ -38,7 +38,7 @@ function do_admin_pages_comments_get($req, $res) {
     $start = irqst ( 'start', 1 );
     
     $comments = $nodeCommentTable->query ( 'CMT.*,NT.url AS page_url,NT.title AS page_title', 'CMT' )->where ( $where )->limit ( $start, $data ['limit'] );
-    $comments->ljoin ( 'node AS NT', 'CMT.node_id = NT.nid' )->sort('cid','d');
+    $comments->ljoin ( 'node AS NT', 'CMT.node_id = NT.nid' )->sort('id','d');
     
     $data ['totalCount'] = count ( $comments );
     $data ['items'] = $comments;

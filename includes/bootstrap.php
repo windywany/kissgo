@@ -260,7 +260,7 @@ function log_message($message, $trace_info, $level, $origin = null) {
                     FB::warn ( $msg );
                     break;
             }
-        } else if (DEBUG == DEBUG_DEBUG) {
+        } else if (DEBUG == DEBUG_DEBUG && ! Request::isAjaxRequest ()) {
             trigger_error ( $message, E_USER_WARNING );
         }
     }

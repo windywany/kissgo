@@ -121,7 +121,7 @@ class ExtensionManager {
             $extension ['unremovable'] = $unremovable;
             include_once APP_PATH . $extension ['pkg_file'];
             $rst = apply_filter ( 'on_install_module_' . $pid, true );
-            log_debug ( "on_install_module_" . $pid . '   ' . $rst );
+            //log_debug ( "on_install_module_" . $pid . '   ' . $rst );
             if ($rst === true) {
                 $this->extensions [] = $extension;
                 $rst = $this->saveExtensionsData ();
