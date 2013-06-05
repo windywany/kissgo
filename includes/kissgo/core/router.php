@@ -46,10 +46,20 @@ class Router {
         self::$url = $url = $request ['_url'];
         self::$cacheKey = md5 ( $_SERVER ['REQUEST_METHOD'] . ' ' . $url );
         $actionInfo = InnerCacher::get ( self::$cacheKey );
+        // if we have a cache for this request.
         if ($actionInfo) {
             include_once $actionInfo ['file'];
             return $actionInfo ['func'];
         }
+        //all url with suffix '.html or htm', we think it is a static page
+        if (preg_match ( '#\.htm[l]?$#i', $url )) {
+            $app_action_file = MODULES_PATH . 'index.php';
+            $cb_func = 'do_show_custom_page';
+            include_once $app_action_file;
+            InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func ) );
+            return $cb_func;
+        }
+        
         $action = 'index';
         $controller = '';
         if ($url == '/') {
@@ -71,6 +81,7 @@ class Router {
     }
     
     /**
+     * 加载url请求对应的实现文件并查找实现方法
      * @param string $action
      * @param string $controller
      * @param string $alias

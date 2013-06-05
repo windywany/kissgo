@@ -170,7 +170,7 @@ function do_ajax_browser_template_files($req) {
     $files = array ();
     if ($hd) {
         while ( ($f = readdir ( $hd )) != false ) {
-            if (is_dir ( $path . DS . $f ) && $f != '.' && $f != '..') {
+            if (is_dir ( $path . DS . $f ) && $f != '.' && $f != '..' && $f != 'admin') {
                 $dirs [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => true );
             }
             if (is_file ( $path . DS . $f ) && preg_match ( '/.+\.tpl$/', $f )) {

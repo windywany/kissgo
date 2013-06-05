@@ -17,5 +17,5 @@ class NodeTypeTable extends DbTable {
         $schema ['template'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 512, Idao::CMMT => '模板文件' );
         $schema ['note'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 512 );
         return $schema;
-    }
+    }    
 }

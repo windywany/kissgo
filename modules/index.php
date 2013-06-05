@@ -19,15 +19,33 @@ function _kissgo_default_index($view) {
 }
 /**
  * 
- * 显示homepage
+ * 显示静态页面
  */
 function do_show_custom_page() {
     bind ( 'after_route', '_kissgo_default_index', 10000 );
     $view = apply_filter ( 'after_route', NULL );
     if ($view == NULL) {
+        $view = get_view_for_page ();
+        if ($view != null) {
+            return $view;
+        }
         Response::respond ( 404 );
     } else {
         return $view;
     }
+}
+/**
+ * 
+ * 取当前页面的视图
+ */
+function get_view_for_page() {
+    $url = Request::getVirtualPageUrl ();
+    $frontPage = FrontPage::initWithPageURL ( $url );
+    if ($frontPage) {
+        $tpl = $frontPage->getTemplate ();
+        $data = $frontPage->toArray ();
+        return template ( $tpl, $data );
+    }
+    return null;
 }
 // end of index.php

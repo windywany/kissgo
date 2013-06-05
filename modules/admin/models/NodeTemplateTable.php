@@ -30,14 +30,14 @@ class NodeTemplateTable extends DbTable {
      * get template
      * @param string $theme
      * @param string $type
-     * @return string|NULL
+     * @return string | NULL
      */
-    public function getTemplate($theme, $type) {
+    public static function getTemplate($theme, $type) {
         $nt = new NodeTypeTable ();
+        $ntt = new NodeTemplateTable ();
         $tpls = $nt->query ( 'NT.template', 'NT' );
-        $rst = $this->query ( 'template', 'NTPL' )->where ( array ('NTPL.type' => imtf ( 'NT.type' ), 'NTPL.theme' => $theme, 'NTPL.type' => $type ) );
+        $rst = $ntt->query ( 'template', 'NTPL' )->where ( array ('NTPL.type' => imtf ( 'NT.type' ), 'NTPL.theme' => $theme, 'NTPL.type' => $type ) );
         $tpls->field ( $rst, 'tpl' );
-        
         $tpl = $tpls [0];
         if ($tpl) {
             if ($tpl ['tpl']) {
