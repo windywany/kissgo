@@ -32,7 +32,7 @@
     <li>&nbsp;&nbsp;</li>
     {foreach $enums_types as $item}
     <li class="{if $item@key == $type}active{/if}">
-        <a href="{$_CUR_URL}?type={$item@key}"><i class="icon-book"></i> {$item}</a>
+        <a href="{$_CUR_URL}?type={$item@key}"><i class="icon-tags"></i> {$item}</a>
     </li>
     {/foreach}
 </ul>

@@ -26,6 +26,7 @@
                 <thead>
                     <tr>                        										
                         <th class="w200">扩展</th>
+                        <th class="w150">别名</th>
                         <th class="wa">描述</th>
                         <th class="w100 txt-ac">操作</th>
                     </tr>
@@ -36,6 +37,9 @@
                         <td>
                             <strong {if $item.disabled}style="color:gray"{/if}>{$item.Module_Name}</strong><br/>
                             {if $item.unremovable}<span class="label label-important">BuildIn</span>{/if}																				
+                        </td>
+                        <td class="alias-td">
+                        	{$item.alias}
                         </td>
                         <td>
                             <p>{$item.Description}</p>
@@ -54,4 +58,25 @@
         </div>	                	
     </div>
 </div>
+
+<div class="modal hide fade" tabindex="-1" id="alias-form" data-backdrop="static" data-keyboard="false">
+	<div class="modal-header">
+		<button class="close" data-dismiss="modal">×</button>
+		<h3>设置访问别名</h3>
+	</div>
+	<div class="modal-body">
+		<div class="row-fluid">
+			<input type="text" name="alias" class="span12" id="module-alias" value=""/>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" id="btn-close-form" data-dismiss="modal">关闭</a>
+		<a href="#" class="btn btn-primary" id="btn-done">确定</a>
+	</div>
+</div>
+
+{/block}
+
+{block name="admincp_foot_js_block"}
+	<script type="text/javascript" src="{'list.js'|here}"></script>
 {/block}

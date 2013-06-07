@@ -1,10 +1,10 @@
 <?php
 assert_login ();
 function do_admin_enums_get($req, $res) {
-    $types = array ('keyword' => 'Keywords', 'author' => 'Authors', 'source' => 'Sources' );
+    $types = array ('tag' => 'Tags', 'flag' => 'Flags', 'keyword' => 'Keywords', 'author' => 'Authors', 'source' => 'Sources' );
     $types = apply_filter ( 'get_enum_type', $types );
     $data = array ('limit' => 50, '_CUR_URL' => murl ( 'admin', 'enums' ) );
-    $type = isset ( $req ['type'] ) ? $req ['type'] : 'keyword';
+    $type = isset ( $req ['type'] ) ? $req ['type'] : 'tag';
     if (! isset ( $types [$type] )) {
         $type = 'keyword';
     }

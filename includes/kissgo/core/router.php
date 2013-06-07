@@ -48,6 +48,13 @@ class Router {
         $actionInfo = InnerCacher::get ( self::$cacheKey );
         // if we have a cache for this request.
         if ($actionInfo) {
+            if (isset ( $actionInfo ['ac'] ) && $actionInfo ['ac']) {
+                list ( $action, $controller, $alias ) = $this->parseURL ( $url );
+                $module = self::$extensionManager->getModuleByAlias ( $alias );
+                if ($module == null || ($module == $alias && self::$extensionManager->hasAlias ( $module ))) {
+                    Response::respond ( 404 );
+                }
+            }
             include_once $actionInfo ['file'];
             return $actionInfo ['func'];
         }
@@ -56,10 +63,17 @@ class Router {
             $app_action_file = MODULES_PATH . 'index.php';
             $cb_func = 'do_show_custom_page';
             include_once $app_action_file;
-            InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func ) );
+            InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func, 'ac' => false ) );
             return $cb_func;
         }
-        
+        list ( $action, $controller, $module ) = $this->parseURL ( $url );
+        return $this->load_application ( $action, $controller, $module );
+    }
+    /**
+     * Enter description here ...
+     * @param url     
+     */
+    private function parseURL($url) {
         $action = 'index';
         $controller = '';
         if ($url == '/') {
@@ -77,9 +91,8 @@ class Router {
                 $controller = implode ( '/', $chunks );
             }
         }
-        return $this->load_application ( $action, $controller, $module );
+        return array ($action, $controller, $module );
     }
-    
     /**
      * 加载url请求对应的实现文件并查找实现方法
      * @param string $action
@@ -95,6 +108,10 @@ class Router {
         $module = $alias;
         if ($alias) {
             $module = self::$extensionManager->getModuleByAlias ( $alias );
+            if ($module == null) {
+                log_warn ( 'module: ' . $alias . ' dose not exist!' );
+                Response::respond ( 404 );
+            }
             if (! empty ( $controller )) {
                 $ctrl_func = str_replace ( '/', '_', $controller );
                 $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true );
@@ -127,7 +144,7 @@ class Router {
                 foreach ( $cb_suffixes as $suffix ) {
                     $cb_func = $func_name . $suffix;
                     if (function_exists ( $cb_func )) {
-                        InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func ) );
+                        InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func, 'ac' => $ismoule ? $module : false ) );
                         return $cb_func;
                     }
                 }

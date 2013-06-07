@@ -91,7 +91,7 @@ class ExtensionManager {
         }
         $pluginsStr = implode ( "\n", $pluginsStr );
         if (@file_put_contents ( APPDATA_PATH . 'extensions.ini', $pluginsStr ) !== false) {
-            InnerCacher::remove(self::$cacheKey);
+            InnerCacher::remove ( self::$cacheKey );
             return true;
         } else {
             log_debug ( '保存插件配置文件时出错.' );
@@ -196,9 +196,10 @@ class ExtensionManager {
     public function getModuleByAlias($alias) {
         if (isset ( $this->aliases ['u2m'] [$alias] )) {
             return $this->aliases ['u2m'] [$alias];
-        } else {
+        } else if (in_array ( $alias, $this->modules )) {
             return $alias;
         }
+        return null;
     }
     /**
      * 
@@ -212,6 +213,44 @@ class ExtensionManager {
         } else {
             return $module;
         }
+    }
+    public function setAlias($pid, $alias) {
+        if (! isset ( $this->extensions [$pid] )) {
+            return false;
+        }
+        if (empty ( $alias ) || ! preg_match ( '#^[0-9_a-z]+$#', $alias )) {
+            unset ( $this->extensions [$pid] ['alias'] );
+        } else if ($this->validateAlias ( $pid, $alias )) {
+            $this->extensions [$pid] ['alias'] = $alias;
+            $plugin = $this->extensions [$pid];
+            $this->aliases ['u2m'] [$plugin ['alias']] = $plugin ['Module'];
+            $this->aliases ['m2u'] [$plugin ['Module']] = $plugin ['alias'];
+            return $this->saveExtensionsData ();
+        }
+        return false;
+    }
+    /**
+     * 验证模块名或别名是否可用
+     */
+    public function validateAlias($pid, $alias) {
+        foreach ( $this->extensions as $id => $ext ) {
+            if (isset ( $ext ['alias'] ) && $ext ['alias'] == $alias && $pid != $id) {
+                return false;
+            }
+            if ($ext ['Module'] == $alias) {
+                return false;
+            }
+        }
+        $hd = opendir ( WEB_ROOT );
+        if ($hd) {
+            while ( ($f = readdir ( $hd )) != false ) {
+                if ($f == $alias) {
+                    closedir ( $hd );
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     /**
      * 
@@ -302,6 +341,9 @@ class ExtensionManager {
             $plugin ['Installed'] = true;
             $plugin ['disabled'] = $extensions [$plugin ['Module_ID']] ['disabled'];
             $plugin ['unremovable'] = $extensions [$plugin ['Module_ID']] ['unremovable'];
+            if (isset ( $extensions [$plugin ['Module_ID']] ['alias'] )) {
+                $plugin ['alias'] = $extensions [$plugin ['Module_ID']] ['alias'];
+            }
             $plugin ['upgradable'] = $this->isUpgradable ( $plugin, $extensions [$plugin ['Module_ID']] ['Version'] );
             if ($this->getUpgradeInfo) {
                 $plugin ['curVersion'] = $extensions [$plugin ['Module_ID']] ['Version'];

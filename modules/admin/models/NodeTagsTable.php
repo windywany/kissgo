@@ -9,13 +9,13 @@ class NodeTagsTable extends DbTable {
         return $schema;
     }
     public function getNodeFlags($nid) {
-        $rst = $this->query ( 'NT.tag_id,tag', 'NT' )->where ( array ('type' => 1, 'node_id' => $nid ) );
-        $rst->ljoin ( 'tag AS T', 'T.tag_id = NT.tag_id' );
+        $rst = $this->query ( 'NT.tag_id,enum_value as tag', 'NT' )->where ( array ('type' => 'flag', 'node_id' => $nid ) );
+        $rst->ljoin ( 'enums AS T', 'T.enum_id = NT.tag_id' );
         return $rst->toArray ();
     }
     public function getNodeTags($nid) {
-        $rst = $this->query ( 'NT.tag_id,tag', 'NT' )->where ( array ('type' => 0, 'node_id' => $nid ) );
-        $rst->ljoin ( 'tag AS T', 'T.tag_id = NT.tag_id' );
+        $rst = $this->query ( 'NT.tag_id,enum_value as tag', 'NT' )->where ( array ('type' => 'tag', 'node_id' => $nid ) );
+        $rst->ljoin ( 'enums AS T', 'T.enum_id = NT.tag_id' );
         return $rst->toArray ();
     }
     public function getHotTags($limit = 10) {

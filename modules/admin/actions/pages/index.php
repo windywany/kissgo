@@ -49,8 +49,8 @@ function do_admin_pages_get($req, $res) {
     $data ['status'] = $status;
     $nodeTypeTable = new NodeTypeTable ();
     $data ['page_types'] = $nodeTypeTable->query ( 'type,name' )->where ( array ('creatable' => 1 ) )->toArray ( 'type', 'name', array ('' => '-页面类型-' ) );
-    $tagM = new TagTable ();
-    $data ['flags'] = $tagM->query ( 'tag_id,tag' )->where ( array ('type' => 1 ) )->toArray ( 'tag_id', 'tag', array ('' => '-页面属性-' ) );
+    $tagM = new EnumTable();
+    $data ['flags'] = $tagM->query ( 'enum_id,enum_value' )->where ( array ('type' => 'flag' ) )->toArray ( 'enum_id', 'enum_value', array ('' => '-页面属性-' ) );
     
     $nk = new NodeHooks ();
     bind ( 'get_page_operation', array ($nk, 'get_page_operation' ), 1, 2 );

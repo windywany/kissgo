@@ -28,7 +28,7 @@ class FrontPage {
     
     protected $update_time;
     
-    protected $cachetime;
+    protected $cachetime = 0;
     
     protected $publish_uid;
     
@@ -43,7 +43,7 @@ class FrontPage {
     
     protected $ontopto;
     
-    protected $node_id;
+    protected $node_id = 0;
     protected $node_type;
     protected $template;
     
@@ -69,9 +69,7 @@ class FrontPage {
     public function __construct($page = null) {
         if ($page && is_array ( $page )) {
             foreach ( $page as $f => $v ) {
-                if (isset ( $this->{$f} )) {
-                    $this->{$f} = $v;
-                }
+                $this->{$f} = $v;
             }
         }
     }
@@ -86,8 +84,14 @@ class FrontPage {
         if (! $nodeTable) {
             $nodeTable = new NodeTable ();
         }
-        $page = $nodeTable->query ( '*' )->where ( array ('url_slug' => md5 ( $url ) ) );
-        $page = $page [0];
+        $cache = Cache::getCache ();
+        $key = md5 ( $url );
+        $page = $cache->get ( $key, 'page' );
+        if (empty ( $page )) {
+            $page = $nodeTable->query ( '*' )->where ( array ('url_slug' => md5 ( $url ) ) );
+            $page = $page [0];
+            $cache->add ( $key, $page, 0, 'page' );
+        }
         if ($page) {
             $frontPage = new FrontPage ( $page );
             return $frontPage;
@@ -133,11 +137,11 @@ class FrontPage {
             $I = whoami ();
             $data ['publish_uid'] = $I->getUid ();
         }
-        if ($data ['nid'] == 0) {
+        $nid = $data ['nid'];
+        unset ( $data ['nid'] );
+        if ($nid == 0) {
             $data = $nodeTable->insert ( $data );
         } else {
-            $nid = $data ['nid'];
-            unset ( $data ['nid'] );
             if ($nodeTable->update ( $data, array ('nid' => $nid ) )) {
                 $data ['nid'] = $nid;
             } else {
@@ -255,7 +259,7 @@ class FrontPage {
             $theme = get_theme ();
             $this->template = NodeTemplateTable::getTemplate ( $theme, $this->node_type );
             if ($this->template == null) {
-                $this->template = '';
+                $this->template = '404.tpl';
             }
         }
         return $this->template;
@@ -385,6 +389,15 @@ class FrontPage {
      * @return array 
      */
     public function toArray($persist = false) {
+        $cache = $key = null;
+        if (! $persist) { //如果是用于展示，尝试从缓存加载
+            $cache = Cache::getCache ();
+            $key = md5 ( $this->nid );
+            $page = $cache->get ( $key, 'page_content' );
+            if ($page) {
+                return $page;
+            }
+        }
         $page ['nid'] = $this->nid;
         $page ['deleted'] = $this->deleted;
         if (! $persist) {
@@ -412,7 +425,7 @@ class FrontPage {
         $page ['ontopto'] = $this->ontopto;
         $page ['node_id'] = $this->node_id;
         $page ['node_type'] = $this->node_type;
-        $page ['template'] = $this->getTemplate();
+        $page ['template'] = $this->template;
         $page ['author'] = $this->author;
         $page ['keywords'] = $this->keywords;
         $page ['description'] = $this->description;
@@ -420,7 +433,37 @@ class FrontPage {
         $page ['url_slug'] = $this->url_slug;
         $page ['source'] = $this->source;
         $page ['figure'] = $this->figure;
+        if ($cache) {
+            $cache->add ( $key, $page, 0, 'page_content' );
+        }
         return $page;
+    }
+    /**
+     * 
+     * 清空页面缓存
+     * @param int $id
+     */
+    public static function clearCache($id) {
+        $cache = Cache::getCache ();
+        $key = md5 ( $id );
+        $cache->delete ( $key, 'page_content' );
+    }
+    /**
+     * 
+     * 清除页面组缓存
+     */
+    public static function clearGroupCache() {
+        $cache = Cache::getCache ();
+        $cache->clear ( false, 'page_content' );
+    }
+    
+    protected function getUserInfo($uid) {
+        static $userMode = false;
+        if (! $userMode) {
+            $userMode = new CoreUserTable ();
+        }
+        $rst = $userMode->query ( 'uid,email,login,deleted,status' )->where ( array ('uid' => $uid ) );
+        return $rst [0];
     }
 }
 //end of FrontPage

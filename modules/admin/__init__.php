@@ -190,17 +190,17 @@ bind ( 'do_ajax_browser_template_files', 'do_ajax_browser_template_files' );
 function do_ajax_tags_autocomplete($req) {
     $q = rqst ( 'q', '' );
     $p = irqst ( 'p', 1 );
-    $tagTable = new TagTable ();
+    $tagTable = new EnumTable();
     $more = true;
-    $where = array ('type' => 0 );
-    $tags = $tagTable->query ( 'TG.tag_id as id, tag as text', 'TG' );
+    $where = array ('type' => 'tag' );
+    $tags = $tagTable->query ( 'TG.enum_id as id, enum_value as text', 'TG' );
     if (empty ( $q )) {
         $more = false;
     } else {
-        $where ['tag LIKE'] = "%{$q}%";
+        $where ['enum_value LIKE'] = "%{$q}%";
     }
     $nodeTagTable = new NodeTagsTable ();
-    $hots = $nodeTagTable->query ( imtf ( "COUNT(NT.tag_id)", 'total' ), 'NT' )->where ( array ('NT.tag_id' => imtv ( 'TG.tag_id' ) ) );
+    $hots = $nodeTagTable->query ( imtf ( "COUNT(NT.tag_id)", 'total' ), 'NT' )->where ( array ('NT.tag_id' => imtv ( 'TG.enum_id' ) ) );
     $tags->field ( $hots, 'hots' );
     $tags->where ( $where )->limit ( $p, 10 )->sort ( 'hots', 'd' );
     if ($more) {

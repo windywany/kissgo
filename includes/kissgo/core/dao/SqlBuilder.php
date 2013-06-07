@@ -14,6 +14,11 @@ class DbSQL {
         $this->values = $values;
         $this->options = $options;
     }
+    public function __destruct() {
+        if ($this->stmt) {            
+            $this->stmt = null;
+        }
+    }
     /**
      * @param PdoDriver $driver
      * @return PDOStatement
