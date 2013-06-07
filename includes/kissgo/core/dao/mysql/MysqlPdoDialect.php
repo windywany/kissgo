@@ -5,17 +5,17 @@
  * @author Leo Ning
  *
  */
-class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
+class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
     /**
      * (non-PHPdoc)
-     * @see PdoDriver::getSqlBuilder()
+     * @see PdoDialect::getSqlBuilder()
      * @return SqlBuilder
      */
     public function getSqlBuilder() {
         return $this;
     }
     /* (non-PHPdoc)
-     * @see PdoDriver::buildOptions()
+     * @see PdoDialect::buildOptions()
      */
     public function buildOptions($options) {
         $opts = array_merge ( array ('encoding' => 'UTF8', 'host' => 'localhost', 'port' => 3306, 'user' => 'root', 'password' => 'root', 'driver_options' => array () ), $options );
@@ -185,7 +185,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         }
         $fields = array ();
         foreach ( $data as $field => $value ) {
-            list ( $name, $vname ) = PdoDriver::safeField ( $field, '`' );
+            list ( $name, $vname ) = PdoDialect::safeField ( $field, '`' );
             if ($value instanceof DbImmutable) {
                 $fields [] = "$name = " . $value->__toString ();
             } else {
@@ -290,7 +290,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         if (! empty ( $joins )) {
             foreach ( $joins as $join ) {
                 list ( $table, $on, $dir, $alias ) = $join;
-                if ($table instanceof DbView) {
+                if ($table instanceof DbView) {                    
                     $fname = $table->getFullTableName ();
                     $falias = $table->getAlias ();
                 } else {
@@ -393,7 +393,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
                 $c [] = $this->buildWhere ( $condition, $values );
                 $c [] = ')';
             } else {
-                list ( $sfield, $field ) = PdoDriver::safeField ( $field, '`' );
+                list ( $sfield, $field ) = PdoDialect::safeField ( $field, '`' );
                 $c [] = $sfield;
                 $c [] = $op;
                 switch ($op) {
@@ -455,7 +455,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
     private function buildGroupBy($groupby) {
         $_gb = array ();
         foreach ( $groupby as $gb ) {
-            $g = PdoDriver::safeField ( $gb, '`' );
+            $g = PdoDialect::safeField ( $gb, '`' );
             $_gb [] = $g [0];
         }
         return ' GROUP BY ' . implode ( ',', $_gb );
@@ -465,7 +465,7 @@ class MysqlPdoDriver extends PdoDriver implements SqlBuilder {
         $_or = array ();
         foreach ( $order as $o ) {
             list ( $field, $dir ) = $o;
-            $fs = PdoDriver::safeField ( $field, '`' );
+            $fs = PdoDialect::safeField ( $field, '`' );
             $_or [] = $fs [0] . ' ' . $dir;
         }
         return ' ORDER BY ' . implode ( ',', $_or );

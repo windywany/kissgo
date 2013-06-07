@@ -1,9 +1,9 @@
 <?php
 assert_login ();
-function do_admin_enums_get($req, $res) {
+function do_admin_tags_get($req, $res) {
     $types = array ('tag' => 'Tags', 'flag' => 'Flags', 'keyword' => 'Keywords', 'author' => 'Authors', 'source' => 'Sources' );
     $types = apply_filter ( 'get_enum_type', $types );
-    $data = array ('limit' => 50, '_CUR_URL' => murl ( 'admin', 'enums' ) );
+    $data = array ('limit' => 50, '_CUR_URL' => murl ( 'admin', 'tags' ) );
     $type = isset ( $req ['type'] ) ? $req ['type'] : 'tag';
     if (! isset ( $types [$type] )) {
         $type = 'keyword';
@@ -14,19 +14,19 @@ function do_admin_enums_get($req, $res) {
     $key = $req ['key'];
     if (! empty ( $key )) {
         $data ['key'] = $key;
-        $where ['enum_value LIKE'] = $key;
+        $where ['tag LIKE'] = $key;
     }
     $start = irqst ( 'start', 1 );
     
-    $enumM = new EnumTable ();
-    $enums = $enumM->query ( 'enum_id,enum_value' )->where ( $where )->limit ( $start, $data ['limit'] );
-    $data ['totalEnums'] = count ( $enums );
-    if ($data ['totalEnums'] > 0) {
-        $data ['enums'] = $enums;
+    $tagM = new TagTable ();
+    $tags = $tagM->query ( 'tag_id,tag' )->where ( $where )->limit ( $start, $data ['limit'] );
+    $data ['totalTags'] = count ( $tags );
+    if ($data ['totalTags'] > 0) {
+        $data ['tags'] = $tags;
     } else {
-        $data ['enums'] = array ();
+        $data ['tags'] = array ();
     }
     $data ['labels'] = array ('', 'label-success', 'label-warning', 'label-important', 'label-info', 'label-inverse' );
-    $data ['enums_types'] = $types;
-    return view ( 'admin/views/enums/enums.tpl', $data );
+    $data ['tags_types'] = $types;
+    return view ( 'admin/views/tags/tags.tpl', $data );
 }

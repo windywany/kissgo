@@ -15,7 +15,7 @@ function do_admin_users_a2g_get($req, $res) {
         $rst = $guM->addToGroup ( $uid, $gids );
         if (! $rst) {
             $data ['success'] = false;
-            $data ['msg'] = '数据库操作失败：' . PdoDriver::$last_error_message;
+            $data ['msg'] = '数据库操作失败：' . PdoDialect::$last_error_message;
         }
     }
     return new JsonView ( $data );

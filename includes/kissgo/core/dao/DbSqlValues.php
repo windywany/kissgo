@@ -11,7 +11,7 @@ class DbSqlValues {
     /**
      * 
      * driver
-     * @var PdoDriver
+     * @var PdoDialect
      */
     private $driver = null;
     public function __construct($driver) {

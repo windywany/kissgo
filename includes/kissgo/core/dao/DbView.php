@@ -8,17 +8,17 @@
 abstract class DbView implements Idao {
     protected $alias = '';
     /**     
-     * @var PdoDriver
+     * @var PdoDialect
      */
-    protected $driver = null;
+    protected $dialect = null;
     /**     
      * @var SqlBuilder
      */
     protected $builder = null;
-    protected $specialChar = '';
+    
     public function __construct($database = 'default') {
         try {
-            $this->driver = PdoDriver::getDriver ( $database );
+            $this->dialect = PdoDialect::getDialect ( $database );
         } catch ( PDOException $e ) {
             trigger_error ( $e->getMessage (), E_USER_ERROR );
         }
@@ -26,11 +26,7 @@ abstract class DbView implements Idao {
         if (! isset ( $this->table ) || empty ( $this->table )) {
             $this->table = strtolower ( $this->alias );
         }
-        $this->builder = $this->driver->getSqlBuilder ();
-        $this->specialChar = $this->builder->specialChar ();
-    }
-    public function getAlias() {
-        return $this->alias;
+        $this->builder = $this->dialect->getSqlBuilder ();
     }
     /**
      * (non-PHPdoc)
@@ -42,10 +38,10 @@ abstract class DbView implements Idao {
     /**
      * (non-PHPdoc)
      * @see Idao::getDriver()
-     * @return PdoDriver
+     * @return PdoDialect
      */
-    public function getDriver() {
-        return $this->driver;
+    public function getDialect() {
+        return $this->dialect;
     }
     /**
      * (non-PHPdoc)
@@ -54,16 +50,18 @@ abstract class DbView implements Idao {
     public function lastId($name = null) {
         return - 1;
     }
+    public function getAlias() {
+        return $this->alias;
+    }
+    public function getTableName() {
+        return $this->table;
+    }
     /**
      * (non-PHPdoc)
      * @see Idao::getFullTableName()
      */
     public function getFullTableName() {
-        static $fullname = false;
-        if (! $fullname) {
-            $fullname = $this->driver->getFullTableName ( $this->table );
-        }
-        return $fullname;
+        return $this->dialect->getFullTableName ( $this->table );
     }
     /**
      * (non-PHPdoc)

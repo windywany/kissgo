@@ -13,6 +13,6 @@ function do_admin_users_dfg_get($req, $res) {
     if ($guM->remove ( $where ) !== false) {
         return new JsonView ( array ('success' => true ) );
     } else {
-        return new JsonView ( array ('success' => false, 'msg' => PdoDriver::$last_error_message ) );
+        return new JsonView ( array ('success' => false, 'msg' => PdoDialect::$last_error_message ) );
     }
 }

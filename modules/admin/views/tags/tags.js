@@ -1,6 +1,6 @@
 $(function() {
 	var murl = $('#tag-form').attr('action');
-	var type = $('#enum-type').val();
+	var type = $('#tag-type').val();
 	var tag_select = $('#tag-select-box').val();
 	$('#btn-selectall').click(function() {
 		var $this = $(this).toggleClass('selected');
@@ -37,7 +37,7 @@ $(function() {
 			type : 'POST',
 			data : {
 				type : type,
-				enum : tag
+				tag : tag
 			},
 			success : function(data) {
 				if (data.success) {
@@ -64,7 +64,7 @@ $(function() {
 		$(this).toggleClass('selected');
 	});
 	function deleteTags(ids, single) {
-		if (!confirm('确认要删除这' + (single ? '个' : '些') + '枚举值吗?')) {
+		if (!confirm('确认要删除这' + (single ? '个' : '些') + '标签吗?')) {
 			return;
 		}
 		var me = single ? $('#tag_' + ids) : $('.tags.selected'), tagIcons = me.find('i');

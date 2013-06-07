@@ -85,8 +85,7 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'node/theme' ), 'icon-picture' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-enums', __ ( 'Enums' ), murl ( 'admin', 'enums' ), 'icon-book' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );    
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Attachments' ), murl ( 'admin', 'attachs' ), 'icon-picture' );
     // Components
@@ -190,17 +189,17 @@ bind ( 'do_ajax_browser_template_files', 'do_ajax_browser_template_files' );
 function do_ajax_tags_autocomplete($req) {
     $q = rqst ( 'q', '' );
     $p = irqst ( 'p', 1 );
-    $tagTable = new EnumTable();
+    $tagTable = new TagTable();
     $more = true;
     $where = array ('type' => 'tag' );
-    $tags = $tagTable->query ( 'TG.enum_id as id, enum_value as text', 'TG' );
+    $tags = $tagTable->query ( 'TG.tag_id as id, tag as text', 'TG' );
     if (empty ( $q )) {
         $more = false;
     } else {
-        $where ['enum_value LIKE'] = "%{$q}%";
+        $where ['tag LIKE'] = "%{$q}%";
     }
     $nodeTagTable = new NodeTagsTable ();
-    $hots = $nodeTagTable->query ( imtf ( "COUNT(NT.tag_id)", 'total' ), 'NT' )->where ( array ('NT.tag_id' => imtv ( 'TG.enum_id' ) ) );
+    $hots = $nodeTagTable->query ( imtf ( "COUNT(NT.tag_id)", 'total' ), 'NT' )->where ( array ('NT.tag_id' => imtv ( 'TG.tag_id' ) ) );
     $tags->field ( $hots, 'hots' );
     $tags->where ( $where )->limit ( $p, 10 )->sort ( 'hots', 'd' );
     if ($more) {

@@ -18,7 +18,7 @@ class DeleteResult extends DbSqlHelper implements Countable {
      */
     public function __construct($dao, $alias = null) {
         $this->dao = $dao;
-        $this->driver = $dao->getDriver ();
+        $this->driver = $dao->getDialect ();
         $this->alias = $alias;
         $this->builder = $this->driver->getSqlBuilder ();
     }

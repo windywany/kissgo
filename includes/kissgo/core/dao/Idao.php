@@ -38,9 +38,9 @@ interface Idao {
     const ENUM_VALUES = 'ENUM_VALUE_LIST';
     /**
      * 
-     * @return PdoDriver
+     * @return PdoDialect
      */
-    public function getDriver();
+    public function getDialect();
     /**
      * 
      * @return DbSchema
@@ -82,8 +82,9 @@ interface Idao {
      * return the full name of Idao
      * @return string
      */
-    public function getFullTableName();
-    public function getAlias();
+    public function getFullTableName(); 
+    public function getTableName();   
+    public function getAlias();    
     /**
      * 
      * prepare select fields

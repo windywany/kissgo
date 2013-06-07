@@ -10,7 +10,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      */
     protected $dao = null;
     /**
-     * @var PdoDriver
+     * @var PdoDialect
      */
     protected $driver = null;
     /**  
@@ -35,7 +35,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      */
     public function __construct($dao, $fields, $alias) {
         $this->dao = $dao;
-        $this->driver = $dao->getDriver ();
+        $this->driver = $dao->getDialect ();
         $this->alias = $alias;
         $this->builder = $this->driver->getSqlBuilder ();
         if ($fields instanceof DbImmutableF) {
