@@ -1,17 +1,24 @@
 <?php
 assert_login ();
 function do_admin_tags_get($req, $res) {
-    $data = array ('limit' => 150 );
-    $tagM = new TagTable ();
-    $where = where ( array ('tag' => array ('like' => 'tag' ) ), $data );
-    if (isset ( $req ['flag'] )) {
-        $where ['type'] = 1;
-        $data ['isTag'] = false;
-    } else {
-        $where ['type'] = 0;
-        $data ['isTag'] = true;
+    $types = array ('tag' => 'Tags', 'flag' => 'Flags', 'keyword' => 'Keywords', 'author' => 'Authors', 'source' => 'Sources' );
+    $types = apply_filter ( 'get_enum_type', $types );
+    $data = array ('limit' => 50, '_CUR_URL' => murl ( 'admin', 'tags' ) );
+    $type = isset ( $req ['type'] ) ? $req ['type'] : 'tag';
+    if (! isset ( $types [$type] )) {
+        $type = 'keyword';
     }
-    $start = irqst ( 'start', 1 ); // 分页
+    $data ['type'] = $type;
+    $data ['type_text'] = $types [$type];
+    $where ['type'] = $type;
+    $key = $req ['key'];
+    if (! empty ( $key )) {
+        $data ['key'] = $key;
+        $where ['tag LIKE'] = $key;
+    }
+    $start = irqst ( 'start', 1 );
+    
+    $tagM = new TagTable ();
     $tags = $tagM->query ( 'tag_id,tag' )->where ( $where )->limit ( $start, $data ['limit'] );
     $data ['totalTags'] = count ( $tags );
     if ($data ['totalTags'] > 0) {
@@ -19,7 +26,7 @@ function do_admin_tags_get($req, $res) {
     } else {
         $data ['tags'] = array ();
     }
-    $data['_CUR_URL'] = murl('admin','tags');
     $data ['labels'] = array ('', 'label-success', 'label-warning', 'label-important', 'label-info', 'label-inverse' );
-    return view ( 'admin/views/tag/tag.tpl', $data );
+    $data ['tags_types'] = $types;
+    return view ( 'admin/views/tags/tags.tpl', $data );
 }

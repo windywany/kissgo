@@ -59,10 +59,7 @@ class DbSqlHelper {
      * @return DbSqlHelper
      */
     public function ljoin($table, $on, $alias = null) {
-        if ($alias == null && is_string ( $table ) && preg_match ( '#(.+)\s+AS\s+(.+)#i', $table, $m )) {
-            $table = $m [1];
-            $alias = $m [2];
-        }
+        list ( $table, $alias ) = $this->parseJoinTable ( $table, $alias );
         $join = array ($table, $on, ' LEFT JOIN ', $alias == null ? $table : $alias );
         $this->joins [] = $join;
         return $this;
@@ -76,10 +73,7 @@ class DbSqlHelper {
      * @return DbSqlHelper
      */
     public function rjoin($table, $on, $alias = null) {
-        if ($alias == null && is_string ( $table ) && preg_match ( '#(.+)\s+AS\s+(.+)#i', $table, $m )) {
-            $table = $m [1];
-            $alias = $m [2];
-        }
+        list ( $table, $alias ) = $this->parseJoinTable ( $table, $alias );
         $join = array ($table, $on, ' RIGHT JOIN ', $alias == null ? $table : $alias );
         $this->joins [] = $join;
         return $this;
@@ -93,14 +87,12 @@ class DbSqlHelper {
      * @return DbSqlHelper
      */
     public function ijoin($table, $on, $alias = null) {
-        if ($alias == null && is_string ( $table ) && preg_match ( '#(.+)\s+AS\s+(.+)#i', $table, $m )) {
-            $table = $m [1];
-            $alias = $m [2];
-        }
+        list ( $table, $alias ) = $this->parseJoinTable ( $table, $alias );
         $join = array ($table, $on, ' INNER JOIN ', $alias == null ? $table : $alias );
         $this->joins [] = $join;
         return $this;
     }
+    
     /**
      * 
      * pagination 
@@ -233,5 +225,23 @@ class DbSqlHelper {
     }
     public function getParams() {
         return $this->params;
+    }
+    
+    /**
+     * 
+     * @param table
+     * @param alias
+     */
+    private function parseJoinTable($table, $alias) {
+        if (is_array ( $table )) {
+            if ($alias == null) {
+                $alias = $table [1];
+            }
+            $table = $table [0];
+        } else if ($alias == null && is_string ( $table ) && preg_match ( '#(.+)\s+AS\s+(.+)#i', $table, $m )) {
+            $table = $m [1];
+            $alias = $m [2];
+        }
+        return array ($table, $alias );
     }
 }

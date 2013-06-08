@@ -18,7 +18,7 @@ class CoreUserRoleTable extends DbTable {
         return $schema;
     }
     public function getGroups($uid) {
-        return $this->query ( 'ROLE.*', 'CUR' )->ljoin ( 'role', 'CUR.rid=ROLE.rid', 'ROLE' )->where ( array ('uid' => $uid ) );
+        return $this->query ( 'ROLE.*', 'CUR' )->ljoin ( new CoreRoleTable(), 'CUR.rid=ROLE.rid', 'ROLE' )->where ( array ('uid' => $uid ) );
     }
     public function addToGroup($uid, $gids) {
         foreach ( $gids as $gid ) {

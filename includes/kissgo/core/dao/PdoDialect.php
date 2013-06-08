@@ -5,7 +5,7 @@
  * @author guangfeng.ning
  *
  */
-abstract class PdoDriver extends PDO {
+abstract class PdoDialect extends PDO {
     public static $last_error_message = '';
     protected $tbl_prefix = '';
     public function __construct($options) {
@@ -13,16 +13,20 @@ abstract class PdoDriver extends PDO {
         parent::__construct ( $dsn, $user, $passwd, $attr );
         $this->tbl_prefix = isset ( $options ['prefix'] ) && ! empty ( $options ['prefix'] ) ? $options ['prefix'] : '';
     }
+    
     public function getFullTableName($name) {
         return $this->tbl_prefix . $name;
+    }
+    public function getTablePrefix() {
+        return $this->tbl_prefix;
     }
     /**
      * 
      * 获取数据库驱动
      * @param string $driver
-     * @return PdoDriver
+     * @return PdoDialect
      */
-    public static function getDriver($driver = 'default') {
+    public static function getDialect($driver = 'default') {
         static $ds = array ();
         if (! isset ( $ds [$driver] )) {
             $settings = KissGoSetting::getSetting ();
@@ -35,13 +39,13 @@ abstract class PdoDriver extends PDO {
             }
             $options = $database_settings [$driver];
             $driver_path = isset ( $options ['driver'] ) && ! empty ( $options ['driver'] ) ? $options ['driver'] : 'mysql';
-            $driverClz = ucfirst ( $driver_path ) . 'PdoDriver';
+            $driverClz = ucfirst ( $driver_path ) . 'PdoDialect';
             $driverFile = dirname ( __FILE__ ) . DS . $driver_path . DS . $driverClz . '.php';
             if (! is_file ( $driverFile )) {
                 trigger_error ( '[' . $driver . ']数据库驱动器' . $driver_path . '实现文件' . $driverFile . '不存在.', E_USER_ERROR );
             }
             include_once $driverFile;
-            if (! is_subclass_of2 ( $driverClz, 'PdoDriver' )) {
+            if (! is_subclass_of2 ( $driverClz, 'PdoDialect' )) {
                 trigger_error ( '[' . $driver . ']数据库驱动器' . $driver_path . '不存在.', E_USER_ERROR );
             }
             $dr = new $driverClz ( $options );
@@ -60,7 +64,7 @@ abstract class PdoDriver extends PDO {
     public static function createTable($dao, $database = 'default', $engine = null) {
         $sql = '';
         try {
-            $driver = PdoDriver::getDriver ( $database );
+            $driver = PdoDialect::getDialect ( $database );
             $sql = $dao->getCreateSql ();
             if (empty ( $sql )) {
                 $fields = array ();

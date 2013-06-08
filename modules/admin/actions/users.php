@@ -29,7 +29,7 @@ function do_admin_users_get($req, $res) {
     $where += where ( array ('UR.rid' => 'rid' ), $data );
     
     if (isset ( $where ['UR.rid'] )) {
-        $users->ljoin ( 'user_role AS UR', 'U.uid=UR.uid' );
+        $users->ljoin ( new CoreUserRoleTable(), 'U.uid=UR.uid','UR' );
     }
     
     $users = $users->where ( $where )->limit ( $start, $data ['limit'] )->sort ();

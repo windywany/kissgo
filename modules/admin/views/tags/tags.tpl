@@ -1,5 +1,5 @@
 {extends file=$ksg_admincp_layout}
-{block name="title"}{'Enums'|ts}{/block}
+{block name="title"}{'Tags'|ts}{/block}
 {block name="admincp_css_block"}
     <style type="text/css">
         #tag-wrap .label{
@@ -24,15 +24,15 @@
 {/block}
 
 {block name="breadcrumb"}
-	<li>{'Enums'|ts}</li>
+	<li>{'Tags'|ts}</li>
 {/block}
 
 {block name="admincp_body"}
 <ul class="nav nav-tabs">
     <li>&nbsp;&nbsp;</li>
-    {foreach $enums_types as $item}
+    {foreach $tags_types as $item}
     <li class="{if $item@key == $type}active{/if}">
-        <a href="{$_CUR_URL}?type={$item@key}"><i class="icon-book"></i> {$item}</a>
+        <a href="{$_CUR_URL}?type={$item@key}"><i class="icon-tags"></i> {$item}</a>
     </li>
     {/foreach}
 </ul>
@@ -40,14 +40,14 @@
     <div class="tab-pane active row-fluid" id="tab-tag">
         <div>
             <form class="form-inline" id="tag-form" method="get" action="{$_CUR_URL}">                
-                <input type="hidden" name="type" id="enum-type" value="{$type}"/>
+                <input type="hidden" name="type" id="tag-type" value="{$type}"/>
 				<input type="text" class="span2"
 					name="key" value="{$key}" placeholder="关键字" />
 				<button type="submit" class="btn">搜索</button>
 			</form>
 			<div id="tag-wrap">
-            {foreach from=$enums item=item}
-            <span id="tag_{$item.enum_id}" class="tags label {$labels|random}"><i class="icon-trash icon-white"></i>{$item.enum_value}</span>
+            {foreach from=$tags item=item}
+            <span id="tag_{$item.tag_id}" class="tags label {$labels|random}"><i class="icon-trash icon-white"></i>{$item.tag}</span>
             {/foreach}
             </div>
             <div class="clear" style="height:10px;"></div>
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="pagination pull-right">
-                {$totalEnums|paging:$limit}
+                {$totalTags|paging:$limit}
 			</div>
         </div>
     </div>
@@ -72,5 +72,5 @@
 {/block}
 
 {block name="admincp_foot_js_block"}
-<script type="text/javascript" src="{'enums.js'|here}"></script>
+<script type="text/javascript" src="{'tags.js'|here}"></script>
 {/block}

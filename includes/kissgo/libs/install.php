@@ -272,7 +272,7 @@ class KissGOInstaller {
     }
     private function getDs() {
         try {
-            $ds = PdoDriver::getDriver ();
+            $ds = PdoDialect::getDriver ();
             return $ds;
         } catch ( PDOException $e ) {
             $this->error = $e->getMessage ();

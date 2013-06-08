@@ -5,10 +5,11 @@ class NodeTable extends DbTable {
         $schema = new DbSchema ( 'all nodes' );
         $schema->addPrimarykey ( array ('nid' ) );
         $schema->addIndex ( 'IDX_DEL_STATUS', array ('deleted', 'status' ) );
-        $schema->addIndex ( 'IDX_NODE_TYPE', array ('node_type', 'node_id' ) );
-        $schema->addIndex ( 'IDX_URL_SLUG', array ('url_slug' ) );
+        $schema->addIndex ( 'IDX_NODE_TYPE', array ('node_type', 'node_id' ) );        
         $schema->addIndex ( 'IDX_UPDATE_TIME', array ('update_time' ) );
         $schema->addIndex ( 'IDX_PUBLISH_TIME', array ('publish_time' ) );
+        //$schema->addIndex ( 'IDX_URL_SLUG', array ('url_slug' ) );
+        $schema->addUnique ( 'IDX_URL_SLUG', array ('url_slug', 'nid' ) );
         
         $schema ['nid'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
         $schema ['deleted'] = array ('type' => 'bool', 'extra' => 'normal', Idao::NN, Idao::DEFT => false, Idao::CMMT => '是否删除' );
@@ -20,7 +21,7 @@ class NodeTable extends DbTable {
         
         $schema ['cachetime'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '缓存时间，0不缓存。' );
         
-        $schema ['publish_uid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::CMMT => '发布用户' );
+        $schema ['publish_uid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '发布用户' );
         $schema ['publish_time'] = array ('type' => 'timestamp', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '发布时间' );
         
         $schema ['status'] = array ('type' => 'enum', 'extra' => 'normal', Idao::NN, Idao::ENUM_VALUES => "'draft','approving','approved','unapproved','published'", Idao::DEFT => 'draft', Idao::CMMT => '页面状态' );

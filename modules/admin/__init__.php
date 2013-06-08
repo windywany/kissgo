@@ -85,8 +85,7 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'node/theme' ), 'icon-picture' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-enums', __ ( 'Enums' ), murl ( 'admin', 'enums' ), 'icon-book' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );    
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Attachments' ), murl ( 'admin', 'attachs' ), 'icon-picture' );
     // Components
@@ -190,9 +189,9 @@ bind ( 'do_ajax_browser_template_files', 'do_ajax_browser_template_files' );
 function do_ajax_tags_autocomplete($req) {
     $q = rqst ( 'q', '' );
     $p = irqst ( 'p', 1 );
-    $tagTable = new TagTable ();
+    $tagTable = new TagTable();
     $more = true;
-    $where = array ('type' => 0 );
+    $where = array ('type' => 'tag' );
     $tags = $tagTable->query ( 'TG.tag_id as id, tag as text', 'TG' );
     if (empty ( $q )) {
         $more = false;

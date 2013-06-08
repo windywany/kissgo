@@ -12,12 +12,12 @@ defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 
 function on_install_module_cn_usephp_core_gui($rst) {
     imports ( 'admin/models/*' );
-    $models = array ('CoreUserTable', 'CoreRoleTable', 'CoreUserRoleTable', 'CorePreferenceTable', 'CoreAccessPolicyTable', 'CoreAttachmentTable', 'TagTable', 'NodeTagsTable', 'EnumTable', 'NodeTypeTable', 'NodeTemplateTable' );
+    $models = array ('CoreUserTable', 'CoreRoleTable', 'CoreUserRoleTable', 'CorePreferenceTable', 'CoreAccessPolicyTable', 'CoreAttachmentTable', 'TagTable', 'NodeTagsTable', 'TagTable', 'NodeTypeTable', 'NodeTemplateTable' );
     $models [] = 'NodeTable';
     $models [] = 'NodeCommentTable';
     $rtn = true;
     foreach ( $models as $model ) {
-        if (! PdoDriver::createTable ( new $model () )) {
+        if (! PdoDialect::createTable ( new $model () )) {
             $rtn = db_error ();
             break;
         }

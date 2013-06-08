@@ -23,7 +23,7 @@ function do_admin_extension($req, $res) {
  * 安装扩展
  */
 function setup_extension($pid, $req) {
-    $opTexts = array ('install' => '安装', 'upgrade' => '升级', 'uninstall' => '卸载' );
+    $opTexts = array ('install' => '安装', 'upgrade' => '升级', 'uninstall' => '卸载', 'alias' => '别名' );
     
     $operation = $req->get ( 'op', 'install' );
     if (! isset ( $opTexts [$operation] )) {
@@ -57,6 +57,12 @@ function setup_extension($pid, $req) {
                         $rst = $plgmgr->upgradeExtension ( $pid );
                     } else if ($operation == 'uninstall') {
                         $rst = $plgmgr->uninstallExtension ( $pid );
+                    } else if ($operation == 'alias') {
+                        $rst = $plgmgr->setAlias ( $pid, $req ['alias'] );
+                        if (! $rst) {
+                            $rst = '别名冲突,设置别名失败。';
+                        }
+                        $data ['_page_url'] = murl ( 'admin', 'extension' );
                     } else {
                         $rst = '未知操作,系统无法完成.';
                     }
@@ -142,6 +148,7 @@ function _hook_plugin_operation($ops, $item) {
         if ($item ['unremovable'] != '1') {
             $ops .= '<a href="' . $url . '?setup=' . $item ['Module_ID'] . '&op=uninstall" class="uninstall" onclick="return confirm(\'你确定要卸载这个扩展吗?\');">卸载</a>';
         }
+        $ops .= '<a href="' . $url . '?setup=' . $item ['Module_ID'] . '&step=saveExtInfo&op=alias" class="set-alias" data-value="' . $item ['alias'] . '">别名</a>';
     } else {
         $ops .= '<a href="' . $url . '?setup=' . $item ['Module_ID'] . '" class="install" onclick="return confirm(\'你确定要安装这个扩展吗?\');">安装</a>';
     }

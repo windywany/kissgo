@@ -21,7 +21,7 @@ class ExecuteResult extends DbSqlHelper implements Countable {
         $this->data = $data;
         $this->dao = $dao;
         $this->alias = $alias == null ? $dao->getAlias () : $alias;
-        $this->driver = $dao->getDriver ();
+        $this->driver = $dao->getDialect ();
         $this->builder = $this->driver->getSqlBuilder ();
         $this->sChar = $this->builder->specialChar ();
     }

@@ -9,6 +9,8 @@ function do_admin_pages_get($req, $res) {
     $data ['limit'] = 10;
     
     $nodeTable = new NodeTable ();
+    $nodeTypeTable = new NodeTypeTable ();
+    
     $draftTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'draft' ), 'nid' );
     $approvingTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'approving' ), 'nid' );
     $where ['ND.deleted'] = 0;
@@ -36,9 +38,10 @@ function do_admin_pages_get($req, $res) {
     
     $items = $nodeTable->query ( 'ND.*,NT.name AS node_type_name,UC.login AS user_name,UU.login AS update_user_name', 'ND' );
     
-    $items->ljoin ( 'node_type AS NT', 'ND.node_type = NT.type' );
-    $items->ljoin ( 'user AS UC', 'ND.create_uid = UC.uid' );
-    $items->ljoin ( 'user AS UU', 'ND.update_uid = UU.uid' );
+    $items->ljoin ( $nodeTypeTable, 'ND.node_type = NT.type', 'NT' );
+    $items->ljoin ( new CoreUserTable (), 'ND.create_uid = UC.uid', 'UC' );
+    $items->ljoin ( new CoreUserTable (), 'ND.update_uid = UU.uid', 'UU' );
+    
     $items->where ( $where )->limit ( $start, $data ['limit'] )->sort ( 'nid', 'd' );
     
     $data ['countTotal'] = count ( $items );
@@ -47,10 +50,10 @@ function do_admin_pages_get($req, $res) {
     $data ['draftTotal'] = $draftTotal;
     $data ['approvingTotal'] = $approvingTotal;
     $data ['status'] = $status;
-    $nodeTypeTable = new NodeTypeTable ();
+    
     $data ['page_types'] = $nodeTypeTable->query ( 'type,name' )->where ( array ('creatable' => 1 ) )->toArray ( 'type', 'name', array ('' => '-页面类型-' ) );
     $tagM = new TagTable ();
-    $data ['flags'] = $tagM->query ( 'tag_id,tag' )->where ( array ('type' => 1 ) )->toArray ( 'tag_id', 'tag', array ('' => '-页面属性-' ) );
+    $data ['flags'] = $tagM->query ( 'tag_id,tag' )->where ( array ('type' => 'flag' ) )->toArray ( 'tag_id', 'tag', array ('' => '-页面属性-' ) );
     
     $nk = new NodeHooks ();
     bind ( 'get_page_operation', array ($nk, 'get_page_operation' ), 1, 2 );
@@ -62,7 +65,7 @@ function do_admin_pages_get($req, $res) {
 }
 
 function do_admin_pages_post($req, $res) {
-    
+
 }
 
 /**

@@ -53,6 +53,7 @@ class SmartyView extends View {
         foreach ( $data as $n => $v ) {
             $this->__smarty->assign ( $n, $v ); //变量
         }
+        $this->__smarty->assign('_current_template_file',$this->tpl);
         return $this->__smarty->fetch ( $this->tpl );
     }
 }

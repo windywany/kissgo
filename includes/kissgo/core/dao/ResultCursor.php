@@ -10,7 +10,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      */
     protected $dao = null;
     /**
-     * @var PdoDriver
+     * @var PdoDialect
      */
     protected $driver = null;
     /**  
@@ -35,7 +35,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      */
     public function __construct($dao, $fields, $alias) {
         $this->dao = $dao;
-        $this->driver = $dao->getDriver ();
+        $this->driver = $dao->getDialect ();
         $this->alias = $alias;
         $this->builder = $this->driver->getSqlBuilder ();
         if ($fields instanceof DbImmutableF) {
@@ -49,9 +49,10 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
     public function __destruct() {
         if ($this->stmt) {
             $this->stmt->closeCursor ();
+            $this->stmt = null;
         }
-        if ($this->countStmt) {
-            $this->countStmt->closeCursor ();
+        if ($this->sql) {
+            $this->sql = null;
         }
     }
     public function __get($name) {
@@ -71,7 +72,7 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
             }
             db_error ( "the PdoStatment is null" );
         }
-        return array();
+        return array ();
     }
     public function lastErrorMsg() {
         if ($this->errorInfo) {
@@ -180,17 +181,13 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
             return false;
         }
     }
-    public function offsetGet($offset) {
-        try {
-            if (! is_int ( $offset )) {
-                return $this->rows [0] [$offset];
-            } else {
-                return $this->rows [$offset];
-            }
-        } catch ( Exception $e ) {
-            echo $e->getMessage ();
-            return array ();
-        }
+    public function offsetGet($offset) {        
+        if (! is_int ( $offset )) {
+            return $this->rows [0] [$offset];
+        } else if (isset ( $this->rows [$offset] )) {
+            return $this->rows [$offset];
+        }        
+        return array ();    
     }
     public function hasHavingField() {
         foreach ( $this->fields as $key => $f ) {

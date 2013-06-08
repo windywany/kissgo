@@ -1,6 +1,6 @@
 $(function() {
 	var murl = $('#tag-form').attr('action');
-	var flag = $('#flag-id').length > 0 ? 1 : 0;
+	var type = $('#tag-type').val();
 	var tag_select = $('#tag-select-box').val();
 	$('#btn-selectall').click(function() {
 		var $this = $(this).toggleClass('selected');
@@ -22,7 +22,7 @@ $(function() {
 			deleteTags(ids.join(','));
 			return false;
 		} else {
-			alert('请选择要删除的标签或标记');
+			alert('请选择要删除的枚举值');
 		}
 	});
 	$('.btn-add').click(function() {
@@ -36,7 +36,7 @@ $(function() {
 			url : murl + '/add',
 			type : 'POST',
 			data : {
-				type : flag,
+				type : type,
 				tag : tag
 			},
 			success : function(data) {

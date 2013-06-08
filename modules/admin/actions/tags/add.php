@@ -10,15 +10,16 @@ function do_admin_tags_add_post($req, $res) {
         $tagM = new TagTable ();
         $data ['tag'] = $tag;
         $data ['type'] = $type;
+        $data ['slug'] = '';
         if ($tagM->exist ( $data )) {
-            $data ['msg'] = '标签已经存在';
+            $data ['msg'] = '标签已经存在.';
         } else {
             $tag = $tagM->insert ( $data );
             if ($tag) {
                 $rst ['success'] = true;
                 $rst ['id'] = $tag ['tag_id'];
             } else {
-                $rst ['msg'] = '保存标签时出错：数据库出错.';
+                $rst ['msg'] = '保存标签时出错：' . db_error ();
             }
         }
     }

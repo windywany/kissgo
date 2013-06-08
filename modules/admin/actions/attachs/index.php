@@ -30,7 +30,7 @@ function do_admin_attachs_get($req, $res) {
     $attModel = new CoreAttachmentTable ();
     $query = $attModel->query ( "AMT.*,U.login AS author", 'AMT' );
     
-    $query->ljoin ( 'user AS U', "AMT.create_uid  = U.uid" );
+    $query->ljoin ( new CoreUserTable(), "AMT.create_uid  = U.uid" ,'U');
     
     $query->sort ( 'create_time' );
     

@@ -44,6 +44,7 @@ function get_view_for_page() {
     if ($frontPage) {
         $tpl = $frontPage->getTemplate ();
         $data = $frontPage->toArray ();
+        $data ['template'] = $tpl;
         return template ( $tpl, $data );
     }
     return null;

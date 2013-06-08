@@ -15,7 +15,7 @@ class ThemeView extends View {
             $this->__smarty = new Smarty ();
             $this->__smarty->addPluginsDir ( INCLUDES . 'vendors/smarty/user_plugins' );
             $this->__smarty->template_dir = $basedir; //模板目录
-            $tpl = str_replace ( DS, '/', $this->tpl );            
+            $tpl = str_replace ( DS, '/', $this->tpl );
             $tpl = explode ( '/', $tpl );
             array_pop ( $tpl );
             $sub = implode ( DS, $tpl );
@@ -23,7 +23,7 @@ class ThemeView extends View {
             $this->__smarty->cache_dir = TMP_PATH . 'themes_cache' . DS . $sub; //模板缓存目录                       
             $this->__smarty = apply_filter ( 'init_smarty_engine', $this->__smarty );
             $this->__smarty->compile_check = true;
-            $this->__smarty->_dir_perms = 0775; 
+            $this->__smarty->_dir_perms = 0775;
             if (DEBUG == DEBUG_DEBUG) {
                 $this->__smarty->force_compile = true;
                 $this->__smarty->caching = 0;
@@ -41,6 +41,7 @@ class ThemeView extends View {
         foreach ( $data as $n => $v ) {
             $this->__smarty->assign ( $n, $v ); //变量
         }
+        $this->__smarty->assign ( '_current_template_file', $this->tpl );
         return $this->__smarty->fetch ( $this->tpl );
     }
 }
