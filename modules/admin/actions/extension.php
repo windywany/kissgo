@@ -35,7 +35,7 @@ function setup_extension($pid, $req) {
     $plgmgr = ExtensionManager::getInstance ();
     $extensions = $plgmgr->getExtensions ( $operation == 'install' ? false : true );
     if (isset ( $extensions [$pid] )) {
-        $plgmgr->load ( array ($extensions [$pid] ['Module'] ), ture );
+        $plgmgr->load ( array ($extensions [$pid] ['Module'] ), true );
         $tpl = 'admin/views/extension/done.tpl';
         $data ['extName'] = $extensions [$pid] ['Module_Name'];
         $data ['form'] = '';
