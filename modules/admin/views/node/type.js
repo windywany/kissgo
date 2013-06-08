@@ -3,12 +3,14 @@ $(function() {
 		var $this = $(this), id = $this.attr('href').replace('#', '#form-inline-');
 		$(id).show();
 		$this.parents('.has-row-actions').find('.type-tpl').hide();
+		return false;
 	});
 
 	$('.btn-ca-att').click(function() {
 		var $this = $(this);
 		$this.parents('.has-row-actions').find('.form-inline').hide();
 		$this.parents('.has-row-actions').find('.type-tpl').show();
+		return false;
 	});
 
 	$('.btn-edit-att').click(function() {

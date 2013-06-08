@@ -67,7 +67,7 @@ bind ( 'init_view_smarty_engine', 'set_admin_global_vars' );
 function _hook_for_admincp_menu($mm) {
     // System
     $mm->addMenu2 ( 'system', __ ( 'System' ), 'icon-th-large' );
-    $mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), '#', 'icon-user' );
+    $mm->addMenuItem ( 'system', 'menuitem-user-role', __ ( 'Users & Roles' ), murl ( 'admin', 'users' ), 'icon-user' );
     $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-users', __ ( 'Users Management' ), murl ( 'admin', 'users' ), 'icon-user' );
     $mm->addSubItem ( 'system/menuitem-user-role', 'submenu-item-roles', __ ( 'Roles Management' ), murl ( 'admin', 'roles' ), 'icon-user' );
     $mm->addMenuItemDivider ( 'system' );

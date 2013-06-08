@@ -427,7 +427,7 @@ function the_thumbnail_src($src, $w, $h) {
     if (file_exists ( WEB_ROOT . $thumbfile )) {
         return BASE_URL . $thumbfile;
     } else {
-        return BASE_URL  . $src;
+        return BASE_URL . $src;
     }
 }
 /**
@@ -800,8 +800,23 @@ function log_error($message) {
  * @param string|array $args 参数
  * @return string
  */
-function murl($module, $action = '', $args = '') {
-    static $em = false;
+function murl($module, $action = '', $args = null) {
+    static $em = false, $_urls = array ();
+    $_args = '';
+    if (is_string ( $args )) {
+        $_args = ltrim ( $args, '?&' );
+    } else if (is_array ( $args )) {
+        $_args = array ();
+        foreach ( $args as $key => $val ) {
+            $_args [] = $key . '=' . urlencode ( $val );
+        }
+        $_args = implode ( '&', $_args );
+    }
+    $md5 = md5 ( $module . $action . $_args );
+    if (isset ( $_urls [$md5] )) {
+        return $_urls [$md5];
+    }
+    
     if (! $em) {
         $em = ExtensionManager::getInstance ();
     }
@@ -809,21 +824,15 @@ function murl($module, $action = '', $args = '') {
     if (! empty ( $action )) {
         $url .= $action;
     }
-    if (! empty ( $args )) {
-        if (is_string ( $args )) {
-            $url .= '?' . ltrim ( $args, '?&' );
-        } else if (is_array ( $args )) {
-            $_args = array ();
-            foreach ( $args as $key => $val ) {
-                $_args [] = $key . '=' . urlencode ( $val );
-            }
-            $url .= '?' . implode ( '&', $_args );
-        }
+    if (! empty ( $_args )) {
+        $url .= '?' . $_args;
     }
     if (! defined ( 'CLEAN_URL' ) || CLEAN_URL == false) {
         $url = 'index.php/' . $url;
     }
-    return BASE_URL . $url;
+    $url = BASE_URL . $url;
+    $_urls [$md5] = $url;
+    return $url;
 }
 
 /**
@@ -841,8 +850,12 @@ function murl($module, $action = '', $args = '') {
  * @return string
  */
 function sortheader($text, $filed, $sort = 'd', $url = '') {
+    static $_url = false;
+    if (! $_url) {
+        $_url = Request::getUri ();
+    }
     if (empty ( $url )) {
-        $url = Request::getUri ();
+        $url = $_url;
     }
     $stext = '';
     if (preg_match ( '/_sf=' . $filed . '/', $_SERVER ['QUERY_STRING'] )) {

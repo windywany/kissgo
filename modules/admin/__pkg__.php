@@ -12,7 +12,7 @@ defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 
 function on_install_module_cn_usephp_core_gui($rst) {
     imports ( 'admin/models/*' );
-    $models = array ('CoreUserTable', 'CoreRoleTable', 'CoreUserRoleTable', 'CorePreferenceTable', 'CoreAccessPolicyTable', 'CoreAttachmentTable', 'TagTable', 'NodeTagsTable', 'TagTable', 'NodeTypeTable', 'NodeTemplateTable' );
+    $models = array ('CoreUserTable', 'CoreRoleTable', 'CoreUserRoleTable', 'CorePreferenceTable', 'CoreAccessPolicyTable', 'CoreAttachmentTable', 'TagTable', 'NodeTagsTable', 'NodeTypeTable', 'NodeTemplateTable' );
     $models [] = 'NodeTable';
     $models [] = 'NodeCommentTable';
     $rtn = true;

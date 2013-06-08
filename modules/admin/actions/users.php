@@ -21,7 +21,7 @@ function do_admin_users_get($req, $res) {
     $where = array ('deleted' => 0 );
     
     $where += where ( array ('U.login' => array ('like' => array ('name' => 'login', 'prefix' => '%', 'suffix' => '%' ) ) ), $data );
-    
+    $where += where ( array ('U.username' => array ('like' => array ('name' => 'un', 'prefix' => '%', 'suffix' => '%' ) ) ), $data );
     $where += where ( array ('U.email' => array ('like' => array ('name' => 'email', 'prefix' => '%', 'suffix' => '%' ) ) ), $data );
     
     $where += where ( array ('U.status' => 'status' ), $data );

@@ -14,7 +14,9 @@
             <div class="tab-pane active">
                 <form class="form-inline" method="get" action="{$_CUR_URL}">				
 				<input type="text" class="input-medium"
-					name="login" value="{$login}" placeholder="账户名" /> 				
+					name="login" value="{$login}" placeholder="账户名" />
+				<input type="text" class="input-medium"
+					name="un" value="{$un}" placeholder="用户名" /> 				
 				<input type="text" class="input-medium"
 					name="email" value="{$email}" placeholder="邮箱" /> 
 				{html_options name=rid options=$role_options selected=$rid} 
@@ -33,7 +35,8 @@
 				<thead>
 					<tr>
 						<th class="col_chk"><input type="checkbox"/></th>						
-						<th class="w120">{'账户名'|sorth:login}</th>						
+						<th class="w120">{'账户名'|sorth:login}</th>	
+						<th class="w120">{'用户名'|sorth:username}</th>					
 						<th class="w150">{'邮箱'|sorth:email}</th>
 						<th class="txt-ac w50">{'状态'|sorth:status}</th>
 						<th class="wa">角色</th>
@@ -44,8 +47,9 @@
 					{foreach from=$users item=user}
 					<tr>
 						<td class="col_chk"><input type="checkbox" value="{$user.uid}"/></td>						
-						<td><a href="{$_CUR_URL}/edit?uid={$user.uid}">{$user.login}</a></td>						
-						<td><a href="{$_CUR_URL}/edit?uid={$user.uid}">{$user.email}</a></td>
+						<td><a href="{$_CUR_URL}/edit?uid={$user.uid}">{$user.login}</a></td>
+						<td>{$user.username}</td>						
+						<td>{$user.email}</td>
 						<td class="txt-ac">{$user.status|status:$stas}</td>
 						<td>
 							{'user_belongs'|fire:$user}
@@ -55,7 +59,7 @@
 					</tr>
 					{foreachelse}
 					<tr>
-						<td colspan="8" class="txt-ac">无记录</td>						
+						<td colspan="7" class="txt-ac">无记录</td>						
 					</tr>
 					{/foreach}
 				</tbody>

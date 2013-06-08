@@ -9,5 +9,11 @@ $(function() {
 		} else {
 			$('#sideTools').hide();
 		}
-	});	
+	});
+	$('.dropdown-submenu > .dropdown-toggle').click(function() {
+		var href = $(this).attr('href');
+		if (href != '#') {
+			window.location.href = href;
+		}
+	});
 });

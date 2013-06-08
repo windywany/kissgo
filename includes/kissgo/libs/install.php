@@ -110,6 +110,7 @@ class KissGOInstaller {
                 //create super administrator
                 $data ['uid'] = 1;
                 $data ['login'] = $tmp ['name'];
+                $data ['username'] = '超级管理员';
                 $data ['email'] = $tmp ['email'];
                 $data ['passwd'] = md5 ( $tmp ['passwd'] );
                 $data ['reserved'] = true;
@@ -117,8 +118,25 @@ class KissGOInstaller {
                 if (count ( $rst ) == 0) {
                     break;
                 }
+                $role = new CoreRoleTable ();
+                $data = array ('rid' => 1, 'label' => 'Administrator', 'name' => '超级管理员', 'reserved' => 1 );
+                $rst = $role->save ( $data );
+                if (count ( $rst ) == 0) {
+                    break;
+                }
+                $userRole = new CoreUserRoleTable ();
+                $data = array ('rid' => 1, 'uid' => 1 );
+                $rst = $userRole->save ( $data );
+                if (count ( $rst ) == 0) {
+                    break;
+                }
                 // assign access policy to administrator
                 $ap = new CoreAccessPolicyTable ();
+                $data = array ('atype' => 'ROLE', 'aid' => 1, 'resource' => '*', 'action' => '*', 'allow' => true );
+                $rst = $ap->save ( $data );
+                if (count ( $rst ) == 0) {
+                    break;
+                }
                 $data = array ('atype' => 'USER', 'aid' => 1, 'resource' => '*', 'action' => '*', 'allow' => true );
                 $rst = $ap->save ( $data );
                 if (count ( $rst ) == 0) {
@@ -272,7 +290,7 @@ class KissGOInstaller {
     }
     private function getDs() {
         try {
-            $ds = PdoDialect::getDriver ();
+            $ds = PdoDialect::getDialect ();
             return $ds;
         } catch ( PDOException $e ) {
             $this->error = $e->getMessage ();

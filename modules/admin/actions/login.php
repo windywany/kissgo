@@ -31,7 +31,7 @@ function do_admin_login_post($req, $res) {
                 $tryCount = 0;
             }
         }
-        if ($goon) {            
+        if ($goon) {
             $um = new CoreUserTable ();
             $account = $form ['account'];
             $passwod = $form ['passwd'];
@@ -54,7 +54,7 @@ function do_admin_login_post($req, $res) {
                 $form->setError ( 'account', '用户已锁定，请联系管理员.' );
             } else {
                 $_SESSION ['login_try_count'] = 0;
-                $loginInfo = new LoginInfo ( $user ['uid'], $user ['login'], time (), $_SERVER ['REMOTE_ADDR'] );
+                $loginInfo = new LoginInfo ( $user ['uid'], $user ['login'], $user ['username'], time (), $_SERVER ['REMOTE_ADDR'] );
                 $loginInfo->login ( true );
                 LoginInfo::save ( $loginInfo );
                 Response::redirect ( sess_del ( 'go_to_the_page_when_login', murl ( 'admin' ) ) );
@@ -94,6 +94,6 @@ function do_admin_login_get($req, $res) {
         $_SESSION ['login_need_captcha'] = true;
     } else {
         $_SESSION ['login_need_captcha'] = false;
-    }    
+    }
     return template ( 'admin/login.tpl', $data );
 }

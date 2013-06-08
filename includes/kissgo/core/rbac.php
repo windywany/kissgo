@@ -110,7 +110,7 @@ class Passport implements ArrayAccess {
         if ($info instanceof LoginInfo) {
             $this->properties ['uid'] = $info->getUid ();
             $this->properties ['account'] = $info->getAccount ();
-            $this->properties ['name'] = $this->properties ['account'];
+            $this->properties ['name'] = $info->getName ();
             $this->properties ['login_ip'] = $info->getIp ();
             $this->properties ['login_time'] = $info->getTime ();
             $this->isLogin ( $info->login () );
@@ -138,11 +138,12 @@ class Passport implements ArrayAccess {
  */
 class LoginInfo {
     private $count = 0;
-    private $account, $time, $ip, $uid;
+    private $account, $time, $ip, $uid, $name;
     private $isLogin = false;
-    public function __construct($uid, $account, $time, $ip) {
+    public function __construct($uid, $account, $name, $time, $ip) {
         $this->uid = $uid;
         $this->account = $account;
+        $this->name = $name;
         $this->time = $time;
         $this->ip = $ip;
     }
@@ -157,6 +158,9 @@ class LoginInfo {
     }
     public function getAccount() {
         return $this->account;
+    }
+    public function getName() {
+        return $this->name;
     }
     public function getTime() {
         return $this->time;
@@ -244,8 +248,8 @@ function access_checking($op, $resource, $redirect = '') {
  * @param int $uid
  * @return Passport 
  */
-function whoami($uid = 0){
-    $passport = Passport::getPassport ($uid);
+function whoami($uid = 0) {
+    $passport = Passport::getPassport ( $uid );
     return $passport;
 }
 /**
