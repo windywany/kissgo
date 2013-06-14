@@ -13,7 +13,7 @@ function check_role_name($value = null, $data = null, $message = null) {
     if ($data ['rid']) {
         $where ['rid <>'] = $data ['rid'];
     }
-    $crt = new CoreRoleTable ();
+    $crt = new KsgRoleTable ();
     $rst = $crt->query ()->where ( $where );
     try {
         return count ( $rst ) ? false : true;
@@ -33,7 +33,7 @@ function check_user_login($value = null, $data = null, $message = '') {
     if ($data ['uid']) {
         $where ['uid <>'] = $data ['uid'];
     }
-    $crt = new CoreUserTable ();
+    $crt = new KsgUserTable ();
     $rst = $crt->query ()->where ( $where );
     try {
         return count ( $rst ) ? false : true;
@@ -53,7 +53,7 @@ function check_user_email($value = null, $data = null, $message = '') {
     if ($data ['uid']) {
         $where ['uid <>'] = $data ['uid'];
     }
-    $crt = new CoreUserTable ();
+    $crt = new KsgUserTable ();
     $rst = $crt->query ()->where ( $where );
     try {
         return count ( $rst ) ? false : true;

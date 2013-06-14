@@ -39,14 +39,24 @@ function do_show_custom_page() {
  * 取当前页面的视图
  */
 function get_view_for_page() {
+    global $_CURRENT_NODE;
     $url = Request::getVirtualPageUrl ();
     $frontPage = FrontPage::initWithPageURL ( $url );
     if ($frontPage) {
-        $tpl = $frontPage->getTemplate ();
         $data = $frontPage->toArray ();
-        $data ['template'] = $tpl;
-        return template ( $tpl, $data );
+        if ($data ['status'] == 'published' || canpreview ()) {
+            $tpl = $frontPage->getTemplate ();
+            $tpl = get_prefer_tpl ( $tpl, $data );
+            $data ['template'] = $tpl;
+            $_CURRENT_NODE = $data;
+            return template ( $tpl, $data );
+        }
     }
     return null;
+}
+function canpreview() {
+    $I = whoami ();
+    // TODO need check the user's right
+    return $I->isLogin () && isset ( $_GET ['preview'] );
 }
 // end of index.php

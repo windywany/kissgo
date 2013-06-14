@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class NodeTypeTable extends DbTable {
-    var $table = 'node_type';
+class KsgNodeTypeTable extends DbTable {
+    var $table = 'system_nodetype';
     public function schema() {
         $schema = new DbSchema ( 'node types' );
         $schema->addPrimarykey ( array ('id' ) );

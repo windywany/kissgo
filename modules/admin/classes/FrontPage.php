@@ -61,6 +61,14 @@ class FrontPage {
     protected $update_user_info = null;
     protected $publish_user_info = null;
     
+    /**     
+     * @var KsgNodeTagsTable
+     */
+    private $nodeTagTable = null;
+    /**     
+     * @var KsgTagTable
+     */
+    private $tagTable = null;
     /**
      * 
      * 使用$page创建一个新的页面
@@ -72,6 +80,8 @@ class FrontPage {
                 $this->{$f} = $v;
             }
         }
+        $this->nodeTagTable = new KsgNodeTagsTable ();
+        $this->tagTable = new KsgTagTable ();
     }
     /**
      * 
@@ -82,7 +92,7 @@ class FrontPage {
     public static function initWithPageURL($url) {
         static $nodeTable = false;
         if (! $nodeTable) {
-            $nodeTable = new NodeTable ();
+            $nodeTable = new KsgNodeTable ();
         }
         $cache = Cache::getCache ();
         $key = md5 ( $url );
@@ -107,7 +117,7 @@ class FrontPage {
     public static function initWithPageId($id) {
         static $nodeTable = false;
         if (! $nodeTable) {
-            $nodeTable = new NodeTable ();
+            $nodeTable = new KsgNodeTable ();
         }
         $page = $nodeTable->query ( '*' )->where ( array ('nid' => $id ) );
         $page = $page [0];
@@ -125,7 +135,7 @@ class FrontPage {
      * @return boolean
      */
     public function save($publish = false) {
-        $nodeTable = new NodeTable ();
+        $nodeTable = new KsgNodeTable ();
         $data = $this->toArray ( true );
         $data = apply_filter ( 'before_save_node', $data );
         if (! is_array ( $data ) || empty ( $data )) {
@@ -224,10 +234,35 @@ class FrontPage {
         return $this->commentable;
     }
     public function getTags() {
-        //TODO 取这个页面的所有标签
+        $tags = $this->nodeTagTable->query ( 'TAG.tag_id,tag,type,slug', 'NT' )->where ( array ('NT.node_id' => $this->nid, 'TAG.type' => 'tag' ) );
+        $tags->ljoin ( $this->tagTable, 'NT.tag_id = TAG.tag_id', 'TAG' );
+        return $tags->toArray ();
     }
     public function getFlags() {
-        //TODO 取这个页面的所有标志
+        $tags = $this->nodeTagTable->query ( 'TAG.tag_id,tag,type,slug', 'NT' )->where ( array ('NT.node_id' => $this->nid, 'TAG.type' => 'flag' ) );
+        $tags->ljoin ( $this->tagTable, 'NT.tag_id = TAG.tag_id', 'TAG' );
+        return $tags->toArray ();
+    }
+    public function getTypeInfo() {
+        $nodeTypeTable = new KsgNodeTypeTable ();
+        $type = $nodeTypeTable->query ()->where ( array ('type' => $this->node_type ) );
+        return $type [0];
+    }
+    public function getAuthorInfo() {
+        if ($this->author) {
+            $tags = $this->nodeTagTable->query ( 'TAG.tag_id,tag,type,slug', 'NT' )->where ( array ('NT.node_id' => $this->nid, 'TAG.type' => 'author', 'tag' => $this->author ) );
+            $tags->ljoin ( $this->tagTable, 'NT.tag_id = TAG.tag_id', 'TAG' );
+            return $tags [0];
+        }
+        return array ();
+    }
+    public function getSourceInfo() {
+        if ($this->source) {
+            $tags = $this->nodeTagTable->query ( 'TAG.tag_id,tag,type,slug', 'NT' )->where ( array ('NT.node_id' => $this->nid, 'TAG.type' => 'source', 'tag' => $this->source ) );
+            $tags->ljoin ( $this->tagTable, 'NT.tag_id = TAG.tag_id', 'TAG' );
+            return $tags [0];
+        }
+        return array ();
     }
     public function getTitle() {
         return $this->title;
@@ -257,9 +292,9 @@ class FrontPage {
     public function getTemplate() {
         if (! $this->template) {
             $theme = get_theme ();
-            $this->template = NodeTemplateTable::getTemplate ( $theme, $this->node_type );
+            $this->template = KsgNodeTemplateTable::getTemplate ( $theme, $this->node_type );
             if ($this->template == null) {
-                $this->template = '404.tpl';
+                $this->template = 'page.tpl';
             }
         }
         return $this->template;
@@ -416,6 +451,13 @@ class FrontPage {
             $page ['flags'] = $this->getFlags ();
             $page ['metadata'] = $this->getMetadata ();
             $page ['crumb'] = $this->getCrumb ();
+            $page ['node_type'] = $this->getTypeInfo ();
+            $page ['author'] = $this->getAuthorInfo ();
+            $page ['source'] = $this->getSourceInfo ();
+        } else {
+            $page ['node_type'] = $this->node_type;
+            $page ['author'] = $this->author;
+            $page ['source'] = $this->source;
         }
         $page ['cachetime'] = $this->cachetime;
         $page ['status'] = $this->status;
@@ -424,14 +466,11 @@ class FrontPage {
         $page ['subtitle'] = $this->subtitle;
         $page ['ontopto'] = $this->ontopto;
         $page ['node_id'] = $this->node_id;
-        $page ['node_type'] = $this->node_type;
         $page ['template'] = $this->template;
-        $page ['author'] = $this->author;
         $page ['keywords'] = $this->keywords;
         $page ['description'] = $this->description;
         $page ['url'] = $this->getUrl ();
         $page ['url_slug'] = $this->url_slug;
-        $page ['source'] = $this->source;
         $page ['figure'] = $this->figure;
         if ($cache) {
             $cache->add ( $key, $page, 0, 'page_content' );
@@ -460,9 +499,9 @@ class FrontPage {
     protected function getUserInfo($uid) {
         static $userMode = false;
         if (! $userMode) {
-            $userMode = new CoreUserTable ();
+            $userMode = new KsgUserTable ();
         }
-        $rst = $userMode->query ( 'uid,email,login,deleted,status' )->where ( array ('uid' => $uid ) );
+        $rst = $userMode->query ( 'uid,email,login,username,deleted,status' )->where ( array ('uid' => $uid ) );
         return $rst [0];
     }
 }

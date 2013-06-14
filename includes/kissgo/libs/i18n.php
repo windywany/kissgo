@@ -37,7 +37,7 @@ class I18n implements ArrayAccess {
         } else if (! empty ( $local )) {
             self::$local = $local;
         }
-        self::append ( APP_PATH );
+        self::append ( INCLUDES );
     }
     
     /**

@@ -14,7 +14,7 @@ function do_admin_users_get($req, $res) {
     $start = irqst ( 'start', 1 ); // 分页
     new UserForm ( null );
     
-    $userModel = new CoreUserTable ();
+    $userModel = new KsgUserTable ();
     
     $users = $userModel->query ( 'U.*', 'U' );
     
@@ -29,7 +29,7 @@ function do_admin_users_get($req, $res) {
     $where += where ( array ('UR.rid' => 'rid' ), $data );
     
     if (isset ( $where ['UR.rid'] )) {
-        $users->ljoin ( new CoreUserRoleTable(), 'U.uid=UR.uid','UR' );
+        $users->ljoin ( new KsgUserRoleTable(), 'U.uid=UR.uid','UR' );
     }
     
     $users = $users->where ( $where )->limit ( $start, $data ['limit'] )->sort ();
@@ -41,7 +41,7 @@ function do_admin_users_get($req, $res) {
     }
     
     $data ['stas'] = array (1 => '<span class="label label-success">正常</span>', '0' => '<span class="label">禁用</span>' );
-    $gM = new CoreRoleTable ();
+    $gM = new KsgRoleTable ();
     $roles = $gM->query ()->where ( array ('deleted' => 0 ) );
     $data ['roles'] = $roles;
     
@@ -71,7 +71,7 @@ function do_admin_users_post($req, $res) {
     if ($form->validate ()) {
         $next_op = $req ['nextOp'];
         
-        $crt = new CoreUserTable ();
+        $crt = new KsgUserTable ();
         $data = $form->getCleanData ();
         $where = array ();
         if ($data ['uid']) {
@@ -150,7 +150,7 @@ function admin_get_user_bench_options($options) {
 function admin_user_belongs($lists, $user) {
     static $guM = null;
     if ($guM == null) {        
-        $guM = new CoreUserRoleTable ();
+        $guM = new KsgUserRoleTable ();
     }
     $uid = $user ['uid'];
     $groups = $guM->getGroups ( $uid );

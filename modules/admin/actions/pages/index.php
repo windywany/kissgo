@@ -8,8 +8,8 @@ function do_admin_pages_get($req, $res) {
     $data ['_CUR_URL'] = murl ( 'admin', 'pages' );
     $data ['limit'] = 10;
     
-    $nodeTable = new NodeTable ();
-    $nodeTypeTable = new NodeTypeTable ();
+    $nodeTable = new KsgNodeTable ();
+    $nodeTypeTable = new KsgNodeTypeTable ();
     
     $draftTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'draft' ), 'nid' );
     $approvingTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'approving' ), 'nid' );
@@ -39,8 +39,8 @@ function do_admin_pages_get($req, $res) {
     $items = $nodeTable->query ( 'ND.*,NT.name AS node_type_name,UC.login AS user_name,UU.login AS update_user_name', 'ND' );
     
     $items->ljoin ( $nodeTypeTable, 'ND.node_type = NT.type', 'NT' );
-    $items->ljoin ( new CoreUserTable (), 'ND.create_uid = UC.uid', 'UC' );
-    $items->ljoin ( new CoreUserTable (), 'ND.update_uid = UU.uid', 'UU' );
+    $items->ljoin ( new KsgUserTable (), 'ND.create_uid = UC.uid', 'UC' );
+    $items->ljoin ( new KsgUserTable (), 'ND.update_uid = UU.uid', 'UU' );
     
     $items->where ( $where )->limit ( $start, $data ['limit'] )->sort ( 'nid', 'd' );
     
@@ -52,7 +52,7 @@ function do_admin_pages_get($req, $res) {
     $data ['status'] = $status;
     
     $data ['page_types'] = $nodeTypeTable->query ( 'type,name' )->where ( array ('creatable' => 1 ) )->toArray ( 'type', 'name', array ('' => '-页面类型-' ) );
-    $tagM = new TagTable ();
+    $tagM = new KsgTagTable ();
     $data ['flags'] = $tagM->query ( 'tag_id,tag' )->where ( array ('type' => 'flag' ) )->toArray ( 'tag_id', 'tag', array ('' => '-页面属性-' ) );
     
     $nk = new NodeHooks ();
@@ -79,7 +79,7 @@ class NodeHooks {
     private $edit_url;
     private $delete_url;
     public function __construct() {
-        $this->wptM = new NodeTagsTable ();
+        $this->wptM = new KsgNodeTagsTable ();
         $this->url = murl ( 'admin', 'pages/flow' );
         $this->edit_url = murl ( 'admin', 'pages/edit' );
         $this->delete_url = murl ( 'admin', 'pages/delete' );

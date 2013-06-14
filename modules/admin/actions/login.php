@@ -32,7 +32,7 @@ function do_admin_login_post($req, $res) {
             }
         }
         if ($goon) {
-            $um = new CoreUserTable ();
+            $um = new KsgUserTable ();
             $account = $form ['account'];
             $passwod = $form ['passwd'];
             
@@ -69,7 +69,7 @@ function do_admin_login_post($req, $res) {
     } else {
         $_SESSION ['login_need_captcha'] = false;
     }
-    return template ( 'admin/login.tpl', $data );
+    return view ( 'admin/layout/login.tpl', $data );
 }
 /**
  * 显示登录页
@@ -95,5 +95,5 @@ function do_admin_login_get($req, $res) {
     } else {
         $_SESSION ['login_need_captcha'] = false;
     }
-    return template ( 'admin/login.tpl', $data );
+    return view ( 'admin/layout/login.tpl', $data );
 }

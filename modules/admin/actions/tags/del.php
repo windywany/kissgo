@@ -6,7 +6,7 @@ function do_admin_tags_del_post($req, $res) {
     if (empty ( $tid )) {
         $data ['msg'] = '标签编号为空，无法删除';
     } else {
-        $tagM = new TagTable ();
+        $tagM = new KsgTagTable ();
         $rst = $tagM->remove ( array ('tag_id IN' => $tid ) );
         
         if ($rst !== false) {

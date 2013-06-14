@@ -11,8 +11,8 @@ imports ( 'admin/validator_callbacks.php' );
  */
 function cfg($name, $default = '') {
     static $cfgs = false;
-    if (! $cfgs) {        
-        $cpt = new CorePreferenceTable ();
+    if (! $cfgs) {
+        $cpt = new KsgPreferenceTable ();
         $data = $cpt->query ();
         $cfgs = $data->walk ( array ($cpt, 'map' ) );
     }
@@ -85,7 +85,7 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'node/theme' ), 'icon-picture' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );    
+    $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Attachments' ), murl ( 'admin', 'attachs' ), 'icon-picture' );
     // Components
@@ -95,18 +95,13 @@ function _hook_for_admincp_menu($mm) {
     return $mm;
 }
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
-/* add new menu items
+
 function _hook_add_new_menu_items($items) {
-    $url = murl ( 'admin', 'pages/create' );
-    $nodeTypeTable = new NodeTypeTable ();
-    $types = $nodeTypeTable->query ( 'type,name' )->where ( array ('creatable' => 1 ) );
-    foreach ( $types as $type ) {
-        $items .= '<li><a href="' . $url . '?type=' . $type ['type'] . '"><i class="icon-file"></i> ' . $type ['name'] . '</a></li>';
-    }
+    $items .= '<li><a href="#"><i class="icon-file"></i> 假的</a></li>';
     return $items;
 }
 bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
-*/
+
 function _hook_for_add_passport_menu_items($items) {
     $items .= '<li><a href="' . murl ( 'admin', 'account' ) . '"><i class="icon-user"></i> ' . __ ( 'Control Panel' ) . '</a></li>';
     return $items;
@@ -123,7 +118,7 @@ function _kissgo_hook_for_get_user_passport($passport) {
         $uid = $passport ['uid'];
         $user = sess_get ( 'login_user_info_' . $uid, false );
         if (! $user) {
-            $um = new CoreUserTable ();
+            $um = new KsgUserTable ();
             $user = $um->query ()->where ( array ('uid' => $uid ) );
             if (count ( $user )) {
                 $_SESSION ['login_user_info_' . $uid] = $user [0];
@@ -189,7 +184,7 @@ bind ( 'do_ajax_browser_template_files', 'do_ajax_browser_template_files' );
 function do_ajax_tags_autocomplete($req) {
     $q = rqst ( 'q', '' );
     $p = irqst ( 'p', 1 );
-    $tagTable = new TagTable();
+    $tagTable = new KsgTagTable ();
     $more = true;
     $where = array ('type' => 'tag' );
     $tags = $tagTable->query ( 'TG.tag_id as id, tag as text', 'TG' );
@@ -198,7 +193,7 @@ function do_ajax_tags_autocomplete($req) {
     } else {
         $where ['tag LIKE'] = "%{$q}%";
     }
-    $nodeTagTable = new NodeTagsTable ();
+    $nodeTagTable = new KsgNodeTagsTable ();
     $hots = $nodeTagTable->query ( imtf ( "COUNT(NT.tag_id)", 'total' ), 'NT' )->where ( array ('NT.tag_id' => imtv ( 'TG.tag_id' ) ) );
     $tags->field ( $hots, 'hots' );
     $tags->where ( $where )->limit ( $p, 10 )->sort ( 'hots', 'd' );

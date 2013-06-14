@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class CoreUserRoleTable extends DbTable {
-    var $table = 'user_role';
+class KsgUserRoleTable extends DbTable {
+    var $table = 'system_userrole';
     public function schema() {
         $schema = new DbSchema ( "the relationship between role and user" );
         
@@ -18,7 +18,7 @@ class CoreUserRoleTable extends DbTable {
         return $schema;
     }
     public function getGroups($uid) {
-        return $this->query ( 'ROLE.*', 'CUR' )->ljoin ( new CoreRoleTable(), 'CUR.rid=ROLE.rid', 'ROLE' )->where ( array ('uid' => $uid ) );
+        return $this->query ( 'ROLE.*', 'CUR' )->ljoin ( new KsgRoleTable(), 'CUR.rid=ROLE.rid', 'ROLE' )->where ( array ('uid' => $uid ) );
     }
     public function addToGroup($uid, $gids) {
         foreach ( $gids as $gid ) {

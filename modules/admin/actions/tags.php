@@ -18,7 +18,7 @@ function do_admin_tags_get($req, $res) {
     }
     $start = irqst ( 'start', 1 );
     
-    $tagM = new TagTable ();
+    $tagM = new KsgTagTable ();
     $tags = $tagM->query ( 'tag_id,tag' )->where ( $where )->limit ( $start, $data ['limit'] );
     $data ['totalTags'] = count ( $tags );
     if ($data ['totalTags'] > 0) {

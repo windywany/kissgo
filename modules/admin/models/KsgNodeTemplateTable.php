@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class NodeTemplateTable extends DbTable {
-    var $table = 'node_template';
+class KsgNodeTemplateTable extends DbTable {
+    var $table = 'system_nodetemplate';
     public function schema() {
         $schema = new DbSchema ( 'the templates of different theme ' );
         $schema->addPrimarykey ( array ('type', 'theme' ) );
@@ -20,7 +20,7 @@ class NodeTemplateTable extends DbTable {
      * @return ResultCursor
      */
     public function getTemplates($theme) {
-        $nt = new NodeTypeTable ();
+        $nt = new KsgNodeTypeTable ();
         $tpls = $nt->query ( 'NT.*', 'NT' );
         $rst = $this->query ( 'template', 'NTPL' )->where ( array ('NTPL.type' => imtf ( 'NT.type' ), 'NTPL.theme' => $theme ) );
         $tpls->field ( $rst, 'tpl' );
@@ -33,8 +33,8 @@ class NodeTemplateTable extends DbTable {
      * @return string | NULL
      */
     public static function getTemplate($theme, $type) {
-        $nt = new NodeTypeTable ();
-        $ntt = new NodeTemplateTable ();
+        $nt = new KsgNodeTypeTable ();
+        $ntt = new KsgNodeTemplateTable ();
         $tpls = $nt->query ( 'NT.template', 'NT' )->where ( array ('NT.type' => $type ) );
         $rst = $ntt->query ( 'template', 'NTPL' )->where ( array ('NTPL.type' => imtf ( 'NT.type' ), 'NTPL.theme' => $theme, 'NTPL.type' => $type ) );
         $tpls->field ( $rst, 'tpl' );

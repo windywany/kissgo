@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class NodeCommentTable extends DbTable {
-    var $table = 'node_comment';
+class KsgCommentTable extends DbTable {
+    var $table = 'system_comment';
     public function schema() {
         $schema = new DbSchema ( 'comments' );
         $schema->addPrimarykey ( array ('id' ) );

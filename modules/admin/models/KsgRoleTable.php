@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class CoreRoleTable extends DbTable {
-    var $table = 'role';
+class KsgRoleTable extends DbTable {
+    var $table = 'system_role';
     public function schema() {
         $schema = new DbSchema ( 'the roles of system' );
         

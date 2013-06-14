@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class CorePreferenceTable extends DbTable {
-    var $table = 'preference';
+class KsgPreferenceTable extends DbTable {
+    var $table = 'system_preference';
     public function schema() {
         $schema = new DbSchema ( "system preference" );
         

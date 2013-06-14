@@ -6,7 +6,7 @@ function do_admin_node_theme_get($req, $res) {
     $theme_dir = THEME_PATH . THEME_DIR;
     $hd = opendir ( $theme_dir );
     $themes = array ();
-    $ntM = new NodeTemplateTable ();
+    $ntM = new KsgNodeTemplateTable ();
     if ($hd) {
         while ( ($dir = readdir ( $hd )) !== false ) {
             if ($dir == '.' || $dir == '..') {
@@ -28,7 +28,7 @@ function do_admin_node_theme_post($req, $res) {
     
     switch ($op) {
         case 'reset' :
-            $nt = new NodeTemplateTable ();
+            $nt = new KsgNodeTemplateTable ();
             $rst = $nt->remove ( array ('theme' => $req ['theme'] ) );
             if ($rst === false) {
                 $data ['success'] = false;
@@ -48,7 +48,7 @@ function do_admin_node_theme_post($req, $res) {
             $form = new SetTplForm ();
             $set = $form->validate ();
             if ($set) {
-                $nt = new NodeTemplateTable ();
+                $nt = new KsgNodeTemplateTable ();
                 $where = $set;
                 unset ( $where ['template'] );
                 if ($nt->exist ( $where )) {

@@ -16,7 +16,7 @@ function do_admin_users_active_get($req, $res) {
     if ($status == 0) {
         $where ['reserved'] = 0;
     }
-    $userModel = new CoreUserTable ();
+    $userModel = new KsgUserTable ();
     $rst = $userModel->save ( array ('status' => $status ) )->where ( $where );
     $msg = $status ? '激话' : '禁用';
     try {

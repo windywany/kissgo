@@ -9,7 +9,7 @@ assert_login ();
 function do_admin_node_type_get($req, $res) {
     $data ['_CUR_URL'] = murl ( 'admin', 'node/type' );
     $data ['limit'] = 20;
-    $typeM = new NodeTypeTable ();
+    $typeM = new KsgNodeTypeTable ();
     $where = where ( array ('type' => array ('like' => 'type' ), 'name' => array ('like' => 'name' ) ), $data );
     $start = irqst ( 'start', 1 );
     
@@ -35,7 +35,7 @@ function do_admin_node_type_post($req, $res) {
     $form = new ModifyNodeTypeForm ();
     if ($form->validate ()) {
         $type = $form->getCleanData ();
-        $ntM = new NodeTypeTable ();
+        $ntM = new KsgNodeTypeTable ();
         $rst = $ntM->update ( array ('template' => $type ['tpl'] ), array ('id' => $type ['id'] ) );
         if ($rst !== false) {
             $data ['success'] = true;

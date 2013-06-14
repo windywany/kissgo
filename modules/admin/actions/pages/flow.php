@@ -11,7 +11,7 @@ function do_admin_pages_flow_get($req, $res) {
         show_page_tip ( '<strong>Oops!</strong><br/>错误的页面编号', 'error' );
         Response::back ();
     }
-    $nM = new NodeTable ();
+    $nM = new KsgNodeTable ();
     if (isset ( $req ['del'] )) {
         $del = irqst ( 'del' );
         $deleted = $del ? 1 : 0;

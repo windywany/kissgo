@@ -142,9 +142,9 @@ class Response {
     public static function respond($status = 404) {
         status_header ( $status );
         if ($status == 404) {
-            $view = template ( "404.tpl" );
-        }
-        echo $view->render ();
+            $view = template ( '404.tpl' );
+            echo $view->render ();
+        }        
         exit ();
     }
     

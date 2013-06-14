@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class CoreAccessPolicyTable extends DbTable {
-    var $table = 'access_policy';
+class KsgAccessPolicyTable extends DbTable {
+    var $table = 'system_acl';
     public function schema() {
         $schema = new DbSchema ( "access policy" );
         $schema->addPrimarykey ( 'id' );

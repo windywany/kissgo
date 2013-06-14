@@ -101,7 +101,7 @@ class KissGOInstaller {
     }
     public function create_administrator() {
         imports ( 'admin/models/*' );
-        $admin = new CoreUserTable ();
+        $admin = new KsgUserTable ();
         $tmp = $_SESSION ['_INSTALL_ADMIN_DATA'];
         $rst = false;
         do {
@@ -118,20 +118,20 @@ class KissGOInstaller {
                 if (count ( $rst ) == 0) {
                     break;
                 }
-                $role = new CoreRoleTable ();
+                $role = new KsgRoleTable ();
                 $data = array ('rid' => 1, 'label' => 'Administrator', 'name' => '超级管理员', 'reserved' => 1 );
                 $rst = $role->save ( $data );
                 if (count ( $rst ) == 0) {
                     break;
                 }
-                $userRole = new CoreUserRoleTable ();
+                $userRole = new KsgUserRoleTable ();
                 $data = array ('rid' => 1, 'uid' => 1 );
                 $rst = $userRole->save ( $data );
                 if (count ( $rst ) == 0) {
                     break;
                 }
                 // assign access policy to administrator
-                $ap = new CoreAccessPolicyTable ();
+                $ap = new KsgAccessPolicyTable ();
                 $data = array ('atype' => 'ROLE', 'aid' => 1, 'resource' => '*', 'action' => '*', 'allow' => true );
                 $rst = $ap->save ( $data );
                 if (count ( $rst ) == 0) {

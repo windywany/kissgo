@@ -445,3 +445,10 @@ function showWaitMask(text, keep) {
 function hideWaitMask() {
     $('#overlay').fadeOut(350);
 }
+
+function publishAsFrontPage(id,type){
+	var publishBox = $('#ksg-publish-box');
+	if(publishBox.length==0){
+		publishBox = $('<div id=""></div>');
+	}
+}

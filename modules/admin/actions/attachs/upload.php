@@ -19,7 +19,7 @@ function do_admin_attachs_upload_post($req, $res) {
     $I = whoami ();
     if ($count > 0) {
         @set_time_limit ( 0 );
-        $atM = new CoreAttachmentTable ();
+        $atM = new KsgAttachmentTable ();
         $uploader = apply_filter ( 'get_uploader', new PlUploader () ); //得到文件上传器
         $data ['create_uid'] = $I ['uid'];
         $data ['create_time'] = time ();

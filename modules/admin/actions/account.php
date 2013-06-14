@@ -42,7 +42,7 @@ function get_account_base_tpl($form) {
     } else {
         $me = whoami ();
         $uid = $me ['uid'];
-        $userModel = new CoreUserTable ();
+        $userModel = new KsgUserTable ();
         $user = $userModel->read ( array ('uid' => $uid ) );
         if ($user == false) {
             show_page_tip ( "<strong>出错啦!</strong>uid为{$uid}的用户不存在。", 'error' );
@@ -69,7 +69,7 @@ function save_account_base($rtn) {
         }
         $where ['uid'] = $user ['uid'];
         unset ( $user ['uid'] );
-        $userModel = new CoreUserTable ();
+        $userModel = new KsgUserTable ();
         $rst = $userModel->save ( $user )->where ( $where );
         if (count ( $rst ) !== false) {
             show_page_tip ( '<strong>恭喜,</strong>用户账户修改成功.' );

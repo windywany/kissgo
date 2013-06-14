@@ -10,7 +10,7 @@ function do_admin_pages_edit_get($req, $res) {
         show_page_tip ( '<strong>Oops!</strong>出错啦:无效的页面编号.' );
         Response::back ();
     }
-    $nodeTable = new NodeTable ();
+    $nodeTable = new KsgNodeTable ();
     $node = $nodeTable->read ( array ('nid' => $pid ) );
     if (empty ( $node )) {
         show_page_tip ( '<strong>Oops!</strong>出错啦:页面不存在.' );

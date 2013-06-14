@@ -1,6 +1,6 @@
 <?php
-class NodeTable extends DbTable {
-    var $table = 'node';
+class KsgNodeTable extends DbTable {
+    var $table = 'system_node';
     public function schema() {
         $schema = new DbSchema ( 'all nodes' );
         $schema->addPrimarykey ( array ('nid' ) );

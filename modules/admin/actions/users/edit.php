@@ -14,7 +14,7 @@ function do_admin_users_edit_get($req, $res) {
     }
     $user_data = true;
     if ($uid && ! isset ( $req ['__bk'] )) {
-        $crt = new CoreUserTable ();
+        $crt = new KsgUserTable ();
         $user_data = $crt->query ()->where ( array ('uid' => $uid ) );
         try {
             $user_data = $user_data [0];

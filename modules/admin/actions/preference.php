@@ -6,7 +6,7 @@ assert_login ();
 function do_admin_preference_get($req, $res) {
     $group = rqst ( '_g', 'base' );
     $data = array ();
-    $optM = new CorePreferenceTable ();
+    $optM = new KsgPreferenceTable ();
     $data ['__options'] = apply_filter ( 'get_option_' . $group, array () );
     
     if (empty ( $data ['__options'] )) {

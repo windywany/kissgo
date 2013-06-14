@@ -178,10 +178,29 @@ function get_theme_resource_uri($args) {
     if (isset ( $args [1] )) {
         $url = $args [1];
     } else {
-        $url = get_theme();
+        $url = get_theme ();
     }
     return BASE_URL . THEME_DIR . '/' . $url . '/' . $args [0];
 }
+
+function get_prefer_tpl($tpl, $node) {
+    $pinfo = pathinfo ( $tpl, PATHINFO_FILENAME );
+    $dirs = array (THEME_PATH . THEME_DIR . DS . 'defaults' . DS );
+    $theme = get_theme ();
+    if ($theme != 'defaults') {
+        array_unshift ( $dirs, THEME_PATH . THEME_DIR . DS . $theme . DS );
+    }
+    $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] . '.tpl', $tpl );
+    foreach ( $dirs as $dir ) {
+        foreach ( $files as $f ) {
+            if (file_exists ( $dir . $f )) {
+                return $f;
+            }
+        }
+    }
+    return '404.tpl';
+}
+
 /**
  * load the template view
  *
@@ -191,7 +210,7 @@ function get_theme_resource_uri($args) {
  * @return ThemeView
  */
 function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
-    $theme = get_theme();
+    $theme = get_theme ();
     $_tpl = THEME_DIR . '/' . $theme . '/' . $tpl;
     if (is_file ( THEME_PATH . $_tpl )) {
         $tpl = $_tpl;
@@ -215,18 +234,13 @@ function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/
  * @return SmartyView
  */
 function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
-    $theme = get_theme();
+    $theme = get_theme ();
     $data ['ksg_current_template'] = $tpl;
     $data ['ksg_current_theme'] = THEME_DIR . '/' . $theme;
     $data ['ksg_theme_name'] = $theme;
     $data ['ksg_theme_dir'] = THEME_DIR;
     $data ['ksg_module'] = MODULE_DIR;
-    $admincp_layout = THEME_PATH . $theme . DS . 'admin/layout.tpl';
-    if (is_file ( $admincp_layout )) {
-        $data ['ksg_admincp_layout'] = THEME_DIR . '/' . $theme . '/admin/layout.tpl';
-    } else {
-        $data ['ksg_admincp_layout'] = THEME_DIR . '/defaults/admin/layout.tpl';
-    }
+    $data ['ksg_admincp_layout'] = MODULES_PATH . '/admin/layout/layout.tpl';
     $data ['ksg_admincp_url'] = murl ( 'admin' );
     return new SmartyView ( $data, MODULE_DIR . '/' . $tpl, $headers );
 }
@@ -316,7 +330,7 @@ function smarty_modifiercompiler_static($params, $compiler) {
     $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
     return "BASE_URL.'{$url}'." . $params [0];
 }
-function smarty_modifiercompiler_theme($params, $compiler) {    
+function smarty_modifiercompiler_theme($params, $compiler) {
     $params = smarty_argstr ( $params );
     return "get_theme_resource_uri($params)";
 }
@@ -325,7 +339,7 @@ function smarty_modifiercompiler_img($params, $compiler) {
     $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
     return "BASE_URL.'{$url}'." . $params [0];
 }
-function smarty_modifiercompiler_uploaded($params, $compiler) {    
+function smarty_modifiercompiler_uploaded($params, $compiler) {
     return "BASE_URL." . $params [0];
 }
 /**
@@ -345,12 +359,12 @@ function smarty_modifiercompiler_uploaded($params, $compiler) {
  */
 function smarty_modifiercompiler_url($params, $compiler) {
     $page = array_shift ( $params );
-    $args = empty ( $params ) ? array () : smarty_argstr ( $params );
-    if (! empty ( $args )) {
-        $output = "build_page_url(safe_url({$page}),$args)";
-    } else {
-        $output = "safe_url({$page})";
+    $type = 'node';
+    if (! empty ( $params )) {
+        $type = trim ( $params [0], '"\'' );
     }
+    $output = "safe_url({$page},'{$type}')";
+    
     return $output;
 }
 
@@ -668,7 +682,7 @@ function smarty_modifiercompiler_form($ary, $compiler) {
     if (isset ( $ary [2] )) {
         $name = trim ( $ary [2], "'\"" );
         $component = trim ( $ary [1], "'\"" );
-        return "{$form}->render('$name',$component)";
+        return "{$form}->render('$name','$component')";
     } else if (isset ( $ary [1] )) {
         $name = trim ( $ary [1], "'\"" );
         return "{$form}->render('$name',null)";

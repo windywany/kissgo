@@ -8,7 +8,7 @@ function do_admin_pages_comments_delete_get($req, $res) {
     $ids = safe_ids ( $ids, ",", true );
     
     if (! empty ( $ids )) {
-        $cmM = new NodeCommentTable ();
+        $cmM = new KsgCommentTable ();
         $rst = $cmM->remove ( array ('id IN' => $ids ) );
         if ($rst) {
             show_page_tip ( '<strong>恭喜!</strong><br/>删除成功.' );

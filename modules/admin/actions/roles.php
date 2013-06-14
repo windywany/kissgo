@@ -21,7 +21,7 @@ function do_admin_roles_get($req, $res) {
     
     $where += where ( array ('name' => array ('like' => array ('prefix' => '%', 'suffix' => '%' ) ) ), $data );
     
-    $rm = new CoreRoleTable ();
+    $rm = new KsgRoleTable ();
     $roles = $rm->query ()->where ( $where )->limit ( $start, $data ['limit'] )->sort ( 'rid', 'd' );
     
     $data ['countTotal'] = count ( $roles );
@@ -46,7 +46,7 @@ function do_admin_roles_post($req, $res) {
     if ($form->validate ()) {
         $next_op = $req ['nextOp'];
         
-        $crt = new CoreRoleTable ();
+        $crt = new KsgRoleTable ();
         $data = $form->getCleanData ();
         $where = array ();
         if ($data ['rid']) {

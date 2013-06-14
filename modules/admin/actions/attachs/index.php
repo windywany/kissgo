@@ -27,10 +27,10 @@ function do_admin_attachs_get($req, $res) {
         $where ['create_time <='] = strtotime ( $time2 . ' 23:59:59' );
     }
     
-    $attModel = new CoreAttachmentTable ();
+    $attModel = new KsgAttachmentTable ();
     $query = $attModel->query ( "AMT.*,U.login AS author", 'AMT' );
     
-    $query->ljoin ( new CoreUserTable(), "AMT.create_uid  = U.uid" ,'U');
+    $query->ljoin ( new KsgUserTable(), "AMT.create_uid  = U.uid" ,'U');
     
     $query->sort ( 'create_time' );
     

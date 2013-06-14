@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class TagTable extends DbTable {
-    var $table = 'tags';
+class KsgTagTable extends DbTable {
+    var $table = 'system_tag';
     public function schema() {
         $schema = new DbSchema ( 'tags' );
         $schema->addPrimarykey ( array ('tag_id' ) );

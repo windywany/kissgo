@@ -13,7 +13,7 @@ function do_admin_roles_edit_get($req, $res) {
     }
     $role_data = true;
     if ($rid && ! isset ( $req ['__bk'] )) {
-        $crt = new CoreRoleTable ();
+        $crt = new KsgRoleTable ();
         $role_data = $crt->query ()->where ( array ('rid' => $rid ) );
         try {
             $role_data = $role_data [0];

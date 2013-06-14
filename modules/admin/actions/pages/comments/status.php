@@ -11,7 +11,7 @@ function do_admin_pages_comments_status_get($req, $res) {
         show_page_tip ( '<strong>Oops!</strong><br/>错误的评论编号', 'error' );
         Response::back ();
     }
-    $cmM = new NodeCommentTable ();
+    $cmM = new KsgCommentTable ();
     if (isset ( $req ['del'] )) {
         $del = irqst ( 'del' );
         $deleted = $del ? 1 : 0;

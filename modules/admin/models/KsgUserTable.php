@@ -4,8 +4,8 @@
  * @author Leo
  *
  */
-class CoreUserTable extends DbTable {
-    var $table = 'users';
+class KsgUserTable extends DbTable {
+    var $table = 'system_user';
     public function schema() {
         $schema = new DbSchema ( "users" );
         

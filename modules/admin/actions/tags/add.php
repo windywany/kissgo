@@ -7,7 +7,7 @@ function do_admin_tags_add_post($req, $res) {
     if (empty ( $tag )) {
         $rst ['msg'] = "空的标签";
     } else {
-        $tagM = new TagTable ();
+        $tagM = new KsgTagTable ();
         $data ['tag'] = $tag;
         $data ['type'] = $type;
         $data ['slug'] = '';

@@ -4,7 +4,7 @@ assert_login ();
 function do_admin_pages_comments_get($req, $res) {
     $data ['_CUR_URL'] = murl ( 'admin', 'pages/comments' );
     $data ['limit'] = 15;
-    $nodeCommentTable = new NodeCommentTable ();
+    $nodeCommentTable = new KsgCommentTable ();
     $data ['newTotal'] = $nodeCommentTable->count ( array ('deleted' => 0, 'status' => 'new' ), 'id' );
     $where = array ('CMT.deleted' => 0 );
     $node_id = irqst ( 'nid' );
@@ -38,7 +38,7 @@ function do_admin_pages_comments_get($req, $res) {
     $start = irqst ( 'start', 1 );
     
     $comments = $nodeCommentTable->query ( 'CMT.*,NT.url AS page_url,NT.title AS page_title', 'CMT' )->where ( $where )->limit ( $start, $data ['limit'] );
-    $comments->ljoin ( new NodeTable(), 'CMT.node_id = NT.nid','NT' )->sort('id','d');
+    $comments->ljoin ( new KsgNodeTable(), 'CMT.node_id = NT.nid','NT' )->sort('id','d');
     
     $data ['totalCount'] = count ( $comments );
     $data ['items'] = $comments;
@@ -61,7 +61,7 @@ function do_admin_pages_comments_post($req, $res) {
             if (strlen ( $comment ['comment'] ) < 10) {
                 $data ['msg'] = '求求你多写一点吧.';
             } else {
-                $cmM = new NodeCommentTable ();
+                $cmM = new KsgCommentTable ();
                 $cmt = $cmM->read ( array ('id' => $id ) );
                 if (! $cmt) {
                     $data ['msg'] = '要回复的评论已经不存在.';
@@ -93,7 +93,7 @@ function do_admin_pages_comments_post($req, $res) {
                 $data ['msg'] = '保存编辑失败:' . $cmt->getError ( "\n" );
             } else {
                 $comment ['status'] = 'pass';
-                $cmM = new NodeCommentTable ();
+                $cmM = new KsgCommentTable ();
                 $rst = $cmM->update ( $comment, array ('id' => $id ) );
                 if (! $rst) {
                     $data ['msg'] = '保存评论失败:' . db_error ();

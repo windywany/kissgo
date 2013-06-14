@@ -11,7 +11,7 @@ function do_admin_users_a2g_get($req, $res) {
         $data ['success'] = false;
         $data ['msg'] = '用户编号或组编号为空,操作无法进行。';
     } else {
-        $guM = new CoreUserRoleTable ();
+        $guM = new KsgUserRoleTable ();
         $rst = $guM->addToGroup ( $uid, $gids );
         if (! $rst) {
             $data ['success'] = false;

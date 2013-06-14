@@ -9,7 +9,7 @@ function do_admin_users_dfg_get($req, $res) {
     $gid = irqst ( 'gid' );
     $where ['uid'] = $uid;
     $where ['rid'] = $gid;
-    $guM = new CoreUserRoleTable ();
+    $guM = new KsgUserRoleTable ();
     if ($guM->remove ( $where ) !== false) {
         return new JsonView ( array ('success' => true ) );
     } else {

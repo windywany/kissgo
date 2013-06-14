@@ -1,6 +1,6 @@
 <?php
-class CoreAttachmentTable extends DbTable {
-    var $table = 'attachment';
+class KsgAttachmentTable extends DbTable {
+    var $table = 'system_attachment';
     public function schema() {
         $schema = new DbSchema ( 'attachments' );
         
