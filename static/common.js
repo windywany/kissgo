@@ -415,6 +415,7 @@
 	$.showMessageBoxTpl += '<div class="modal-body" id="xui-messagebox-body"></div>';
 	$.showMessageBoxTpl += '<div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">确定</button></div></div>';
 	$.showMessageBox = function(type, title, message) {
+		$('#overlay').hide();
 		var msgbox = $('#xui-messagebox');
 		if (msgbox.length == 0) {
 			msgbox = $($.showMessageBoxTpl);

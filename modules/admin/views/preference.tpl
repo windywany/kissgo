@@ -5,10 +5,10 @@
 {/block}
 
 {block name="toolbar"}
-	<button class="btn btn-mini btn-success" type="button">
+	<button class="btn btn-mini btn-success" type="button" id="btn-save-preference">
 	    <i class="icon-ok-circle"></i> {'Save'|ts}
 	</button>
-	<button class="btn btn-mini btn-warning" type="button">
+	<button class="btn btn-mini btn-warning" type="button" id="btn-reset-preference">
 	    <i class="icon-refresh"></i> {'Reset'|ts}
 	</button>
 {/block}
@@ -41,10 +41,7 @@
          </div>
     </div>			
 </form>
-
-<script type="text/javascript">
-$(function(){
-	$('#options-form').uvalidate();
-});
-</script>
+{/block}
+{block name="admincp_foot_js_block"}
+<script type="text/javascript" src="{'preference.js'|here}"></script>
 {/block}

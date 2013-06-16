@@ -5,32 +5,6 @@
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 imports ( 'admin/validator_callbacks.php' );
 /**
- * 
- * @param string $name preference group and name
- * @param mixed $default
- */
-function cfg($name, $default = '') {
-    static $cfgs = false;
-    if (! $cfgs) {
-        $cpt = new KsgPreferenceTable ();
-        $data = $cpt->query ();
-        $cfgs = $data->walk ( array ($cpt, 'map' ) );
-    }
-    if (strpos ( $name, '@', 1 ) === false) {
-        $name .= '@core';
-    }
-    if (isset ( $cfgs [$name] )) {
-        $default = $cfgs [$name];
-    }
-    return $default;
-}
-function show_page_tip($message, $type = 'success') {
-    if ($message) {
-        $_SESSION ['_ksg_page_tip_info'] = $message;
-        $_SESSION ['_ksg_page_tip_info_cls'] = 'alert-' . $type;
-    }
-}
-/**
  *
  * @param Smarty $smarty        	
  */
@@ -95,13 +69,11 @@ function _hook_for_admincp_menu($mm) {
     return $mm;
 }
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
-
 function _hook_add_new_menu_items($items) {
     $items .= '<li><a href="#"><i class="icon-file"></i> 假的</a></li>';
     return $items;
 }
 bind ( 'add_new_menu_items', '_hook_add_new_menu_items' );
-
 function _hook_for_add_passport_menu_items($items) {
     $items .= '<li><a href="' . murl ( 'admin', 'account' ) . '"><i class="icon-user"></i> ' . __ ( 'Control Panel' ) . '</a></li>';
     return $items;
@@ -204,4 +176,23 @@ function do_ajax_tags_autocomplete($req) {
     echo json_encode ( $data );
 }
 bind ( 'do_ajax_tags_autocomplete', 'do_ajax_tags_autocomplete' );
+//测试邮件发送功能
+function do_ajax_test_email($params) {
+    KissGo::startSession ();
+    $I = whoami ();
+    if ($I->isLogin ()) {
+        $message = "亲爱的网站管理员：\n\t这是一封测试邮件，如果你能收到，则说明你网站中邮件配置是正确的。\n\n此邮件只用于测试，请不要回复。\n\n请尽情享受KissGO! CMS吧。";
+        $email = rqst ( 'email' );
+        $rst = sendmail ( $email, "恭喜,你网站的邮件配置通过", $message, null, 'text' );
+        if ($rst) {
+            $data ['msg'] = '邮件已经发出,请查收.';
+        } else {
+            $data ['msg'] = '邮件发送失败,详情请查看日志.';
+        }
+    } else {
+        show_error_message ( "你没登录，无权操作." );
+    }
+    echo json_encode ( $data );
+}
+bind ( 'do_ajax_test_email', 'do_ajax_test_email' );
 // end of __init__.php

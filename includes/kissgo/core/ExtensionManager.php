@@ -86,7 +86,7 @@ class ExtensionManager {
             $pluginsStr [] = "[{$o['Module_ID']}]";
             foreach ( $o as $key => $val ) {
                 $val = str_replace ( '!', '！', $val );
-                $pluginsStr [] = "\t{$key} = {$val}";
+                $pluginsStr [] = "{$key} = {$val}";
             }
         }
         $pluginsStr = implode ( "\n", $pluginsStr );
@@ -120,8 +120,7 @@ class ExtensionManager {
             $extension ['Installed'] = time ();
             $extension ['unremovable'] = $unremovable;
             include_once APP_PATH . $extension ['pkg_file'];
-            $rst = apply_filter ( 'on_install_module_' . $pid, true );
-            //log_debug ( "on_install_module_" . $pid . '   ' . $rst );
+            $rst = apply_filter ( 'on_install_module_' . $pid, true );            
             if ($rst === true) {
                 $this->extensions [] = $extension;
                 $rst = $this->saveExtensionsData ();

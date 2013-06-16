@@ -206,7 +206,7 @@ if (is_readable ( $_ksg_settings_file )) {
         define ( 'SECURITY_KEY', md5 ( __FILE__ ) );
     }
     if (isset ( $settings ['BASE_URL'] ) && ! empty ( $settings ['BASE_URL'] )) {
-        define ( 'BASE_URL', rtrim ( $settings ['BASE_URL'] ) . '/' );
+        define ( 'BASE_URL', rtrim ( $settings ['BASE_URL'], '/' ) . '/' );
     }
     if (isset ( $settings ['TIMEZONE'] ) && ! empty ( $settings ['TIMEZONE'] )) {
         define ( 'TIMEZONE', $settings ['TIMEZONE'] );
@@ -217,7 +217,7 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['THEME'] ) && ! empty ( $settings ['THEME'] )) {
         define ( 'THEME', $settings ['THEME'] );
     }
-
+    
     ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';

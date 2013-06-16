@@ -319,7 +319,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
                     }
                 }
                 if (method_exists ( $this, 'init_' . $widget_name )) {
-                    call_user_method_array ( 'init_' . $widget_name, $this, array (&$widget, &$value ) );
+                    call_user_func_array ( array ($this, 'init_' . $widget_name ), array (&$widget, &$value ) );
                 }
                 $widget_object = new $widget_class ( $widget, $value, $this );
                 $this->addWidget ( $widget_name, $widget_object );

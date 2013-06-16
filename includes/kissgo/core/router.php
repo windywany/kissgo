@@ -65,6 +65,9 @@ class Router {
             include_once $app_action_file;
             InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func, 'ac' => false ) );
             return $cb_func;
+        } else if ($url == 'install.test.clean.url') {
+            status_header ( 200 );
+            Response::getInstance ()->close ();
         }
         list ( $action, $controller, $module ) = $this->parseURL ( $url );
         return $this->load_application ( $action, $controller, $module );
