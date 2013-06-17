@@ -697,12 +697,13 @@ $.extend($.validator, {
 				}
 			}
 			if ( !message && this.settings.success ) {
-				label.text("");
+				label.text("").hide();
 				if ( typeof this.settings.success === "string" ) {
-					label.addClass( this.settings.success );
+					label.addClass( this.settings.success );					
 				} else {
 					this.settings.success( label, element );
 				}
+				label.show();
 			}
 			this.toShow = this.toShow.add(label);
 		},

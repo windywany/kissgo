@@ -31,6 +31,13 @@
         <p class="lead">请修改{$_current_template_file}模板文件以自定义此页面。</p>
       </div>
       <div id="push"></div>
+      <div>
+      {cts from=testabc item=a name=1 order=1 age='10' tags=$tags}
+      	<p>{$a.name}</p>
+      {ctselse}
+      	<p>no testabc</p>
+      {/cts}
+      </div>
     </div>    
 	</body>
 </html>

@@ -16,7 +16,11 @@ class BaseValidator implements IValidator {
         foreach ( $rules as $m => $exp ) {
             switch ($m) {
                 case 'required' :
-                    $rs [] = $m . ':true';
+                    if ($exp ['option']) {
+                        $rs [] = $m . ':\'#' . $exp ['option'] . '\'';
+                    } else {
+                        $rs [] = $m . ':true';
+                    }
                     break;
                 case 'callback' :
                     if ($exp ['option'] [0] == '@') {
@@ -61,8 +65,8 @@ class BaseValidator implements IValidator {
                     break;
                 case 'range' :
                 case 'rangelength' :
-                    $lens = explode(",", $exp ['option']);
-                    $rs [] = $m . ':[' . intval($lens[0]) . ', ' . intval($lens[1]) . ']';
+                    $lens = explode ( ",", $exp ['option'] );
+                    $rs [] = $m . ':[' . intval ( $lens [0] ) . ', ' . intval ( $lens [1] ) . ']';
                     break;
                 case 'num' :
                     $m = 'number';
@@ -116,26 +120,9 @@ class BaseValidator implements IValidator {
     //必填项目
     protected function v_required($value, $exp, $data, $scope, $message) {
         if ($exp) {
-            $exps = explode ( ',', $exp );
-            $need_check = true;
-            foreach ( $exps as $e ) {
-                $e = trim ( $e );
-                if ($e {0} == '!') { //如果$e,则当前不必须
-                    $e = substr ( $e, 1 );
-                    if (empty ( $data [$e] )) {
-                        $need_check = true;
-                        break;
-                    } else {
-                        $need_check = false;
-                    }
-                } else if (! empty ( $data [$e] )) {
-                    $need_check = true;
-                    break;
-                } else {
-                    $need_check = false;
-                }
-            }
-            if (! $need_check) {
+            $exp = explode ( ':', $exp );
+            $exp = array_shift ( $exp );
+            if (! isset ( $data [$exp] ) || $this->emp ( $data [$exp] )) {
                 return true;
             }
         }

@@ -42,7 +42,7 @@ function do_admin_preference_post($req, $res) {
     } else {
         $data = apply_filter ( 'get_preference_for_save_' . $group, array () );
         if (! is_array ( $data )) {
-            show_page_tip ( $data, 'error' );
+            show_page_tip ( '<strong>糟啦!</strong>'.$data, 'error' );
         } else {
             $optM = new KsgPreferenceTable ();
             foreach ( $data as $name => $val ) {
@@ -57,7 +57,7 @@ function do_admin_preference_post($req, $res) {
             show_page_tip ( '<strong>恭喜!</strong>设置成功.' );
         }
     }
-    return do_admin_preference_get ( $req, $res );
+    Response::redirect ( murl ( 'admin', 'preference', array ('_g' => $group ) ) );
 }
 // 基本配置
 function _hook_for_get_option_base($data) {
@@ -137,9 +137,23 @@ function _hook_for_get_preference_smtp($data) {
 
 // 图片与水印设置
 function _hook_for_thumb_option_tpl($tpl, $data) {
-    return new ThumbPreferenceForm ();
+    return new ThumbPreferenceForm ( $data );
 }
 // 为图片与水印设置获取数据
 function _hook_for_get_preference_thumb($data) {
     $form = new ThumbPreferenceForm ();
+    if ($form->validate ()) {
+        $data = $form->getCleanData ();
+        $watermark = '';
+        $rst = $form->saveWatermarkPic ( $watermark );
+        if ($watermark) {
+            $data ['watermark_pic'] = $watermark;
+        } else if ($rst === false) {
+            unset ( $data ['watermark_pic'] );
+        } else {
+            return $rst;
+        }
+        return $data;
+    }
+    return $form->getError ( "<br/>" );
 }

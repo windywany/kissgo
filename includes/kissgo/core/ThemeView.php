@@ -42,6 +42,23 @@ class ThemeView extends View {
             $this->__smarty->assign ( $n, $v ); //变量
         }
         $this->__smarty->assign ( '_current_template_file', $this->tpl );
-        return $this->__smarty->fetch ( $this->tpl );
+        $content = $this->__smarty->fetch ( $this->tpl );
+        //此外为大显神通之笔, 呵呵。
+        if (! empty ( $content )) {
+            $pattern = '#(<!--placeholder:([a-z][\d\w_]*)-->)(?:(?!<!--?/placeholder*-->)[\s\S])*(<!--/placeholder:\2-->)#m';
+            if (preg_match_all ( $pattern, $content, $matches, PREG_SET_ORDER )) {
+                foreach ( $matches as $key => $val ) {
+                    $search = $val [0];
+                    $keyword = $val [2];
+                    $replace = apply_filter ( 'replace_placeholder_' . $keyword, false );
+                    if ($replace) {
+                        $content = str_replace ( $search, $replace, $content );
+                    } else {
+                        $content = str_replace ( array ($val [1], $val [3] ), '', $content );
+                    }
+                }
+            }
+        }
+        return $content;
     }
 }

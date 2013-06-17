@@ -442,7 +442,9 @@ abstract class FormWidget {
             $message = __ ( $message );
         }
         $this->validates [$rule] = array ('message' => $message, 'option' => $exp, 'form' => $this->formCls );
-        $this->required = isset ( $this->validates ['required'] ) ? true : false;
+        if ($rule == 'required' && empty ( $exp )) {
+            $this->required = true;
+        }
     }
     public function removeValidate($rule) {
         unset ( $this->validates [$rule] );
@@ -642,10 +644,12 @@ class BootstrapForm extends BaseForm {
         return $wrapper;
     }
     protected function getFormFoot() {
-        if (! self::$echoed) {
-            self::$echoed = true;
-            return '<script type="text/javascript">$(function(){$.fn.popover && $(\'body\').popover({selector: "[rel=popover]",html: true,trigger:"focus"});});</script>';
+        if (! has_hook ( 'admincp_footer', array ($this, 'setPopoverTipe' ) )) {
+            bind ( 'admincp_footer', array ($this, 'setPopoverTipe' ) );
         }
+    }
+    public function setPopoverTipe() {
+        echo '<script type="text/javascript">$(function(){$.fn.popover && $(\'body\').popover({selector: "[rel=popover]",html: true,trigger:"focus"});});</script>', "\n";
     }
 }
 /**
@@ -673,7 +677,50 @@ class TextWidget extends FormWidget {
         }
     }
 }
-
+class FileWidget extends TextWidget {
+    const PCLS = 'pcls';
+    const ECLS = 'ecls';
+    public function __construct($option, $value, $form) {
+        parent::__construct ( $option, $value, $form );
+        if (! has_hook ( 'admincp_header', array ($this, 'addFileuploadSupport' ) )) {
+            bind ( 'admincp_header', array ($this, 'addFileuploadSupport' ) );
+        }
+    }
+    public function getWidgetComponent() {
+        $properties = $this->getProperties ();
+        
+        $pcls = isset ( $this->option ['pcls'] ) ? $this->option ['pcls'] : '';
+        $ecls = isset ( $this->option ['ecls'] ) ? $this->option ['ecls'] : '';
+        if ($this->value) {
+            $pcls .=' fileupload-exists';
+        }else{
+            $pcls .=' fileupload-new';
+        }
+        $html = '<div class="fileupload ' . $pcls . '" data-provides="fileupload">
+                 	<div class="input-append">
+                		<div class="uneditable-input ' . $ecls . '">
+                			<i class="icon-file fileupload-exists"></i>
+                			<span class="fileupload-preview">'.$this->value.'</span>
+                		</div><span class="btn btn-file">
+                		<span class="fileupload-new">浏览...</span><span class="fileupload-exists">重选</span><input type="file" ' . $properties . '/></span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">删除</a>
+                	</div>
+                 </div>';
+        return $html;
+    }
+    public function addFileuploadSupport() {
+        $css = the_static_resource_uri ( 'bootstrap/css/bootstrap-fileupload.css' );
+        echo '<link rel="stylesheet" href="', $css, '"/>', "\n";
+        $js = the_static_resource_uri ( 'bootstrap/bootstrap-fileupload.js' );
+        echo '<script type="text/javascript" src="', $js, '"></script>', "\n";
+    }
+    public function getValue($req) {
+        if (isset ( $_FILES [$this->name] ) && $_FILES [$this->name] ['error'] == 0) {
+            $file = $_FILES [$this->name];
+            $this->value = $file ['name'];
+        }
+        return $this->value;
+    }
+}
 /**
  * 密码控件
  */

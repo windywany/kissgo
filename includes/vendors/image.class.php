@@ -381,7 +381,7 @@ class image {
     }
     
     // -----------------------------------------------------------------------------
-    protected function __get($name) {
+    public function __get($name) {
         if ($name == "image") {
             return $this->image;
         }
@@ -401,7 +401,7 @@ class image {
             return false;
         }
     }
-    protected function __set($name, $value) {
+    public function __set($name, $value) {
         if ($name == "image") {
             $this->image = $value;
         } elseif (substr ( $name, 0, 2 ) == "a_") {
@@ -450,11 +450,15 @@ class image {
     }
 }
 function __image_class_load($file, $clz) {
+    static $path = false;
+    if(!$path){
+        $path = dirname ( __FILE__ ) . DS;
+    }
     $m = array ();
     if (preg_match ( '/^image_fx_(.+)/', $clz, $m )) {
-        return dirname ( __FILE__ ) . DS . 'fx' . DS . $m [1] . '.class.php';
+        return  $path. 'fx' . DS . $m [1] . '.class.php';
     } else if (preg_match ( '/^image_draw_(.+)/', $clz, $m )) {
-        return dirname ( __FILE__ ) . DS . 'draw' . DS . $m [1] . '.class.php';
+        return $path . 'draw' . DS . $m [1] . '.class.php';
     }
     return $file;
 }

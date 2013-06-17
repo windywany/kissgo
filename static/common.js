@@ -361,9 +361,15 @@
 					if (espan.length > 0 && !espan.attr('generated')) {
 						ccls = espan.attr('data-style');
 						espan.remove();
+					}else{
+						espan = element.parents(".controls").find('span.tip');
+						if (espan.length > 0 && !espan.attr('generated')) {
+							ccls = espan.attr('data-style');
+							espan.remove();
+						}
 					}
 					label.attr('data-content', element.attr('data-content'));
-					label.addClass(ccls).appendTo(element.parent(".controls"));
+					label.addClass(ccls).appendTo(element.parents(".controls"));
 				},
 				success : function(label, element) {
 					var cls = this.errorClass, $e = $(element);
@@ -430,7 +436,11 @@
 		$('.stuffbox').on('click','.handlediv',function(){
 			var $this = $(this), $box = $this.parents('.stuffbox');
 			$box.toggleClass('closed');
-		});				
+		});
+		$('.autoset').each(function(i,e){
+			var $e = $(e),h=$e.find('.tab-content').height();
+			$e.find('.nav-tabs').height(h);
+		});
 	});
 })(jQuery);
 

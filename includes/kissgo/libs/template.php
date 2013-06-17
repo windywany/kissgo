@@ -175,14 +175,24 @@ function get_data_from_cts_provider($name, $args) {
     }
 }
 function get_theme_resource_uri($args) {
+    static $res_url = false;
+    if (! $res_url) {
+        $res_url = BASE_URL . THEME_DIR . '/';
+    }
     if (isset ( $args [1] )) {
         $url = $args [1];
     } else {
         $url = get_theme ();
     }
-    return BASE_URL . THEME_DIR . '/' . $url . '/' . $args [0];
+    return $res_url . $url . '/' . $args [0];
 }
-
+function the_static_resource_uri($resource) {
+    static $static_url = false;
+    if (! $static_url) {
+        $static_url = BASE_URL . (defined ( 'STATIC_DIR' ) ? STATIC_DIR : 'static') . '/';
+    }
+    return $static_url . $resource;
+}
 function get_prefer_tpl($tpl, $node) {
     $pinfo = pathinfo ( $tpl, PATHINFO_FILENAME );
     $dirs = array (THEME_PATH . THEME_DIR . DS . 'defaults' . DS );
@@ -330,6 +340,7 @@ function smarty_modifiercompiler_static($params, $compiler) {
     $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
     return "BASE_URL.'{$url}'." . $params [0];
 }
+
 function smarty_modifiercompiler_theme($params, $compiler) {
     $params = smarty_argstr ( $params );
     return "get_theme_resource_uri($params)";
@@ -622,15 +633,10 @@ function smarty_modifiercompiler_cfg($ary, $compiler) {
     }
     $option = array_shift ( $ary );
     $default = "''";
-    if (! empty ( $ary )) {
-        $name = $ary [0];
-        if (isset ( $ary [1] )) {
-            $default = $ary [1];
-        }
-    } else {
-        $name = "'default'";
+    if (isset ( $ary [0] )) {
+        $default = $ary [0];
     }
-    $output = "KissGoSetting::getSetting($name)->get($option, $default)";
+    $output = "cfg($option, $default)";
     return $output;
 }
 /**

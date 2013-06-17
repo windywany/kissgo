@@ -15,10 +15,10 @@
 
 {block name="admincp_body"}
 
-<form class="form-horizontal" id="options-form" method="POST" action="{$_CUR_URL}">
+<form class="form-horizontal" id="options-form" method="POST" action="{$_CUR_URL}" enctype="multipart/form-data">
     <input type="hidden" name="_g" value="{$_g}"/>
     <div class="workspace">
-        <div class="tabbable tabs-left">
+        <div class="tabbable tabs-left autoset">
             <ul class="nav nav-tabs" style="min-height:385px;">
                 <li>&nbsp;</li>
                 {foreach $__opt_groups as $item}
