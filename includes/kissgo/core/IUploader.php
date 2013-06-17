@@ -42,7 +42,7 @@ interface IUploader {
      * @param string $watermark
      * @return boolean
      */
-    public function watermark($file, $watermark);
+    public function watermark($file, $watermark,$pos='br');
     /**
      * delete the file
      * @param string $file

@@ -170,7 +170,7 @@ class UploadTmpFile {
 			$mimes = get_allowed_mime_types ();
 		}
 		foreach ( $mimes as $mime => $type ) {
-			if (preg_match ( "/({$mime})/i", $mime )) {
+			if (preg_match ( "/({$mime})/i", $ext )) {
 				return $type;
 			}
 		}

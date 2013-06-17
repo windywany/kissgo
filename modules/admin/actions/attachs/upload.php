@@ -41,7 +41,10 @@ function do_admin_attachs_upload_post($req, $res) {
                     //生成缩略图与添加水印
                     if (in_array ( $tmpfile->file_ext, array ('.jpg', '.gif', '.jpeg', '.png', '.bmp' ) )) {
                         if (cfg ( 'enable_watermark@thumb', false ) && cfg ( 'watermark_pic@thumb' )) {
-                            $uploader->watermark ( $rst [0], cfg ( 'watermark_pic@thumb', '' ) );
+                            $watermark = APPDATA_PATH . cfg ( 'watermark_pic@thumb' );
+                            if (file_exists ( $watermark )) {
+                                $uploader->watermark ( $rst [0], $watermark, cfg ( 'watermark_pos@thumb', 'br' ) );
+                            }
                         }
                         if (cfg ( 'enable_thumb@thumb', false ) && cfg ( 'thumb_sizes@thumb' )) {
                             $sizestr = cfg ( 'thumb_sizes@thumb' );

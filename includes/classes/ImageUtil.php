@@ -31,7 +31,7 @@ class ImageUtil {
                         continue;
                     }
                     $image = new image ( $this->file );
-                    $fx = $image->attach ( new image_fx_resize ( $width, $height ) );                   
+                    $fx = $image->attach ( new image_fx_resize ( $width, $height ) );
                     $rst = $image->save ( $tfile );
                     if (! $rst) {
                         log_error ( '生成缩略图失败:' . $tfile );
@@ -51,7 +51,20 @@ class ImageUtil {
 	 * @param string $pos
 	 * 位置
 	 */
-    public function watermark($mark, $pos) {}
+    public function watermark($mark, $pos) {
+        if ($this->file && file_exists ( $mark )) {
+            $image = new image ( $this->file );
+            $watermark = new image ( $mark );
+            $fx = $image->attach ( new image_draw_watermark ( $watermark, $pos ) );
+            $rst = $image->save ( $this->file );
+            if (! $rst) {
+                log_error ( '添加水印失败:' . $this->file );
+                return false;
+            }
+            $image->destroyImage ();
+        }
+        return true;
+    }
     /**
      * delete thumbnail
      * @param unknown_type $filename
@@ -126,7 +139,7 @@ class ImageUtil {
             $allowSize = 1024 * $config ['fileSize'];
             if ($uriSize > $allowSize) {
                 continue;
-            }            
+            }
             $tmpName = $savePath . rand ( 1, 10000 ) . time () . strrchr ( $imgUrl, '.' );
             try {
                 $fp2 = @fopen ( WEB_ROOT . $tmpName, "a" );

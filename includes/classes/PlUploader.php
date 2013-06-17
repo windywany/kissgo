@@ -62,9 +62,9 @@ class PlUploader implements IUploader {
         $imageUtil = new ImageUtil ( WEB_ROOT . $file );
         return $imageUtil->thumbnail ( $sizes );
     }
-    public function watermark($file, $watermark) {
-        // TODO add watermark to a picture
-        return true;
+    public function watermark($file, $watermark,$pos='br') {
+        $imageUtil = new ImageUtil ( WEB_ROOT . $file );        
+        return $imageUtil->watermark($watermark, $pos);
     }
     public function delete($file) {
         $file = WEB_ROOT . $file;
