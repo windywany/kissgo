@@ -1,4 +1,5 @@
 $(function() {
+	var url = $('#edit-menuitem').attr('action'), item = null;
 	$('ol.sortable').nestedSortable({
 		forcePlaceholderSize : true,
 		handle : 'dt.menu-item-handle',
@@ -13,39 +14,48 @@ $(function() {
 		toleranceElement : '> div'
 	});
 	/*
-	$('#page-autoc').autocomplete({
-		source : './?Ctlr=TopPages',
-		autoFocus : true,
-		select : function(event, ui) {
-			if (ui.item) {
-				$('#autoc-id').val(ui.item.id);
-			} else {
-				$('#autoc-id').val('');
-			}
-		}
-	}).change(function() {
-		var val = $.trim($(this).val());
-		if (!val) {
-			$('#autoc-id').val('');
-		}
-	});*/
+	 * $('#page-autoc').autocomplete({ source : './?Ctlr=TopPages', autoFocus :
+	 * true, select : function(event, ui) { if (ui.item) {
+	 * $('#autoc-id').val(ui.item.id); } else { $('#autoc-id').val(''); } }
+	 * }).change(function() { var val = $.trim($(this).val()); if (!val) {
+	 * $('#autoc-id').val(''); } });
+	 */
 
 	$('.edit-item').live('click', function() {
 		var me = $(this), wrap = me.parents('.menu-wrap');
-		if (wrap.hasClass('menu-wrap-inactive')) {
-			wrap.removeClass('menu-wrap-inactive').addClass('menu-wrap-active');
+		item = wrap;
+		$('#ipt-menu-name').val(wrap.find('.item_name').val());
+		$('#ipt-menu-title').val(wrap.find('.title').val());
+		if (wrap.find('.url').length > 0) {
+			$('#ipt-menu-url').val(wrap.find('.url').val());
+			$('#ipt-url-wrap').removeClass('hide');
 		} else {
-			wrap.removeClass('menu-wrap-active').addClass('menu-wrap-inactive');
+			$('#ipt-url-wrap').addClass('hide');
 		}
+		$('#menuitem-editor').find('input[name=item_target][value=' + wrap.find('.target').val() + ']').attr('checked', true);
+		$('#menuitem-editor').modal('show');
 		return false;
 	});
-
-	$('.hide-item-form').live('click', function() {
-		var me = $(this), wrap = me.parents('.menu-wrap');
-		wrap.removeClass('menu-wrap-active').addClass('menu-wrap-inactive');
-		return false;
+	$('#menuitem-editor-done').click(function() {
+		var item_name = $.trim($('#ipt-menu-name').val());
+		if (item_name.length == 0) {
+			alert('请填菜单项名称.');
+			return;
+		}
+		if (!$('#ipt-url-wrap').hasClass('hide')) {
+			var url = $('#ipt-menu-url').val();
+			if (!/^https?:\/\/.+/.test(url)) {
+				alert('请填写正确的URL.');
+				return;
+			}
+			item.find('.url').val(url);
+		}
+		item.find('.item_name').val(item_name);
+		item.find('.title').val($('#ipt-menu-title').val());
+		item.find('.target').val($('#menuitem-editor').find('input[name=item_target]:checked').val());
+		item.find('.item-title').text($('#ipt-menu-name').val());
+		$('#menuitem-editor').modal('hide');
 	});
-
 	$('.del-item').live('click', function() {
 		if (!confirm('你确定要移除这个菜单项?')) {
 			return false;
@@ -108,6 +118,7 @@ $(function() {
 		}
 
 		if (ids.length == 0 || !ids[0]) {
+			alert('请选择页面!');
 			return;
 		}
 
@@ -123,7 +134,7 @@ $(function() {
 
 	function addMenuItem(data) {
 		$.ajax({
-			url : './?Ctlr=AddMenuItem',
+			url : url + '/add/',
 			dataType : 'text',
 			type : 'POST',
 			data : data,

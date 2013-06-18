@@ -114,7 +114,7 @@ function _hook_for_output_menu_items($html, $items) {
     }
     foreach ( $items as $item ) {
         $item ['type_name'] = $menuitem_types [$item ['type']];
-        $view = view ( 'admin/views/menus/item.tpl', array ('adding' => false, 'items' => array ($item ) ) );
+        $view = view ( 'admin/views/menus/item.tpl', array ('_CUR_URL' => murl ( 'admin', 'menus' ), 'adding' => false, 'items' => array ($item ) ) );
         $itemText = $view->render ();
         $html .= '<li id="menu-item-' . $item ['menuitem_id'] . '">' . $itemText;
         $subitems = $miM->getSubItems ( $item ['menu_name'], $item ['menuitem_id'] );

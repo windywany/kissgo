@@ -23,7 +23,7 @@
                                     </div>
                                     <br class="clear"/>
                                     <div class="input-prepend mgt5">
-                                        <span class="add-on">属性</span><input type="text" id="n_title" class="w200" value=""/>
+                                        <span class="add-on">提示</span><input type="text" id="n_title" class="w200" value=""/>
                                     </div>
                                     <br class="clear"/>
                                     <div class="input-prepend mgt5">
@@ -50,7 +50,7 @@
 								          <div id="page-A" class="tab-pane active">
 								            {foreach $npages as $item}
 								            <p>
-								            	<label class="checkbox"><input type="checkbox" class="npage" value="{$item.page_id}" title="{$item.title}"/>{$item.title|truncate:30}</label>
+								            	<label class="checkbox"><input type="checkbox" class="npage" value="{$item.nid}" title="{$item.title}"/>{$item.title|truncate:30}</label>
 								            </p>
 								            {foreachelse}
 								            <p>暂无可用页面</p>
@@ -139,7 +139,7 @@
                                                     </div>
                                                     <label class="radio"><input type="radio" name="menu_default" {'1'|checked:$menu.menu_default}/>默认</label>                                                    
                                                     <button type="submit" class="btn-small btn-primary pull-right mgl5"><i class="icon-check"></i> 保存</button>
-                                                    <button data-href="{$_CUR_URL}?mn={$menu.menu_name}&mid={$menu.menu_id}" class="btn-small btn-danger pull-right" style="margin-right:10px;"><i class="icon-trash"></i> 删除</button>
+                                                    <a href="{$_CUR_URL}/del?mn={$menu.menu_name}" class="btn-small btn-danger pull-right" style="margin-right:10px;"><i class="icon-trash"></i> 删除</a>
                                                     <br class="clear"/>
                                                 </div>
                                             </div>
@@ -167,7 +167,33 @@
                 <br class="clear"/>
             </div>		      
 		</div>
-
+<div id="menuitem-editor" class="modal hide fade" tabindex="-1" data-width="350" data-backdrop="static" data-keyboard="false">
+	<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>编辑菜单项</h3>
+    </div>
+    <div class="modal-body">
+    
+        <div class="form-inline">
+                <div class="input-prepend row-fluid">
+    	        	<span class="add-on">名称</span><input type="text" class="span10" id="ipt-menu-name"/>
+    	     	</div>
+    	        <div class="input-prepend mgt5 row-fluid">
+    	           	<span class="add-on">提示</span><input type="text" class="span10" id="ipt-menu-title"/>
+    	        </div>
+    	        <div class="input-prepend mgt5 row-fluid" id="ipt-url-wrap">
+    	           	<span class="add-on">URL</span><input type="text" class="span10" id="ipt-menu-url"/>
+    	        </div>
+    	       	<label class="radio"><input type="radio" name="item_target" value="_blank"/>新窗口</label>
+    	        <label class="radio"><input type="radio" name="item_target" value="_self"/>原窗口</label>
+        </div>
+    
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn">Close</button>
+        <button type="button" class="btn btn-primary" id="menuitem-editor-done">Done</button>
+	</div>
+</div>
 {/block}
 {block name="admincp_foot_js_block"}
 <script type="text/javascript" src="{'jquery/jquery-ui.js'|static}"></script>

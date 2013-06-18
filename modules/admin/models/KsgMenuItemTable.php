@@ -23,11 +23,11 @@ class KsgMenuItemTable extends DbTable {
         return $schema;
     }
     public function getMenuItems($menu_name) {
-        $nodes = $this->query ()->where ( array ('menu_name' => $menu_name ) )->sort ( 'sort' );
+        $nodes = $this->query ()->where ( array ('menu_name' => $menu_name ) )->sort ( 'sort', 'a' );
         return $nodes;
     }
     public function getSubItems($menu_name, $up_id) {
-        $nodes = $this->query ()->where ( array ('menu_name' => $menu_name, 'up_id' => $up_id ) )->sort ( 'sort' );
+        $nodes = $this->query ()->where ( array ('menu_name' => $menu_name, 'up_id' => $up_id ) )->sort ( 'sort', 'a' );
         return $nodes;
     }
 }
