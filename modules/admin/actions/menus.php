@@ -21,6 +21,7 @@ function do_admin_menus_get($req, $res) {
         $menu = $mM->read ( array ('menu_id' => $menu_id ) );
         $miM = new KsgMenuItemTable ();
         $menuitems = $miM->getSubItems ( $menu ['menu_name'], 0 );
+        $menuitems = $menuitems->size () > 0 ? $menuitems : array ();
         $data ['menu'] = $menu;
     } else {
         $op = 'add';
@@ -30,7 +31,7 @@ function do_admin_menus_get($req, $res) {
     $data ['menus'] = $menus;
     
     $pM = new KsgNodeTable ();
-    $pages = $pM->query ( 'nid,title' )->where ( array ('status' => 'published' ) )->sort ( 'publish_time' )->limit ( 1, 10 );
+    $pages = $pM->query ( 'nid,title' )->where ( array ('deleted' => 0, 'status' => 'published' ) )->sort ( 'publish_time' )->limit ( 1, 10 );
     $data ['npages'] = $pages;
     
     $data ['op'] = $op;

@@ -79,7 +79,7 @@
 
 <!-- container -->
 <div id="container">
-    <div id="body" class="container-fluid">
+    <div id="body" class="container-fluid">    
     {if $_ksg_page_tip_info}
         <div class="alert {$_ksg_page_tip_info_cls}">
             <button class="close" data-dismiss="alert">×</button>
@@ -104,10 +104,11 @@
     </div>
 </div>
 </div>
-<div id="overlay">
+<div id="overlay-wrapper">
+    <div id="overlay"></div>
     <div id="overlay-body">
-        <img src="{'images/overlay.gif'|here}">
-        <div class="msg">处理中...</div>
+    	<img src="{'images/overlay.gif'|here}">
+    	<div class="msg">处理中...</div>
     </div>
 </div>
 {block name="admincp_foot_js_block"}{/block}

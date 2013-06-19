@@ -5,6 +5,7 @@
 {/block}
 {block name="admincp_css_block"}
 <link href="{'jquery/ui/smoothness/jquery-ui.css'|static}" rel="stylesheet"/>
+<link rel="stylesheet" href="{'bootstrap/select2/select2.css'|static}"/>
 <link href="{'menu.css'|here}" rel="stylesheet"/>
 {/block} 
 {block name="admincp_body"}
@@ -57,10 +58,7 @@
 								            {/foreach}
 								          </div>
 								          <div id="page-B" class="tab-pane">
-								            <input type="hidden" id="autoc-id" value=""/>
-								            <div class="input-prepend">
-		                                        <span class="add-on">条件</span><input type="text" id="page-autoc" autocomplete="off" class="w180"/>
-		                                    </div>
+								            <input type="hidden" id="autoc-id" name="autoc_id" value="" class="w240"/>								            
 								          </div>								          
 								        </div>
 								        <ul class="nav nav-tabs">
@@ -139,7 +137,7 @@
                                                     </div>
                                                     <label class="radio"><input type="radio" name="menu_default" {'1'|checked:$menu.menu_default}/>默认</label>                                                    
                                                     <button type="submit" class="btn-small btn-primary pull-right mgl5"><i class="icon-check"></i> 保存</button>
-                                                    <a href="{$_CUR_URL}/del?mn={$menu.menu_name}" class="btn-small btn-danger pull-right" style="margin-right:10px;"><i class="icon-trash"></i> 删除</a>
+                                                    <a href="{$_CUR_URL}/del?mn={$menu.menu_name}" onclick="return confirm('你真的要删除该菜单？')" class="btn-small btn-danger pull-right" style="margin-right:10px;"><i class="icon-trash"></i> 删除</a>
                                                     <br class="clear"/>
                                                 </div>
                                             </div>
@@ -198,5 +196,6 @@
 {block name="admincp_foot_js_block"}
 <script type="text/javascript" src="{'jquery/jquery-ui.js'|static}"></script>
 <script type="text/javascript" src="{'jquery/nestedSortable.js'|static}"></script>
+<script type="text/javascript" src="{'bootstrap/select2/select2.min.js'|static}"></script>
 <script type="text/javascript" src="{'menus.js'|here}"></script>
 {/block}

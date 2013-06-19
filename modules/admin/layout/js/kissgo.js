@@ -17,3 +17,14 @@ $(function() {
 		}
 	});
 });
+function showWaitMask(text, keep) {
+    text = text ? text : '处理中...';
+    var ov = $('#overlay-wrapper'), msg = ov.find('div.msg');
+    ov.show();
+    if (!keep) {
+        msg.html(text);
+    }
+}
+function hideWaitMask() {
+    $('#overlay-wrapper').fadeOut(350);
+}

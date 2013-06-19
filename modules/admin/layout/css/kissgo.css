@@ -90,7 +90,7 @@ body {
     right: 1px;
     bottom: 90px;	
     width: 23px;
-    z-index: 10010;
+    z-index: 1010;
 	display:none;
 }
 #sideTools a{
@@ -102,6 +102,7 @@ body {
 #sideTools a:hover{
 	background-position: -23px top;
 }
+
 #foot {
     background: none repeat scroll 0 0 #EDEDED;
     border-top: 1px solid #DDDDDD;
@@ -125,8 +126,10 @@ body {
 #foot a:hover{
     color: #0088CC;
 }
-#overlay {
+#overlay-wrapper{
 	display:none;
+}
+#overlay {	
     background:#fff;
 	left: 0;
     position: fixed;
@@ -134,7 +137,7 @@ body {
     opacity: 0.85;
     top: 0;
 	right: 0;
-    z-index: 9999;
+    z-index: 1035;
 }
 #overlay-body {
     height: 160px;
@@ -144,11 +147,14 @@ body {
     text-align: center;
     top: 50%;
     width: 500px;
+    z-index: 1036;
 }
-#overlay img, #overlay div.msg {
+#overlay-body img, #overlay-body div.msg {
     color: #999;
     text-align: center;
 }
-#overlay div.msg {
+#overlay-body div.msg {
     width: 100%;
+    font-size: 16px;
+    font-weight: bold;
 }

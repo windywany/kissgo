@@ -5,6 +5,7 @@ $(function() {
 	$('#ipt-tag').select2({
 		multiple : true,
 		ajax : {
+			cache:true,
 			url : Kissgo.AJAX + '?__op=tags_autocomplete',
 			data : function(term, page) {
 				return {

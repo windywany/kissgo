@@ -443,23 +443,3 @@
 		});
 	});
 })(jQuery);
-
-function showWaitMask(text, keep) {
-    text = text ? text : '处理中...';
-    var ov = $('#overlay'), msg = ov.find('div.msg');
-    ov.show();
-    if (!keep) {
-        msg.html(text);
-    }
-}
-
-function hideWaitMask() {
-    $('#overlay').fadeOut(350);
-}
-
-function publishAsFrontPage(id,type){
-	var publishBox = $('#ksg-publish-box');
-	if(publishBox.length==0){
-		publishBox = $('<div id=""></div>');
-	}
-}

@@ -176,6 +176,29 @@ function do_ajax_tags_autocomplete($req) {
     echo json_encode ( $data );
 }
 bind ( 'do_ajax_tags_autocomplete', 'do_ajax_tags_autocomplete' );
+
+// 读取页面
+function do_ajax_nodes_autocomplete($req) {
+    $q = rqst ( 'q', '' );
+    $p = irqst ( 'p', 1 );
+    $nodeTable = new KsgNodeTable ();
+    $more = true;
+    $where = array ('deleted' => 0, 'status' => 'published' );
+    $nodes = $nodeTable->query ( 'nid as id, title as text' );
+    if (empty ( $q )) {
+        $more = false;
+    } else {
+        $where ['title LIKE'] = "%{$q}%";
+    }
+    $nodes->where ( $where )->limit ( $p, 10 )->sort ( 'publish_time', 'd' );
+    if ($more) {
+        $more = $nodes->size () > 0;
+    }
+    $data = array ('more' => $more, 'results' => $nodes->toArray () );
+    echo json_encode ( $data );
+}
+bind ( 'do_ajax_nodes_autocomplete', 'do_ajax_nodes_autocomplete' );
+
 //测试邮件发送功能
 function do_ajax_test_email($params) {
     KissGo::startSession ();

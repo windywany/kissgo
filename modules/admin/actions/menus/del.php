@@ -5,7 +5,7 @@ assert_login ();
  * @param Request $req
  * @param Response $res
  * @return View
-*/
+ */
 function do_admin_menus_del_get($req, $res) {
     if (isset ( $req ['miid'] )) {
         $miid = irqst ( 'miid' );
@@ -32,9 +32,16 @@ function do_admin_menus_del_get($req, $res) {
         $miM = new KsgMenuItemTable ();
         $mM->getDialect ()->beginTransaction ();
         $where ['menu_name'] = $mn;
+        $menu = $mM->read ( $where );
         $rst = $mM->remove ( $where );
         $rst = $rst != false ? $miM->remove ( $where ) : false;
         if ($rst != false) {
+            if ($menu ['menu_default']) {
+                $menu = $mM->query ( 'menu_id' )->sort ( 'menu_id' )->limit ( 1, 1 );
+                if ($menu [0]) {
+                    $mM->update ( array ('menu_default' => 1 ), $menu [0] );
+                }
+            }
             $mM->getDialect ()->commit ();
             Response::redirect ( murl ( 'admin', 'menus' ) );
         } else {

@@ -1,4 +1,4 @@
-$(function() {
+$(function() {	
 	var url = $('#edit-menuitem').attr('action'), item = null;
 	$('ol.sortable').nestedSortable({
 		forcePlaceholderSize : true,
@@ -13,13 +13,23 @@ $(function() {
 		tolerance : 'pointer',
 		toleranceElement : '> div'
 	});
-	/*
-	 * $('#page-autoc').autocomplete({ source : './?Ctlr=TopPages', autoFocus :
-	 * true, select : function(event, ui) { if (ui.item) {
-	 * $('#autoc-id').val(ui.item.id); } else { $('#autoc-id').val(''); } }
-	 * }).change(function() { var val = $.trim($(this).val()); if (!val) {
-	 * $('#autoc-id').val(''); } });
-	 */
+	$('#autoc-id').select2({
+		placeholder:'输入页面标题',
+		multiple : true,
+		ajax : {
+			cache:true,
+			url : Kissgo.AJAX + '?__op=nodes_autocomplete',
+			data : function(term, page) {
+				return {
+					q : term,
+					p : page
+				};
+			},
+			results : function(data, page) {
+				return data;
+			}
+		}
+	});
 
 	$('.edit-item').live('click', function() {
 		var me = $(this), wrap = me.parents('.menu-wrap');
@@ -114,10 +124,10 @@ $(function() {
 				ids[i] = $(e).val();
 			});
 		} else {
-			ids[0] = $('#autoc-id').val();
+			ids = $('#autoc-id').select2('val');
 		}
 
-		if (ids.length == 0 || !ids[0]) {
+		if (ids.length == 0) {
 			alert('请选择页面!');
 			return;
 		}
