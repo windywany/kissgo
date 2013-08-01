@@ -195,9 +195,9 @@ function the_static_resource_uri($resource) {
 }
 function get_prefer_tpl($tpl, $node) {
     $pinfo = pathinfo ( $tpl, PATHINFO_FILENAME );
-    $dirs = array (THEME_PATH . THEME_DIR . DS . 'defaults' . DS );
+    $dirs = array (THEME_PATH . THEME_DIR . DS . 'default' . DS );
     $theme = get_theme ();
-    if ($theme != 'defaults') {
+    if ($theme != 'default') {
         array_unshift ( $dirs, THEME_PATH . THEME_DIR . DS . $theme . DS );
     }
     $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] . '.tpl', $tpl );
@@ -225,7 +225,7 @@ function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/
     if (is_file ( THEME_PATH . $_tpl )) {
         $tpl = $_tpl;
     } else {
-        $tpl = THEME_DIR . '/defaults/' . $tpl;
+        $tpl = THEME_DIR . '/default/' . $tpl;
     }
     $data ['ksg_current_template'] = $tpl;
     $data ['ksg_current_theme'] = THEME_DIR . '/' . $theme;

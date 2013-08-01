@@ -1,4 +1,5 @@
 <?php
+defined ( 'WEB_ROOT' ) or exit ( 'No direct script access allowed' );
 /*
  * kissgo framework that keep it simple and stupid, go go go ~~
  *
@@ -7,36 +8,53 @@
  *
  * $Id$
  */
-defined ( 'WEB_ROOT' ) or exit ( 'No direct script access allowed' );
-/////////////////////////////////////////////////////////////////////
-// Version configuration
-/////////////////////////////////////////////////////////////////////
-define ( 'KISSGO_VERSION', "1.0 BETA" );
-define ( 'KISSGO_BUILD', "1024" );
-// common constants 
-define ( 'DS', DIRECTORY_SEPARATOR ); // the short for directory separator
-define ( 'APP_PATH', WEB_ROOT );
-define ( 'INCLUDES', WEB_ROOT . 'includes' . DS );
-define ( 'KISSGO', INCLUDES . 'kissgo' . DS );
-
-define ( 'DEBUG_ERROR', 5 ); // debug levels
+// -----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+// debug levels
+//////////////////////////////////////////////////////////////////////////
+define ( 'DEBUG_OFF', 6 );
+define ( 'DEBUG_ERROR', 5 );
 define ( 'DEBUG_INFO', 4 );
 define ( 'DEBUG_WARN', 3 );
 define ( 'DEBUG_DEBUG', 2 );
-define ( 'DEBUG_OFF', 6 );
 
-defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) ); // the default application name, this is used by session id
-defined ( 'MODULES_PATH' ) or define ( 'MODULES_PATH', APP_PATH . 'modules' . DS ); // the default modules path
-define ( 'MODULE_DIR', basename ( MODULES_PATH ) );
+//////////////////////////////////////////////////////////////////////////
+// common constant
+////////////////////////////////////////////////////////////////////////// 
+define ( 'DS', DIRECTORY_SEPARATOR ); // the short for directory separator
+define ( 'APP_PATH', WEB_ROOT );
+define ( 'INCLUDES', WEB_ROOT . 'includes' . DS );
+define ( 'KISSGO', INCLUDES . 'system' . DS );
+
+//////////////////////////////////////////////////////////////////////////
+// path constant
+//////////////////////////////////////////////////////////////////////////
+defined ( 'WEBSITE_DIR' ) or define ( 'WEBSITE_DIR', 'website' );
+
+// the default application name, this is used by session id
+defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) );
+
+// module directory
+defined ( 'MODULE_DIR' ) or define ( 'MODULE_DIR', 'modules' );
+define ( 'MODULES_PATH', APP_PATH . MODULE_DIR . DS ); // the default modules path
+
+
+// application data directory
 defined ( 'APPDATA_PATH' ) or define ( 'APPDATA_PATH', APP_PATH . 'appdata' . DS ); // the application data path
-defined ( 'THEME_PATH' ) or define ( 'THEME_PATH', WEB_ROOT );
-defined ( 'THEME_DIR' ) or define ( 'THEME_DIR', 'themes' );
-defined ( 'STATIC_DIR' ) or define ( 'STATIC_DIR', 'static' );
 defined ( 'TMP_PATH' ) or define ( 'TMP_PATH', APPDATA_PATH . 'tmp' . DS ); // the temporary directory path
+
+
+//theme path
+defined ( 'THEME_PATH' ) or define ( 'THEME_PATH', WEB_ROOT . WEBSITE_DIR . DS );
+defined ( 'THEME_DIR' ) or define ( 'THEME_DIR', 'themes' );
+
+define ( 'MISC_DIR', WEBSITE_DIR . '/misc' );
+
 define ( 'NOTNULL', '_@_NOT_NULL_@_' );
 define ( 'DATABASE', '__DATABASE__' );
 define ( 'COOKIE', '__COOKIE__' );
 define ( 'DATE_FORMAT', '_DATE_FORMAT_' );
+// 过滤输入
 // 过滤输入
 if (@ini_get ( 'register_globals' )) {
     if (isset ( $_REQUEST ['GLOBALS'] )) {
@@ -233,7 +251,7 @@ defined ( 'THEME' ) or define ( 'THEME', 'defaults' );
 if (isset ( $_GET ['__url'] )) {
     define ( 'REQUEST_URL', $_GET ['__url'] );
 }
-include KISSGO . 'core/cache.php'; // load cache instant
+include KISSGO . 'cache.php'; // load cache instant
 // log function
 function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;
@@ -293,21 +311,20 @@ if (DEBUG > DEBUG_DEBUG) {
 if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
     include INCLUDES . 'vendors/firephp/fb.php';
 }
-include KISSGO . 'libs/i18n.php';
-include KISSGO . 'libs/functions.php';
-include KISSGO . 'libs/plugin.php';
-include KISSGO . 'libs/template.php';
+include KISSGO . 'plugin.php';
+include KISSGO . 'i18n.php';
+include KISSGO . 'functions.php';
+include KISSGO . 'template.php';
 // load kissgo core scripts
-include KISSGO . 'core/path.php';
-include KISSGO . 'core/request.php';
-include KISSGO . 'core/response.php';
-include KISSGO . 'core/rbac.php';
-include KISSGO . 'core/router.php';
-include KISSGO . 'core/session.php';
-include KISSGO . 'core/views.php';
-include KISSGO . 'core/form.php';
-include KISSGO . 'core/grid.php';
-include KISSGO . 'core/kissgo.php';
+include KISSGO . 'request.php';
+include KISSGO . 'response.php';
+include KISSGO . 'rbac.php';
+include KISSGO . 'router.php';
+include KISSGO . 'session.php';
+include KISSGO . 'views.php';
+include KISSGO . 'form.php';
+include KISSGO . 'grid.php';
+include KISSGO . 'kissgo.php';
 // ////////////////////////////////////////////////////////////
 // 自动加载器
 /**
@@ -341,6 +358,10 @@ function _kissgo_class_loader($clz) {
         include $clz_file;
     }
 }
+$__kissgo_exports [] = KISSGO . 'dao';
+$__kissgo_exports [] = KISSGO . 'classes';
+$__kissgo_exports [] = INCLUDES . 'vendors';
+$__kissgo_exports [] = INCLUDES . 'vendors' . DS . 'smarty';
 spl_autoload_register ( '_kissgo_class_loader' );
 ///////////////////////////////////////////////////////////////
 // load applications and plugins

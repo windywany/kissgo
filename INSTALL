@@ -10,7 +10,7 @@
 		Allow from all
 	</Directory>
 	
-	<Directory "your_centims_webroot_dir/uploads">
+	<Directory "your_centims_webroot_dir/website/uploads">
 		<FilesMatch ".*\.php$">
 		    Order allow,deny
 		    Deny from all
@@ -26,7 +26,7 @@
 			Order allow,deny
 			Allow from all
 		</Directory>
-		<Directory "your_centims_webroot_dir/uploads">
+		<Directory "your_centims_webroot_dir/website/uploads">
 			<FilesMatch ".*\.php$">
 			    Order allow,deny
 			    Deny from all
@@ -52,7 +52,7 @@
                 rewrite “^(.*)$” index.php?_url=$1 last;
             }
         }
-        location ~ /uploads/.+\.php$ {
+        location ~ /website/uploads/.+\.php$ {
         	return 403;
         }        
         error_page  404              /404.html;
