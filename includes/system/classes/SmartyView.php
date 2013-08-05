@@ -20,7 +20,7 @@ class SmartyView extends View {
             $headers ['Content-Type'] = 'text/html';
         }
         parent::__construct ( $data, $tpl, $headers );
-        $basedir = THEME_PATH;
+        $basedir = MODULES_PATH;
         $tpl = $basedir . $this->tpl;
         if (is_file ( $tpl )) {
             $this->__smarty = new Smarty ();

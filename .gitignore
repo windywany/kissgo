@@ -1,0 +1,7 @@
+appdata/logs/*
+appdata/tmp/*
+appdata/*settings.php
+appdata/extensions.ini
+.settings
+.buildpath
+.project

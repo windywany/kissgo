@@ -174,7 +174,7 @@ class KissGOInstaller {
      * @return array
      */
     public function check_directory_rw() {
-        $uploads = (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : 'uploads');
+        $uploads = (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : WEBSITE_DIR . '/uploads');
         $dirs = array ('appdata' => APPDATA_PATH, 'logs' => APPDATA_PATH . 'logs', 'tmp' => TMP_PATH, 'uploads' => WEB_ROOT . $uploads );
         $profile = ProfileManager::getInstallProfile ();
         $profile->onCheckDirectory ( $dirs );

@@ -30,12 +30,13 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
      * (non-PHPdoc)
      * @see SqlBuilder::schema()
      * @param Idao $dao
-     * @return string
+     * @return array(drop,create)
      */
     public function schema($dao, $engine = 'InnoDB', $charset = 'UTF8') {
         $sql = 'CREATE TABLE ';
         $schema = $dao->schema ();
         $sql .= '`' . $dao->getFullTableName () . '` (';
+        $dropSQL = 'DROP TABLE IF EXISTS  `' . $dao->getFullTableName () . '`';
         $fields = array ();
         foreach ( $schema as $field => $def ) {
             $fstr = $this->getColumnDef ( $field, $def );
@@ -62,7 +63,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         
         $cmt = $schema->getDescription ();
         $sql .= ")ENGINE=$engine DEFAULT CHARSET $charset COMMENT '$cmt'";
-        return $sql;
+        return array($dropSQL,$sql);
     }
     /**
      * (non-PHPdoc)

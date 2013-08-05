@@ -14,7 +14,7 @@ require_once WEB_ROOT . 'includes/bootstrap.php';
 if (is_file ( APPDATA_PATH . 'settings.php' )) {
     Response::redirect ( BASE_URL );
 }
-require_once KISSGO . 'libs/install.php';
+require_once KISSGO . 'install.php';
 KissGo::startSession ();
 $steps = array ('welcome' => 'Welcome', 'profile' => 'Select Install Profile', 'check' => 'Environment Check', 'db' => 'Configurate Database', 'admin' => 'Create Administrator', 'config' => 'Configurate', 'install' => 'Install', 'done' => 'Done', 'cu' => 'cu', 'cm' => 'cm', 'save' => 'save', 'tasks' => 'tasks' );
 $step = isset ( $_POST ['step'] ) ? $_POST ['step'] : $_SESSION ['INSTALL_STEP'];

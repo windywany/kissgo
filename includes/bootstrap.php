@@ -49,7 +49,7 @@ defined ( 'THEME_PATH' ) or define ( 'THEME_PATH', WEB_ROOT . WEBSITE_DIR . DS )
 defined ( 'THEME_DIR' ) or define ( 'THEME_DIR', 'themes' );
 
 define ( 'MISC_DIR', WEBSITE_DIR . '/misc' );
-
+define ( 'STATIC_DIR', MISC_DIR );
 define ( 'NOTNULL', '_@_NOT_NULL_@_' );
 define ( 'DATABASE', '__DATABASE__' );
 define ( 'COOKIE', '__COOKIE__' );
@@ -235,7 +235,7 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['THEME'] ) && ! empty ( $settings ['THEME'] )) {
         define ( 'THEME', $settings ['THEME'] );
     }
-    
+
     ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
     $install_script = detect_app_base_url () . 'install.php';
@@ -243,7 +243,7 @@ if (is_readable ( $_ksg_settings_file )) {
     exit ();
 }
 unset ( $_ksg_settings_file );
-defined ( 'DEBUG' ) or define ( 'DEBUG', DEBUG_ERROR ); // debug level
+defined ( 'DEBUG' ) or define ( 'DEBUG', DEBUG_DEBUG ); // debug level
 defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
 defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
 defined ( 'THEME' ) or define ( 'THEME', 'defaults' );

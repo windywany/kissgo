@@ -29,7 +29,8 @@ class DbSqlValues {
         if (is_numeric ( $value )) {
             $type = PDO::PARAM_INT;
         } else if (is_bool ( $value )) {
-            $type = PDO::PARAM_BOOL;
+            $type = PDO::PARAM_INT;
+            $value = intval ( $value );
         } else if (is_null ( $value )) {
             $type = PDO::PARAM_NULL;
         } else {

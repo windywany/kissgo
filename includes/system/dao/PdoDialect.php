@@ -75,7 +75,16 @@ abstract class PdoDialect extends PDO {
                 if ($engine == null) {
                     $engine = isset ( $_SESSION ['_INSTALL_DB_DATA'] ) && $_SESSION ['_INSTALL_DB_DATA'] ['engine'] ? $_SESSION ['_INSTALL_DB_DATA'] ['engine'] : 'InnoDB';
                 }
-                $sql = $builder->schema ( $dao, $engine );
+                list ( $dropSQL, $sql ) = $builder->schema ( $dao, $engine );
+            } else if (is_array ( $sql )) {
+                list ( $dropSQL, $sql ) = $sql;
+            }
+            if ($dropSQL) {
+                $rst = $driver->exec ( $dropSQL );
+                if ($rst === false) {
+                    db_error ( 'Cannot execute SQL:' . $dropSQL );
+                    return false;
+                }
             }
             if ($sql) {
                 $rst = $driver->exec ( $sql );
@@ -90,7 +99,7 @@ abstract class PdoDialect extends PDO {
             db_error ( $e->getMessage () . ($sql ? $sql : '') );
             return false;
         }
-    }    
+    }
     /**
      * 
      * safe field and their parameter name

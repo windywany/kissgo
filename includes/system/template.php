@@ -177,7 +177,7 @@ function get_data_from_cts_provider($name, $args) {
 function get_theme_resource_uri($args) {
     static $res_url = false;
     if (! $res_url) {
-        $res_url = BASE_URL . THEME_DIR . '/';
+        $res_url = BASE_URL . WEBSITE_DIR . '/' . THEME_DIR . '/';
     }
     if (isset ( $args [1] )) {
         $url = $args [1];
@@ -189,7 +189,7 @@ function get_theme_resource_uri($args) {
 function the_static_resource_uri($resource) {
     static $static_url = false;
     if (! $static_url) {
-        $static_url = BASE_URL . (defined ( 'STATIC_DIR' ) ? STATIC_DIR : 'static') . '/';
+        $static_url = BASE_URL . STATIC_DIR . '/';
     }
     return $static_url . $resource;
 }
@@ -252,7 +252,7 @@ function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html
     $data ['ksg_module'] = MODULE_DIR;
     $data ['ksg_admincp_layout'] = MODULES_PATH . '/admin/layout/layout.tpl';
     $data ['ksg_admincp_url'] = murl ( 'admin' );
-    return new SmartyView ( $data, MODULE_DIR . '/' . $tpl, $headers );
+    return new SmartyView ( $data, $tpl, $headers );
 }
 /**
  * 解析smarty参数.
@@ -336,9 +336,7 @@ function smarty_modifiercompiler_here($params, $compiler) {
  * @return string with compiled code
  */
 function smarty_modifiercompiler_static($params, $compiler) {
-    $tpl = defined ( 'STATIC_DIR' ) ? STATIC_DIR : 'static';
-    $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
-    return "BASE_URL.'{$url}'." . $params [0];
+    return "BASE_URL.WEBSITE_DIR.'/misc/'." . $params [0];
 }
 
 function smarty_modifiercompiler_theme($params, $compiler) {
@@ -346,12 +344,10 @@ function smarty_modifiercompiler_theme($params, $compiler) {
     return "get_theme_resource_uri($params)";
 }
 function smarty_modifiercompiler_img($params, $compiler) {
-    $tpl = defined ( 'STATIC_DIR' ) ? STATIC_DIR : 'static';
-    $url = (! empty ( $tpl ) ? trailingslashit ( $tpl ) : '');
-    return "BASE_URL.'{$url}'." . $params [0];
+    return "BASE_URL.WEBSITE_DIR.'/misc/'." . $params [0];
 }
 function smarty_modifiercompiler_uploaded($params, $compiler) {
-    return "BASE_URL." . $params [0];
+    return "BASE_URL.WEBSITE_DIR.'/'." . $params [0];
 }
 /**
  * Smarty url modifier plugin
