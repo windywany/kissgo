@@ -9,10 +9,7 @@ abstract class PdoDialect extends PDO {
     public static $last_error_message = '';
     protected $tbl_prefix = '';
     public function __construct($options) {
-        list ( $dsn, $user, $passwd, $attr ) = $this->buildOptions ( $options );
-        if (! isset ( $attr [PDO::ATTR_EMULATE_PREPARES] )) {
-            $attr [PDO::ATTR_EMULATE_PREPARES] = false;
-        }
+        list ( $dsn, $user, $passwd, $attr ) = $this->buildOptions ( $options );        
         parent::__construct ( $dsn, $user, $passwd, $attr );
         $this->tbl_prefix = isset ( $options ['prefix'] ) && ! empty ( $options ['prefix'] ) ? $options ['prefix'] : '';
     }
