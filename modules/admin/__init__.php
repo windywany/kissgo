@@ -50,18 +50,18 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItemDivider ( 'system' );
     $mm->addMenuItem ( 'system', 'menuitem-cm-builder', __ ( 'Model Builder' ), murl ( 'admin', 'cmb' ), 'icon-tint' );
     // Web Site
-    $mm->addMenu2 ( 'menu-website', __ ( 'Website' ), 'icon-globe' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Pages' ), murl ( 'admin', 'pages' ), 'icon-file' );
+    $mm->addMenu2 ( 'menu-website', __ ( 'Site' ), 'icon-globe' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Web Pages' ), murl ( 'admin', 'pages' ), 'icon-file' );
     
     $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'pages/comments' ), 'icon-comment' );
     
-    $mm->addMenuItem ( 'menu-website', 'menuitem-tags', __ ( 'Tags & Flags' ), murl ( 'admin', 'tags' ), 'icon-tags' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-tags', __ ( 'Tags&Flags' ), murl ( 'admin', 'tags' ), 'icon-tags' );
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'node/theme' ), 'icon-picture' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItemDivider ( 'menu-website' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Attachments' ), murl ( 'admin', 'attachs' ), 'icon-picture' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Medias' ), murl ( 'admin', 'media' ), 'icon-picture' );
     // Components
     $mm->addMenu2 ( 'menu-components', __ ( 'Components' ), 'icon-cog' );
     $mm->addMenuItem ( 'menu-components', 'menuitem-codes', __ ( 'Code Fragments' ), murl ( 'admin', 'fragments' ), 'icon-list-alt' );

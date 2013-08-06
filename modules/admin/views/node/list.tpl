@@ -1,10 +1,10 @@
 {extends file=$ksg_admincp_layout}
-{block name="title"}{'Pages'|ts}{/block}
+{block name="title"}{'Web Pages'|ts}{/block}
 {block name="admincp_css_block"}
 <link rel="stylesheet" href="{'bootstrap/select2/select2.css'|static}"/>
 {/block}
 {block name="breadcrumb" nocache}
-<li>{'Pages'|ts}</li>
+<li>{'Web Pages'|ts}</li>
 {/block}
 {block name="admincp_body"}
 

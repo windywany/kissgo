@@ -10,7 +10,7 @@
  */
 class BaseValidator implements IValidator {
     protected static $extra_methods = array ();
-    public function yield(&$properties, $rules, $data = array()) {
+    public function addRule(&$properties, $rules, $data = array()) {
         $rs = array ();
         $ms = array ();
         foreach ( $rules as $m => $exp ) {

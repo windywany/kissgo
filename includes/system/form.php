@@ -394,7 +394,7 @@ abstract class BaseForm implements ArrayAccess, Iterator {
  *
  */
 interface IValidator {
-    public function yield(&$properties, $rules);
+    public function addRule(&$properties, $rules);
     public function valid($value, $data, $rules, $scope);
 }
 
@@ -500,7 +500,7 @@ abstract class FormWidget {
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
             if ($validator) {
-                $validator->yield ( $properties, $this->validates, $this->form->getData () );
+                $validator->addRule ( $properties, $this->validates, $this->form->getData () );
             }
         }
         return html_tag_properties ( $properties );
@@ -573,7 +573,7 @@ abstract class FormWidget {
         if (! empty ( $this->validates )) {
             $validator = $this->form->useValidator ();
             if ($validator) {
-                $validator->yield ( $properties, $this->validates, $this->form->getData () );
+                $validator->addRule ( $properties, $this->validates, $this->form->getData () );
             }
         }
         return $properties ['validate'];
@@ -713,7 +713,7 @@ class FileWidget extends TextWidget {
         $js = the_static_resource_uri ( 'bootstrap/bootstrap-fileupload.js' );
         echo '<script type="text/javascript" src="', $js, '"></script>', "\n";
     }
-    public function getValue($req) {
+    public function getValue($request=null) {
         if (isset ( $_FILES [$this->name] ) && $_FILES [$this->name] ['error'] == 0) {
             $file = $_FILES [$this->name];
             $this->value = $file ['name'];
