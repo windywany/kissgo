@@ -61,11 +61,8 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItemDivider ( 'menu-website' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-attachs', __ ( 'Medias' ), murl ( 'admin', 'media' ), 'icon-picture' );
-    // Components
-    $mm->addMenu2 ( 'menu-components', __ ( 'Components' ), 'icon-cog' );
-    $mm->addMenuItem ( 'menu-components', 'menuitem-codes', __ ( 'Code Fragments' ), murl ( 'admin', 'fragments' ), 'icon-list-alt' );
-    $mm->addMenuItem ( 'menu-components', 'menuitem-links', __ ( 'Links' ), murl ( 'admin', 'links' ), 'icon-retweet' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-medias', __ ( 'Medias' ), murl ( 'admin', 'media' ), 'icon-picture' );
+    
     return $mm;
 }
 bind ( 'get_top_navigation_menu', '_hook_for_admincp_menu' );
