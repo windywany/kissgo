@@ -19,8 +19,11 @@ class KissGo {
      * 运行，分发请求
      */
     public static function run() {
-        self::startSession ();
         $request = Request::getInstance ();
+        $sessionAutoStart = ! preg_match ( '#\.(css|js)$#i', $request ['_url'] );
+        if ($sessionAutoStart) {
+            self::startSession ();
+        }
         $response = Response::getInstance ();
         $view = apply_filter ( 'before_route', false );
         if ($view === false) {

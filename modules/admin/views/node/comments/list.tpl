@@ -141,6 +141,5 @@
 
 {/block}
 {block name="admincp_foot_js_block"}
-<script type="text/javascript" src="{'quicktags.js'|static}"></script>
 <script type="text/javascript" src="{'list.js'|here}"></script>
 {/block}

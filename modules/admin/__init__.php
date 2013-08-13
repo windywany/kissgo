@@ -12,8 +12,7 @@ function set_site_global_vars($smarty) {
     $settings = KissGoSetting::getSetting ();
     $smarty->assign ( 'ksg_site_url', BASE_URL );
     $smarty->assign ( 'ksg_passport', Passport::getPassport () );
-    $smarty->assign ( 'ksg_version', KISSGO_VERSION );
-    $smarty->assign ( 'ksg_build', KISSGO_BUILD );
+    $smarty->assign ( 'ksg_version', KISSGO_VERSION );    
     $smarty->assign ( 'ksg_uri', Request::getUri () );
     $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );
     $smarty->assign ( '_ksg_page_tip_info', sess_del ( '_ksg_page_tip_info', false ) );
@@ -47,6 +46,7 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenuItemDivider ( 'system' );
     $mm->addMenuItem ( 'system', 'menuitem-modules', __ ( 'Extensions' ), murl ( 'admin', 'extension' ), 'icon-briefcase' );
     $mm->addMenuItem ( 'system', 'menuitem-options', __ ( 'Preferences' ), murl ( 'admin', 'preference' ), 'icon-adjust' );
+    $mm->addMenuItem ( 'system', 'menuitem-inner-clear', __ ( 'Clear Inner Cache' ), murl ( 'admin', 'cache/clear' ), 'icon-trash' );
     $mm->addMenuItemDivider ( 'system' );
     $mm->addMenuItem ( 'system', 'menuitem-cm-builder', __ ( 'Model Builder' ), murl ( 'admin', 'cmb' ), 'icon-tint' );
     // Web Site

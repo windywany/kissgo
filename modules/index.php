@@ -14,6 +14,10 @@ function _kissgo_default_index($view) {
     $url = Request::getVirtualPageUrl ();
     if ($view == null && ($url == '/' || $url == '/index.html')) {
         return template ( 'index.tpl' );
+    } else if (preg_match ( '#.+style\.css$#', $url )) {
+        return merge_css ( $url );
+    } else if (preg_match ( '#.+script\.js$#', $url )) {
+        return merge_js ();
     }
     return $view;
 }
@@ -58,5 +62,75 @@ function canpreview() {
     $I = whoami ();
     // TODO need check the user's right
     return $I->isLogin () && isset ( $_GET ['preview'] );
+}
+function merge_css($path) {
+    $etag = md5 ( $path );
+    $etag_m = $etag . '_m';
+    if (isset ( $_SERVER ['HTTP_IF_NONE_MATCH'] ) && $_SERVER ['HTTP_IF_NONE_MATCH'] == $etag) {
+        $lastModified = strtotime ( $_SERVER ['HTTP_IF_MODIFIED_SINCE'] );
+        $etagM = InnerCacher::get ( $etag_m );
+        if ($lastModified && $etagM && $lastModified >= $etagM) {
+            status_header ( 304 );
+            @header ( 'Etag: ' . $etag );
+            @header ( 'Last-Modified: ' . $_SERVER ['HTTP_IF_MODIFIED_SINCE'] );
+            Response::getInstance ()->close ();
+        } else if (! $etagM) {
+            InnerCacher::remove ( $etag );
+        }
+    }
+    
+    $styles = InnerCacher::get ( $etag );
+    if (! $styles) {
+        $path = WEB_ROOT . pathinfo ( $path, PATHINFO_DIRNAME );
+        $styles = '';
+        if (is_dir ( $path )) {
+            $fs = find_files ( $path, '#.+\.css$#i', array (), false );
+            if ($fs) {
+                foreach ( $fs as $f ) {
+                    $styles .= file_get_contents ( $f );
+                }
+            }
+        }
+        InnerCacher::add ( $etag, $styles );
+        InnerCacher::add ( $etag_m, time () );
+    }
+    return new CssView ( $styles, $etag );
+}
+function merge_js() {
+    $jss = rqst ( 'jss', '' );
+    if ($jss) {
+        $etag = md5 ( $jss );
+        $etag_m = $etag . '_m';
+        if (isset ( $_SERVER ['HTTP_IF_NONE_MATCH'] ) && $_SERVER ['HTTP_IF_NONE_MATCH'] == $etag) {
+            $lastModified = strtotime ( $_SERVER ['HTTP_IF_MODIFIED_SINCE'] );
+            $etagM = InnerCacher::get ( $etag_m );
+            if ($lastModified && $etagM && $lastModified >= $etagM) {
+                status_header ( 304 );
+                @header ( 'Etag: ' . $etag );
+                @header ( 'Last-Modified: ' . $_SERVER ['HTTP_IF_MODIFIED_SINCE'] );
+                Response::getInstance ()->close ();
+            } else if (! $etagM) {
+                InnerCacher::remove ( $etag );
+            }
+        }
+        $jsses = InnerCacher::get ( $etag );
+        if (! $jsses) {
+            $fs = explode ( ',', $jss );
+            if ($fs) {
+                $jsses = '';
+                $js = '';
+                foreach ( $fs as $f ) {
+                    $js = WEB_ROOT . WEBSITE_DIR . DS . $f . '.js';
+                    if (is_file ( $js )) {
+                        $jsses .= file_get_contents ( $js );
+                    }
+                }
+                InnerCacher::add ( $etag, $jsses );
+                InnerCacher::add ( $etag_m, time () );
+            }
+        }
+        return new JsView ( $jsses, $etag );
+    }
+    return '';
 }
 // end of index.php

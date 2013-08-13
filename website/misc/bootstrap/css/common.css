@@ -310,7 +310,7 @@ i.handl {
 }
 
 .sortheader .asc,.sortheader .desc,.sortheader .sdir {
-	background: url("images/arrow.gif") no-repeat scroll 0 0 transparent;
+	background: url("../../images/arrow.gif") no-repeat scroll 0 0 transparent;
 	display: block;
 	height: 10px;
 	position: absolute;
@@ -320,11 +320,11 @@ i.handl {
 }
 
 .sortheader .desc {
-	background-image: url("images/arrow_down.gif");
+	background-image: url("../../images/arrow_down.gif");
 }
 
 .sortheader .asc {
-	background-image: url("images/arrow_up.gif");
+	background-image: url("../../images/arrow_up.gif");
 }
 
 .form-field {
@@ -415,19 +415,19 @@ i.handl {
 }
 
 .icon-loading-14 {
-	background: transparent url("images/loading14.gif") 0 0 no-repeat;
+	background: transparent url("../../images/loading14.gif") 0 0 no-repeat;
 }
 
 .ico-loading-14 {
-	background: transparent url("images/loading14.gif") 0 50% no-repeat;
+	background: transparent url("../../images/loading14.gif") 0 50% no-repeat;
 }
 
 .ico-loading-14r {
-	background: transparent url("images/loading14.gif") 100% 50% no-repeat;
+	background: transparent url("../../images/loading14.gif") 100% 50% no-repeat;
 }
 
 .ico-loading-14m {
-	background: transparent url("images/loading14.gif") 50% 50% no-repeat;
+	background: transparent url("../../images/loading14.gif") 50% 50% no-repeat;
 }
 
 .ui-sortable {
@@ -435,7 +435,7 @@ i.handl {
 }
 
 .ui-autocomplete-loading {
-	background-image: url('images/loading14.gif');
+	background-image: url('../../images/loading14.gif');
 	background-position: right center;
 	background-repeat: no-repeat;
 }
@@ -497,7 +497,7 @@ i.handl {
 }
 
 .stuffbox .overlay .loading {
-	background: transparent url(images/loading.gif) no-repeat 0 0;
+	background: transparent url(../../images/loading.gif) no-repeat 0 0;
 	width: 32px;
 	height: 32px;
 	position: absolute;
@@ -514,7 +514,7 @@ i.handl {
 }
 
 .stuffbox:hover .handlediv {
-	background: transparent url("images/arrows.png") no-repeat 6px 7px;
+	background: transparent url("../../images/arrows.png") no-repeat 6px 7px;
 }
 
 .stuffbox a.tools {
@@ -622,27 +622,27 @@ i.handl {
 }
 
 textarea.error,input.error {
-	background: #FFFFFF url(images/invalid_line.gif) repeat-x left bottom;
+	background: #FFFFFF url(../../images/invalid_line.gif) repeat-x left bottom;
 	color: #D54E21;
 }
 
 span.error {
 	margin-left: 2px;
 	color: red;
-	background: transparent url(images/verror.png) no-repeat left center;
+	background: transparent url(../../images/verror.png) no-repeat left center;
 	padding: 2px 18px;
 }
 
 span.valid {
 	margin-left: 2px;
 	padding: 2px 18px;
-	background: transparent url(images/vaccept.png) no-repeat left center;
+	background: transparent url(../../images/vaccept.png) no-repeat left center;
 }
 
 span.tip {
 	margin-left: 2px;
 	color: #888;
-	background: transparent url(images/tip_info.png) no-repeat left center;
+	background: transparent url(../../images/tip_info.png) no-repeat left center;
 	padding-left: 18px;
 }
 
@@ -655,23 +655,23 @@ span.tip {
 }
 
 #xui-messagebox .modal-body {
-	background: transparent url(images/msg-tip.png) no-repeat 10px 10px;
+	background: transparent url(../../images/msg-tip.png) no-repeat 10px 10px;
 	min-height: 120px;
 	padding-left: 150px;
 }
 
 #xui-messagebox .modal-body.error {
-	background-image: url(images/msg-err.png);
+	background-image: url(../../images/msg-err.png);
 	color: red;
 }
 
 #xui-messagebox .modal-body.error {
-	background-image: url(images/msg-err.png);
+	background-image: url(../../images/msg-err.png);
 	color: red;
 }
 
 #xui-messagebox .modal-body.warning {
-	background-image: url(images/msg-war.png);
+	background-image: url(../../images/msg-war.png);
 	color: red;
 }
 

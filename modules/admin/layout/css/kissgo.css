@@ -2,6 +2,12 @@ body {
     padding: 70px 0 35px 0;
 	min-width:1000px;
 }
+body.nonavibar{
+	padding: 0;
+}
+body.nonavibar #navbar,body.nonavibar #foot,body.nonavibar #sideTools{
+	display: none;
+}
 #navbar .dropdown-menu .divider {
     margin: 2px 1px;
 }
@@ -15,6 +21,7 @@ body {
 	padding: 5px 15px;
 }
 .breadcrumb {
+	border-radius: 0 0 4px 4px;
     padding: 5px 15px;
 	margin: 0px;
 }

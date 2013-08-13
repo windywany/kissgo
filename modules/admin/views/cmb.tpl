@@ -5,11 +5,9 @@
 {/block}
 {block name="admincp_css_block"}
 <link rel="stylesheet" href="{'bootstrap/css/prettify.css'|static}"/>
-<link rel="stylesheet" href="{'bootstrap/select2/select2.css'|static}"/>
 {/block}
 {block name="admincp_head_js_block"}
-<script type="text/javascript" src="{'bootstrap/prettify.js'|static}"></script>
-<script type="text/javascript" src="{'bootstrap/select2/select2.min.js'|static}"></script>	
+<script type="text/javascript" src="{'bootstrap/prettify.js'|static}"></script>	
 {/block}
 {block name="admincp_body"}
     <ul class="nav nav-tabs" id="cmb-tabs">

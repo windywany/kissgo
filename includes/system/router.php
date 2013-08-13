@@ -59,7 +59,7 @@ class Router {
             return $actionInfo ['func'];
         }
         //all url with suffix '.html or htm', we think it is a static page
-        if (preg_match ( '#\.htm[l]?$#i', $url )) {
+        if (preg_match ( '#\.(htm[l]?|css|js)$#i', $url )) {
             $app_action_file = MODULES_PATH . 'index.php';
             $cb_func = 'do_show_custom_page';
             include_once $app_action_file;

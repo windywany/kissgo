@@ -5,29 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="KissGO! group"/>
-    <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$ksg_version}</title>
-    <link rel="stylesheet" href="{'bootstrap/css/bootstrap.css'|static}"/>
-    <link rel="stylesheet" href="{'bootstrap/css/bootstrap-modal.css'|static}"/>
-    <link rel="stylesheet" href="{'bootstrap/css/bootstrap-responsive.css'|static}"/>
-    <link rel="stylesheet" href="{'common.css'|static}"/>
+    <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$ksg_version}</title>    
+    {'bootstrap/css/bootstrap.css'|css:misc}    
+    {'bootstrap/css/bootstrap-modal.css'|css:misc}    
+    {'bootstrap/css/bootstrap-responsive.css'|css:misc}
+    {'bootstrap/css/datepicker.css'|css:misc}
+    {'bootstrap/css/select2.css'|css:misc}    
+    <link href="{'jquery/ui/smoothness/jquery-ui.css'|static}" rel="stylesheet"/>
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
     {block name="admincp_css_block"}{/block} 
     <script type="text/javascript">
        window.Kissgo = { 'BASE': "{$ksg_site_url}" , 'AJAX':'{$ksg_site_url}ajax.php' };
        window.UEDITOR_HOME_URL = "{'ueditor/'|static}";
-    </script>    
-    <script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>    
-    <script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>
-    <script type="text/javascript" src="{'bootstrap/bootstrap-modalmanager.js'|static}"></script>
-    <script type="text/javascript" src="{'bootstrap/bootstrap-modal.js'|static}"></script>
-    <script type="text/javascript" src="{'jquery/plugins/validate.js'|static}"></script>
-	<script type="text/javascript" src="{'jquery/plugins/validate_addons.js'|static}"></script>
-	<script type="text/javascript" src="{'common.js'|static}"></script>
+    </script>        
+    {'jquery/jquery.js'|js:misc}
+    {'jquery/jquery-ui.js'|js:misc}
+    {'bootstrap/bootstrap.js'|js:misc}    
+    {'bootstrap/bootstrap-modalmanager.js'|js:misc}    
+    {'bootstrap/bootstrap-modal.js'|js:misc}    
+    {'jquery/plugins/validate.js'|js:misc}	
+	{'jquery/plugins/validate_addons.js'|js:misc}
+	{'bootstrap/bootstrap-datepicker.js'|js:misc}
+	{'jquery/plugins/prettyPhoto/prettyPhoto.js'|js:misc}
+    {'jquery/nestedSortable.js'|js:misc}
+    {'bootstrap/select2/select2.min.js'|js:misc}    
+    {'quicktags.js'|js:misc}
+	{'common.js'|js:misc}
     <script type="text/javascript" src="{'js/kissgo.js'|here}"></script>
     {block name="admincp_head_js_block"}{/block}
     {'admincp_header'|fire}    
 </head>
-<body>
+<body {if $hideNavi}class="nonavibar"{/if}>
 <div class="page-container">
 <!-- head -->
 <div id="navbar" class="navbar navbar-fixed-top">

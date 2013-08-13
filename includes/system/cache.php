@@ -97,7 +97,16 @@ class InnerCache {
     public function get($key) {
         return null;
     }
+    public function clear() {
+
+    }
 }
+/**
+ * 
+ * APC Cache
+ * @author guangfeng.ning
+ *
+ */
 class ApcCacher extends InnerCache {
     public function add($key, $data) {
         apc_store ( $key, $data );
@@ -110,7 +119,16 @@ class ApcCacher extends InnerCache {
     public function get($key) {
         return apc_fetch ( $key );
     }
+    public function clear() {
+        return apc_clear_cache ( 'user' );
+    }
 }
+/**
+ * 
+ * XCache
+ * @author guangfeng.ning
+ *
+ */
 class XCacheCacher extends InnerCache {
     public function add($key, $data) {
         xcache_set ( $key, $data );
@@ -126,7 +144,16 @@ class XCacheCacher extends InnerCache {
         }
         return null;
     }
+    public function clear() {
+        return xcache_clear_cache ( XC_TYPE_VAR );
+    }
 }
+/**
+ * 
+ * Inner Cache Wrapper
+ * @author guangfeng.ning
+ *
+ */
 class InnerCacher {
     private static $CACHE;
     public static function init() {
@@ -148,6 +175,9 @@ class InnerCacher {
     }
     public static function remove($key) {
         return self::$CACHE->remove ( $key );
+    }
+    public static function clear() {
+        self::$CACHE->clear ();
     }
 }
 InnerCacher::init ();

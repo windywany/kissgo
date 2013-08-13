@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>{'Login'|ts}[Powered by KissGo! {$ksg_version}]</title>
-		<link href="{'bootstrap/css/bootstrap.css'|static}" rel="stylesheet"/>
-		<link href="{'bootstrap/css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
-		<link href="{'common.css'|static}" rel="stylesheet"/>
+		<title>{'Login'|ts}[Powered by KissGo! {$ksg_version}]</title>		
+		{'bootstrap/css/bootstrap.css'|css:misc}		
+		{'bootstrap/css/bootstrap-responsive.css'|css:misc}
+		{'bootstrap/css/common.css'|css:misc}		
 		<link href="{'css/login.css'|here}" rel="stylesheet"/>
 	</head>
 	<body>
@@ -47,9 +47,9 @@
 				</form>
 			</div>
 			<div class="info">本系统基于<a href="http://www.kissgo.org/">KissGo! {$ksg_version}</a>构建,由<a href="http://www.kissgo.org/">KissGo!</a>提供动力。</div>
-		</div>	
-		<script type="text/javascript" src="{'jquery/jquery.js'|static}"></script>
-		<script type="text/javascript" src="{'bootstrap/bootstrap.js'|static}"></script>
+		</div>		
+		{'jquery/jquery.js'|js:misc}
+		{'bootstrap/bootstrap.js'|js:misc}
 		<script type="text/javascript">
 			$(function(){
 				var imgSrc = $('#captcha-img').attr('src');

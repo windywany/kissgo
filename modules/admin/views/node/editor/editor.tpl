@@ -1,8 +1,6 @@
 {extends file=$ksg_admincp_layout}
 {block name="title"}{'Pages Editor'|ts}{/block}
-{block name="admincp_css_block"}
-<link rel="stylesheet" href="{'bootstrap/select2/select2.css'|static}"/>
-{/block}
+
 {block name="breadcrumb" nocache}
 <li>{'Pages Editor'|ts}</li>
 {/block}
@@ -73,6 +71,5 @@
 {/block}
 
 {block name="admincp_foot_js_block"}
-<script type="text/javascript" src="{'bootstrap/select2/select2.min.js'|static}"></script>
 <script type="text/javascript" src="{'editor.js'|here}"></script>
 {/block}

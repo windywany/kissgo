@@ -7,14 +7,14 @@
 class PlUploader implements IUploader {
     private $last_error = '';
     /**
-	 * 默认文件上传器
-	 *
-	 * @param UploadTmpFile $title        	
-	 * @return boolean
-	 */
+     * 默认文件上传器
+     *
+     * @param UploadTmpFile $title        	
+     * @return boolean
+     */
     public function save($file) {
         $path = (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : 'uploads') . date ( '/Y/m/' );
-        $destdir = WEB_ROOT . $path;
+        $destdir = WEB_ROOT . WEBSITE_DIR . DS . $path;
         $tmp_file = $file->tmpname;
         $fileinfo = stat ( $tmp_file );
         $maxSize = $this->getMaxSize ();
@@ -62,9 +62,9 @@ class PlUploader implements IUploader {
         $imageUtil = new ImageUtil ( WEB_ROOT . $file );
         return $imageUtil->thumbnail ( $sizes );
     }
-    public function watermark($file, $watermark,$pos='br') {
-        $imageUtil = new ImageUtil ( WEB_ROOT . $file );        
-        return $imageUtil->watermark($watermark, $pos);
+    public function watermark($file, $watermark, $pos = 'br') {
+        $imageUtil = new ImageUtil ( WEB_ROOT . $file );
+        return $imageUtil->watermark ( $watermark, $pos );
     }
     public function delete($file) {
         $file = WEB_ROOT . $file;

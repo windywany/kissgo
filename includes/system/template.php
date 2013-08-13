@@ -255,6 +255,35 @@ function view($tpl, $data = array(), $headers = array('Content-Type'=>'text/html
     return new SmartyView ( $data, $tpl, $headers );
 }
 /**
+ * 
+ * add css js
+ * @param string $file
+ * @param string $loc
+ * @param string $type
+ */
+function add_css_js($file, $loc, $type = 'css') {
+    global $_ksg_csjs_files;
+    static $cse = false;
+    static $jse = false;
+    if (! empty ( $loc )) {
+        $file = $loc . '/' . $file;
+    }
+    if ($type == 'css') {
+        $path = pathinfo ( WEBSITE_DIR . '/' . $file, PATHINFO_DIRNAME );
+        $_ksg_csjs_files ['css'] ["{$path}"] [] = $file;
+        if ($cse == false) {
+            $cse = true;
+            return '<!--[css]-->';
+        }
+    } else {
+        $_ksg_csjs_files ['js'] [] = substr ( $file, 0, strlen ( $file ) - 3 );
+        if ($jse == false) {
+            $jse = true;
+            return '<!--[js]-->';
+        }
+    }
+}
+/**
  * 解析smarty参数.
  *
  * 将参数中 '" 去除比,如 '1' 转换为1.
@@ -396,7 +425,28 @@ function smarty_modifiercompiler_fire($hook, $compiler) {
     $args1 = isset ( $hook [2] ) ? $hook [2] : "''";
     return "apply_filter({$filter},'',{$args},{$args1})";
 }
-
+/**
+ * 
+ * add css 
+ * @param array $hook
+ * @param Smarty $compiler
+ */
+function smarty_modifiercompiler_css($hook, $compiler) {
+    $css_file = $hook [0];
+    $loc = isset ( $hook [1] ) ? $hook [1] : 'null';
+    return "add_css_js({$css_file},{$loc},'css')";
+}
+/**
+ * 
+ * add css 
+ * @param array $hook
+ * @param Smarty $compiler
+ */
+function smarty_modifiercompiler_js($hook, $compiler) {
+    $css_file = $hook [0];
+    $loc = isset ( $hook [1] ) ? $hook [1] : 'null';
+    return "add_css_js({$css_file},{$loc},'js')";
+}
 /**
  * Smarty checked modifier plugin
  *

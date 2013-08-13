@@ -1,8 +1,7 @@
 {extends file=$ksg_admincp_layout}
 
-{block name="title"}{'Attachments'|ts}{/block}
+{block name="title"}{'Medias'|ts}{/block}
 {block name="admincp_css_block"}
-<link href="{'jquery/ui/smoothness/jquery-ui.css'|static}" rel="stylesheet"/>
 <link href="{'jquery/plugins/plupload/css/jquery.plupload.queue.css'|static}" rel="stylesheet"/>
 <style type="text/css">
     #uploader {
@@ -58,7 +57,7 @@
 </style>
 {/block}
 {block name="breadcrumb"}
-	<li><a href="{$_CUR_URL}">{'Attachments'|ts}</a><span class="divider">/</span></li>
+	<li><a href="{$_CUR_URL}">{'Medias'|ts}</a><span class="divider">/</span></li>
 	<li>Upload</li>
 {/block}
 
@@ -77,7 +76,6 @@
 
 {/block}
 {block name="admincp_foot_js_block"}
-<script type="text/javascript" src="{'jquery/jquery-ui.js'|static}"></script>
 <script type="text/javascript" src="{'jquery/plugins/plupload/plupload.js'|static}"></script>
 <script type="text/javascript" src="{'jquery/plugins/plupload/jquery.plupload.queue.js'|static}"></script>
 <script type="text/javascript">

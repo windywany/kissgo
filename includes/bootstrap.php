@@ -8,6 +8,8 @@ defined ( 'WEB_ROOT' ) or exit ( 'No direct script access allowed' );
  *
  * $Id$
  */
+define ( 'KISSGO_VERSION', '1.0 BETA' );
+define ( '_KISSGO_R_VERSION', '20130813' );
 // -----------------------------------------------------------------------
 //////////////////////////////////////////////////////////////////////////
 // debug levels
@@ -365,7 +367,7 @@ $__kissgo_exports [] = INCLUDES . 'vendors' . DS . 'smarty';
 spl_autoload_register ( '_kissgo_class_loader' );
 ///////////////////////////////////////////////////////////////
 // load applications and plugins
-global $_ksg_installed_modules;
+global $_ksg_installed_modules, $_ksg_csjs_files;
 ExtensionManager::getInstance ()->loadInstalledExtensions ();
 $__rqst = Request::getInstance ();
 //////////////////////////////////////////////////////////////////

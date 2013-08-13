@@ -6,6 +6,6 @@
  */
 class KsgMenuForm extends DataForm {
     var $menu_id = array (FWT_VALIDATOR => array ('digits' => '导航菜单编号只能是数字.' ) );
-    var $menu_name = array (FWT_VALIDATOR => array ('callback(@check_menu_name)' => '菜单不能重名.' ) );
+    var $menu_name = array (FWT_VALIDATOR => array ('required'=>'The alias name of the menu can not be empty.','callback(@check_menu_name)' => '菜单不能重名.' ) );
     var $menu_title = array ();    
 }

@@ -3,7 +3,6 @@
 {block name="title"}{'Medias'|ts}{/block}
 
 {block name="admincp_css_block"}
-<link href="{'bootstrap/css/datepicker.css'|static}" rel="stylesheet"/>
 <link href="{'jquery/plugins/prettyPhoto/prettyPhoto.css'|static}" rel="stylesheet"/>
 {/block}
 
@@ -55,7 +54,7 @@
 				<tbody>
 					{foreach from=$items item=item}
 					<tr>
-						<td class="col_chk"><input type="checkbox" class="chkbx" aid="{$item.url}" value="{$item.media_id}"/></td>						
+						<td class="col_chk"><input type="checkbox" class="chkbx" aid="{$item.url}" value="{$item.attachment_id}"/></td>						
 						<td class="has-row-actions">
 							<div class="thumbnail pull-left mg-r5">								
 								<a href="{$item.url|uploaded}" title="{$item.name}" {if $item.type == 'image'}rel="prettyPhoto[pp_gal]"{/if}>								
@@ -108,8 +107,6 @@
 			    </div>
 		    </div>
 {/block}
-{block name="admincp_foot_js_block"}
-	<script type="text/javascript" src="{'bootstrap/bootstrap-datepicker.js'|static}"></script>
-	<script type="text/javascript" src="{'jquery/plugins/prettyPhoto/prettyPhoto.js'|static}"></script>
+{block name="admincp_foot_js_block"}	
 	<script type="text/javascript" src="{'list.js'|here}"></script>
 {/block}

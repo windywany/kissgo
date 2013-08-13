@@ -4,8 +4,6 @@
 	<li>{'Navigation Menus'|ts}</li>
 {/block}
 {block name="admincp_css_block"}
-<link href="{'jquery/ui/smoothness/jquery-ui.css'|static}" rel="stylesheet"/>
-<link rel="stylesheet" href="{'bootstrap/select2/select2.css'|static}"/>
 <link href="{'menu.css'|here}" rel="stylesheet"/>
 {/block} 
 {block name="admincp_body"}
@@ -194,8 +192,5 @@
 </div>
 {/block}
 {block name="admincp_foot_js_block"}
-<script type="text/javascript" src="{'jquery/jquery-ui.js'|static}"></script>
-<script type="text/javascript" src="{'jquery/nestedSortable.js'|static}"></script>
-<script type="text/javascript" src="{'bootstrap/select2/select2.min.js'|static}"></script>
 <script type="text/javascript" src="{'menus.js'|here}"></script>
 {/block}

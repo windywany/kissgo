@@ -59,6 +59,6 @@ class ThemeView extends View {
                 }
             }
         }
-        return $content;
+        return $this->processJSCSS($content);
     }
 }
