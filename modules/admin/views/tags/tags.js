@@ -1,5 +1,5 @@
 $(function() {
-	var murl = $('#tag-form').attr('action');
+	var murl = Kissgo.ROUTER;
 	var type = $('#tag-type').val();
 	var tag_select = $('#tag-select-box').val();
 	$('#btn-selectall').click(function() {

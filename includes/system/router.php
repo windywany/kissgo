@@ -44,7 +44,7 @@ class Router {
      */
     public function getAction($request) {
         global $_ksg_router_url;
-        self::$url = $url = $request ['_url'];
+        self::$url = $url = trim($request ['_url'],'/');
         self::$cacheKey = md5 ( $_SERVER ['REQUEST_METHOD'] . ' ' . $url );
         $actionInfo = InnerCacher::get ( self::$cacheKey );
         // if we have a cache for this request.
@@ -83,7 +83,7 @@ class Router {
             Response::getInstance ()->close ();
         }
         list ( $action, $controller, $module ) = $this->parseURL ( $url );
-        return $this->load_application ( $action, $controller, $module, $url );
+        return $this->load_application ( $action, $controller, $module, $url);
     }
     /**
      * Enter description here ...
@@ -92,10 +92,10 @@ class Router {
     private function parseURL($url) {
         $action = 'index';
         $controller = '';
-        if ($url == '/') {
+        if ($url == '/' || empty($url)) {
             $module = '';
         } else {
-            $chunks = explode ( '/', trim ( $url, '/' ) );
+            $chunks = explode ( '/', $url);
             $cnt = count ( $chunks );
             if ($cnt == 1) {
                 $module = $chunks [0];

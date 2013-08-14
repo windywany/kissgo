@@ -39,6 +39,7 @@
 <div id="tabs">
     <div class="tab-pane active row-fluid" id="tab-tag">
         <div>
+        	<input type="hidden" id="tag-type" value="{$type}"/>
             <form class="form-inline" id="tag-form" method="get" action="{$_CUR_URL}/{$type}">         
                 
 				<input type="text" class="span2"
@@ -55,7 +56,7 @@
                 <button class="btn" id="btn-selectall"><i class="icon-check"></i>全选/反选</button>
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                 <ul class="dropdown-menu">			            
-                   <li><a href="#" id="btn-delete"><i class="icon-delete"></i> 删除</a></li>
+                   <li><a href="#" id="btn-delete"><i class="icon-trash"></i> 删除</a></li>
                 </ul>
             </div>
             <div class="controls pull-left">

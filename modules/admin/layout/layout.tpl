@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
     {block name="admincp_css_block"}{/block} 
     <script type="text/javascript">
-       window.Kissgo = { 'BASE': "{$_ksg_base_url}" , 'AJAX':'{$_ksg_base_url}ajax.php' };
+       window.Kissgo = { 'BASE': "{$_ksg_base_url}" , 'AJAX':'{$_ksg_base_url}ajax.php','ROUTER':'{$ROUTER_URL}' };
        window.UEDITOR_HOME_URL = "{'ueditor/'|static}";
     </script>
     {'jquery.js,jquery-ui.js,validate.js,validate_addons.js,ztree.js,prettyPhoto.js,nestedSortable.js'|js:'misc/jquery'}
