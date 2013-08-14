@@ -6,8 +6,8 @@ assert_login ();
  * @param Response $res
  * @return SmartyView
  */
-function do_admin_node_type_get($req, $res) {
-    $data ['_CUR_URL'] = murl ( 'admin', 'node/type' );
+function do_admin_pages_type_get($req, $res) {
+    $data ['_CUR_URL'] = murl ( 'admin', 'pages/type' );
     $data ['limit'] = 20;
     $typeM = new KsgNodeTypeTable ();
     $where = where ( array ('type' => array ('like' => 'type' ), 'name' => array ('like' => 'name' ) ), $data );
@@ -30,7 +30,7 @@ function do_admin_node_type_get($req, $res) {
  * @param Request $req
  * @param Response $res
  */
-function do_admin_node_type_post($req, $res) {
+function do_admin_pages_type_post($req, $res) {
     $data ['success'] = false;
     $form = new ModifyNodeTypeForm ();
     if ($form->validate ()) {

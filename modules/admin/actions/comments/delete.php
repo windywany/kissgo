@@ -3,7 +3,7 @@
  * 彻底删除评论
  */
 assert_login ();
-function do_admin_pages_comments_delete_get($req, $res) {
+function do_admin_comments_delete_get($req, $res) {
     $ids = rqst ( 'cid' );
     $ids = safe_ids ( $ids, ",", true );
     

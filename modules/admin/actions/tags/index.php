@@ -1,10 +1,10 @@
 <?php
 assert_login ();
-function do_admin_tags_get($req, $res) {
+function do_admin_tags_get($req, $res, $type = 'tag') {
     $types = array ('tag' => 'Tags', 'flag' => 'Flags', 'keyword' => 'Keywords', 'author' => 'Authors', 'source' => 'Sources' );
     $types = apply_filter ( 'get_enum_type', $types );
     $data = array ('limit' => 50, '_CUR_URL' => murl ( 'admin', 'tags' ) );
-    $type = isset ( $req ['type'] ) ? $req ['type'] : 'tag';
+    
     if (! isset ( $types [$type] )) {
         $type = 'keyword';
     }

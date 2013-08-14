@@ -265,22 +265,28 @@ function add_css_js($file, $loc, $type = 'css') {
     global $_ksg_csjs_files;
     static $cse = false;
     static $jse = false;
-    if (! empty ( $loc )) {
-        $file = $loc . '/' . $file;
+    $files = explode ( ',', $file );
+    foreach ( $files as $file ) {
+        $file = trim ( $file );
+        if (! empty ( $loc )) {
+            $file = $loc . '/' . $file;
+        }
+        $info = pathinfo ( $file );
+        $path = $info ['dirname'];
+        $name = $info ['filename'];
+        if ($type == 'css') {
+            $path = WEBSITE_DIR . '/' . $path;
+            $_ksg_csjs_files ['css'] ["{$path}"] [] = $name;
+        } else {
+            $_ksg_csjs_files ['js'] ["{$path}"] [] = $name;
+        }
     }
-    if ($type == 'css') {
-        $path = pathinfo ( WEBSITE_DIR . '/' . $file, PATHINFO_DIRNAME );
-        $_ksg_csjs_files ['css'] ["{$path}"] [] = $file;
-        if ($cse == false) {
-            $cse = true;
-            return '<!--[css]-->';
-        }
-    } else {
-        $_ksg_csjs_files ['js'] [] = substr ( $file, 0, strlen ( $file ) - 3 );
-        if ($jse == false) {
-            $jse = true;
-            return '<!--[js]-->';
-        }
+    if ($type == 'css' && $cse == false) {
+        $cse = true;
+        return '<!--[css]-->';
+    } else if ($type == 'js' && $jse == false) {
+        $jse = true;
+        return '<!--[js]-->';
     }
 }
 /**

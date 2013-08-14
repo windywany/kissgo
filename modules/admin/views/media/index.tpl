@@ -2,10 +2,6 @@
 
 {block name="title"}{'Medias'|ts}{/block}
 
-{block name="admincp_css_block"}
-<link href="{'jquery/plugins/prettyPhoto/prettyPhoto.css'|static}" rel="stylesheet"/>
-{/block}
-
 {block name="toolbar"}
     <a class="btn btn-mini btn-success" href="{$_CUR_URL}/upload"><i class="icon-upload"></i> {'Upload'|ts}</a>
 {/block}

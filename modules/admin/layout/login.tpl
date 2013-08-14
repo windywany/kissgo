@@ -2,10 +2,8 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>{'Login'|ts}[Powered by KissGo! {$ksg_version}]</title>		
-		{'bootstrap/css/bootstrap.css'|css:misc}		
-		{'bootstrap/css/bootstrap-responsive.css'|css:misc}
-		{'bootstrap/css/common.css'|css:misc}		
+		<title>{'Login'|ts}[Powered by KissGo! {$_ksg_version}]</title>
+		{'bootstrap.css,bootstrap-responsive.css,common.css'|css:'misc/css'}
 		<link href="{'css/login.css'|here}" rel="stylesheet"/>
 	</head>
 	<body>
@@ -46,10 +44,9 @@
 		          	</div>
 				</form>
 			</div>
-			<div class="info">本系统基于<a href="http://www.kissgo.org/">KissGo! {$ksg_version}</a>构建,由<a href="http://www.kissgo.org/">KissGo!</a>提供动力。</div>
+			<div class="info">本系统基于<a href="http://www.kissgo.org/">KissGo! {$_ksg_version}</a>构建,由<a href="http://www.kissgo.org/">KissGo!</a>提供动力。</div>
 		</div>		
-		{'jquery/jquery.js'|js:misc}
-		{'bootstrap/bootstrap.js'|js:misc}
+		{'jquery/jquery.js,bootstrap/bootstrap.js'|js:misc}		
 		<script type="text/javascript">
 			$(function(){
 				var imgSrc = $('#captcha-img').attr('src');

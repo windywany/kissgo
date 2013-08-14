@@ -1,7 +1,7 @@
 <?php
 assert_login ();
-function do_admin_node_theme_get($req, $res) {
-    $data ['_CUR_URL'] = murl ( 'admin', 'node/theme' );
+function do_admin_theme_get($req, $res) {
+    $data ['_CUR_URL'] = murl ( 'admin', 'theme' );
     $data ['current_theme'] = get_theme ();
     $theme_dir = THEME_PATH . THEME_DIR;
     $hd = opendir ( $theme_dir );
@@ -22,7 +22,7 @@ function do_admin_node_theme_get($req, $res) {
     $data ['theme_count'] = count ( $themes );
     return view ( 'admin/views/node/theme.tpl', $data );
 }
-function do_admin_node_theme_post($req, $res) {
+function do_admin_theme_post($req, $res) {
     $data ['success'] = true;
     $op = $req ['op'];
     

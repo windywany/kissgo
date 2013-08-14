@@ -874,7 +874,18 @@ function murl($module, $action = '', $args = null) {
     $_urls [$md5] = $url;
     return $url;
 }
-
+/**
+ * 
+ * return the clean url
+ * @param string $url
+ * @return string
+ */
+function clean_url($url){
+    if (! defined ( 'CLEAN_URL' ) || CLEAN_URL == false) {
+        $url = 'index.php/' . $url;
+    }
+    return BASE_URL . $url;
+}
 /**
  * 表格排序
  *

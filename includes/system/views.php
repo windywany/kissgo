@@ -94,9 +94,10 @@ abstract class View implements ArrayAccess {
             $css_chunks = array ();
             foreach ( $_ksg_csjs_files ['css'] as $path => $csses ) {
                 if (count ( $csses ) == 1) {
-                    $css_chunks [] = '<link href="' . BASE_URL .WEBSITE_DIR.'/'. $csses[0] . '" rel="stylesheet"/>';
+                    $css_chunks [] = '<link href="' . BASE_URL . WEBSITE_DIR . '/' . $csses [0] . '" rel="stylesheet"/>';
                 } else {
-                    $css_chunks [] = '<link href="' . BASE_URL . $path . '/style.css" rel="stylesheet"/>';
+                    $cssfs = implode ( ',', $csses );
+                    $css_chunks [] = '<link href="' . BASE_URL . $path . '/!style.css?f=' . $cssfs . '" rel="stylesheet"/>';
                 }
             }
             if (! empty ( $css_chunks )) {
@@ -105,8 +106,12 @@ abstract class View implements ArrayAccess {
             }
         }
         if (isset ( $_ksg_csjs_files ['js'] ) && ! empty ( $_ksg_csjs_files ['js'] )) {
-            $jss = implode ( ',', $_ksg_csjs_files ['js'] );
-            $jss = '<script type="text/javascript" src="' . BASE_URL . WEBSITE_DIR . '/script.js?jss=' . $jss . '"></script>';
+            $jssfs = array ();
+            foreach ( $_ksg_csjs_files ['js'] as $path => $jss ) {
+                $jssfs [] = $path . '{' . implode ( ',', $jss ) . '}';
+            }
+            $jss = implode ( ';', $jssfs );
+            $jss = '<script type="text/javascript" src="' . BASE_URL . WEBSITE_DIR . '/!script.js?f=' . $jss . '"></script>';
             $content = str_replace ( '<!--[js]-->', $jss, $content );
         }
         return $content;

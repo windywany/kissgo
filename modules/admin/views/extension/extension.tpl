@@ -11,7 +11,7 @@
             <a class="tgre" href="{$_page_url}"><i class="icon-check"></i>已安装({$installedTotal})</a>
         </li>						
         <li class="{if 'uninstall' == $group}active{/if}">
-            <a href="{$_page_url}?group=uninstall"><i class="icon-inbox"></i>未安装({$uninstalledTotal})</a>
+            <a href="{$_page_url}/uninstall"><i class="icon-inbox"></i>未安装({$uninstalledTotal})</a>
         </li>					
     </ul>
     <div class="tab-content">	                	

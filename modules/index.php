@@ -64,7 +64,11 @@ function canpreview() {
     return $I->isLogin () && isset ( $_GET ['preview'] );
 }
 function merge_css($path) {
-    $etag = md5 ( $path );
+    $f = rqst ( 'f' );
+    if (! $f) {
+        return '';
+    }
+    $etag = md5 ( $path . $f );
     $etag_m = $etag . '_m';
     if (isset ( $_SERVER ['HTTP_IF_NONE_MATCH'] ) && $_SERVER ['HTTP_IF_NONE_MATCH'] == $etag) {
         $lastModified = strtotime ( $_SERVER ['HTTP_IF_MODIFIED_SINCE'] );
@@ -81,14 +85,12 @@ function merge_css($path) {
     
     $styles = InnerCacher::get ( $etag );
     if (! $styles) {
-        $path = WEB_ROOT . pathinfo ( $path, PATHINFO_DIRNAME );
+        $path = WEB_ROOT . ltrim ( pathinfo ( $path, PATHINFO_DIRNAME ), '/' ) . '/';
         $styles = '';
-        if (is_dir ( $path )) {
-            $fs = find_files ( $path, '#.+\.css$#i', array (), false );
-            if ($fs) {
-                foreach ( $fs as $f ) {
-                    $styles .= file_get_contents ( $f );
-                }
+        $fs = explode ( ',', $f );
+        if ($fs) {
+            foreach ( $fs as $f ) {
+                $styles .= file_get_contents ( $path . $f . '.css' );
             }
         }
         InnerCacher::add ( $etag, $styles );
@@ -97,7 +99,7 @@ function merge_css($path) {
     return new CssView ( $styles, $etag );
 }
 function merge_js() {
-    $jss = rqst ( 'jss', '' );
+    $jss = rqst ( 'f', '' );
     if ($jss) {
         $etag = md5 ( $jss );
         $etag_m = $etag . '_m';
@@ -115,18 +117,24 @@ function merge_js() {
         }
         $jsses = InnerCacher::get ( $etag );
         if (! $jsses) {
-            $fs = explode ( ',', $jss );
-            if ($fs) {
-                $jsses = '';
-                $js = '';
-                foreach ( $fs as $f ) {
-                    $js = WEB_ROOT . WEBSITE_DIR . DS . $f . '.js';
-                    if (is_file ( $js )) {
-                        $jsses .= file_get_contents ( $js );
+            $jsses = '';
+            $js = '';
+            $prefix = WEB_ROOT . WEBSITE_DIR . DS;
+            $fss = explode ( ';', $jss );
+            foreach ( $fss as $_fs ) {
+                if (preg_match ( '#(.*?)\{(.+)\}#', $_fs, $m )) {
+                    $fs = explode ( ',', $m [2] );
+                    if ($fs) {
+                        foreach ( $fs as $f ) {
+                            $js = $prefix . $m [1] . DS . $f . '.js';
+                            if (is_file ( $js )) {
+                                $jsses .= file_get_contents ( $js ).";\n";
+                            }
+                        }
+                        InnerCacher::add ( $etag, $jsses );
+                        InnerCacher::add ( $etag_m, time () );
                     }
                 }
-                InnerCacher::add ( $etag, $jsses );
-                InnerCacher::add ( $etag_m, time () );
             }
         }
         return new JsView ( $jsses, $etag );

@@ -9,12 +9,15 @@ imports ( 'admin/validator_callbacks.php' );
  * @param Smarty $smarty        	
  */
 function set_site_global_vars($smarty) {
+    global $_ksg_router_url;
     $settings = KissGoSetting::getSetting ();
-    $smarty->assign ( 'ksg_site_url', BASE_URL );
-    $smarty->assign ( 'ksg_passport', Passport::getPassport () );
-    $smarty->assign ( 'ksg_version', KISSGO_VERSION );    
-    $smarty->assign ( 'ksg_uri', Request::getUri () );
-    $smarty->assign ( 'ksg_url', Request::getVirtualPageUrl () );
+    $smarty->assign ( '_ksg_base_url', BASE_URL );
+    $smarty->assign ( '_ksg_passport', Passport::getPassport () );
+    $smarty->assign ( '_ksg_version', KISSGO_VERSION );
+    $smarty->assign ( '_KISSGO_R_VERSION', KISSGO_R_VERSION );
+    $smarty->assign ( '_ksg_page_uri', Request::getUri () );
+    $smarty->assign ( '_ksg_page_url', Request::getVirtualPageUrl () );
+    $smarty->assign ( 'ROUTER_URL', $_ksg_router_url );
     $smarty->assign ( '_ksg_page_tip_info', sess_del ( '_ksg_page_tip_info', false ) );
     $smarty->assign ( '_ksg_page_tip_info_cls', sess_del ( '_ksg_page_tip_info_cls', '' ) );
     return $smarty;
@@ -53,12 +56,27 @@ function _hook_for_admincp_menu($mm) {
     $mm->addMenu2 ( 'menu-website', __ ( 'Site' ), 'icon-globe' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-pages', __ ( 'Web Pages' ), murl ( 'admin', 'pages' ), 'icon-file' );
     
-    $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'pages/comments' ), 'icon-comment' );
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list', __ ( 'Draft' ), murl ( 'admin', 'pages' ), 'icon-file' );
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list1', __ ( 'Approving' ), murl ( 'admin', 'pages/approving' ), 'icon-star-empty' );
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list2', __ ( 'Approved' ), murl ( 'admin', 'pages/approved' ), 'icon-thumbs-up' );
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list3', __ ( 'Published' ), murl ( 'admin', 'pages/published' ), 'icon-check' );
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list4', __ ( 'Unapproved' ), murl ( 'admin', 'pages/unapproved' ), 'icon-thumbs-down' );
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list5', __ ( 'Recycle Bin' ), murl ( 'admin', 'pages/trash' ), 'icon-trash' );    
+    $mm->addMenuItemDivider('menu-website/menuitem-pages');
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'pages/type' ), 'icon-list' );
+    
+    
+    $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'comments' ), 'icon-comment' );
+    $mm->addSubItem ( 'menu-website/menuitem-comments', 'menuitem-cmt-list', __ ( 'New Comments' ), murl ( 'admin', 'comments' ), 'icon-comment' );
+    $mm->addSubItem ( 'menu-website/menuitem-comments', 'menuitem-cmt-list1', __ ( 'Approved' ), murl ( 'admin', 'comments/pass' ), 'icon-thumbs-up' );
+    $mm->addSubItem ( 'menu-website/menuitem-comments', 'menuitem-cmt-list2', __ ( 'Unapproved' ), murl ( 'admin', 'comments/unpass' ), 'icon-thumbs-down' );
+    $mm->addSubItem ( 'menu-website/menuitem-comments', 'menuitem-cmt-list3', __ ( 'Spam Comments' ), murl ( 'admin', 'comments/spam' ), 'icon-fire' );
+    $mm->addSubItem ( 'menu-website/menuitem-comments', 'menuitem-cmt-list4', __ ( 'Recycle Bin' ), murl ( 'admin', 'comments/trash' ), 'icon-trash' );
     
     $mm->addMenuItem ( 'menu-website', 'menuitem-tags', __ ( 'Tags&Flags' ), murl ( 'admin', 'tags' ), 'icon-tags' );
     $mm->addMenuItemDivider ( 'menu-website' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'node/theme' ), 'icon-picture' );
-    $mm->addMenuItem ( 'menu-website', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'node/type' ), 'icon-list' );
+    $mm->addMenuItem ( 'menu-website', 'menuitem-theme', __ ( 'Theme' ), murl ( 'admin', 'theme' ), 'icon-picture' );
+    
     $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-medias', __ ( 'Medias' ), murl ( 'admin', 'media' ), 'icon-picture' );

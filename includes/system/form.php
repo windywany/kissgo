@@ -681,10 +681,7 @@ class FileWidget extends TextWidget {
     const PCLS = 'pcls';
     const ECLS = 'ecls';
     public function __construct($option, $value, $form) {
-        parent::__construct ( $option, $value, $form );
-        if (! has_hook ( 'admincp_header', array ($this, 'addFileuploadSupport' ) )) {
-            bind ( 'admincp_header', array ($this, 'addFileuploadSupport' ) );
-        }
+        parent::__construct ( $option, $value, $form );        
     }
     public function getWidgetComponent() {
         $properties = $this->getProperties ();
@@ -706,13 +703,7 @@ class FileWidget extends TextWidget {
                 	</div>
                  </div>';
         return $html;
-    }
-    public function addFileuploadSupport() {
-        $css = the_static_resource_uri ( 'bootstrap/css/bootstrap-fileupload.css' );
-        echo '<link rel="stylesheet" href="', $css, '"/>', "\n";
-        $js = the_static_resource_uri ( 'bootstrap/bootstrap-fileupload.js' );
-        echo '<script type="text/javascript" src="', $js, '"></script>', "\n";
-    }
+    }    
     public function getValue($request=null) {
         if (isset ( $_FILES [$this->name] ) && $_FILES [$this->name] ['error'] == 0) {
             $file = $_FILES [$this->name];

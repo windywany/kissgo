@@ -43,6 +43,7 @@ class Router {
      * @return string
      */
     public function getAction($request) {
+        global $_ksg_router_url;
         self::$url = $url = $request ['_url'];
         self::$cacheKey = md5 ( $_SERVER ['REQUEST_METHOD'] . ' ' . $url );
         $actionInfo = InnerCacher::get ( self::$cacheKey );
@@ -56,21 +57,33 @@ class Router {
                 }
             }
             include_once $actionInfo ['file'];
-            return $actionInfo ['func'];
+            
+            if ($actionInfo ['c']) {
+                $_ksg_router_url = $actionInfo ['c'];
+                $e = '#^' . $_ksg_router_url . '/?#i';
+                $args = preg_replace ( $e, '', $url );
+                $args = strlen ( $args ) > 0 ? explode ( '/', $args ) : array ();
+                $_ksg_router_url = clean_url ( $_ksg_router_url );
+                return array ($actionInfo ['func'], $args );
+            } else {
+                $_ksg_router_url = Request::getVirtualPageUrl ();
+                return array ($actionInfo ['func'], array () );
+            }
         }
         //all url with suffix '.html or htm', we think it is a static page
         if (preg_match ( '#\.(htm[l]?|css|js)$#i', $url )) {
             $app_action_file = MODULES_PATH . 'index.php';
             $cb_func = 'do_show_custom_page';
             include_once $app_action_file;
-            InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func, 'ac' => false ) );
-            return $cb_func;
+            InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func, 'ac' => false, 'c' => '' ) );
+            $_ksg_router_url = Request::getVirtualPageUrl ();
+            return array ($cb_func, array () );
         } else if ($url == 'install.test.clean.url') {
             status_header ( 200 );
             Response::getInstance ()->close ();
         }
         list ( $action, $controller, $module ) = $this->parseURL ( $url );
-        return $this->load_application ( $action, $controller, $module );
+        return $this->load_application ( $action, $controller, $module, $url );
     }
     /**
      * Enter description here ...
@@ -103,11 +116,14 @@ class Router {
      * @param string $alias
      * @return string a callable function name
      */
-    public function load_application($action, $controller = '', $alias = '') {
-        $actions [3] = array ('index.php', 'do_show_custom_page', false );
+    public function load_application($action, $controller = '', $alias = '', $url = '') {
+        global $_ksg_router_url;
         $alias = strtolower ( $alias );
         $controller = strtolower ( $controller );
         $action = strtolower ( $action );
+        $suffix = Request::isPost () ? '_post' : '_get';
+        $actions [9999] = array ('index.php', 'do_show_custom_page', false, '', array ('_index' . $suffix, '_index', $suffix, '' ) );
+        
         $module = $alias;
         if ($alias) {
             $module = self::$extensionManager->getModuleByAlias ( $alias );
@@ -115,28 +131,35 @@ class Router {
                 log_warn ( 'module: ' . $alias . ' dose not exist!' );
                 Response::respond ( 404 );
             }
+            if ($action == 'index') {
+                $cbks = array ('_index' . $suffix, '_index', $suffix, '' );
+            } else {
+                $cbks = array ('_' . $action . $suffix, '_' . $action );
+            }
             if (! empty ( $controller )) {
                 $ctrl_func = str_replace ( '/', '_', $controller );
-                $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true );
-                $actions [2] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true );
+                $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true, $controller . '/' . $action, $cbks );
+                $actions [2] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                $actions [3] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                $slices = explode ( '_', $ctrl_func );
+                if (count ( $slices ) > 1) {
+                    $controller = array_shift ( $slices );
+                    $actions [4] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$controller}", true, $controller, array ($suffix, '' ) );
+                    $actions [5] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$controller}", true, $controller, array ($suffix, '' ) );
+                }
             } else {
-                $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}", true );
-                $actions [2] = array ("{$module}/actions/{$action}/index.php", "do_{$module}", true );
+                $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}", true, $action, $cbks );
+                $actions [2] = array ("{$module}/actions/{$action}/index.php", "do_{$module}", true, $action, $cbks );
             }
             if (! is_module_file ( $module )) {
                 unset ( $actions );
-                $actions [] = array ('index.php', 'do_show_custom_page', false );
+                $actions [] = array ('index.php', 'do_show_custom_page', false, '', array ('_index' . $suffix, '_index', $suffix, '' ) );
             }
         }
         ksort ( $actions );
-        $suffix = Request::isPost () ? '_post' : '_get';
-        if ($action == 'index') {
-            $cb_suffixes = array ('_index' . $suffix, '_index', $suffix, '' );
-        } else {
-            $cb_suffixes = array ('_' . $action . $suffix, '_' . $action );
-        }
+        
         foreach ( $actions as $act ) {
-            list ( $af, $func_name, $ismoule ) = $act;
+            list ( $af, $func_name, $ismoule, $cc, $cb_suffixes ) = $act;
             $app_action_file = MODULES_PATH . $af;
             if (is_file ( $app_action_file )) {
                 //如果模块有别名，则模块只能通过别名访问
@@ -147,8 +170,13 @@ class Router {
                 foreach ( $cb_suffixes as $suffix ) {
                     $cb_func = $func_name . $suffix;
                     if (function_exists ( $cb_func )) {
-                        InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func, 'ac' => $ismoule ? $module : false ) );
-                        return $cb_func;
+                        $_ksg_router_url = $alias . (empty ( $cc ) ? '' : '/' . $cc);
+                        $e = '#^' . $_ksg_router_url . '/?#i';
+                        InnerCacher::add ( self::$cacheKey, array ('file' => $app_action_file, 'func' => $cb_func, 'ac' => $ismoule ? $module : false, 'c' => $_ksg_router_url ) );
+                        $args = preg_replace ( $e, '', $url );
+                        $args = strlen ( $args ) > 0 ? explode ( '/', $args ) : array ();
+                        $_ksg_router_url = clean_url ( $_ksg_router_url );
+                        return array ($cb_func, $args );
                     }
                 }
             }

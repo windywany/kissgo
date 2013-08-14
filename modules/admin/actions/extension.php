@@ -3,7 +3,7 @@
  * 模块管理
  */
 assert_login ();
-function do_admin_extension($req, $res) {
+function do_admin_extension($req, $res, $group = 'installed') {
     if (isset ( $req ['setup'] )) {
         $view = setup_extension ( $req ['setup'], $req );
     } else if (isset ( $req ['enable'] )) {
@@ -15,7 +15,7 @@ function do_admin_extension($req, $res) {
             show_error_message ( $req ['enabled'] ? '启用扩展失败.' : '停用扩展失败.' );
         }
     } else {
-        $view = list_extension ( $req );
+        $view = list_extension ( $req, $group );
     }
     return $view;
 }
@@ -96,10 +96,10 @@ function setup_extension($pid, $req) {
  * 列出扩展：(已安装，未安装) * (已启用,可升级,未启用)
  * @return SmartyView
  */
-function list_extension($req) {
+function list_extension($req, $group) {
     $plgmgr = ExtensionManager::getInstance ();
     $plgmgr->enableUpgradeInfo ();
-    $data ['group'] = $req->get ( 'group', 'installed' );
+    $data ['group'] = $group;
     $plugins = $plgmgr->getExtensions ( true );
     $plugins = $plugins + $plgmgr->getExtensions ();
     $installedTotal = count ( $plugins );

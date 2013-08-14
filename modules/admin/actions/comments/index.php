@@ -1,8 +1,8 @@
 <?php
 assert_login ();
 //评论列表页
-function do_admin_pages_comments_get($req, $res) {
-    $data ['_CUR_URL'] = murl ( 'admin', 'pages/comments' );
+function do_admin_comments_get($req, $res, $status = 'new') {
+    $data ['_CUR_URL'] = murl ( 'admin', 'comments' );
     $data ['limit'] = 15;
     $nodeCommentTable = new KsgCommentTable ();
     $data ['newTotal'] = $nodeCommentTable->count ( array ('deleted' => 0, 'status' => 'new' ), 'id' );
@@ -18,27 +18,16 @@ function do_admin_pages_comments_get($req, $res) {
         $key = "%{$key}%";
         $where ['&&'] = array ('subject LIKE' => $key, '|comment LIKE' => $key, '|CMT.author LIKE' => $key );
     }
-    if (isset ( $req ['pass'] )) {
-        $status = 'pass';
-        $where ['CMT.status'] = $status;
-    } else if (isset ( $req ['unpass'] )) {
-        $status = 'unpass';
-        $where ['CMT.status'] = $status;
-    } else if (isset ( $req ['trash'] )) {
-        $status = 'trash';
+    if ($status == 'trash') {
         $where ['CMT.deleted'] = 1;
-    } else if (isset ( $req ['spam'] )) {
-        $status = 'spam';
-        $where ['CMT.status'] = $status;
     } else {
-        $status = 'new';
         $where ['CMT.status'] = $status;
     }
     
     $start = irqst ( 'start', 1 );
     
     $comments = $nodeCommentTable->query ( 'CMT.*,NT.url AS page_url,NT.title AS page_title', 'CMT' )->where ( $where )->limit ( $start, $data ['limit'] );
-    $comments->ljoin ( new KsgNodeTable(), 'CMT.node_id = NT.nid','NT' )->sort('id','d');
+    $comments->ljoin ( new KsgNodeTable (), 'CMT.node_id = NT.nid', 'NT' )->sort ( 'id', 'd' );
     
     $data ['totalCount'] = count ( $comments );
     $data ['items'] = $comments;
@@ -46,10 +35,10 @@ function do_admin_pages_comments_get($req, $res) {
     
     bind ( 'get_comment_operations', 'hook_for_get_comment_operations', 1, 2 );
     bind ( 'get_comment_bench_options', 'hook_for_get_comment_bench_options', 1, 2 );
-    return view ( 'admin/views/node/comments/list.tpl', $data );
+    return view ( 'admin/views/comments/list.tpl', $data );
 }
 //保存或回复评论
-function do_admin_pages_comments_post($req, $res) {
+function do_admin_comments_post($req, $res) {
     $data ['success'] = false;
     $op = rqst ( 'op', 'reply' );
     $id = irqst ( 'id' );
@@ -109,7 +98,7 @@ function do_admin_pages_comments_post($req, $res) {
 function hook_for_get_comment_operations($opts, $item) {
     static $url = false;
     if (! $url) {
-        $url = murl ( 'admin', 'pages/comments' );
+        $url = murl ( 'admin', 'comments' );
     }
     if ($item ['deleted']) {
         $opts .= '<a href="' . $url . '/status?del=0&cid=' . $item ['id'] . '" class="reset-cmt tgre"><i class="icon-share-alt"></i>还原</a>';
@@ -139,7 +128,7 @@ function hook_for_get_comment_operations($opts, $item) {
 function hook_for_get_comment_bench_options($opts, $status) {
     static $url = false;
     if (! $url) {
-        $url = murl ( 'admin', 'pages/comments' );
+        $url = murl ( 'admin', 'comments' );
     }
     if ($status == 'trash') {
         $opts .= '<li><a href="' . $url . '/status?del=0" class="menu-reset-cmt tgre"><i class="icon-share-alt"></i>还原</a></li>';

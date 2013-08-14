@@ -4,7 +4,7 @@
 	<li>{'Model Builder'|ts}</li>	
 {/block}
 {block name="admincp_css_block"}
-<link rel="stylesheet" href="{'bootstrap/css/prettify.css'|static}"/>
+<link rel="stylesheet" href="{'css/prettify.css'|static}"/>
 {/block}
 {block name="admincp_head_js_block"}
 <script type="text/javascript" src="{'bootstrap/prettify.js'|static}"></script>	

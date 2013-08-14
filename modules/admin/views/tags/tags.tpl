@@ -32,15 +32,15 @@
     <li>&nbsp;&nbsp;</li>
     {foreach $tags_types as $item}
     <li class="{if $item@key == $type}active{/if}">
-        <a href="{$_CUR_URL}?type={$item@key}"><i class="icon-tags"></i> {$item}</a>
+        <a href="{$_CUR_URL}/{$item@key}"><i class="icon-tags"></i> {$item}</a>
     </li>
     {/foreach}
 </ul>
 <div id="tabs">
     <div class="tab-pane active row-fluid" id="tab-tag">
         <div>
-            <form class="form-inline" id="tag-form" method="get" action="{$_CUR_URL}">                
-                <input type="hidden" name="type" id="tag-type" value="{$type}"/>
+            <form class="form-inline" id="tag-form" method="get" action="{$_CUR_URL}/{$type}">         
+                
 				<input type="text" class="span2"
 					name="key" value="{$key}" placeholder="关键字" />
 				<button type="submit" class="btn">搜索</button>

@@ -3,10 +3,8 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title>{'site_name'|cfg} -- {$title}</title>
-		<link href="{'bootstrap/css/bootstrap.css'|static}" rel="stylesheet"/>
-		<link href="{'bootstrap/css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
-		<script src="{'jquery/jquery.js'|static}"></script>	
-		<script src="{'bootstrap/bootstrap.js'|static}"></script>		
+		{'bootstrap.css,bootstrap-responsive.css,common.css'|css:'misc/css'}
+        {'jquery/jquery.js,bootstrap/bootstrap.js'|js:misc}		
 	</head>
 	<body>	
     <div id="wrap">      

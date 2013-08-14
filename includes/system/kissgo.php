@@ -28,9 +28,10 @@ class KissGo {
         $view = apply_filter ( 'before_route', false );
         if ($view === false) {
             $router = Router::getInstance ();
-            $action_func = $router->getAction ( $request );
+            list ( $action_func, $args ) = $router->getAction ( $request );
             if (is_callable ( $action_func )) {
-                $view = call_user_func_array ( $action_func, array ($request, $response ) );
+                array_unshift ( $args, $request, $response );
+                $view = call_user_func_array ( $action_func, $args );
             } else {
                 Response::respond ( 404 );
             }

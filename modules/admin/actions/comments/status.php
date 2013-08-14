@@ -3,7 +3,7 @@
  * 设置评论的状态
  */
 assert_login ();
-function do_admin_pages_comments_status_get($req, $res) {
+function do_admin_comments_status_get($req, $res) {
     $status = array ('new', 'pass', 'unpass', 'spam' );
     $ids = rqst ( 'cid' );
     $ids = safe_ids ( $ids, ",", true );

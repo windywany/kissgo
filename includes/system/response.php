@@ -13,17 +13,17 @@ class Response {
     private static $INSTANCE = null;
     
     /**
-	 * 初始化
-	 */
+     * 初始化
+     */
     private function __construct() {
         // nothing to do
     }
     
     /**
-	 * 得到全局唯一Response实例
-	 *
-	 * @return Response
-	 */
+     * 得到全局唯一Response实例
+     *
+     * @return Response
+     */
     public static function getInstance() {
         if (self::$INSTANCE == null) {
             self::$INSTANCE = new Response ();
@@ -32,10 +32,10 @@ class Response {
     }
     
     /**
-	 * set response view instance
-	 *
-	 * @param View $view
-	 */
+     * set response view instance
+     *
+     * @param View $view
+     */
     public function setView($view) {
         if ($view instanceof View) {
             $this->view = $view;
@@ -43,8 +43,8 @@ class Response {
     }
     
     /**
-	 * 禁用浏览器缓存
-	 */
+     * 禁用浏览器缓存
+     */
     public static function nocache() {
         $headers = array ('Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 'Last-Modified' => gmdate ( 'D, d M Y H:i:s' ) . ' GMT', 'Cache-Control' => 'no-cache, must-revalidate, max-age=0', 'Pragma' => 'no-cache' );
         foreach ( $headers as $header => $val ) {
@@ -53,7 +53,7 @@ class Response {
     }
     public static function back($args = null) {
         $_SESSION ['__IS_BACK'] = true;
-        self::redirect ( $_SERVER ['HTTP_REFERER'], $args );
+        self::redirect ( isset ( $_SERVER ['HTTP_REFERER'] ) ? $_SERVER ['HTTP_REFERER'] : BASE_URL, $args );
     }
     /**
      * 
@@ -63,12 +63,12 @@ class Response {
         return sess_del ( '__IS_BACK', false );
     }
     /**
-	 * 跳转
-	 *
-	 * @param string $location 要转到的网址
-	 * @param string|array $args 参数
-	 * @param int $status 响应代码
-	 */
+     * 跳转
+     *
+     * @param string $location 要转到的网址
+     * @param string|array $args 参数
+     * @param int $status 响应代码
+     */
     public static function redirect($location, $args = "", $status = 302) {
         global $is_IIS;
         if (! $location) {
@@ -100,10 +100,10 @@ class Response {
     }
     
     /**
-	 * 内部转发,当你使用内部转发时，请一定要保证不会出现循环重写向错误。
-	 * @param string $url forward to the $url
-	 * @return null|View|string|array
-	 */
+     * 内部转发,当你使用内部转发时，请一定要保证不会出现循环重写向错误。
+     * @param string $url forward to the $url
+     * @return null|View|string|array
+     */
     public static function forward($url) {
         static $last_forward_url = false;
         if ($last_forward_url == $url) {
@@ -136,28 +136,28 @@ class Response {
     }
     
     /**
-	 *
-	 * @param int $status respond status code
-	 */
+     *
+     * @param int $status respond status code
+     */
     public static function respond($status = 404) {
         status_header ( $status );
         if ($status == 404) {
             $view = template ( '404.tpl' );
             echo $view->render ();
-        }        
+        }
         exit ();
     }
     
     /**
-	 * 设置cookie
-	 *
-	 * @param string $name 变量名
-	 * @param null|mixed$value
-	 * @param null|int $expire
-	 * @param null|string $path
-	 * @param null|string $domain
-	 * @param null|bool $security
-	 */
+     * 设置cookie
+     *
+     * @param string $name 变量名
+     * @param null|mixed$value
+     * @param null|int $expire
+     * @param null|string $path
+     * @param null|string $domain
+     * @param null|bool $security
+     */
     public static function set_cookie($name, $value = null, $expire = null, $path = null, $domain = null, $security = null) {
         $settings = KissGoSetting::getSetting ();
         $cookie_setting = array_merge2 ( array ('expire' => 0, 'path' => '/', 'domain' => ".", 'security' => false ), $settings [COOKIE] );
@@ -177,9 +177,9 @@ class Response {
     }
     
     /**
-	 * 输出view产品的内容
-	 * @param View $view
-	 */
+     * 输出view产品的内容
+     * @param View $view
+     */
     public function output($view = null) {
         if ($view instanceof View) {
             $this->view = $view;
@@ -200,11 +200,11 @@ class Response {
     
     /**
      * 
-	 * 此方法不应该直接调用，用于ob_start处理output buffer中的内容。
-	 *
-	 * @param string $content
-	 * @return string
-	 */
+     * 此方法不应该直接调用，用于ob_start处理output buffer中的内容。
+     *
+     * @param string $content
+     * @return string
+     */
     public function ob_out_handler($content) {
         $this->content = apply_filter ( 'filter_output_content', $content );
         return $this->content;
@@ -212,10 +212,10 @@ class Response {
     
     /**
      * 
-	 * 关闭响应，将内容输出的浏览器，同时触发after_content_output勾子
-	 *
-	 * @uses fire
-	 */
+     * 关闭响应，将内容输出的浏览器，同时触发after_content_output勾子
+     *
+     * @uses fire
+     */
     public function close($exit = true) {
         if ($exit) {
             exit ();

@@ -1,8 +1,5 @@
 {extends file=$ksg_admincp_layout}
 {block name="title"}{'Theme'|ts}{/block}
-{block name="admincp_css_block"}
-<link rel="stylesheet" href="{'jquery/plugins/ztree/ztree.css'|static}" />
-{/block}
 {block name="breadcrumb" nocache}
 <li>{'Theme'|ts}</li>
 {/block}
@@ -69,6 +66,5 @@
 		
 {/block}
 {block name="admincp_foot_js_block"}
-<script type="text/javascript" src="{'jquery/plugins/ztree/ztree.js'|static}"></script>
 <script type="text/javascript" src="{'theme.js'|here}"></script>
 {/block}

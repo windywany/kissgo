@@ -15,15 +15,14 @@
 
 {block name="admincp_body"}
 
-<form class="form-horizontal" id="options-form" method="POST" action="{$_CUR_URL}" enctype="multipart/form-data">
-    <input type="hidden" name="_g" value="{$_g}"/>
+<form class="form-horizontal" id="options-form" method="POST" action="{$_CUR_URL}/{$_g}" enctype="multipart/form-data">    
     <div class="workspace">
         <div class="tabbable tabs-left autoset">
             <ul class="nav nav-tabs" style="min-height:385px;">
                 <li>&nbsp;</li>
                 {foreach $__opt_groups as $item}
 				<li class="{if $item@key == $_g}active{/if}">
-				    <a href="{$_CUR_URL}?_g={$item@key}">{$item}</a>
+				    <a href="{$_CUR_URL}/{$item@key}">{$item}</a>
 			    </li>
 			    {/foreach}
 		    </ul>

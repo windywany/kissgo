@@ -4,8 +4,8 @@
  */
 assert_login ();
 bind ( 'get_core_option_group', '_hook_get_core_option_group', 0 );
-function do_admin_preference_get($req, $res) {
-    $group = rqst ( '_g', 'base' );
+function do_admin_preference_get($req, $res, $group = 'base') {
+    
     $data = array ();
     $optM = new KsgPreferenceTable ();
     
@@ -29,8 +29,7 @@ function do_admin_preference_get($req, $res) {
     return view ( 'admin/views/preference.tpl', $data );
 }
 //保存
-function do_admin_preference_post($req, $res) {
-    $group = rqst ( '_g', 'base' );
+function do_admin_preference_post($req, $res, $group = 'base') {
     apply_filter ( 'get_core_option_group', array () );
     if (has_hook ( 'on_save_preference_' . $group )) {
         $rest = apply_filter ( 'on_save_preference_' . $group, true );
@@ -42,7 +41,7 @@ function do_admin_preference_post($req, $res) {
     } else {
         $data = apply_filter ( 'get_preference_for_save_' . $group, array () );
         if (! is_array ( $data )) {
-            show_page_tip ( '<strong>糟啦!</strong>'.$data, 'error' );
+            show_page_tip ( '<strong>糟啦!</strong>' . $data, 'error' );
         } else {
             $optM = new KsgPreferenceTable ();
             foreach ( $data as $name => $val ) {
@@ -57,7 +56,7 @@ function do_admin_preference_post($req, $res) {
             show_page_tip ( '<strong>恭喜!</strong>设置成功.' );
         }
     }
-    Response::redirect ( murl ( 'admin', 'preference', array ('_g' => $group ) ) );
+    Response::redirect ( murl ( 'admin', 'preference/' . $group ) );
 }
 // 基本配置
 function _hook_for_get_option_base($data) {

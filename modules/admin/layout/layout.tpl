@@ -5,32 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="KissGO! group"/>
-    <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$ksg_version}</title>    
-    {'bootstrap/css/bootstrap.css'|css:misc}    
-    {'bootstrap/css/bootstrap-modal.css'|css:misc}    
-    {'bootstrap/css/bootstrap-responsive.css'|css:misc}
-    {'bootstrap/css/datepicker.css'|css:misc}
-    {'bootstrap/css/select2.css'|css:misc}    
-    <link href="{'jquery/ui/smoothness/jquery-ui.css'|static}" rel="stylesheet"/>
+    <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$_ksg_version}</title>    
+    {'bootstrap.css,bootstrap-modal.css,bootstrap-fileupload.css,bootstrap-responsive.css,datepicker.css,select2.css,jquery-ui.css,prettyPhoto.css,ztree.css,common.css'|css:'misc/css'}    
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
     {block name="admincp_css_block"}{/block} 
     <script type="text/javascript">
-       window.Kissgo = { 'BASE': "{$ksg_site_url}" , 'AJAX':'{$ksg_site_url}ajax.php' };
+       window.Kissgo = { 'BASE': "{$_ksg_base_url}" , 'AJAX':'{$_ksg_base_url}ajax.php' };
        window.UEDITOR_HOME_URL = "{'ueditor/'|static}";
-    </script>        
-    {'jquery/jquery.js'|js:misc}
-    {'jquery/jquery-ui.js'|js:misc}
-    {'bootstrap/bootstrap.js'|js:misc}    
-    {'bootstrap/bootstrap-modalmanager.js'|js:misc}    
-    {'bootstrap/bootstrap-modal.js'|js:misc}    
-    {'jquery/plugins/validate.js'|js:misc}	
-	{'jquery/plugins/validate_addons.js'|js:misc}
-	{'bootstrap/bootstrap-datepicker.js'|js:misc}
-	{'jquery/plugins/prettyPhoto/prettyPhoto.js'|js:misc}
-    {'jquery/nestedSortable.js'|js:misc}
-    {'bootstrap/select2/select2.min.js'|js:misc}    
-    {'quicktags.js'|js:misc}
-	{'common.js'|js:misc}
+    </script>
+    {'jquery.js,jquery-ui.js,validate.js,validate_addons.js,ztree.js,prettyPhoto.js,nestedSortable.js'|js:'misc/jquery'}
+    {'bootstrap.js,modalmanager.js,modal.js,datepicker.js,fileupload.js,select2.js'|js:'misc/bootstrap'}
+    {'quicktags.js,common.js'|js:misc}	
     <script type="text/javascript" src="{'js/kissgo.js'|here}"></script>
     {block name="admincp_head_js_block"}{/block}
     {'admincp_header'|fire}    
@@ -38,13 +23,14 @@
 <body {if $hideNavi}class="nonavibar"{/if}>
 <div class="page-container">
 <!-- head -->
+{if !$hideNavi}
 <div id="navbar" class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
-            <a target="_blank" href="{$ksg_site_url}" class="brand">{'site_name'|cfg}<i class="icon-share"></i></a>
+            <a target="_blank" href="{$_ksg_base_url}" class="brand">{'site_name'|cfg}<i class="icon-share"></i></a>
             <div class="nav-collapse">
                 <ul id="menu" class="nav">
-                    {$ksg_top_navigation_menu|render}                    
+                    {$ksg_top_navigation_menu|render}                  
                 </ul>
                 <ul class="nav pull-right">
                 	<li class="dropdown">
@@ -57,7 +43,7 @@
                     </li>
                     <li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                            <i class="icon-user"></i> {$ksg_passport['name']}({$ksg_passport['account']})<span class="caret"></span>
+                            <i class="icon-user"></i> {$_ksg_passport['name']}({$_ksg_passport['account']})<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             {'add_passport_menu_items'|fire}
@@ -84,7 +70,7 @@
         </div>
     </div>
 </div>
-
+{/if}
 <!-- container -->
 <div id="container">
     <div id="body" class="container-fluid">    
@@ -97,20 +83,22 @@
     {block name="admincp_body"}{/block}
     </div>
 </div>
+{if !$hideNavi}
 <div id="sideTools">
     <a href="#top" id="btn_goto_top"></a>	
 </div>
 <!-- foot -->
 <div id="foot" class="navbar navbar-fixed-bottom hidden-phone">
     <div class="btn-toolbar">
-        <div class="btn-group"><a href="{$ksg_site_url}" target="_blank"><i class="icon-globe"></i>{'View'|ts}</a></div>
+        <div class="btn-group"><a href="{$_ksg_base_url}" target="_blank"><i class="icon-globe"></i>{'View'|ts}</a></div>
     	{$ksg_foot_toolbar_btns|render}
         <div class="btn-group"><a href="{'admin'|murl:'logout'}"><i class="icon-off"></i>{'Logout'|ts}</a></div>
         <div class="btn-group pull-right">
-            <p>&copy; <a href="http://www.kissgo.org/" target="_blank">KissGO! {$ksg_version}</a> 2012</p>
+            <p>&copy; <a href="http://www.kissgo.org/" target="_blank">KissGO! {$_ksg_version}</a> 2012</p>
         </div>
     </div>
 </div>
+{/if}
 </div>
 <div id="overlay-wrapper">
     <div id="overlay"></div>
