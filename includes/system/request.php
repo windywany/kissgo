@@ -25,8 +25,8 @@ class Request implements ArrayAccess {
     }
     
     /**
-	 * @return Request
-	 */
+     * @return Request
+     */
     public static function getInstance($use_xss_clean = null) {
         if (self::$INSTANCE == null) {
             self::$INSTANCE = new Request ( $use_xss_clean );
@@ -38,9 +38,9 @@ class Request implements ArrayAccess {
     }
     
     /**
-	 * 本次请求的类型
-	 * @return bool 如果是通过ajax请求的返回true,反之返回false
-	 */
+     * 本次请求的类型
+     * @return bool 如果是通过ajax请求的返回true,反之返回false
+     */
     public static function isAjaxRequest() {
         return isset ( $_SERVER ["HTTP_X_AJAX_TYPE"] );
     }
@@ -52,27 +52,37 @@ class Request implements ArrayAccess {
     }
     
     /**
-	 * set enable flag
-	 * @param $enable
-	 */
+     * set enable flag
+     * @param $enable
+     */
     public function set_cleaner_enable($enable) {
         $this->use_xss_clean = $enable;
     }
     
     /**
-	 * 获取客户端传过来的值无论是通过GET方式还是POST方式
-	 * @param string $name
-	 * @param mixed $default
-	 * @param boolean $xss_clean 是否进行xss过滤
-	 * @return mixed
-	 */
+     * 获取客户端传过来的值无论是通过GET方式还是POST方式
+     * @param string $name
+     * @param mixed $default
+     * @param boolean $xss_clean 是否进行xss过滤
+     * @return mixed
+     */
     public function get($name, $default = '', $xss_clean = false) {
         $ary = isset ( $this->userData [$name] ) ? $this->userData : (isset ( $_POST [$name] ) ? $_POST : $_GET);
         if (! isset ( $ary [$name] )) {
             if ($name == '_url') {
-                $default = ltrim ( $_SERVER ['PATH_INFO'], '/' );
-                if (empty ( $default )) {
-                    $default = '/';
+                if (isset ( $_SERVER ['PATH_INFO'] )) {
+                    $default = ltrim ( $_SERVER ['PATH_INFO'], '/' );
+                    if (empty ( $default )) {
+                        $default = '/';
+                    }
+                } else if (isset ( $_SERVER ['REQUEST_URI'] )) {
+                    $fs = parse_url ( $_SERVER ['REQUEST_URI'] );
+                    $default = $fs ['path'];
+                    if (isset ( $fs ['query'] )) {
+                        $quries = array ();
+                        parse_str ( $fs ['query'], $quries );
+                        $this->userData += $quries;
+                    }
                 }
                 $this->userData [$name] = $default;
             }
@@ -109,7 +119,14 @@ class Request implements ArrayAccess {
             $query_str = $_SERVER ['QUERY_STRING'];
             if ($_SERVER ['SCRIPT_NAME'] == '/index.php') {
                 parse_str ( $query_str, $args );
-                $url = $args ['_url'];
+                if (isset ( $args ['_url'] )) {
+                    $url = $args ['_url'];
+                } else if (isset ( $_SERVER ['REQUEST_URI'] )) {
+                    $fs = parse_url ( $_SERVER ['REQUEST_URI'] );
+                    $url = $fs ['path'];
+                } else {
+                    $url = '';
+                }
             } else {
                 $url = $_SERVER ['SCRIPT_NAME'];
             }
@@ -118,11 +135,11 @@ class Request implements ArrayAccess {
         return $url;
     }
     /**
-	 * 对值进行xss安全处理
-	 *
-	 * @param $val 要进行xss处理的值
-	 * @return string
-	 */
+     * 对值进行xss安全处理
+     *
+     * @param $val 要进行xss处理的值
+     * @return string
+     */
     public function xss_clean($val) {
         if ($this->use_xss_clean === false) {
             $val = $this->xss_cleaner->xss_clean ( $val );
@@ -155,15 +172,15 @@ class Request implements ArrayAccess {
     }
     
     /**
-	 * Clean Input Data
-	 *
-	 * This is a helper function. It escapes data and
-	 * standardizes newline characters to \n
-	 *
-	 * @access    private
-	 * @param    string
-	 * @return    string
-	 */
+     * Clean Input Data
+     *
+     * This is a helper function. It escapes data and
+     * standardizes newline characters to \n
+     *
+     * @access    private
+     * @param    string
+     * @return    string
+     */
     private function _clean_input_data($str) {
         if (is_array ( $str )) {
             $new_array = array ();
@@ -192,16 +209,16 @@ class Request implements ArrayAccess {
     }
     
     /**
-	 * Clean Keys
-	 *
-	 * This is a helper function. To prevent malicious users
-	 * from trying to exploit keys we make sure that keys are
-	 * only named with alpha-numeric text and a few other items.
-	 *
-	 * @access    private
-	 * @param    string
-	 * @return    string
-	 */
+     * Clean Keys
+     *
+     * This is a helper function. To prevent malicious users
+     * from trying to exploit keys we make sure that keys are
+     * only named with alpha-numeric text and a few other items.
+     *
+     * @access    private
+     * @param    string
+     * @return    string
+     */
     private function _clean_input_keys($str) {
         if (! preg_match ( '/^[a-z0-9:_\/-]+$/i', $str )) {
             exit ( 'Disallowed Key Characters.' );
@@ -239,37 +256,37 @@ class XssCleaner {
     /* never allowed, string replacement */
     private $never_allowed_str = array ('document.cookie' => '[removed]', 'document.write' => '[removed]', '.parentNode' => '[removed]', '.innerHTML' => '[removed]', 'window.location' => '[removed]', '-moz-binding' => '[removed]', '<!--' => '&lt;!--', '-->' => '--&gt;', '<![CDATA[' => '&lt;![CDATA[' );
     /* never allowed, regex replacement */
-    private $never_allowed_regex = array ('javascript\s*:' => '[removed]', 'expression\s*(\(|&\#40;)' => '[removed]',     // CSS and IE
-'vbscript\s*:' => '[removed]',     // IE, surprise!
+    private $never_allowed_regex = array ('javascript\s*:' => '[removed]', 'expression\s*(\(|&\#40;)' => '[removed]', // CSS and IE
+'vbscript\s*:' => '[removed]', // IE, surprise!
 'Redirect\s+302' => '[removed]' );
     
     /**
-	 * XSS Clean
-	 *
-	 * Sanitizes data so that Cross Site Scripting Hacks can be
-	 * prevented.  This function does a fair amount of work but
-	 * it is extremely thorough, designed to prevent even the
-	 * most obscure XSS attempts.  Nothing is ever 100% foolproof,
-	 * of course, but I haven't been able to get anything passed
-	 * the filter.
-	 *
-	 * Note: This function should only be used to deal with data
-	 * upon submission.  It's not something that should
-	 * be used for general runtime processing.
-	 *
-	 * This function was based in part on some code and ideas I
-	 * got from Bitflux: http://blog.bitflux.ch/wiki/XSS_Prevention
-	 *
-	 * To help develop this script I used this great list of
-	 * vulnerabilities along with a few other hacks I've
-	 * harvested from examining vulnerabilities in other programs:
-	 * http://ha.ckers.org/xss.html
-	 *
-	 * @access    public
-	 * @param    string
-	 * @param bool $is_image
-	 * @return    string
-	 */
+     * XSS Clean
+     *
+     * Sanitizes data so that Cross Site Scripting Hacks can be
+     * prevented.  This function does a fair amount of work but
+     * it is extremely thorough, designed to prevent even the
+     * most obscure XSS attempts.  Nothing is ever 100% foolproof,
+     * of course, but I haven't been able to get anything passed
+     * the filter.
+     *
+     * Note: This function should only be used to deal with data
+     * upon submission.  It's not something that should
+     * be used for general runtime processing.
+     *
+     * This function was based in part on some code and ideas I
+     * got from Bitflux: http://blog.bitflux.ch/wiki/XSS_Prevention
+     *
+     * To help develop this script I used this great list of
+     * vulnerabilities along with a few other hacks I've
+     * harvested from examining vulnerabilities in other programs:
+     * http://ha.ckers.org/xss.html
+     *
+     * @access    public
+     * @param    string
+     * @param bool $is_image
+     * @return    string
+     */
     public function xss_clean($str, $is_image = FALSE) {
         /*
           * Is the string an array?
@@ -526,11 +543,11 @@ class XssCleaner {
     
 
     /**
-	 * Random Hash for protecting URLs
-	 *
-	 * @access    public
-	 * @return    string
-	 */
+     * Random Hash for protecting URLs
+     *
+     * @access    public
+     * @return    string
+     */
     public function xss_hash() {
         if ($this->xss_hash == '') {
             if (phpversion () >= 4.2)
@@ -548,24 +565,24 @@ class XssCleaner {
     
 
     /**
-	 * Remove Invisible Characters
-	 *
-	 * This prevents sandwiching null characters
-	 * between ascii characters, like Java\0script.
-	 *
-	 * @access    public
-	 * @param    string
-	 * @return    string
-	 */
+     * Remove Invisible Characters
+     *
+     * This prevents sandwiching null characters
+     * between ascii characters, like Java\0script.
+     *
+     * @access    public
+     * @param    string
+     * @return    string
+     */
     private function _remove_invisible_characters($str) {
         static $non_displayables = false;
         
         if (! $non_displayables) {
             // every control character except newline (dec 10), carriage return (dec 13), and horizontal tab (dec 09),
-            $non_displayables = array ('/%0[0-8bcef]/',             // url encoded 00-08, 11, 12, 14, 15
-'/%1[0-9a-f]/',             // url encoded 16-31
-'/[\x00-\x08]/',             // 00-08
-'/\x0b/', '/\x0c/',             // 11, 12
+            $non_displayables = array ('/%0[0-8bcef]/', // url encoded 00-08, 11, 12, 14, 15
+'/%1[0-9a-f]/', // url encoded 16-31
+'/[\x00-\x08]/', // 00-08
+'/\x0b/', '/\x0c/', // 11, 12
 '/[\x0e-\x1f]/' ); // 14-31
         }
         
@@ -581,15 +598,15 @@ class XssCleaner {
     
 
     /**
-	 * Compact Exploded Words
-	 *
-	 * Callback function for xss_clean() to remove whitespace from
-	 * things like j a v a s c r i p t
-	 *
-	 * @access  public
-	 * @param   array
-	 * @return  string
-	 */
+     * Compact Exploded Words
+     *
+     * Callback function for xss_clean() to remove whitespace from
+     * things like j a v a s c r i p t
+     *
+     * @access  public
+     * @param   array
+     * @return  string
+     */
     function _compact_exploded_words($matches) {
         return preg_replace ( '/\s+/s', '', $matches [1] ) . $matches [2];
     }
@@ -598,14 +615,14 @@ class XssCleaner {
     
 
     /**
-	 * Sanitize Naughty HTML
-	 *
-	 * Callback function for xss_clean() to remove naughty HTML elements
-	 *
-	 * @access    private
-	 * @param    array
-	 * @return    string
-	 */
+     * Sanitize Naughty HTML
+     *
+     * Callback function for xss_clean() to remove naughty HTML elements
+     *
+     * @access    private
+     * @param    array
+     * @return    string
+     */
     function _sanitize_naughty_html($matches) {
         // encode opening brace
         $str = '&lt;' . $matches [1] . $matches [2] . $matches [3];
@@ -620,34 +637,34 @@ class XssCleaner {
     
 
     /**
-	 * JS Link Removal
-	 *
-	 * Callback function for xss_clean() to sanitize links
-	 * This limits the PCRE backtracks, making it more performance friendly
-	 * and prevents PREG_BACKTRACK_LIMIT_ERROR from being triggered in
-	 * PHP 5.2+ on link-heavy strings
-	 *
-	 * @access    private
-	 * @param    array
-	 * @return    string
-	 */
+     * JS Link Removal
+     *
+     * Callback function for xss_clean() to sanitize links
+     * This limits the PCRE backtracks, making it more performance friendly
+     * and prevents PREG_BACKTRACK_LIMIT_ERROR from being triggered in
+     * PHP 5.2+ on link-heavy strings
+     *
+     * @access    private
+     * @param    array
+     * @return    string
+     */
     function _js_link_removal($match) {
         $attributes = $this->_filter_attributes ( str_replace ( array ('<', '>' ), '', $match [1] ) );
         return str_replace ( $match [1], preg_replace ( '#href=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si', '', $attributes ), $match [0] );
     }
     
     /**
-	 * JS Image Removal
-	 *
-	 * Callback function for xss_clean() to sanitize image tags
-	 * This limits the PCRE backtracks, making it more performance friendly
-	 * and prevents PREG_BACKTRACK_LIMIT_ERROR from being triggered in
-	 * PHP 5.2+ on image tag heavy strings
-	 *
-	 * @access    private
-	 * @param    array
-	 * @return    string
-	 */
+     * JS Image Removal
+     *
+     * Callback function for xss_clean() to sanitize image tags
+     * This limits the PCRE backtracks, making it more performance friendly
+     * and prevents PREG_BACKTRACK_LIMIT_ERROR from being triggered in
+     * PHP 5.2+ on image tag heavy strings
+     *
+     * @access    private
+     * @param    array
+     * @return    string
+     */
     function _js_img_removal($match) {
         $attributes = $this->_filter_attributes ( str_replace ( array ('<', '>' ), '', $match [1] ) );
         return str_replace ( $match [1], preg_replace ( '#src=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si', '', $attributes ), $match [0] );
@@ -657,14 +674,14 @@ class XssCleaner {
     
 
     /**
-	 * Attribute Conversion
-	 *
-	 * Used as a callback for XSS Clean
-	 *
-	 * @access    public
-	 * @param    array
-	 * @return    string
-	 */
+     * Attribute Conversion
+     *
+     * Used as a callback for XSS Clean
+     *
+     * @access    public
+     * @param    array
+     * @return    string
+     */
     function _convert_attribute($match) {
         return str_replace ( array ('>', '<', '\\' ), array ('&gt;', '&lt;', '\\\\' ), $match [0] );
     }
@@ -673,14 +690,14 @@ class XssCleaner {
     
 
     /**
-	 * HTML Entity Decode Callback
-	 *
-	 * Used as a callback for XSS Clean
-	 *
-	 * @access    public
-	 * @param    array
-	 * @return    string
-	 */
+     * HTML Entity Decode Callback
+     *
+     * Used as a callback for XSS Clean
+     *
+     * @access    public
+     * @param    array
+     * @return    string
+     */
     function _html_entity_decode_callback($match) {
         $charset = 'UTF8';
         return $this->_html_entity_decode ( $match [0], strtoupper ( $charset ) );
@@ -690,38 +707,38 @@ class XssCleaner {
     
 
     /**
-	 * HTML Entities Decode
-	 *
-	 * This function is a replacement for html_entity_decode()
-	 *
-	 * In some versions of PHP the native function does not work
-	 * when UTF-8 is the specified character set, so this gives us
-	 * a work-around.  More info here:
-	 * http://bugs.php.net/bug.php?id=25670
-	 *
-	 * @access    private
-	 * @param    string
-	 * @param    string
-	 * @return    string
-	 */
+     * HTML Entities Decode
+     *
+     * This function is a replacement for html_entity_decode()
+     *
+     * In some versions of PHP the native function does not work
+     * when UTF-8 is the specified character set, so this gives us
+     * a work-around.  More info here:
+     * http://bugs.php.net/bug.php?id=25670
+     *
+     * @access    private
+     * @param    string
+     * @param    string
+     * @return    string
+     */
     /* -------------------------------------------------
      /*  Replacement for html_entity_decode()
      /* -------------------------------------------------*/
-	
-	/*
+    
+    /*
      NOTE: html_entity_decode() has a bug in some PHP versions when UTF-8 is the
      character set, and the PHP developers said they were not back porting the
      fix to versions other than PHP 5.x.
      */
-	private function _html_entity_decode($str, $charset = 'UTF-8') {
+    private function _html_entity_decode($str, $charset = 'UTF-8') {
         if (stristr ( $str, '&' ) === FALSE)
             return $str;
-            
-            // The reason we are not using html_entity_decode() by itself is because
-            // while it is not technically correct to leave out the semicolon
-            // at the end of an entity most browsers will still interpret the entity
-            // correctly.  html_entity_decode() does not convert entities without
-            // semicolons, so we are left with our own little solution here. Bummer.
+        
+     // The reason we are not using html_entity_decode() by itself is because
+        // while it is not technically correct to leave out the semicolon
+        // at the end of an entity most browsers will still interpret the entity
+        // correctly.  html_entity_decode() does not convert entities without
+        // semicolons, so we are left with our own little solution here. Bummer.
         
 
         if (function_exists ( 'html_entity_decode' ) && (strtolower ( $charset ) != 'utf-8' or version_compare ( phpversion (), '5.0.0', '>=' ))) {
@@ -746,14 +763,14 @@ class XssCleaner {
     
 
     /**
-	 * Filter Attributes
-	 *
-	 * Filters tag attributes for consistency and safety
-	 *
-	 * @access    public
-	 * @param    string
-	 * @return    string
-	 */
+     * Filter Attributes
+     *
+     * Filters tag attributes for consistency and safety
+     *
+     * @access    public
+     * @param    string
+     * @return    string
+     */
     private function _filter_attributes($str) {
         $out = '';
         

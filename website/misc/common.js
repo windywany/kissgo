@@ -431,6 +431,7 @@
 		msgbox.find('#xui-messagebox-body').addClass(type).html(message);
 		msgbox.modal('show');
 	};
+	
 	$(function() {
 		$('table.ui-table').uiTable();
 		$('.stuffbox').on('click','.handlediv',function(){
@@ -440,6 +441,33 @@
 		$('.autoset').each(function(i,e){
 			var $e = $(e),h=$e.find('.tab-content').height();
 			$e.find('.nav-tabs').height(h);
-		});
+		});		
 	});
 })(jQuery);
+function showWaitMask(text, keep) {
+    text = text ? text : '处理中...';
+    var ov = $('#overlay-wrapper'), msg = ov.find('div.msg');
+    ov.show();
+    if (!keep) {
+        msg.html(text);
+    }
+}
+function hideWaitMask() {
+    $('#overlay-wrapper').fadeOut(350);
+}
+if(window.Kissgo){
+	window.Kissgo.publish = function(type,id){
+		if(!type||!id){
+			alert('error type or id');
+		}else{
+			alert(Kissgo.ROUTER_BASE);
+		}
+	};
+	window.Kissgo.murl = function(module, action){
+		var alias = Kissgo.alias[module];
+		if(!alias){
+			alias = module;
+		}
+		return Kissgo.ROUTER_BASE + alias + (action ? '/'+action: '');
+	}
+}

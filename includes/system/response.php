@@ -17,6 +17,7 @@ class Response {
      */
     private function __construct() {
         // nothing to do
+        status_header ( 200 );
     }
     
     /**

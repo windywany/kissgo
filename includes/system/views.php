@@ -111,7 +111,7 @@ abstract class View implements ArrayAccess {
                 $jssfs [] = $path . '{' . implode ( ',', $jss ) . '}';
             }
             $jss = implode ( ';', $jssfs );
-            $jss = '<script type="text/javascript" src="' . BASE_URL . WEBSITE_DIR . '/!script.js?f=' . $jss . '"></script>';
+            $jss = '<script type="text/javascript" src="' . clean_url ( WEBSITE_DIR ) . '/!script.js?f=' . $jss . '"></script>';
             $content = str_replace ( '<!--[js]-->', $jss, $content );
         }
         return $content;
@@ -234,7 +234,7 @@ class CssView extends View {
         return array_pop ( $this->data );
     }
     
-    public function setHeader() {
+    public function setHeader() {        
         @header ( 'Content-Type: text/css' );
         if ($this->etag) {
             @header ( 'Etag: ' . $this->etag );
@@ -260,7 +260,7 @@ class JsView extends View {
         return array_pop ( $this->data );
     }
     
-    public function setHeader() {
+    public function setHeader() {        
         @header ( 'Content-Type: text/javascript' );
         if ($this->etag) {
             @header ( 'Etag: ' . $this->etag );

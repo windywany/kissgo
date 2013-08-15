@@ -16,7 +16,7 @@
       </div>
       <div class="modal-body error">真的没找到！！！</div>
       <div class="modal-footer">
-        <a class="btn" href="/">GO HOME</a>        
+        <a class="btn" href="{$_ksg_base_url}">GO HOME</a>
       </div>
     </div>
     </body>

@@ -1,5 +1,5 @@
 $(function() {
-	var murl = Kissgo.ROUTER;
+	var murl = Kissgo.murl('admin','tags');
 	var type = $('#tag-type').val();
 	var tag_select = $('#tag-select-box').val();
 	$('#btn-selectall').click(function() {

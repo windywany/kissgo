@@ -8,15 +8,31 @@
     <title>{block name="title"}{'Dashboard'|ts}{/block} -- Powered by KissGO! {$_ksg_version}</title>    
     {'bootstrap.css,bootstrap-modal.css,bootstrap-fileupload.css,bootstrap-responsive.css,datepicker.css,select2.css,jquery-ui.css,prettyPhoto.css,ztree.css,common.css'|css:'misc/css'}    
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
-    {block name="admincp_css_block"}{/block} 
-    <script type="text/javascript">
-       window.Kissgo = { 'BASE': "{$_ksg_base_url}" , 'AJAX':'{$_ksg_base_url}ajax.php','ROUTER':'{$ROUTER_URL}' };
-       window.UEDITOR_HOME_URL = "{'ueditor/'|static}";
-    </script>
+    {block name="admincp_css_block"}{/block}    
     {'jquery.js,jquery-ui.js,validate.js,validate_addons.js,ztree.js,prettyPhoto.js,nestedSortable.js'|js:'misc/jquery'}
     {'bootstrap.js,modalmanager.js,modal.js,datepicker.js,fileupload.js,select2.js'|js:'misc/bootstrap'}
     {'quicktags.js,common.js'|js:misc}	
-    <script type="text/javascript" src="{'js/kissgo.js'|here}"></script>
+    <script type="text/javascript">
+    $(function() {
+    	$('#btn_goto_top').click(function() {
+    		$(window).scrollTop(0);
+    		return false;
+    	});
+    	$(window).scroll(function(e) {
+    		if ($(this).scrollTop() > 40) {
+    			$('#sideTools').show();
+    		} else {
+    			$('#sideTools').hide();
+    		}
+    	});
+    	$('.dropdown-submenu > .dropdown-toggle').click(function() {
+    		var href = $(this).attr('href');
+    		if (href != '#') {
+    			window.location.href = href;
+    		}
+    	});
+    });
+    </script>
     {block name="admincp_head_js_block"}{/block}
     {'admincp_header'|fire}    
 </head>

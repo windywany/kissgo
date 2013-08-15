@@ -14,9 +14,10 @@ function set_site_global_vars($smarty) {
     $smarty->assign ( '_ksg_base_url', BASE_URL );
     $smarty->assign ( '_ksg_passport', Passport::getPassport () );
     $smarty->assign ( '_ksg_version', KISSGO_VERSION );
-    $smarty->assign ( '_KISSGO_R_VERSION', KISSGO_R_VERSION );
+    $smarty->assign ( '_ksg_rversion', KISSGO_R_VERSION );
     $smarty->assign ( '_ksg_page_uri', Request::getUri () );
     $smarty->assign ( '_ksg_page_url', Request::getVirtualPageUrl () );
+    $smarty->assign ( '__ksg_router_base', clean_url () );
     $smarty->assign ( 'ROUTER_URL', $_ksg_router_url );
     $smarty->assign ( '_ksg_page_tip_info', sess_del ( '_ksg_page_tip_info', false ) );
     $smarty->assign ( '_ksg_page_tip_info_cls', sess_del ( '_ksg_page_tip_info_cls', '' ) );
@@ -61,10 +62,9 @@ function _hook_for_admincp_menu($mm) {
     $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list2', __ ( 'Approved' ), murl ( 'admin', 'pages/approved' ), 'icon-thumbs-up' );
     $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list3', __ ( 'Published' ), murl ( 'admin', 'pages/published' ), 'icon-check' );
     $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list4', __ ( 'Unapproved' ), murl ( 'admin', 'pages/unapproved' ), 'icon-thumbs-down' );
-    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list5', __ ( 'Recycle Bin' ), murl ( 'admin', 'pages/trash' ), 'icon-trash' );    
-    $mm->addMenuItemDivider('menu-website/menuitem-pages');
+    $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pages-list5', __ ( 'Recycle Bin' ), murl ( 'admin', 'pages/trash' ), 'icon-trash' );
+    $mm->addMenuItemDivider ( 'menu-website/menuitem-pages' );
     $mm->addSubItem ( 'menu-website/menuitem-pages', 'menuitem-pagetypes', __ ( 'Page Types' ), murl ( 'admin', 'pages/type' ), 'icon-list' );
-    
     
     $mm->addMenuItem ( 'menu-website', 'menuitem-comments', __ ( 'Comments' ), murl ( 'admin', 'comments' ), 'icon-comment' );
     $mm->addSubItem ( 'menu-website/menuitem-comments', 'menuitem-cmt-list', __ ( 'New Comments' ), murl ( 'admin', 'comments' ), 'icon-comment' );

@@ -63,6 +63,11 @@ function canpreview() {
     // TODO need check the user's right
     return $I->isLogin () && isset ( $_GET ['preview'] );
 }
+/**
+ * 
+ * merge css files
+ * @param string $path
+ */
 function merge_css($path) {
     $f = rqst ( 'f' );
     if (! $f) {
@@ -90,7 +95,10 @@ function merge_css($path) {
         $fs = explode ( ',', $f );
         if ($fs) {
             foreach ( $fs as $f ) {
-                $styles .= file_get_contents ( $path . $f . '.css' );
+               $f =  $path . $f . '.css';
+                if(is_file($f)){
+                    $styles .= @file_get_contents ($f );
+                }
             }
         }
         InnerCacher::add ( $etag, $styles );
@@ -98,6 +106,10 @@ function merge_css($path) {
     }
     return new CssView ( $styles, $etag );
 }
+/**
+ * 
+ * merge js files
+ */
 function merge_js() {
     $jss = rqst ( 'f', '' );
     if ($jss) {
@@ -117,7 +129,13 @@ function merge_js() {
         }
         $jsses = InnerCacher::get ( $etag );
         if (! $jsses) {
-            $jsses = '';
+            global $_ksg_router_url;
+            $_ksg_base_url = BASE_URL;
+            $_ksg_router_base = clean_url ();
+            $_ksg_ueditor_home = BASE_URL . MISC_DIR . '/ueditor/';
+            $em = json_encode(ExtensionManager::getInstance()->getAliasMap());
+            $jsses = "window.Kissgo = { 'BASE': '{$_ksg_base_url}' ,'ROUTER_BASE':'{$_ksg_router_base}', 'AJAX':'{$_ksg_base_url}ajax.php','alias':$em};\n";
+            $jsses .= "window.UEDITOR_HOME_URL = '{$_ksg_ueditor_home}';\n";
             $js = '';
             $prefix = WEB_ROOT . WEBSITE_DIR . DS;
             $fss = explode ( ';', $jss );
@@ -128,7 +146,7 @@ function merge_js() {
                         foreach ( $fs as $f ) {
                             $js = $prefix . $m [1] . DS . $f . '.js';
                             if (is_file ( $js )) {
-                                $jsses .= file_get_contents ( $js ).";\n";
+                                $jsses .= @file_get_contents ( $js ) . ";\n";
                             }
                         }
                         InnerCacher::add ( $etag, $jsses );

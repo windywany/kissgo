@@ -119,9 +119,13 @@ function status_header($header) {
     if ('HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol) {
         $protocol = 'HTTP/1.0';
     }
+    
     $status_header = "$protocol $header $text";
     
     @header ( $status_header, true, $header );
+    if (php_sapi_name () == 'cgi-fcgi') {
+        @header ( "Status: $header $text" );
+    }
 }
 
 /**
@@ -880,7 +884,7 @@ function murl($module, $action = '', $args = null) {
  * @param string $url
  * @return string
  */
-function clean_url($url){
+function clean_url($url = '') {
     if (! defined ( 'CLEAN_URL' ) || CLEAN_URL == false) {
         $url = 'index.php/' . $url;
     }

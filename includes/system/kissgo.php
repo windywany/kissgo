@@ -29,7 +29,7 @@ class KissGo {
         if ($view === false) {
             $router = Router::getInstance ();
             list ( $action_func, $args ) = $router->getAction ( $request );
-            if (is_callable ( $action_func )) {
+            if (is_callable ( $action_func )) {                
                 array_unshift ( $args, $request, $response );
                 $view = call_user_func_array ( $action_func, $args );
             } else {

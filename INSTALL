@@ -34,6 +34,7 @@
 		</Directory>		
 	    ServerAdmin your-email-address
 	    DocumentRoot "your_centims_webroot_dir"
+	    ErrorDocument 404 /index.php
 	    ServerName your-domain
 	    # some directives can be here
 	</VirtualHost>
@@ -63,6 +64,7 @@
             fastcgi_index  index.php;
             fastcgi_param  SCRIPT_FILENAME  $document_root/$fastcgi_script_name;
             fastcgi_param  HTTP_REFERER  $http_referer;
+            fastcgi_param  REQUEST_URI	 $request_uri;
             include        fastcgi_params;
         }
 		location ~ /\.ht {

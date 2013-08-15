@@ -2,24 +2,10 @@
 {block name="title"}{'Tags'|ts}{/block}
 {block name="admincp_css_block"}
     <style type="text/css">
-        #tag-wrap .label{
-            padding:3px;				
-            margin:5px;
-            line-height: 150%;
-            display: inline-block;
-            cursor: default;
-            font-size:14px;
-        }
-        #tag-wrap .controls{
-            margin-left:1px;
-        }
-        .tags i{
-	        cursor:pointer;
-        }
-        #tag-wrap .label.selected{        	
-            padding:5px 3px;
-            color:blue;
-        }
+        #tag-wrap .label{ padding:3px;	margin:5px;line-height: 150%;display: inline-block;cursor: default;font-size:14px; }
+        #tag-wrap .controls{ margin-left:1px; }
+        .tags i{ cursor:pointer; }
+        #tag-wrap .label.selected{  padding:5px 3px; color:blue; }
 	</style>
 {/block}
 
