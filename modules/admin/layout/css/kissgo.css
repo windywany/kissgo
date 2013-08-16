@@ -2,12 +2,7 @@ body {
     padding: 70px 0 35px 0;
 	min-width:1000px;
 }
-body.nonavibar{
-	padding: 0;
-}
-body.nonavibar #navbar,body.nonavibar #foot,body.nonavibar #sideTools{
-	display: none;
-}
+
 #navbar .dropdown-menu .divider {
     margin: 2px 1px;
 }
@@ -31,7 +26,7 @@ body.nonavibar #navbar,body.nonavibar #foot,body.nonavibar #sideTools{
 .breadcrumb .btn-mini {
 	font-size:12px;
 }
-#crumb .container-fluid, #container .container-fluid{
+#crumb .container-fluid-r25{
 	padding-right: 25px;
 }
 #container {

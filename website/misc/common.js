@@ -431,7 +431,22 @@
 		msgbox.find('#xui-messagebox-body').addClass(type).html(message);
 		msgbox.modal('show');
 	};
-	
+	$.scrollbarWidth = function(){
+		
+		var scrollDiv = $('<div></div>').css({width: '100px',
+									height: '100px',
+									overflow: 'scroll',
+									position: 'absolute',
+									padding:0,
+									margin:0,
+									top: '-9999px'}
+									);		
+		$('body').append(scrollDiv);	
+		scrollD = scrollDiv.get(0);
+		var scrollbarWidth = scrollD.offsetWidth - scrollD.clientWidth;;
+		scrollDiv.remove();
+		return scrollbarWidth;
+	};
 	$(function() {
 		$('table.ui-table').uiTable();
 		$('.stuffbox').on('click','.handlediv',function(){
@@ -455,19 +470,48 @@ function showWaitMask(text, keep) {
 function hideWaitMask() {
     $('#overlay-wrapper').fadeOut(350);
 }
+
 if(window.Kissgo){
-	window.Kissgo.publish = function(type,id){
+	window.Kissgo.emptyFun = function(){};
+	window.Kissgo.publish = function(type, id, callback){
 		if(!type||!id){
 			alert('error type or id');
 		}else{
-			alert(Kissgo.ROUTER_BASE);
+			Kissgo.openIframe(Kissgo.murl('admin','pages/publish/'+type+'/'+id), false,callback);
 		}
 	};
+	
 	window.Kissgo.murl = function(module, action){
 		var alias = Kissgo.alias[module];
 		if(!alias){
 			alias = module;
 		}
 		return Kissgo.ROUTER_BASE + alias + (action ? '/'+action: '');
+	};
+	
+	window.Kissgo.openIframe = function(url, onload, callback){
+		Kissgo.iframeOnload = $.isFunction(onload)?onload:Kissgo.emptyFun;
+		Kissgo.iframeOnclosed = $.isFunction(callback)?onload:Kissgo.emptyFun;
+		var tpl = '<div id="overlay-container">'+
+			'<div class="overlay-modal-background"></div>'+
+			'<iframe scrolling="auto" frameborder="0" allowtransparency="true" class="overlay-element" tabindex="-1"></iframe>'+
+			'<iframe scrolling="auto" onload="Kissgo.iframeOnload()" frameborder="0" allowtransparency="true" class="overlay-element overlay-active" id="overlay-iframe"></iframe></div>';
+			
+		var overIframe = $(tpl),body = $('body');
+		body.addClass('show-overlay');		
+		overIframe.appendTo($('body'));
+		var sw = $(window).width() - $.scrollbarWidth();
+		$('#navbar').width(sw);
+		$('#foot').width(sw-20);
+		overIframe.find('#overlay-iframe').attr('src',url);
+	}
+	
+	window.Kissgo.closeIframe = function(){
+		Kissgo.iframeOnclosed();
+		$('#overlay-container').remove();
+		$('#navi,#foot').css('clip','none');
+		$('#navbar').width('100%');
+		$('#foot').width('100%');
+		body.removeClass('show-overlay');
 	}
 }

@@ -93,8 +93,10 @@ abstract class View implements ArrayAccess {
         if (isset ( $_ksg_csjs_files ['css'] )) {
             $css_chunks = array ();
             foreach ( $_ksg_csjs_files ['css'] as $path => $csses ) {
-                if (count ( $csses ) == 1) {
-                    $css_chunks [] = '<link href="' . BASE_URL . WEBSITE_DIR . '/' . $csses [0] . '" rel="stylesheet"/>';
+                if (!CLEAN_URL || count ( $csses ) == 1 ) {
+                    foreach ($csses as $c){
+                        $css_chunks [] = '<link href="' . BASE_URL . $path . '/' . $c . '.css" rel="stylesheet"/>';
+                    }
                 } else {
                     $cssfs = implode ( ',', $csses );
                     $css_chunks [] = '<link href="' . BASE_URL . $path . '/!style.css?f=' . $cssfs . '" rel="stylesheet"/>';

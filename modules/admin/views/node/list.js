@@ -1,6 +1,6 @@
 $(function() {
 	$('.btn-selectall').click(function() {
-		$('#comment-list').uiTable('selectAll');
+		$('#page-list').uiTable('selectAll');
 	});
 	$('#ipt-tag').select2({
 		multiple : true,
@@ -17,5 +17,10 @@ $(function() {
 				return data;
 			}
 		}
+	});
+	$('.edit-page').click(function(){
+		var type = $(this).attr('data-type'),noteId = $(this).attr('data-content');
+		Kissgo.publish(type,noteId);
+		return false;
 	});
 });

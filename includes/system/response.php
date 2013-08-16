@@ -16,8 +16,7 @@ class Response {
      * 初始化
      */
     private function __construct() {
-        // nothing to do
-        status_header ( 200 );
+        // nothing to do        
     }
     
     /**

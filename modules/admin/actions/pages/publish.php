@@ -11,7 +11,7 @@ assert_login ();
  * @param int $pid
  * @param string $type
  */
-function do_admin_pages_publish_get($req, $res, $pid = 0, $type = '') {
+function do_admin_pages_publish_get($req, $res, $type = '', $pid = 0) {
     $data ['_CUR_URL'] = murl ( 'admin', 'pages/publish' );
     if (empty ( $pid )) {
         show_page_tip ( '<strong>Oops!</strong>出错啦:无效的页面编号.' );
@@ -37,7 +37,7 @@ function do_admin_pages_publish_get($req, $res, $pid = 0, $type = '') {
  * @param int $pid
  * @param string $type
  */
-function do_admin_pages_publish_post($req, $res, $pid = 0, $type = '') {
+function do_admin_pages_publish_post($req, $res, $type = '', $pid = 0) {
 
 }
 // end of admin/actions/pages/publish.php

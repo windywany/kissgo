@@ -73,7 +73,7 @@
     </div>
     <!-- breadcrumbs -->
     <div id="crumb">
-        <div class="container-fluid">
+        <div class="container-fluid container-fluid-r25">
             <div class="row-fluid">
                 <ul class="breadcrumb">
                     <li><a href="{$ksg_admincp_url}"><i class="icon-home"></i> {'Dashboard'|ts}</a><span class="divider">/</span></li>
@@ -89,7 +89,7 @@
 {/if}
 <!-- container -->
 <div id="container">
-    <div id="body" class="container-fluid">    
+    <div id="body" class="container-fluid container-fluid-r25">    
     {if $_ksg_page_tip_info}
         <div class="alert {$_ksg_page_tip_info_cls}">
             <button class="close" data-dismiss="alert">×</button>

@@ -44,9 +44,9 @@ class Router {
      */
     public function getAction($request) {
         global $_ksg_router_url;
-        self::$url = $url = trim($request ['_url'],'/');
+        self::$url = $url = trim ( $request ['_url'], '/' );
         self::$cacheKey = md5 ( $_SERVER ['REQUEST_METHOD'] . ' ' . $url );
-        $actionInfo = false;//InnerCacher::get ( self::$cacheKey );
+        $actionInfo = false; //InnerCacher::get ( self::$cacheKey );
         // if we have a cache for this request.
         if ($actionInfo) {
             if (isset ( $actionInfo ['ac'] ) && $actionInfo ['ac']) {
@@ -83,7 +83,7 @@ class Router {
             Response::getInstance ()->close ();
         }
         list ( $action, $controller, $module ) = $this->parseURL ( $url );
-        return $this->load_application ( $action, $controller, $module, $url);
+        return $this->load_application ( $action, $controller, $module, $url );
     }
     /**
      * Enter description here ...
@@ -92,10 +92,10 @@ class Router {
     private function parseURL($url) {
         $action = 'index';
         $controller = '';
-        if ($url == '/' || empty($url)) {
+        if ($url == '/' || empty ( $url )) {
             $module = '';
         } else {
-            $chunks = explode ( '/', $url);
+            $chunks = explode ( '/', $url );
             $cnt = count ( $chunks );
             if ($cnt == 1) {
                 $module = $chunks [0];
@@ -142,11 +142,18 @@ class Router {
                 $actions [2] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
                 $actions [3] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
                 $slices = explode ( '_', $ctrl_func );
+                $idx = 3;
                 if (count ( $slices ) > 1) {
-                    $controller = array_shift ( $slices );
-                    $actions [4] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$controller}", true, $controller, array ($suffix, '' ) );
-                    $actions [5] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$controller}", true, $controller, array ($suffix, '' ) );
-                }
+                    do {
+                        $action = array_pop ( $slices );
+                        $controller = implode ( '/', $slices );
+                        $cbks = array ('_' . $action . $suffix, '_' . $action );
+                        $ctrl_func = str_replace ( '/', '_', $controller );
+                        $actions [$idx ++] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true, $controller . '/' . $action, $cbks );
+                        $actions [$idx ++] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                        $actions [$idx ++] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                    } while ( count ( $slices ) > 1 );
+                }                
             } else {
                 $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}", true, $action, $cbks );
                 $actions [2] = array ("{$module}/actions/{$action}/index.php", "do_{$module}", true, $action, $cbks );

@@ -1,3 +1,10 @@
+body.nonavibar{
+	padding: 0;
+	overflow-y: visible;
+}
+body.nonavibar #navbar,body.nonavibar #foot,body.nonavibar #sideTools{
+	display: none;
+}
 ul {
 	list-style: none;
 	outline: none;
@@ -698,4 +705,49 @@ span.tip {
 .ui-form .table,.ui-form .progress,.ui-form .well,.ui-form .alert,.ui-form .hero-unit,.ui-form .pagination,.ui-form .navbar,.ui-form>.nav,.ui-form blockquote
 	{
 	margin-bottom: 5px;
+}
+
+
+#overlay-container, .overlay-modal-background, .overlay-element {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 500;
+}
+
+.overlay-modal-background {
+    background: url("images/background.png") repeat scroll 0 0 transparent;
+}
+
+.overlay-element {
+    background: none repeat scroll 0 0 transparent;
+    left: -200%;
+    z-index: 501;
+}
+   
+.overlay-element.overlay-active {
+    left: 0;
+}
+body.show-overlay {
+	overflow:hidden;	
+}
+body.nonavibar{
+	background: none repeat scroll 0 0 transparent !important;
+    margin: 100px 0 0 0;
+    padding: 20px 0;
+}
+
+body.nonavibar .page-container{
+	display: table;
+    margin: 0 auto;
+    min-height: 100px;
+    min-width: 700px;
+    padding: 0.2em 26px 2em 0.2em !important;
+    position: relative;
+    width: 88%;
+}
+body.nonavibar .container-fluid-r25 {
+    padding: 0 !important;
 }
