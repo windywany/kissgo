@@ -491,7 +491,7 @@ if(window.Kissgo){
 	
 	window.Kissgo.openIframe = function(url, onload, callback){
 		Kissgo.iframeOnload = $.isFunction(onload)?onload:Kissgo.emptyFun;
-		Kissgo.iframeOnclosed = $.isFunction(callback)?onload:Kissgo.emptyFun;
+		Kissgo.iframeOnclosed = $.isFunction(callback)?callback:Kissgo.emptyFun;
 		var tpl = '<div id="overlay-container">'+
 			'<div class="overlay-modal-background"></div>'+
 			'<iframe scrolling="auto" frameborder="0" allowtransparency="true" class="overlay-element" tabindex="-1"></iframe>'+
@@ -504,14 +504,20 @@ if(window.Kissgo){
 		$('#navbar').width(sw);
 		$('#foot').width(sw-20);
 		overIframe.find('#overlay-iframe').attr('src',url);
-	}
+	};
 	
-	window.Kissgo.closeIframe = function(){
-		Kissgo.iframeOnclosed();
-		$('#overlay-container').remove();
-		$('#navi,#foot').css('clip','none');
+	window.Kissgo.closeIframe = function(args){
+		var win = window;
+		while (win.location.href != win.parent.location.href) {
+			win = win.parent;
+		}
+		win.Kissgo._closeIframe (win,args);
+	};
+	window.Kissgo._closeIframe = function(win,args){
+		win.Kissgo.iframeOnclosed(args);		
+		$('#overlay-container').remove();		
 		$('#navbar').width('100%');
 		$('#foot').width('100%');
-		body.removeClass('show-overlay');
-	}
+		$('body').removeClass('show-overlay');
+	};
 }

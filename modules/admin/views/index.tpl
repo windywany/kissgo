@@ -1,7 +1,7 @@
 {extends file=$ksg_admincp_layout}
 
 {block name="admincp_body"}
-    <div style="height:2000px;">
+    <div style="">
         dashboard index
     </div>
 {/block}

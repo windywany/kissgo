@@ -27,7 +27,7 @@ class ExtensionManager {
         return self::$INSTANCE;
     }
     public function getAliasMap(){
-        return $this->aliases ['m2u'];
+        return $this->aliases ['m2u']?$this->aliases ['m2u']:array();
     }
     /**
      * 加载已经安装的插件

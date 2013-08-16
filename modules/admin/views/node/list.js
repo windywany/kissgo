@@ -20,7 +20,9 @@ $(function() {
 	});
 	$('.edit-page').click(function(){
 		var type = $(this).attr('data-type'),noteId = $(this).attr('data-content');
-		Kissgo.publish(type,noteId);
+		Kissgo.publish(type,noteId,function(id){
+			alert(id);
+		});
 		return false;
 	});
 });

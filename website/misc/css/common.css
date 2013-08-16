@@ -714,7 +714,7 @@ span.tip {
     position: absolute;
     top: 0;
     width: 100%;
-    z-index: 500;
+    z-index: 1020;
 }
 
 .overlay-modal-background {
@@ -724,11 +724,12 @@ span.tip {
 .overlay-element {
     background: none repeat scroll 0 0 transparent;
     left: -200%;
-    z-index: 501;
+    z-index: 1021;
 }
    
 .overlay-element.overlay-active {
     left: 0;
+    overflow-y: scroll;
 }
 body.show-overlay {
 	overflow:hidden;	
@@ -750,4 +751,107 @@ body.nonavibar .page-container{
 }
 body.nonavibar .container-fluid-r25 {
     padding: 0 !important;
+}
+
+#overlay-titlebar {
+    padding: 0 20px;
+    position: relative;
+    white-space: nowrap;
+    z-index: 100;
+}
+#overlay-content {
+    background: #FFFFFF;
+    clear: both;
+    color: #000000;
+    padding: 0.5em 1em;
+    position: relative;
+}
+#overlay-content .overlay-body{
+	background: #FFFFFF;    
+    margin:0;
+    padding: 0 20px;
+    position: relative;
+}
+#overlay-title-wrapper {
+    overflow: hidden;
+}
+#overlay-title {
+    color: #FFFFFF;
+    float: left;
+    font-size: 20px;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.3em 0;
+    line-height: 1.1em;
+}
+#overlay-title:active, #overlay-title:focus {
+    outline: 0 none;
+}
+
+#overlay-close-wrapper {
+    position: absolute;
+    right: 0;
+}
+#overlay-close, #overlay-close:hover {
+    background: url("images/close.png") no-repeat scroll 0 0 transparent;
+    border-top-left-radius: 0;
+    display: block;
+    height: 26px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 26px;
+}
+#overlay-tabs {
+    line-height: 27px;
+    margin: -28px 0 0;
+    position: absolute;
+    right: 20px;
+    text-transform: uppercase;
+    bottom: -1px;
+    font-size: 1.54em;
+    line-height: 1.54em;
+    margin: 0;
+}
+#overlay-tabs li {
+    display: inline;
+    list-style: none outside none;
+    margin: 0 -2px;
+    padding: 0;
+    line-height: 1.54em;
+}
+#overlay-tabs li a, #overlay-tabs li a:active, #overlay-tabs li a:visited, #overlay-tabs li a:hover {
+    background-color: #A6A7A2;
+    border-radius: 8px 8px 0 0;
+    color: #000000;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 0 0 2px;
+    outline: 0 none;
+    padding: 0 14px;
+    text-decoration: none;
+}
+#overlay-tabs li.active a, #overlay-tabs li.active a.active, #overlay-tabs li.active a:active, #overlay-tabs li.active a:visited {
+    background-color: #FFFFFF;
+    margin: 0;
+    padding-bottom: 2px;
+}
+#overlay-tabs li a:focus, #overlay-tabs li a:hover {
+    color: #FFFFFF;
+}
+#overlay-tabs li.active a:focus, #overlay-tabs li.active a:hover {
+    color: #000000;
+}
+#overlay-titlebar .add-or-remove-shortcuts {
+    padding-top: 0.9em;
+}
+* html #overlay-close, * html #overlay-close:hover {
+    position: absolute;
+}
+.element-invisible {
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute !important;
 }

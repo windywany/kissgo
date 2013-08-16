@@ -46,7 +46,7 @@ class Router {
         global $_ksg_router_url;
         self::$url = $url = trim ( $request ['_url'], '/' );
         self::$cacheKey = md5 ( $_SERVER ['REQUEST_METHOD'] . ' ' . $url );
-        $actionInfo = false; //InnerCacher::get ( self::$cacheKey );
+        $actionInfo = InnerCacher::get ( self::$cacheKey );
         // if we have a cache for this request.
         if ($actionInfo) {
             if (isset ( $actionInfo ['ac'] ) && $actionInfo ['ac']) {

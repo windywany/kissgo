@@ -17,7 +17,7 @@ function set_site_global_vars($smarty) {
     $smarty->assign ( '_ksg_rversion', KISSGO_R_VERSION );
     $smarty->assign ( '_ksg_page_uri', Request::getUri () );
     $smarty->assign ( '_ksg_page_url', Request::getVirtualPageUrl () );
-    $smarty->assign ( '__ksg_router_base', clean_url () );
+    $smarty->assign ( '_ksg_router_base', clean_url () );
     $smarty->assign ( 'ROUTER_URL', $_ksg_router_url );
     $smarty->assign ( '_ksg_page_tip_info', sess_del ( '_ksg_page_tip_info', false ) );
     $smarty->assign ( '_ksg_page_tip_info_cls', sess_del ( '_ksg_page_tip_info_cls', '' ) );
