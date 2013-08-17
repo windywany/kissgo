@@ -431,8 +431,7 @@
 		msgbox.find('#xui-messagebox-body').addClass(type).html(message);
 		msgbox.modal('show');
 	};
-	$.scrollbarWidth = function(){
-		
+	$.scrollbarWidth = function(){		
 		var scrollDiv = $('<div></div>').css({width: '100px',
 									height: '100px',
 									overflow: 'scroll',
@@ -457,8 +456,10 @@
 			var $e = $(e),h=$e.find('.tab-content').height();
 			$e.find('.nav-tabs').height(h);
 		});		
+		$('input, textarea').placeholder();
 	});
 })(jQuery);
+
 function showWaitMask(text, keep) {
     text = text ? text : '处理中...';
     var ov = $('#overlay-wrapper'), msg = ov.find('div.msg');
@@ -473,6 +474,16 @@ function hideWaitMask() {
 
 if(window.Kissgo){
 	window.Kissgo.emptyFun = function(){};
+	window.Kissgo.hasVScrollbar = function(){
+		if(window.innerHeight){
+            return document.body.offsetHeight> innerHeight;
+        }
+        else {
+            return  document.documentElement.scrollHeight > 
+                document.documentElement.offsetHeight ||
+                document.body.scrollHeight>document.body.offsetHeight;
+        }
+	};
 	window.Kissgo.publish = function(type, id, callback){
 		if(!type||!id){
 			alert('error type or id');
@@ -495,15 +506,20 @@ if(window.Kissgo){
 		var tpl = '<div id="overlay-container">'+
 			'<div class="overlay-modal-background"></div>'+
 			'<iframe scrolling="auto" frameborder="0" allowtransparency="true" class="overlay-element" tabindex="-1"></iframe>'+
-			'<iframe scrolling="auto" onload="Kissgo.iframeOnload()" frameborder="0" allowtransparency="true" class="overlay-element overlay-active" id="overlay-iframe"></iframe></div>';
+			'<iframe scrolling="yes" onload="Kissgo.iframeOnload()" frameborder="0" allowtransparency="true" class="overlay-element overlay-active" id="overlay-iframe"></iframe></div>';
 			
-		var overIframe = $(tpl),body = $('body');
-		body.addClass('show-overlay');		
-		overIframe.appendTo($('body'));
-		var sw = $(window).width() - $.scrollbarWidth();
+		var overIframe = $(tpl),sw=0;
+		overIframe.appendTo($('body'));	
+		if(Kissgo.hasVScrollbar()){			
+			sw = $(window).width();			
+		}else{			
+			sw = $(window).width() - $.scrollbarWidth();	
+		}
 		$('#navbar').width(sw);
 		$('#foot').width(sw-20);
+		$('body').addClass('show-overlay');
 		overIframe.find('#overlay-iframe').attr('src',url);
+		
 	};
 	
 	window.Kissgo.closeIframe = function(args){
@@ -516,8 +532,8 @@ if(window.Kissgo){
 	window.Kissgo._closeIframe = function(win,args){
 		win.Kissgo.iframeOnclosed(args);		
 		$('#overlay-container').remove();		
-		$('#navbar').width('100%');
-		$('#foot').width('100%');
+		$('#navbar').width('auto');
+		$('#foot').width('auto');
 		$('body').removeClass('show-overlay');
 	};
 }

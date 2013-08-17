@@ -1,7 +1,11 @@
+* html body,* html{
+	overflow:auto;	
+}
 body.nonavibar{
 	padding: 0;
-	overflow-y: visible;
+	overflow-y: scroll;
 }
+
 body.nonavibar #navbar,body.nonavibar #foot,body.nonavibar #sideTools{
 	display: none;
 }
@@ -729,7 +733,8 @@ span.tip {
    
 .overlay-element.overlay-active {
     left: 0;
-    overflow-y: scroll;
+	overflow-x:hidden;
+    /*overflow-y: visible;*/
 }
 body.show-overlay {
 	overflow:hidden;	
@@ -855,3 +860,4 @@ body.nonavibar .container-fluid-r25 {
     overflow: hidden;
     position: absolute !important;
 }
+.placeholder { color: #999 !important; }

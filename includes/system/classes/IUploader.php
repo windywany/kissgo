@@ -37,6 +37,13 @@ interface IUploader {
      */
     public function thumbnail($file, $sizes);
     /**
+     * get the thumbnail url for the image
+     * @param string $thumbfile
+     * @param string $src
+     * @return string the thumbnail url
+     */
+    public function thumbnail_url($thumbfile,$src);
+    /**
      * marked the file with a cover
      * @param string $file
      * @param string $watermark

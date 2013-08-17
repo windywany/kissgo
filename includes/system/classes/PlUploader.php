@@ -6,6 +6,10 @@
  */
 class PlUploader implements IUploader {
     private $last_error = '';
+    private $upload_root_path = '';
+    public function __construct() {
+        $this->upload_root_path = WEB_ROOT . WEBSITE_DIR . DS;
+    }
     /**
      * 默认文件上传器
      *
@@ -14,7 +18,7 @@ class PlUploader implements IUploader {
      */
     public function save($file) {
         $path = (defined ( 'UPLOAD_DIR' ) && UPLOAD_DIR ? UPLOAD_DIR : 'uploads') . date ( '/Y/m/' );
-        $destdir = WEB_ROOT . WEBSITE_DIR . DS . $path;
+        $destdir = $this->upload_root_path . $path;
         $tmp_file = $file->tmpname;
         $fileinfo = stat ( $tmp_file );
         $maxSize = $this->getMaxSize ();
@@ -59,15 +63,22 @@ class PlUploader implements IUploader {
         return in_array ( $ext, $types );
     }
     public function thumbnail($file, $sizes) {
-        $imageUtil = new ImageUtil ( WEB_ROOT . $file );
+        $imageUtil = new ImageUtil ( $this->upload_root_path . $file );
         return $imageUtil->thumbnail ( $sizes );
     }
+    public function thumbnail_url($thumbfile, $src) {
+        if (file_exists ( $this->upload_root_path . $thumbfile )) {
+            return BASE_URL . WEBSITE_DIR . '/' . $thumbfile;
+        } else {
+            return BASE_URL . WEBSITE_DIR . '/' . $src;
+        }
+    }
     public function watermark($file, $watermark, $pos = 'br') {
-        $imageUtil = new ImageUtil ( WEB_ROOT . $file );
+        $imageUtil = new ImageUtil ( $this->upload_root_path . $file );
         return $imageUtil->watermark ( $watermark, $pos );
     }
     public function delete($file) {
-        $file = WEB_ROOT . $file;
+        $file = $this->upload_root_path . $file;
         if (file_exists ( $file )) {
             if (@unlink ( $file )) {
                 ImageUtil::deleteThumbnail ( $file );

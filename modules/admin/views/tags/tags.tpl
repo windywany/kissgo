@@ -28,8 +28,7 @@
         	<input type="hidden" id="tag-type" value="{$type}"/>
             <form class="form-inline" id="tag-form" method="get" action="{$_CUR_URL}/{$type}">         
                 
-				<input type="text" class="span2"
-					name="key" value="{$key}" placeholder="关键字" />
+				<input type="text" class="input-medium" name="key" value="{$key}" placeholder="关键字" />
 				<button type="submit" class="btn">搜索</button>
 			</form>
 			<div id="tag-wrap">

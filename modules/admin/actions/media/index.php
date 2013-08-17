@@ -53,18 +53,18 @@ function admin_media_icon($icon, $item) {
         return $src;
     } else if ($item ['type'] == 'doc') {
         if ($item ['ext'] == 'xls' || $item ['ext'] == 'xlsx') {
-            return BASE_URL . STATIC_DIR . '/images/icons/spreadsheet.png';
+            return BASE_URL . MISC_DIR . '/images/icons/spreadsheet.png';
         } else if ($item ['ext'] == 'txt') {
-            return BASE_URL . STATIC_DIR . '/images/icons/text.png';
+            return BASE_URL . MISC_DIR . '/images/icons/text.png';
         } else {
-            return BASE_URL . STATIC_DIR . '/images/icons/document.png';
+            return BASE_URL . MISC_DIR . '/images/icons/document.png';
         }
     } else if ($item ['type'] == 'zip') {
-        return BASE_URL . STATIC_DIR . '/images/icons/archive.png';
+        return BASE_URL . MISC_DIR . '/images/icons/archive.png';
     } else if ($item ['type'] == 'media') {
-        return BASE_URL . STATIC_DIR . '/images/icons/video.png';
+        return BASE_URL . MISC_DIR . '/images/icons/video.png';
     }
-    return BASE_URL . STATIC_DIR . '/images/icons/default.png';
+    return BASE_URL . MISC_DIR . '/images/icons/default.png';
 }
 function admin_get_media_actions($actions, $item) {
     static $urls = false;
