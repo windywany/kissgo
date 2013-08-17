@@ -1,11 +1,11 @@
 <?php
 /**
  * 
- * Mysql Pdo Driver
+ * Postgresql Pdo Driver
  * @author Leo Ning
  *
  */
-class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
+class PsqlPdoDialect extends PdoDialect implements SqlBuilder {
     /**
      * (non-PHPdoc)
      * @see PdoDialect::getSqlBuilder()
@@ -18,13 +18,13 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
      * @see PdoDialect::buildOptions()
      */
     public function buildOptions($options) {
-        $opts = array_merge ( array ('encoding' => 'UTF8', 'host' => 'localhost', 'port' => 3306, 'user' => 'root', 'password' => 'root', 'driver_options' => array () ), $options );
+        $opts = array_merge ( array ('encoding' => 'UTF8', 'host' => 'localhost', 'port' => 5432, 'user' => 'postgres', 'password' => 'postgres', 'driver_options' => array () ), $options );
         $charset = isset ( $opts ['encoding'] ) && ! empty ( $opts ['encoding'] ) ? $opts ['encoding'] : 'UTF8';
-        $dsn = "mysql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']};charset={$charset}";
+        $dsn = "pgsql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']};user={$opts ['user']};password={$opts ['password']}";
         return array ($dsn, $opts ['user'], $opts ['password'], $opts ['driver_options'] );
     }
     public function specialChar() {
-        return '`';
+        return '"';
     }
     /**
      * (non-PHPdoc)
@@ -35,7 +35,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
     public function schema($dao, $engine = 'InnoDB', $charset = 'UTF8') {
         $sql = 'CREATE TABLE ';
         $schema = $dao->schema ();
-        $sql .= '`' . $dao->getFullTableName () . '` (';
+        $sql .= '"' . $dao->getFullTableName () . '" (';
         $fields = array ();
         foreach ( $schema as $field => $def ) {
             $fstr = $this->getColumnDef ( $field, $def );
@@ -50,7 +50,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         
         $primarykes = $schema->getPrimaryKey ();
         if (! empty ( $primarykes )) {
-            $fields [] = 'PRIMARY KEY (`' . implode ( '`,`', $primarykes ) . '`)';
+            $fields [] = 'PRIMARY KEY ("' . implode ( '","', $primarykes ) . '")';
         }
         
         $indexs = $schema->getIndexes ();
@@ -72,7 +72,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         $values = new DbSqlValues ( $this );
         list ( $dao, $alias ) = $table;
         $fname = $dao->getFullTableName ();
-        $sql = "DELETE `{$alias}` FROM `{$fname}` AS `{$alias}`";
+        $sql = "DELETE \"{$alias}\" FROM \"{$fname}\" AS \"{$alias}\"";
         $join = $sqlHelper->getJoins ();
         if (! empty ( $join )) {
             $sql .= $this->buildJoin ( $join );
@@ -104,13 +104,13 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         list ( $dao, $alias ) = $table;
         $values = new DbSqlValues ( $this );
         $fname = $dao->getFullTableName ();
-        $sql = "INSERT INTO `$fname` (`";
+        $sql = "INSERT INTO \"$fname\" (\"";
         $fields = $_values = array ();
         foreach ( $data as $field => $value ) {
             $fields [] = $field;
             $_values [] = $values->addValue ( $field, $value );
         }
-        $sql .= implode ( "`,`", $fields ) . '`) VALUES (' . implode ( ',', $_values ) . ')';
+        $sql .= implode ( '","', $fields ) . '") VALUES (' . implode ( ',', $_values ) . ')';
         $data = $values->getValues ();
         return new DbSQL ( $sql, $data );
     }
@@ -124,15 +124,15 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         $values = new DbSqlValues ( $this );
         if ($dao instanceof DbSQL) {
             $values->merge ( $dao->values () );
-            $fields = DbView::prepareFields ( $sqlHelper->getFields (), $values, '`' );
-            $sql = "SELECT $fields FROM ( $dao ) AS `$alias`";
+            $fields = DbView::prepareFields ( $sqlHelper->getFields (), $values, '"' );
+            $sql = "SELECT $fields FROM ( $dao ) AS \"$alias\"";
         } else {
-            $fields = DbView::prepareFields ( $sqlHelper->getFields (), $values, '`', $dao );
+            $fields = DbView::prepareFields ( $sqlHelper->getFields (), $values, '"', $dao );
             if (! $fields) {
-                throw new PDOException ( "field lists is empty" );
+                throw new PDOException ( 'field lists is empty' );
             }
             $fname = $dao->getFullTableName ();
-            $sql = "SELECT $fields FROM `$fname` AS `$alias`";
+            $sql = "SELECT $fields FROM \"$fname\" AS \"$alias\"";
         }
         
         $join = $sqlHelper->getJoins ();
@@ -178,14 +178,14 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         list ( $dao, $alias ) = $table;
         $values = new DbSqlValues ( $this );
         $fname = $dao->getFullTableName ();
-        $sql = "UPDATE `$fname` AS `$alias`";
+        $sql = "UPDATE \"$fname\" AS \"$alias\"";
         $join = $sqlHelper->getJoins ();
         if (! empty ( $join )) {
             $sql .= $this->buildJoin ( $join );
         }
         $fields = array ();
         foreach ( $data as $field => $value ) {
-            list ( $name, $vname ) = PdoDialect::safeField ( $field, '`' );
+            list ( $name, $vname ) = PdoDialect::safeField ( $field, '"' );
             if ($value instanceof DbImmutable) {
                 $fields [] = "$name = " . $value->__toString ();
             } else {
@@ -224,12 +224,10 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
      * @param unknown_type $definition
      */
     private function getColumnDef($field, $definition) {
-        $fstr [] = "`{$field}`";
+        $fstr [] = "\"{$field}\"";
         $type = $definition [Idao::TYPE];
         $typee = isset ( $definition [Idao::TYPE_EXTRA] ) ? $definition [Idao::TYPE_EXTRA] : Idao::TE_NORMAL;
-        if ($type == Idao::TYPE_SERIAL) {
-            $definition ['auto_increment'] = true;
-        } else if ($type == Idao::TYPE_BOOL) {
+        if ($type == Idao::TYPE_BOOL) {
             $definition [Idao::LENGTH] = 1;
             if (isset ( $definition [Idao::DEFT] )) {
                 $definition [Idao::DEFT] = $definition [Idao::DEFT] ? 1 : 0;
@@ -264,9 +262,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         if (isset ( $definition [Idao::DEFT] )) {
             $fstr [] = 'DEFAULT ' . ((in_array ( $f, array ('VARCHAR', 'CHAR', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'TEXT', 'DATE', 'DATETIME', 'ENUM' ) )) ? "'{$definition[Idao::DEFT]}'" : $definition [Idao::DEFT]);
         }
-        if (isset ( $definition ['auto_increment'] )) {
-            $fstr [] = 'AUTO_INCREMENT';
-        }
+        
         if (isset ( $definition [Idao::CMMT] )) {
             $fstr [] = "COMMENT '{$definition[Idao::CMMT]}'";
         }
@@ -275,10 +271,10 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
     }
     private function getIndexDef($def) {
         list ( $name, $fields, $type ) = $def;
-        if (! empty ( $type )) {
-            return $type . ' KEY `' . $name . '` (`' . implode ( '`,`', $fields ) . '`)';
+        if (! empty ( $type ) && $type != 'UNIQUE') {
+            return 'CONSTRAINT  "' . $name . '" UNIQUE ("' . implode ( '","', $fields ) . '")';
         } else {
-            return 'KEY `' . $name . '` (`' . implode ( '`,`', $fields ) . '`)';
+            return 'CONSTRAINT  "' . $name . '" EXCLUDE  USING ("' . implode ( '","', $fields ) . '")';
         }
     }
     /**
@@ -290,7 +286,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         if (! empty ( $joins )) {
             foreach ( $joins as $join ) {
                 list ( $table, $on, $dir, $alias ) = $join;
-                if ($table instanceof DbView) {                    
+                if ($table instanceof DbView) {
                     $fname = $table->getFullTableName ();
                     $falias = $table->getAlias ();
                 } else {
@@ -302,7 +298,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
                 } else if (! empty ( $alias )) {
                     $falias = $alias;
                 }
-                $_joins [] = $dir . ' `' . $fname . '` AS `' . $falias . '` ON (' . $on . ')';
+                $_joins [] = $dir . ' "' . $fname . '" AS "' . $falias . '" ON (' . $on . ')';
             }
             if (! empty ( $_joins )) {
                 return implode ( ' ', $_joins );
@@ -371,7 +367,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             } else if (is_string ( $condition )) {
                 $field = $condition;
                 $condition = '';
-            }            
+            }
             $and_ors = preg_split ( '/[\s]+/', trim ( $field ) );
             $and_ors = count ( $and_ors ) >= 2 ? $and_ors : array ($and_ors [0], '=' );
             $field = array_shift ( $and_ors ); // 字段
@@ -383,7 +379,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             if (! $first && ! $inline_or) {
                 $c [] = 'AND';
             } else if ($inline_or) {
-                $c [] = 'OR';                
+                $c [] = 'OR';
             }
             if (is_array ( $condition ) && ! in_array ( $op, array ('BETWEEN', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL' ) )) { // 如果是嵌套条件 
                 if (! is_numeric ( $field )) {
@@ -393,7 +389,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
                 $c [] = $this->buildWhere ( $condition, $values );
                 $c [] = ')';
             } else {
-                list ( $sfield, $field ) = PdoDialect::safeField ( $field, '`' );
+                list ( $sfield, $field ) = PdoDialect::safeField ( $field, '"' );
                 $c [] = $sfield;
                 $c [] = $op;
                 switch ($op) {
@@ -455,7 +451,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
     private function buildGroupBy($groupby) {
         $_gb = array ();
         foreach ( $groupby as $gb ) {
-            $g = PdoDialect::safeField ( $gb, '`' );
+            $g = PdoDialect::safeField ( $gb, '"' );
             $_gb [] = $g [0];
         }
         return ' GROUP BY ' . implode ( ',', $_gb );
@@ -465,14 +461,14 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         $_or = array ();
         foreach ( $order as $o ) {
             list ( $field, $dir ) = $o;
-            $fs = PdoDialect::safeField ( $field, '`' );
+            $fs = PdoDialect::safeField ( $field, '"' );
             $_or [] = $fs [0] . ' ' . $dir;
         }
         return ' ORDER BY ' . implode ( ',', $_or );
     }
     private function getType($type, $typee = 'normal') {
-        static $map = array ('varchar:normal' => 'VARCHAR', 'char:normal' => 'CHAR', 'text:tiny' => 'TINYTEXT', 'text:small' => 'TINYTEXT', 'text:medium' => 'MEDIUMTEXT', 'text:big' => 'LONGTEXT', 'text:normal' => 'TEXT', 'serial:tiny' => 'TINYINT', 'serial:small' => 'SMALLINT', 'serial:medium' => 'MEDIUMINT', 'serial:big' => 'BIGINT', 'serial:normal' => 'INT', 'int:tiny' => 'TINYINT', 'int:small' => 'SMALLINT', 'int:medium' => 'MEDIUMINT', 'int:big' => 'BIGINT', 'int:normal' => 'INT', 
-                            'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL','timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME', 'enum:normal' => 'ENUM' );
+        static $map = array ('varchar:normal' => 'VARCHAR', 'char:normal' => 'CHAR', 'text:tiny' => 'TEXT', 'text:small' => 'TEXT', 'text:medium' => 'TEXT', 'text:big' => 'TEXT', 'text:normal' => 'TEXT', 'serial:tiny' => 'smallserial', 'serial:small' => 'smallserial', 'serial:medium' => 'serial', 'serial:big' => 'bigserial', 'serial:normal' => 'serial', 'int:tiny' => 'SMALLINT', 'int:small' => 'SMALLINT', 'int:medium' => 'MEDIUMINT', 'int:big' => 'BIGINT', 'int:normal' => 'INT', 
+                            'bool:normal' => 'boolean', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'timestamp', 'enum:normal' => 'ENUM' );
         $t = $type . ':' . $typee;
         if (isset ( $map [$t] )) {
             return $map [$t];
