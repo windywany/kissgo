@@ -9,7 +9,7 @@
 
 <div class="clearfix" id="overlay-titlebar">
     <div class="clearfix" id="overlay-title-wrapper">
-      <h1 id="overlay-title">People</h1>
+      <h1 id="overlay-title">{'Publish'|ts}</h1>
     </div>
     <div id="overlay-close-wrapper">
       <a class="overlay-close" href="#" id="overlay-close"></a>
@@ -31,44 +31,55 @@
 	        </div>
 	    </div>
 	    
-	    <div class="accordion" id="page-widgets">        
-	        
-	        <div class="accordion-group">
-	            <div class="accordion-heading">
-	                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseBase">基本</a>
-	            </div>
-	            <div id="collapseBase" class="accordion-body collapse in">
-	              <div class="accordion-inner">
-	              Anim pariatur cliche...
-	              </div>
-	            </div>
-	        </div>
-	        
-	        <div class="accordion-group">
-	            <div class="accordion-heading">
-	                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseNavi">导航菜单</a>
-	            </div>
-	            <div id="collapseNavi" class="accordion-body collapse">
-	              <div class="accordion-inner">
-	              Anim pariatur cliche...
-	              </div>
-	            </div>
-	        </div>  
-	             
-	        <div class="accordion-group">
-	            <div class="accordion-heading">
-	                <a class="accordion-toggle" data-toggle="collapse" data-parent="#page-widgets" href="#collapseSEO">SEO(搜索优化)</a>
-	            </div>
-	            <div id="collapseSEO" class="accordion-body collapse">
-	              <div class="accordion-inner">
-	              Anim pariatur cliche...
-	              </div>
-	            </div>
-	        </div>
-	        
-	        {$widgets}
-	        
-	    </div>
+	    <div class="vertical-tabs clearfix">
+	    	<ul class="vertical-tabs-list">
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#abc">
+	    				<strong>Menu settings</strong>
+	    				<span class="summary">abcaa</span>
+	    			</a>
+	    		</li>
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#def">
+	    				<strong>Revision information</strong>
+	    				<span class="summary">No revision</span>
+	    			</a>
+	    		</li>
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#">
+	    				<strong>URL path settings</strong>
+	    				<span class="summary">No alias</span>
+	    			</a>
+	    		</li>
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#">
+	    				<strong>Comment settings</strong>
+	    				<span class="summary">Open</span>
+	    			</a>
+	    		</li>
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#">
+	    				<strong>Authoring information</strong>
+	    				<span class="summary">By admin</span>
+	    			</a>
+	    		</li>
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#">
+	    				<strong>Publishing options</strong>
+	    				<span class="summary">Published, Promoted to front page</span>
+	    			</a>
+	    		</li>
+	    	</ul>
+	    	<div class="vertical-tabs-panes vertical-tabs-processed">
+	    		<fieldset id="abc" class="vertical-tabs-pane" style="display: block;">	    			
+	    			<div class="fieldset-wrapper" style="height:500px"></div>
+	    		</fieldset>
+				<fieldset id="def" class="vertical-tabs-pane" style="display: none;">
+					<div class="fieldset-wrapper"></div>
+				</fieldset>
+			</div>
+		</div>
+	    
 	    
 	    <div class="form-actions" style="text-align:center;padding:10px">
 	        <a data-name="s" class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>	            
