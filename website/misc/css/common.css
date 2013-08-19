@@ -185,20 +185,14 @@ br.clear {
 input.title1 {	
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	height: 35px;
-	box-shadow:none;
-	border-radius: 0;
-	border-width: 0 0 1px 0;
-	border-style: solid;
+	height: 35px;	
 	font-size: 16px;
 	font-weight: bold;
 	width: 100%;
 	transition: none;
 	outline: none;
 }
-input.title1:focus{
-	box-shadow:none;
-}
+
 .txt-impt,.txt-err {
 	color: #D90000;
 }
