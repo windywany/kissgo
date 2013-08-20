@@ -128,35 +128,3 @@ body {
 #foot a:hover{
     color: #0088CC;
 }
-#overlay-wrapper{
-	display:none;
-}
-#overlay {	
-    background:#fff;
-	left: 0;
-    position: fixed;
-    bottom: 0;
-    opacity: 0.85;
-    top: 0;
-	right: 0;
-    z-index: 1035;
-}
-#overlay-body {
-    height: 160px;
-    left: 50%;
-    margin: -80px 0 0 -250px;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    width: 500px;
-    z-index: 1036;
-}
-#overlay-body img, #overlay-body div.msg {
-    color: #999;
-    text-align: center;
-}
-#overlay-body div.msg {
-    width: 100%;
-    font-size: 16px;
-    font-weight: bold;
-}

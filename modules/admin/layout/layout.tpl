@@ -9,7 +9,7 @@
     {'bootstrap.css,bootstrap-modal.css,bootstrap-fileupload.css,bootstrap-responsive.css,datepicker.css,select2.css,jquery-ui.css,prettyPhoto.css,ztree.css,common.css'|css:'misc/css'}    
     <link rel="stylesheet" href="{'css/kissgo.css'|here}"/>
     {block name="admincp_css_block"}{/block}    
-    {'jquery.js,jquery-ui.js,placeholder.js,validate.js,validate_addons.js,ztree.js,prettyPhoto.js,nestedSortable.js'|js:'misc/jquery'}
+    {'jquery.js,jquery-ui.js,placeholder.js,validate.js,validate_addons.js,ztree.js,prettyPhoto.js,nestedSortable.js,form.js'|js:'misc/jquery'}
     {'bootstrap.js,modalmanager.js,modal.js,datepicker.js,fileupload.js,select2.js'|js:'misc/bootstrap'}
     {'quicktags.js,common.js'|js:misc}	
     <script type="text/javascript">
@@ -115,13 +115,6 @@
     </div>
 </div>
 {/if}
-</div>
-<div id="overlay-wrapper">
-    <div id="overlay"></div>
-    <div id="overlay-body">
-    	<img src="{'images/overlay.gif'|here}">
-    	<div class="msg">处理中...</div>
-    </div>
 </div>
 {block name="admincp_foot_js_block"}{/block}
 {'admincp_footer'|fire}

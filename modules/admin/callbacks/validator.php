@@ -72,3 +72,4 @@ function check_menu_name($value = null, $data = null, $message = '') {
     $nM = new KsgMenuTable ();
     return $nM->exist ( $where ) ? $message : true;
 }
+//end of validator_callbacks.php

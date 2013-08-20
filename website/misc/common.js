@@ -440,20 +440,99 @@
 					"九月", "十月", "十一", "腊月" ]
 		});
 	}
-	$.showMessageBoxTpl = '<div id="xui-messagebox" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="msgModalLabel" aria-hidden="true">';
-	$.showMessageBoxTpl += '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3></h3></div>';
-	$.showMessageBoxTpl += '<div class="modal-body" id="xui-messagebox-body"></div>';
-	$.showMessageBoxTpl += '<div class="modal-footer"><button class="btn" data-dismiss="modal" aria-hidden="true">确定</button></div></div>';
-	$.showMessageBox = function(type, title, message) {
-		$('#overlay').hide();
+	
+	$.warn = function(msg){
+		$.showMessageBox('warn','Warn',msg);
+	};
+	$.error = function(msg){
+		$.showMessageBox('error','Error',msg);
+	};
+	$.success = function(msg){
+		$.showMessageBox('success','Success',msg);
+	};
+	$.alert = function(msg){
+		$.showMessageBox('info','Alert',msg);
+	};
+	$.confirm = function(msg,callback){
+		$.showMessageBox('confirm','Confirm',msg,[{text:'Yes',callback:callback},{text:'No'}]);
+	};	
+	$.dialog = function(title,body,buttons){
+		$.showMessageBox('prompt',title,body,buttons);
+	};
+	
+	$.showMessageBoxTpl = '<div id="xui-messagebox" class="xui_dialog"><div class="dialog_head"><span></span></div>';
+	$.showMessageBoxTpl += '<div class="dialog_body"><div class="dialog_content"><div class="cnfx_content"><span class="dialog_icon"></span><div class="dialog_f_c"></div></div></div>';
+	$.showMessageBoxTpl += '<div class="dialog_operate"><div class="txt_right cnfx_btn"></div><div class="clearfix"></div></div></div></div>';
+	
+	$.showMessageBox = function(type, title, message,buttons) {
+		var ov = $.getOverlay(),cls='icon_info_b';		
 		var msgbox = $('#xui-messagebox');
 		if (msgbox.length == 0) {
 			msgbox = $($.showMessageBoxTpl);
 			msgbox.appendTo($('body'));
 		}
-		msgbox.find('.modal-header h3').addClass(type).html(title);
-		msgbox.find('#xui-messagebox-body').addClass(type).html(message);
-		msgbox.modal('show');
+		msgbox.find('.dialog_content').removeClass('no-icon');
+		switch(type){
+			case 'error':
+				cls = 'icon_err_b';
+				break;
+			case 'success':
+				cls = 'icon_suc_b';
+				break;
+			case 'warn':
+				cls = 'icon_warn_b';
+				break;
+			case 'confirm':
+				cls = 'icon_con_b';
+				break;
+			case 'prompt':
+				msgbox.find('.dialog_content').addClass('no-icon');
+				break;
+			default:
+				break;			
+		}
+		msgbox.find('.dialog_head span').html(title);
+		msgbox.find('.dialog_f_c').html(message);		
+		msgbox.find('.dialog_icon').attr('class','dialog_icon').addClass(cls);			
+		$.createMessageButtons(msgbox,buttons);
+		var w = msgbox.width(),h = msgbox.height(),ww = $(window).width(),wh=$(window).height();
+		msgbox.css({top:(wh-h)/2,left:(ww-w)/2}).show();
+		ov.show();
+	};
+	$.closeMessageBox = function(){
+		var ov = $('#overlay'),msgbox = $('#xui-messagebox');
+		ov.hide();
+		msgbox.hide();
+	};
+	$.createMessageButtons = function(dialog,buttons){
+		var btnWrapper = dialog.find('.cnfx_btn').empty(),$btn=null;
+		buttons = buttons || [{text:'OK'}];
+		$.each(buttons,function(i,btn){
+			$btn = $('<a class="btn '+(btn.cls?btn.cls:'')+'">'+btn.text+'</a>');
+			if(btn.iconCls){
+				$btn.prepend('<i class="'+btn.iconCls+'"></i>');
+			}
+			$btn.click(function(){
+				var rst = true;
+				if($.isFunction(btn.callback)){
+					rst = btn.callback(btn,dialog);
+				}
+				if(rst !==false){
+					$.closeMessageBox();
+				}
+			});
+			btnWrapper.append($btn);
+		});
+	};
+	$.getOverlay = function(){
+		var ov = $('#overlay');
+		if(ov.length == 0){
+			ov = $('<div id="overlay"></div>').appendTo($('body'));
+			ov.click(function(){
+				//$('#xui-messagebox').animate('');
+			});
+		}
+		return ov;
 	};
 	$.scrollbarWidth = function(){		
 		var scrollDiv = $('<div></div>').css({width: '100px',
@@ -485,15 +564,27 @@
 })(jQuery);
 
 function showWaitMask(text, keep) {
+	var ov = $.getOverlay(),ob = $('#overlay-body');	
+	if(ob.length == 0){
+		ob = $('<div id="overlay-body"><img/><div class="msg">处理中...</div></div>').appendTo($('body'));
+		if(window.Kissgo){
+			ob.find('img').attr('src',Kissgo.misc('images/overlay.gif'));
+		}else{
+			ob.find('img').attr('src','/website/misc/images/overlay.gif');
+		}		
+	}
     text = text ? text : '处理中...';
-    var ov = $('#overlay-wrapper'), msg = ov.find('div.msg');
+    var msg = ob.find('div.msg');
     ov.show();
     if (!keep) {
         msg.html(text);
     }
+    ob.show();
 }
 function hideWaitMask() {
-    $('#overlay-wrapper').fadeOut(350);
+	var ov = $('#overlay'),ob = $('#overlay-body');
+	ob.fadeOut(350);
+	ov.fadeOut(350);
 }
 
 if(window.Kissgo){
@@ -508,11 +599,13 @@ if(window.Kissgo){
                 document.body.scrollHeight>document.body.offsetHeight;
         }
 	};
-	window.Kissgo.publish = function(type, id, callback){
+	window.Kissgo.publish = function(type, id, callback,data){
 		if(!type||!id){
 			alert('error type or id');
 		}else{
-			Kissgo.openIframe(Kissgo.murl('admin','pages/publish/'+type+'/'+id), false,callback);
+			Kissgo.openIframe(Kissgo.murl('admin','pages/publish/'+type+'/'+id), function(win){
+				alert(win);
+			},callback);
 		}
 	};
 	
@@ -523,6 +616,37 @@ if(window.Kissgo){
 		}
 		return Kissgo.ROUTER_BASE + alias + (action ? '/'+action: '');
 	};
+	window.Kissgo.misc = function(res){
+		return Kissgo.MISCURL + res;
+	}
+	window.Kissgo.website = function(res){
+		return Kissgo.WEBSITE + res;
+	}
+	window.Kissgo.base = function(res){
+		return Kissgo.BASE + res;
+	}
+	window.Kissgo._iframeOnload  = function(iframe){
+		var doc,win;
+		if (iframe.contentWindow) {
+		  win =  iframe.contentWindow;
+		}	else  if (iframe.window) {
+		  win = iframe_object.window;
+		} else if (!doc && iframe.contentDocument) {
+	      doc = iframe.contentDocument;	  
+	
+		  if (!doc && iframe.document) {
+		    doc = iframe.document;
+		  }		
+		  if (doc && doc.defaultView) {
+			  win = doc.defaultView;
+		  }else if (doc && doc.parentWindow) {
+			  win = doc.parentWindow;
+		  }
+		} 
+		if(win){
+			Kissgo.iframeOnload(win);
+		}		
+	};
 	
 	window.Kissgo.openIframe = function(url, onload, callback){
 		Kissgo.iframeOnload = $.isFunction(onload)?onload:Kissgo.emptyFun;
@@ -530,7 +654,7 @@ if(window.Kissgo){
 		var tpl = '<div id="overlay-container">'+
 			'<div class="overlay-modal-background"></div>'+
 			'<iframe scrolling="auto" frameborder="0" allowtransparency="true" class="overlay-element" tabindex="-1"></iframe>'+
-			'<iframe scrolling="yes" onload="Kissgo.iframeOnload()" frameborder="0" allowtransparency="true" class="overlay-element overlay-active" id="overlay-iframe"></iframe></div>';
+			'<iframe scrolling="yes" onload="Kissgo._iframeOnload(this)" frameborder="0" allowtransparency="true" class="overlay-element overlay-active" id="overlay-iframe"></iframe></div>';
 			
 		var overIframe = $(tpl),sw=0;
 		overIframe.appendTo($('body'));	

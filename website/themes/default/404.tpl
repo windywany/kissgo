@@ -10,12 +10,11 @@
         {'jquery/jquery.js,bootstrap/bootstrap.js'|js:misc}
     </head>
     <body>
-    <div id="xui-messagebox" class="modal">
-      <div class="modal-header">        
-        <h3 class="error">404 NOT FOUND</h3>
+    <div id="xui-messagebox" class="modal" style="top:10px;">      
+      <div class="modal-body" style="text-align: center; max-height:460px !important;">
+      	<img alt="404 not found" style="width: 500px;height:454px;" src="{'images/404.png'|static}"/>
       </div>
-      <div class="modal-body error">真的没找到！！！</div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="padding: 5px 15px 5px;">
         <a class="btn" href="{$_ksg_base_url}">GO HOME</a>
       </div>
     </div>

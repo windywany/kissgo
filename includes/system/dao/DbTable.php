@@ -56,6 +56,6 @@ abstract class DbTable extends DbView {
      * @see Idao::lastId()
      */
     public function lastId($name = null) {
-        return $this->driver->lastInsertId ( $name );
+        return $this->dialect->lastInsertId ( $name );
     }
 }

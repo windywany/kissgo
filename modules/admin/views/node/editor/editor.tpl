@@ -17,6 +17,9 @@
 	         background-color: #FFF;
             cursor: pointer;
         }
+        .datepicker span{
+			float:none;
+        }
     </style>
 {/block} 
 {block name="breadcrumb" nocache}
@@ -37,7 +40,7 @@
 
 <div id="overlay-content" class="clearfix">
 	<div class="overlay-body">
-	<form action="{'admin'|murl:pages}" method="POST" id="node-form">
+	<form action="{'admin'|murl:'pages/publish'}" method="POST" id="node-form">
 	    <input type="hidden" name="type" value="{$type}"/>
 	    <input type="hidden" name="node_id" value="{$node_id}"/>
 	    <div class="row-fluid">
@@ -138,17 +141,19 @@
     							<label class="checkbox pull-left mg-r5"><input name="custome_tpl_chk" id="custom-set-tpl" type="checkbox">自定义</label>
     							<br class="clear">								
     						</div>
-    						<div style="display: none;" class="input-append hide" id="tpl-wrapper">
-    			                <input class="w180" id="template_file" name="template_file" value="" readonly="readonly" type="text"><button class="btn" type="button" id="btn-select-tpl">选择..</button>
+    						<div class="input-append hide" id="tpl-wrapper">
+    			                <input class="w250" id="template_file" name="template_file" value="" readonly="readonly" type="text"/><button class="btn" type="button" id="btn-select-tpl">选择..</button>
     			            </div>
     					</div>
     					<div class="form-field">
-    						<label>置顶到</label>																		
-    			            <input class="w180 hasDatepicker" id="ontopto" name="ontopto" placeholder="默认不置顶" value="" type="text">
+    						<label>置顶到</label>
+    						<div id="time1" class="input-append date datepicker">
+        				    	<input class="w250" id="ontopto" name="ontopto" placeholder="默认不置顶" value="" type="text"/><span class="add-on"><i class="icon-calendar"></i></span>
+        				    </div>
     					</div>
     					<div class="form-field">
     						<label>缓存时间</label>												  									
-    			            <input class="w80 mg-r5" style="float:left;" id="cachetime" name="cachetime" value="0" type="text">
+    			            <input class="w80 mg-r5" style="float:left;" id="cachetime" name="cachetime" value="0" type="text"/>
     			            <span class="txt-info info">0表示不缓存，单位秒.</span>
     			            <br class="clear">
     					</div>
@@ -207,7 +212,7 @@
 	    
 	    
 	    <div class="form-actions" style="text-align:center;padding:10px">
-	        <a data-name="s" class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>	            
+	        <a class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>	            
 	        <a href="#" class="btn btn-warning overlay-close"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
 	    </div>
 	</form>

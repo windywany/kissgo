@@ -95,9 +95,9 @@ function merge_css($path) {
         $fs = explode ( ',', $f );
         if ($fs) {
             foreach ( $fs as $f ) {
-               $f =  $path . $f . '.css';
-                if(is_file($f)){
-                    $styles .= @file_get_contents ($f );
+                $f = $path . $f . '.css';
+                if (is_file ( $f )) {
+                    $styles .= @file_get_contents ( $f );
                 }
             }
         }
@@ -129,13 +129,7 @@ function merge_js() {
         }
         $jsses = InnerCacher::get ( $etag );
         if (! $jsses) {
-            global $_ksg_router_url;
-            $_ksg_base_url = BASE_URL;
-            $_ksg_router_base = clean_url ();
-            $_ksg_ueditor_home = BASE_URL . MISC_DIR . '/ueditor/';
-            $em = json_encode(ExtensionManager::getInstance()->getAliasMap());
-            $jsses = "window.Kissgo = { 'BASE': '{$_ksg_base_url}' ,'ROUTER_BASE':'{$_ksg_router_base}', 'AJAX':'{$_ksg_base_url}ajax.php','alias':$em};\n";
-            $jsses .= "window.UEDITOR_HOME_URL = '{$_ksg_ueditor_home}';\n";
+            $jsses = View::getCommonJS ();
             $js = '';
             $prefix = WEB_ROOT . WEBSITE_DIR . DS;
             $fss = explode ( ';', $jss );

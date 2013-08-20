@@ -50,5 +50,6 @@ function do_admin_pages_publish_get($req, $res, $type = '', $pid = 0) {
  * @param string $type        	
  */
 function do_admin_pages_publish_post($req, $res, $type = '', $pid = 0) {
+    return "ok";
 }
 // end of admin/actions/pages/publish.php

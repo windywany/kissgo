@@ -38,6 +38,7 @@ define ( 'FWT_TIP_SHOW_S', 's' );
  * </code>
  */
 abstract class BaseForm implements ArrayAccess, Iterator {
+    private static $callbacks_loaded = false;
     private $__properties__ = array ();
     private $__title__ = '';
     private $__options__ = array ();
@@ -239,6 +240,9 @@ abstract class BaseForm implements ArrayAccess, Iterator {
         }
     }
     public function validate($scope = null, $initail = false) {
+        if (self::$callbacks_loaded == false) {
+            self::load_callbacks ();
+        }
         if (! $initail) {
             $clean_data = $this->getCleanData ();
         } else {
@@ -381,6 +385,21 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             $this->__widgets__ [$widget]->setErrorMsg ( $error );
             $this->__errors__ [] = $error;
         }
+    }
+    /**
+     * 
+     * load validator callbacks
+     */
+    public static function load_callbacks() {
+        $em = ExtensionManager::getInstance ();
+        $es = $em->getExtensions ( true, true );
+        foreach ( $es as $module ) {
+            $f = MODULES_PATH . $module . DS . 'callbacks' . DS . 'validator.php';
+            if (is_file ( $f )) {
+                include_once $f;
+            }
+        }
+        self::$callbacks_loaded = true;
     }
     protected abstract function getFormHead();
     protected abstract function getFormItemWrapper();
@@ -681,7 +700,7 @@ class FileWidget extends TextWidget {
     const PCLS = 'pcls';
     const ECLS = 'ecls';
     public function __construct($option, $value, $form) {
-        parent::__construct ( $option, $value, $form );        
+        parent::__construct ( $option, $value, $form );
     }
     public function getWidgetComponent() {
         $properties = $this->getProperties ();
@@ -689,22 +708,22 @@ class FileWidget extends TextWidget {
         $pcls = isset ( $this->option ['pcls'] ) ? $this->option ['pcls'] : '';
         $ecls = isset ( $this->option ['ecls'] ) ? $this->option ['ecls'] : '';
         if ($this->value) {
-            $pcls .=' fileupload-exists';
-        }else{
-            $pcls .=' fileupload-new';
+            $pcls .= ' fileupload-exists';
+        } else {
+            $pcls .= ' fileupload-new';
         }
         $html = '<div class="fileupload ' . $pcls . '" data-provides="fileupload">
                  	<div class="input-append">
                 		<div class="uneditable-input ' . $ecls . '">
                 			<i class="icon-file fileupload-exists"></i>
-                			<span class="fileupload-preview">'.$this->value.'</span>
+                			<span class="fileupload-preview">' . $this->value . '</span>
                 		</div><span class="btn btn-file">
                 		<span class="fileupload-new">浏览...</span><span class="fileupload-exists">重选</span><input type="file" ' . $properties . '/></span><a href="#" class="btn fileupload-exists" data-dismiss="fileupload">删除</a>
                 	</div>
                  </div>';
         return $html;
-    }    
-    public function getValue($request=null) {
+    }
+    public function getValue($request = null) {
         if (isset ( $_FILES [$this->name] ) && $_FILES [$this->name] ['error'] == 0) {
             $file = $_FILES [$this->name];
             $this->value = $file ['name'];

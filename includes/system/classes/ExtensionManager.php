@@ -26,8 +26,8 @@ class ExtensionManager {
         }
         return self::$INSTANCE;
     }
-    public function getAliasMap(){
-        return $this->aliases ['m2u']?$this->aliases ['m2u']:array();
+    public function getAliasMap() {
+        return $this->aliases ['m2u'] ? $this->aliases ['m2u'] : array ();
     }
     /**
      * 加载已经安装的插件
@@ -123,7 +123,7 @@ class ExtensionManager {
             $extension ['Installed'] = time ();
             $extension ['unremovable'] = $unremovable;
             include_once APP_PATH . $extension ['pkg_file'];
-            $rst = apply_filter ( 'on_install_module_' . $pid, true );            
+            $rst = apply_filter ( 'on_install_module_' . $pid, true );
             if ($rst === true) {
                 $this->extensions [] = $extension;
                 $rst = $this->saveExtensionsData ();
@@ -266,18 +266,23 @@ class ExtensionManager {
     /**
      * 取插件列表
      *
-     * @param boolean $installed        	
+     * @param boolean $installed       
+     * @param boolean $loaded  	
      * @return ArrayObject
      */
-    public function getExtensions($installed = true) {
+    public function getExtensions($installed = true, $loaded = false) {
         static $scaned = false;
-        if (! $scaned) {
-            $scaned = true;
-            $this->scanExentions ();
-        }
-        $extensions = $installed ? $this->installed : $this->uninstalled;
-        if (is_array ( $extensions )) {
-            return $extensions;
+        if ($loaded) {
+            return $this->modules;
+        } else {
+            if (! $scaned) {
+                $scaned = true;
+                $this->scanExentions ();
+            }
+            $extensions = $installed ? $this->installed : $this->uninstalled;
+            if (is_array ( $extensions )) {
+                return $extensions;
+            }
         }
         return array ();
     }

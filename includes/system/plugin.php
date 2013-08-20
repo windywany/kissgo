@@ -18,7 +18,7 @@
  * @name $__ksg_rtk_hooks
  * @var array
  */
-$__ksg_rtk_hooks = array();
+$__ksg_rtk_hooks = array ();
 /**
  * 已经排序的插件
  *
@@ -26,14 +26,14 @@ $__ksg_rtk_hooks = array();
  * @name $__ksg_sorted_hooks
  * @var array
  */
-$__ksg_sorted_hooks = array();
+$__ksg_sorted_hooks = array ();
 /**
  * 已经触发的HOOKS
  * @global array
  * @name $__ksg_triggered_hooks
  * @var array
  */
-$__ksg_triggered_hooks = array();
+$__ksg_triggered_hooks = array ();
 /**
  * 正在触发的HOOKS
  *
@@ -41,7 +41,15 @@ $__ksg_triggered_hooks = array();
  * @name $__ksg_triggering_hooks
  * @var array
  */
-$__ksg_triggering_hooks = array();
+$__ksg_triggering_hooks = array ();
+/**
+ * had been loaded files
+ *
+ * @global array
+ * @name $__ksg_loaded_files
+ * @var array
+ */
+$__ksg_loaded_files = array ();
 /**
  * 注册一个HOOK的回调函数
  *
@@ -56,21 +64,31 @@ $__ksg_triggering_hooks = array();
  */
 function bind($hook, $hook_func, $priority = 10, $accepted_args = 1) {
     global $__ksg_rtk_hooks, $__ksg_sorted_hooks;
-
-    if (empty ($hook)) {
-        trigger_error('the hook name must not be empty!', E_USER_ERROR);
+    
+    if (empty ( $hook )) {
+        trigger_error ( 'the hook name must not be empty!', E_USER_ERROR );
     }
-
-    if (empty ($hook_func)) {
-        trigger_error('the hook function must not be empty!', E_USER_ERROR);
+    $file = false;
+    if (is_array ( $hook_func ) && !is_callable($hook_func)) {        
+        list ( $hook_func, $file ) = $hook_func;        
+        if ($file && ! preg_match ( '#.*\.php$#i', $file )) {
+            if (preg_match ( '#^[a-z][a-z0-9_]*$#i', $hook_func )) {
+                $file = $file . '/callbacks/' . $hook_func . '.php';
+            } else {
+                $file = $file . '/callbacks/hooks.php';
+            }
+        }
     }
-
-    $idx = __rt_hook_unique_id($hook, $hook_func, $priority);
-
-    $__ksg_rtk_hooks [$hook] [$priority] [$idx] = array('func' => $hook_func, 'accepted_args' => $accepted_args);
-
-    unset ($__ksg_sorted_hooks [$hook]);
-
+    if (empty ( $hook_func )) {
+        trigger_error ( 'the hook function must not be empty!', E_USER_ERROR );
+    }
+    
+    $idx = __rt_hook_unique_id ( $hook, $hook_func, $priority );
+    
+    $__ksg_rtk_hooks [$hook] [$priority] [$idx] = array ('func' => $hook_func, 'accepted_args' => $accepted_args, 'file' => $file );
+    
+    unset ( $__ksg_sorted_hooks [$hook] );
+    
     return true;
 }
 
@@ -87,17 +105,17 @@ function bind($hook, $hook_func, $priority = 10, $accepted_args = 1) {
  */
 function unbind($hook, $hook_func, $priority = 10) {
     global $__ksg_rtk_hooks, $__ksg_sorted_hooks;
-
-    $idx = __rt_hook_unique_id($hook, $hook_func, $priority);
-
-    $r = isset ($__ksg_rtk_hooks [$hook] [$priority] [$idx]);
-
+    
+    $idx = __rt_hook_unique_id ( $hook, $hook_func, $priority );
+    
+    $r = isset ( $__ksg_rtk_hooks [$hook] [$priority] [$idx] );
+    
     if (true === $r) {
-        unset ($__ksg_rtk_hooks [$hook] [$priority] [$idx]);
-        if (empty ($__ksg_rtk_hooks [$hook] [$priority])) {
-            unset ($__ksg_rtk_hooks [$hook] [$priority]);
+        unset ( $__ksg_rtk_hooks [$hook] [$priority] [$idx] );
+        if (empty ( $__ksg_rtk_hooks [$hook] [$priority] )) {
+            unset ( $__ksg_rtk_hooks [$hook] [$priority] );
         }
-        unset ($__ksg_sorted_hooks [$hook]);
+        unset ( $__ksg_sorted_hooks [$hook] );
     }
     return $r;
 }
@@ -114,16 +132,16 @@ function unbind($hook, $hook_func, $priority = 10) {
  */
 function unbind_all($hook, $priority = false) {
     global $__ksg_rtk_hooks, $__ksg_sorted_hooks;
-
-    if (isset ($__ksg_rtk_hooks [$hook])) {
-        if (false !== $priority && isset ($$__ksg_rtk_hooks [$hook] [$priority])) {
-            unset ($__ksg_rtk_hooks [$hook] [$priority]);
+    
+    if (isset ( $__ksg_rtk_hooks [$hook] )) {
+        if (false !== $priority && isset ( $$__ksg_rtk_hooks [$hook] [$priority] )) {
+            unset ( $__ksg_rtk_hooks [$hook] [$priority] );
         } else {
-            unset ($__ksg_rtk_hooks [$hook]);
+            unset ( $__ksg_rtk_hooks [$hook] );
         }
     }
-    if (isset ($__ksg_sorted_hooks [$hook])) {
-        unset ($__ksg_sorted_hooks [$hook]);
+    if (isset ( $__ksg_sorted_hooks [$hook] )) {
+        unset ( $__ksg_sorted_hooks [$hook] );
     }
     return true;
 }
@@ -140,49 +158,54 @@ function unbind_all($hook, $priority = false) {
  * @return string 如果HOOK的回调中有输出,则返回输出
  */
 function fire($hook, $arg = "") {
-    global $__ksg_rtk_hooks, $__ksg_sorted_hooks, $__ksg_triggered_hooks, $__ksg_triggering_hooks;
-
-    if (is_array($__ksg_triggered_hooks)) {
+    global $__ksg_rtk_hooks, $__ksg_sorted_hooks, $__ksg_triggered_hooks, $__ksg_triggering_hooks, $__ksg_loaded_files;
+    
+    if (is_array ( $__ksg_triggered_hooks )) {
         $__ksg_triggered_hooks [] = $hook;
     } else {
-        $__ksg_triggered_hooks = array($hook);
+        $__ksg_triggered_hooks = array ($hook );
     }
     $__ksg_triggering_hooks [] = $hook;
     // Do 'all' actions first
-    if (isset ($__ksg_rtk_hooks ['all'])) {
-        $all_args = func_get_args();
-        __rt_call_all_hook($all_args);
+    if (isset ( $__ksg_rtk_hooks ['all'] )) {
+        $all_args = func_get_args ();
+        __rt_call_all_hook ( $all_args );
     }
-    if (!isset ($__ksg_rtk_hooks [$hook])) { //没有该HOOK的回调
-        array_pop($__ksg_triggering_hooks);
+    if (! isset ( $__ksg_rtk_hooks [$hook] )) { //没有该HOOK的回调
+        array_pop ( $__ksg_triggering_hooks );
         return;
     }
-    $args = array();
-    if (is_array($arg) && 1 == count($arg) && is_object($arg [0])) { // array(&$this)
+    $args = array ();
+    if (is_array ( $arg ) && 1 == count ( $arg ) && is_object ( $arg [0] )) { // array(&$this)
         $args [] = & $arg [0];
     } else {
         $args [] = $arg;
     }
-    for ($a = 2; $a < func_num_args(); $a++) {
-        $args [] = func_get_arg($a);
+    for($a = 2; $a < func_num_args (); $a ++) {
+        $args [] = func_get_arg ( $a );
     }
-
+    
     //对hook的回调进行排序
-    if (!isset ($__ksg_sorted_hooks [$hook])) {
-        ksort($__ksg_rtk_hooks [$hook]);
+    if (! isset ( $__ksg_sorted_hooks [$hook] )) {
+        ksort ( $__ksg_rtk_hooks [$hook] );
         $__ksg_sorted_hooks [$hook] = true;
     }
     //重置hook回调数组
-    reset($__ksg_rtk_hooks [$hook]);
-
+    reset ( $__ksg_rtk_hooks [$hook] );
+    
     do {
-        foreach (( array )current($__ksg_rtk_hooks [$hook]) as $the_) {
-            if (!is_null($the_ ['func'])) {
-                call_user_func_array($the_ ['func'], array_slice($args, 0, ( int )$the_ ['accepted_args']));
+        foreach ( ( array ) current ( $__ksg_rtk_hooks [$hook] ) as $the_ ) {
+            if (! is_null ( $the_ ['func'] )) {
+                $f = $the_ ['file'];
+                if ($f && ! isset ( $__ksg_loaded_files [$f] )) {
+                    imports ( $the_ ['file'] );
+                    $__ksg_loaded_files [$f] = 1;
+                }
+                call_user_func_array ( $the_ ['func'], array_slice ( $args, 0, ( int ) $the_ ['accepted_args'] ) );
             }
         }
-    } while (next($__ksg_rtk_hooks [$hook]) !== false);
-    array_pop($__ksg_triggering_hooks);
+    } while ( next ( $__ksg_rtk_hooks [$hook] ) !== false );
+    array_pop ( $__ksg_triggering_hooks );
 }
 
 /**
@@ -197,38 +220,43 @@ function fire($hook, $arg = "") {
  * @param array $args 参数
  */
 function fire_ref_array($hook, $args) {
-    global $__ksg_rtk_hooks, $__ksg_sorted_hooks, $__ksg_triggered_hooks, $__ksg_triggering_hooks;
-
-    if (is_array($__ksg_triggered_hooks)) {
+    global $__ksg_rtk_hooks, $__ksg_sorted_hooks, $__ksg_triggered_hooks, $__ksg_triggering_hooks, $__ksg_loaded_files;
+    
+    if (is_array ( $__ksg_triggered_hooks )) {
         $__ksg_triggered_hooks [] = $hook;
     } else {
-        $__ksg_triggered_hooks = array($hook);
+        $__ksg_triggered_hooks = array ($hook );
     }
     $__ksg_triggering_hooks [] = $hook;
     // Do 'all' actions first
-    if (isset ($__ksg_rtk_hooks ['all'])) {
-        $all_args = func_get_args();
-        __rt_call_all_hook($all_args);
+    if (isset ( $__ksg_rtk_hooks ['all'] )) {
+        $all_args = func_get_args ();
+        __rt_call_all_hook ( $all_args );
     }
-    if (!isset ($__ksg_rtk_hooks [$hook])) { //没有该HOOK的回调
-        array_pop($__ksg_triggering_hooks);
+    if (! isset ( $__ksg_rtk_hooks [$hook] )) { //没有该HOOK的回调
+        array_pop ( $__ksg_triggering_hooks );
         return;
     }
     //对hook的回调进行排序
-    if (!isset ($__ksg_sorted_hooks [$hook])) {
-        ksort($__ksg_rtk_hooks [$hook]);
+    if (! isset ( $__ksg_sorted_hooks [$hook] )) {
+        ksort ( $__ksg_rtk_hooks [$hook] );
         $__ksg_sorted_hooks [$hook] = true;
     }
     //重置hook回调数组
-    reset($__ksg_rtk_hooks [$hook]);
+    reset ( $__ksg_rtk_hooks [$hook] );
     do {
-        foreach (( array )current($__ksg_rtk_hooks [$hook]) as $the_) {
-            if (!is_null($the_ ['func'])) {
-                call_user_func_array($the_ ['func'], array_slice($args, 0, ( int )$the_ ['accepted_args']));
+        foreach ( ( array ) current ( $__ksg_rtk_hooks [$hook] ) as $the_ ) {
+            if (! is_null ( $the_ ['func'] )) {
+                $f = $the_ ['file'];
+                if ($f && ! isset ( $__ksg_loaded_files [$f] )) {
+                    imports ( $the_ ['file'] );
+                    $__ksg_loaded_files [$f] = 1;
+                }
+                call_user_func_array ( $the_ ['func'], array_slice ( $args, 0, ( int ) $the_ ['accepted_args'] ) );
             }
         }
-    } while (next($__ksg_rtk_hooks [$hook]) !== false);
-    array_pop($__ksg_triggering_hooks);
+    } while ( next ( $__ksg_rtk_hooks [$hook] ) !== false );
+    array_pop ( $__ksg_triggering_hooks );
 }
 
 /**
@@ -244,43 +272,48 @@ function fire_ref_array($hook, $args) {
  * @return mixed The filtered value after all hooked functions are applied to it.
  */
 function apply_filter($filter, $value) {
-    global $__ksg_rtk_hooks, $__ksg_sorted_hooks, $__ksg_triggering_hooks;
-
-    $args = array();
+    global $__ksg_rtk_hooks, $__ksg_sorted_hooks, $__ksg_triggering_hooks, $__ksg_loaded_files;
+    
+    $args = array ();
     $__ksg_triggering_hooks [] = $filter;
-
-    if (isset ($__ksg_rtk_hooks ['all'])) {
-        $args = func_get_args();
-        __rt_call_all_hook($args);
+    
+    if (isset ( $__ksg_rtk_hooks ['all'] )) {
+        $args = func_get_args ();
+        __rt_call_all_hook ( $args );
     }
-
-    if (!isset ($__ksg_rtk_hooks [$filter])) {
-        array_pop($__ksg_triggering_hooks);
+    
+    if (! isset ( $__ksg_rtk_hooks [$filter] )) {
+        array_pop ( $__ksg_triggering_hooks );
         return $value;
     }
-
-    if (!isset ($__ksg_sorted_hooks [$filter])) {
-        ksort($__ksg_rtk_hooks [$filter]);
+    
+    if (! isset ( $__ksg_sorted_hooks [$filter] )) {
+        ksort ( $__ksg_rtk_hooks [$filter] );
         $__ksg_sorted_hooks [$filter] = true;
     }
-
-    reset($__ksg_rtk_hooks [$filter]);
-
-    if (empty ($args)) {
-        $args = func_get_args();
+    
+    reset ( $__ksg_rtk_hooks [$filter] );
+    
+    if (empty ( $args )) {
+        $args = func_get_args ();
     }
-
+    
     do {
-        foreach (( array )current($__ksg_rtk_hooks [$filter]) as $the_) {
-            if (!is_null($the_ ['func'])) {
+        foreach ( ( array ) current ( $__ksg_rtk_hooks [$filter] ) as $the_ ) {
+            if (! is_null ( $the_ ['func'] )) {
+                $f = $the_ ['file'];
+                if ($f && ! isset ( $__ksg_loaded_files [$f] )) {
+                    imports ( $the_ ['file'] );
+                    $__ksg_loaded_files [$f] = 1;
+                }
                 $args [1] = $value;
-                $value = call_user_func_array($the_ ['func'], array_slice($args, 1, ( int )$the_ ['accepted_args']));
+                $value = call_user_func_array ( $the_ ['func'], array_slice ( $args, 1, ( int ) $the_ ['accepted_args'] ) );
             }
         }
-    } while (next($__ksg_rtk_hooks [$filter]) !== false);
-
-    array_pop($__ksg_triggering_hooks);
-
+    } while ( next ( $__ksg_rtk_hooks [$filter] ) !== false );
+    
+    array_pop ( $__ksg_triggering_hooks );
+    
     return $value;
 }
 
@@ -292,7 +325,7 @@ function apply_filter($filter, $value) {
  */
 function triggering_hook() {
     global $__ksg_triggering_hooks;
-    return end($__ksg_triggering_hooks);
+    return end ( $__ksg_triggering_hooks );
 }
 
 /**
@@ -304,11 +337,11 @@ function triggering_hook() {
  */
 function triggered_hook($hook) {
     global $__ksg_triggered_hooks;
-
-    if (empty ($__ksg_triggered_hooks)) {
+    
+    if (empty ( $__ksg_triggered_hooks )) {
         return 0;
     }
-    return count(array_keys($__ksg_triggered_hooks, $hook));
+    return count ( array_keys ( $__ksg_triggered_hooks, $hook ) );
 }
 
 /**
@@ -324,16 +357,16 @@ function triggered_hook($hook) {
  */
 function has_hook($hook, $function_to_check = false) {
     global $__ksg_rtk_hooks;
-
-    $has = !empty ($__ksg_rtk_hooks [$hook]);
+    
+    $has = ! empty ( $__ksg_rtk_hooks [$hook] );
     if (false === $function_to_check || false == $has) {
         return $has;
     }
-    if (!$idx = __rt_hook_unique_id($hook, $function_to_check, false)) {
+    if (! $idx = __rt_hook_unique_id ( $hook, $function_to_check, false )) {
         return false;
     }
-    foreach (( array )array_keys($__ksg_rtk_hooks [$hook]) as $priority) {
-        if (isset ($__ksg_rtk_hooks [$hook] [$priority] [$idx])) {
+    foreach ( ( array ) array_keys ( $__ksg_rtk_hooks [$hook] ) as $priority ) {
+        if (isset ( $__ksg_rtk_hooks [$hook] [$priority] [$idx] )) {
             return $priority;
         }
     }
@@ -347,16 +380,21 @@ function has_hook($hook, $function_to_check = false) {
  * @param array $args 参数
  */
 function __rt_call_all_hook($args) {
-    global $__ksg_rtk_hooks;
-
-    reset($__ksg_rtk_hooks ['all']);
+    global $__ksg_rtk_hooks, $__ksg_loaded_files;
+    
+    reset ( $__ksg_rtk_hooks ['all'] );
     do {
-        foreach (( array )current($__ksg_rtk_hooks ['all']) as $the_) {
-            if (!is_null($the_ ['func'])) {
-                call_user_func_array($the_ ['func'], $args);
+        foreach ( ( array ) current ( $__ksg_rtk_hooks ['all'] ) as $the_ ) {
+            if (! is_null ( $the_ ['func'] )) {
+                $f = $the_ ['file'];
+                if ($f && ! isset ( $__ksg_loaded_files [$f] )) {
+                    imports ( $the_ ['file'] );
+                    $__ksg_loaded_files [$f] = 1;
+                }
+                call_user_func_array ( $the_ ['func'], $args );
             }
         }
-    } while (next($__ksg_rtk_hooks ['all']) !== false);
+    } while ( next ( $__ksg_rtk_hooks ['all'] ) !== false );
 }
 
 /**
@@ -373,29 +411,29 @@ function __rt_call_all_hook($args) {
 function __rt_hook_unique_id($hook_name, $function, $priority) {
     global $__ksg_rtk_hooks;
     static $filter_id_count = 0;
-
-    if (is_string($function)) {
+    
+    if (is_string ( $function )) {
         return $function;
-    } else if (is_object($function [0])) {
+    } else if (is_object ( $function [0] )) {
         // Object Class Calling
-        if (function_exists('spl_object_hash')) {
-            return spl_object_hash($function [0]) . $function [1];
+        if (function_exists ( 'spl_object_hash' )) {
+            return spl_object_hash ( $function [0] ) . $function [1];
         } else {
-            $obj_idx = get_class($function [0]) . $function [1];
-            if (!isset ($function [0]->wp_filter_id)) {
+            $obj_idx = get_class ( $function [0] ) . $function [1];
+            if (! isset ( $function [0]->wp_filter_id )) {
                 if (false === $priority) {
                     return false;
                 }
-                $obj_idx .= isset ($__ksg_rtk_hooks [$hook_name] [$priority]) ? count(( array )$__ksg_rtk_hooks [$hook_name] [$priority]) : $filter_id_count;
+                $obj_idx .= isset ( $__ksg_rtk_hooks [$hook_name] [$priority] ) ? count ( ( array ) $__ksg_rtk_hooks [$hook_name] [$priority] ) : $filter_id_count;
                 $function [0]->wp_filter_id = $filter_id_count;
-                ++$filter_id_count;
+                ++ $filter_id_count;
             } else {
                 $obj_idx .= $function [0]->wp_filter_id;
             }
-
+            
             return $obj_idx;
         }
-    } else if (is_string($function [0])) {
+    } else if (is_string ( $function [0] )) {
         // Static Calling
         return $function [0] . $function [1];
     }

@@ -655,27 +655,102 @@ span.tip {
 	overflow: inherit;
 }
 
-#xui-messagebox .modal-body {
-	background: transparent url(../images/msg-tip.png) no-repeat 10px 10px;
-	min-height: 120px;
-	padding-left: 150px;
+.xui_dialog {
+    background-color: #F5F5F5;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    _border: 1px solid #EEEEEE;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    min-width: 440px;
+    overflow: hidden;
+    position: absolute;
+    z-index: 1035;
+    display: none;
+}
+.dialog_head {
+    background-color: #F5F5F5;
+    border-bottom: 1px solid #EEEEEE;
+    border-radius: 5px 5px 0 0;
+    font-weight: bold;
+    font-size:14px;
+    line-height: 25px;
+    padding: 5px 15px;
+}
+.dialog_body {    
+    overflow: hidden;
+}
+.dialog_content {
+    background-color: #FFF;
+    min-height: 85px;
+}
+.dialog_icon {
+	background: url(images/dialog.png) no-repeat 0 0 transparent;
+    float: left;
+    margin: 7px 12px 8px 0;
+    height: 32px;
+    width: 32px;
+}
+.no-icon .dialog_icon{
+	display: none;
+}
+.dialog_txt {
+    padding: 30px 34px 32px;
+}
+.dialog_operate {
+    background-color: #F5F5F5;
+    border-top: 1px solid #EEEEEE;
+    line-height: 25px;
+    padding: 5px 12px;
+    text-align: right;
+}
+.dialog_operate .btn {
+    margin: 0 0 1px 3px;
 }
 
-#xui-messagebox .modal-body.error {
-	background-image: url(../images/msg-err.png);
-	color: red;
+.dialog_operate .btn_left {
+    float: left;
+    margin-left: 0;
 }
-
-#xui-messagebox .modal-body.error {
-	background-image: url(../images/msg-err.png);
-	color: red;
+.cnfx_content {
+    padding: 23px 30px 30px 37px;
+    text-align: left;
 }
-
-#xui-messagebox .modal-body.warning {
-	background-image: url(../images/msg-war.png);
-	color: red;
+.no-icon .cnfx_content{
+	padding: 3px 10px 17px;
 }
-
+.cnfx_btn {
+    text-align: right;
+}
+.dialog_f_c {
+    font-size: 14px;
+    line-height: 1.9;
+    margin-left: 44px;
+    padding-top: 8px;
+}
+.no-icon .dialog_f_c {
+	margin-left: 0;
+}
+.dialog_f_c:after {
+    clear: both;
+    content: "";
+    display: block;
+    visibility: hidden;
+}
+.icon_warn_b {
+    background-position:-64px 0;
+}
+.icon_info_b {
+    background-position:-96px 0;    
+}
+.icon_suc_b {
+    background-position:-160px 0;
+}
+.icon_err_b {
+    background-position:-192px 0;
+}
+.icon_con_b {
+    background-position:-224px 0;
+}
 .ui-form {
 	position: relative;
 	padding: 39px 19px 14px;
@@ -726,6 +801,40 @@ span.tip {
 	overflow-x:hidden;
     /*overflow-y: visible;*/
 }
+
+#overlay {	
+    background:#fff;
+	left: 0;
+    position: fixed;
+    bottom: 0;
+    opacity: 0.85;
+    filter:  alpha(opacity=85);
+    top: 0;
+	right: 0;
+    z-index: 1033;
+    display:none;
+}
+#overlay-body {
+    height: 160px;
+    left: 50%;
+    margin: -80px 0 0 -250px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 500px;
+    z-index: 1034;
+    display:none;
+}
+#overlay-body img, #overlay-body div.msg {
+    color: #999;
+    text-align: center;
+}
+#overlay-body div.msg {
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+}
+
 body.show-overlay {
 	overflow:hidden;	
 }

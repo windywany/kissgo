@@ -93,8 +93,8 @@ abstract class View implements ArrayAccess {
         if (isset ( $_ksg_csjs_files ['css'] )) {
             $css_chunks = array ();
             foreach ( $_ksg_csjs_files ['css'] as $path => $csses ) {
-                if (!CLEAN_URL || count ( $csses ) == 1 ) {
-                    foreach ($csses as $c){
+                if (! CLEAN_URL || DEBUG == DEBUG_DEBUG || count ( $csses ) == 1) {
+                    foreach ( $csses as $c ) {
                         $css_chunks [] = '<link href="' . BASE_URL . $path . '/' . $c . '.css" rel="stylesheet"/>';
                     }
                 } else {
@@ -109,14 +109,37 @@ abstract class View implements ArrayAccess {
         }
         if (isset ( $_ksg_csjs_files ['js'] ) && ! empty ( $_ksg_csjs_files ['js'] )) {
             $jssfs = array ();
-            foreach ( $_ksg_csjs_files ['js'] as $path => $jss ) {
-                $jssfs [] = $path . '{' . implode ( ',', $jss ) . '}';
+            if (DEBUG == DEBUG_DEBUG) {
+                foreach ( $_ksg_csjs_files ['js'] as $path => $jss ) {
+                    foreach ( $jss as $js ) {
+                        $jssfs [] = '<script type="text/javascript" src="' . BASE_URL . WEBSITE_DIR . '/' . $path . '/' . $js . '.js"></script>';
+                    }
+                }
+                $jsses = "<script type=\"text/javascript\">\n" . self::getCommonJS () . "\n</script>\n";                
+                $jss = $jsses . implode ( "\n", $jssfs );
+            
+            } else {
+                foreach ( $_ksg_csjs_files ['js'] as $path => $jss ) {
+                    $jssfs [] = $path . '{' . implode ( ',', $jss ) . '}';
+                }
+                $jss = implode ( ';', $jssfs );
+                $jss = '<script type="text/javascript" src="' . clean_url ( WEBSITE_DIR ) . '/!script.js?f=' . $jss . '"></script>';
             }
-            $jss = implode ( ';', $jssfs );
-            $jss = '<script type="text/javascript" src="' . clean_url ( WEBSITE_DIR ) . '/!script.js?f=' . $jss . '"></script>';
             $content = str_replace ( '<!--[js]-->', $jss, $content );
         }
         return $content;
+    }
+    public static function getCommonJS() {
+        global $_ksg_router_url;
+        $_ksg_base_url = BASE_URL;
+        $_ksg_router_base = clean_url ();
+        $_ksg_misc_url = BASE_URL . MISC_DIR . '/';
+        $_ksg_website_url = BASE_URL . WEBSITE_DIR . '/';
+        $_ksg_ueditor_home = $_ksg_misc_url . 'ueditor/';
+        $em = json_encode ( ExtensionManager::getInstance ()->getAliasMap () );
+        $jsses = "window.Kissgo = { 'BASE': '{$_ksg_base_url}','WEBSITE':'{$_ksg_website_url}','MISCURL':'{$_ksg_misc_url}' ,'ROUTER_BASE':'{$_ksg_router_base}', 'AJAX':'{$_ksg_base_url}ajax.php','alias':$em};\n";
+        $jsses .= "window.UEDITOR_HOME_URL = '{$_ksg_ueditor_home}';\n";
+        return $jsses;
     }
 }
 
@@ -236,7 +259,7 @@ class CssView extends View {
         return array_pop ( $this->data );
     }
     
-    public function setHeader() {        
+    public function setHeader() {
         @header ( 'Content-Type: text/css' );
         if ($this->etag) {
             @header ( 'Etag: ' . $this->etag );
@@ -262,7 +285,7 @@ class JsView extends View {
         return array_pop ( $this->data );
     }
     
-    public function setHeader() {        
+    public function setHeader() {
         @header ( 'Content-Type: text/javascript' );
         if ($this->etag) {
             @header ( 'Etag: ' . $this->etag );
