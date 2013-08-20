@@ -44,6 +44,7 @@ bind ( 'get_user_passport', array ('kissgo_hook_for_get_user_passport', 'admin/c
 // ajax hooks
 bind ( 'do_ajax_ajax_validate', array ('do_ajax_validate_check', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_browser_template_files', array ('do_ajax_browser_template_files', 'admin/callbacks/do_ajax.php' ) );
+bind ( 'do_ajax_browser_all_template_files', array ('do_ajax_browser_all_template_files', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_tags_autocomplete', array ('do_ajax_tags_autocomplete', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_nodes_autocomplete', array ('do_ajax_nodes_autocomplete', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_test_email', array ('do_ajax_test_email', 'admin/callbacks/do_ajax.php' ) );

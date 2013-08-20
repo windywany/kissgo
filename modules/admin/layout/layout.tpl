@@ -37,7 +37,7 @@
     {'admincp_header'|fire}    
 </head>
 <body {if $hideNavi}class="nonavibar"{/if}>
-<div class="page-container">
+<div class="page-containerx">
 <!-- head -->
 {if !$hideNavi}
 <div id="navbar" class="navbar navbar-fixed-top">

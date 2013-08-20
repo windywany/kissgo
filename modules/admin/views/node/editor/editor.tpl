@@ -84,11 +84,10 @@
 	    <div class="row-fluid">
 			<div>
 				<span class="strong">关键词</span>										
-				<span class="txt-info">[如果不填写，将使用全局定义的关键词，多个关键词以(,)分隔]</span>	
-				<a href="#" id="select-keywords" class="pull-right mg-r5">常用关键词</a>
+				<span class="txt-info">[如果不填写，将使用全局定义的关键词，多个关键词以(,)分隔]</span>
 				<br class="clear"/>								
 			</div>
-			<input type="text" value="" placeholder="在此键入关键词" class="span12" id="keywords" name="keywords"/>
+			<input type="hidden" value="abc,def,gdf" placeholder="在此键入关键词" class="wf txt-select2" id="keywords" name="keywords"/>
 		</div>
 	    
 	    <div class="row-fluid">
@@ -177,29 +176,21 @@
     							<span class="txt-info">多个标签以(,)分隔.</span>
     							<br class="clear">								
     						</div>
-    						<div class="input-append">		  									
-    				        	<input type="text" id="tags" class="w250"><button id="btn-add-tag" type="button" class="btn">添加</button><button id="btn-select-tag" type="button" class="btn">常用</button>
+    						<div>		  									
+    				        	<input type="hidden" id="tags" class="wf txt-select2"/>
     				        </div>								        
-    					</div>
-    					<div id="page-tags" class="form-field">
-    					    <span class="tag label"><input type="hidden" value="dsfasdf" name="tags[]"><i class="icon-trash"></i>dsfasdf</span>																			
-    						<br class="clear">
-    					</div>
+    					</div>    					
 					</div>
 				</fieldset>
 				<fieldset id="page-author" class="vertical-tabs-pane">
 					<div class="fieldset-wrapper">
     					<div class="form-field">
     						<label>作者</label>
-    						<div class="input-append">		  									
-    			                <input class="w250" id="author" name="author" value="" type="text"/><button class="btn btn-enums" type="button" data-for="author" title="作者">选择..</button>
-    			            </div>
+    						<input class="w250" id="author" name="author" value="abc" type="hidden"/>    			            
     					</div>
     					<div class="form-field">
-    						<label>来源</label>
-    						<div class="input-append">		  									
-    			                <input class="w250" id="source" name="source" value="" type="text"/><button class="btn btn-enums" type="button" data-for="source" title="来源">选择..</button>
-    			            </div>
+    						<label>来源</label>    						
+    						<input class="w250" id="source" name="source" value="def" type="hidden"/>    			           
     					</div>
 					</div>
 				</fieldset>
@@ -217,6 +208,20 @@
 	    </div>
 	</form>
 	</div>
+</div>
+
+<div class="modal hide fade" tabindex="-1" id="tpl-selector-box" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>选择模板</h3>
+    </div>
+    <div class="modal-body" style="max-height:300px;overflow:auto;">
+        <ul class="ztree" id="tpls-tree"></ul>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" id="btn-close-form" data-dismiss="modal">关闭</a>
+        <a href="#" class="btn btn-primary" id="btn-done">确定</a>
+    </div>
 </div>
 {/block}
 

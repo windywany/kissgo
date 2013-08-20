@@ -59,7 +59,35 @@ function do_ajax_browser_template_files($req) {
     }
     echo json_encode ( $dirs );
 }
-
+/**
+ *
+ * browser all template files
+ * @param Request $req
+ */
+function do_ajax_browser_all_template_files($req) {
+	
+	$id = rqst ( 'id', '' );
+	$path = THEME_PATH . THEME_DIR . DS . $id;
+	$hd = opendir ( $path );
+	$dirs = array ();
+	$files = array ();
+	if ($hd) {
+		while ( ($f = readdir ( $hd )) != false ) {
+			if (is_dir ( $path . DS . $f ) && $f != '.' && $f != '..' && $f != 'admin') {
+				$dirs [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => true );
+			}
+			if (is_file ( $path . DS . $f ) && preg_match ( '/.+\.tpl$/', $f )) {
+				$files [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => false );
+			}
+		}
+		closedir ( $hd );
+		ksort ( $dirs );
+		ksort ( $files );
+		$dirs = $dirs + $files;
+		$dirs = array_values ( $dirs );
+	}
+	echo json_encode ( $dirs );
+}
 /**
  * 
  * 读取标签

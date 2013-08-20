@@ -234,7 +234,19 @@ input.title1 {
 .txt-ac {
 	text-align: center !important;
 }
-
+.txt-select2 input{
+	height:auto;
+}
+.txt-select2 .select2-choices{
+	border-radius: 4px;
+    color: #555;
+    border: 1px solid #CCC;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+}
+.select2-dropdown-open .select2-choices{
+	border-radius: 4px 4px 0 0;
+}
 .strong {
 	font-size: 14px;
 	font-weight: bold;
@@ -845,7 +857,7 @@ body.nonavibar{
 	overflow-y: scroll;
 }
 
-body.nonavibar .page-container{
+body.nonavibar .page-containerx{
 	display: table;
     margin: 0 auto;
     min-height: 100px;
@@ -961,7 +973,9 @@ body.nonavibar .container-fluid-r25 {
     position: absolute !important;
 }
 .placeholder { color: #999 !important; }
-
+.modal-open.page-overflow .modal-scrollable{
+	overflow: hidden;
+}
 
 div.vertical-tabs {
   background: #fff url(images/fc.png) repeat-y 0 0;

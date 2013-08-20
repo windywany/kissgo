@@ -529,7 +529,14 @@
 		if(ov.length == 0){
 			ov = $('<div id="overlay"></div>').appendTo($('body'));
 			ov.click(function(){
-				//$('#xui-messagebox').animate('');
+				var msgbox = $('#xui-messagebox:visible');
+				if(msgbox.length>0){
+					var w = msgbox.width(),ww = $(window).width(),mw = (ww-w)/2;
+					$('#xui-messagebox').animate({left:mw-50},{duration:50})
+										.animate({left:mw+50},{duration:100})
+										.animate({left:mw-50},{duration:100})
+										.animate({left:mw},{duration:50});
+				}
 			});
 		}
 		return ov;
@@ -541,8 +548,7 @@
 									position: 'absolute',
 									padding:0,
 									margin:0,
-									top: '-9999px'}
-									);		
+									top: '-9999px'});		
 		$('body').append(scrollDiv);	
 		scrollD = scrollDiv.get(0);
 		var scrollbarWidth = scrollD.offsetWidth - scrollD.clientWidth;;
@@ -599,12 +605,14 @@ if(window.Kissgo){
                 document.body.scrollHeight>document.body.offsetHeight;
         }
 	};
-	window.Kissgo.publish = function(type, id, callback,data){
+	window.Kissgo.publish = function(type, id, callback, data){
 		if(!type||!id){
 			alert('error type or id');
 		}else{
 			Kissgo.openIframe(Kissgo.murl('admin','pages/publish/'+type+'/'+id), function(win){
-				alert(win);
+				if($.isFunction(win.setNodeData)){
+					win.setNodeData(data);
+				}
 			},callback);
 		}
 	};
@@ -618,15 +626,15 @@ if(window.Kissgo){
 	};
 	window.Kissgo.misc = function(res){
 		return Kissgo.MISCURL + res;
-	}
+	};
 	window.Kissgo.website = function(res){
 		return Kissgo.WEBSITE + res;
-	}
+	};
 	window.Kissgo.base = function(res){
 		return Kissgo.BASE + res;
-	}
+	};
 	window.Kissgo._iframeOnload  = function(iframe){
-		var doc,win;
+		var doc=false,win=false;
 		if (iframe.contentWindow) {
 		  win =  iframe.contentWindow;
 		}	else  if (iframe.window) {
@@ -648,9 +656,9 @@ if(window.Kissgo){
 		}		
 	};
 	
-	window.Kissgo.openIframe = function(url, onload, callback){
+	window.Kissgo.openIframe = function(url, onload, onclose){
 		Kissgo.iframeOnload = $.isFunction(onload)?onload:Kissgo.emptyFun;
-		Kissgo.iframeOnclosed = $.isFunction(callback)?callback:Kissgo.emptyFun;
+		Kissgo.iframeOnclosed = $.isFunction(onclose)?onclose:Kissgo.emptyFun;
 		var tpl = '<div id="overlay-container">'+
 			'<div class="overlay-modal-background"></div>'+
 			'<iframe scrolling="auto" frameborder="0" allowtransparency="true" class="overlay-element" tabindex="-1"></iframe>'+

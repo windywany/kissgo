@@ -52,7 +52,7 @@
 </div>
 <div class="modal hide fade" tabindex="-1" id="tpl-selector-box" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
-        <button class="close" data-dismiss="modal">×</button>
+        <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3>选择模板</h3>
     </div>
     <div class="modal-body" style="max-height:300px;overflow:auto;">
