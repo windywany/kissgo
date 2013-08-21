@@ -20,6 +20,9 @@
         .datepicker span{
 			float:none;
         }
+        #page-flags{
+        	margin:0 0 10px 0;
+        }
     </style>
 {/block} 
 {block name="breadcrumb" nocache}
@@ -30,7 +33,7 @@
 
 <div class="clearfix" id="overlay-titlebar">
     <div class="clearfix" id="overlay-title-wrapper">
-      <h1 id="overlay-title">{'Publish'|ts} - 普通文章 [110]</h1>
+      <h1 id="overlay-title">{'Publish'|ts} - {$type_name} [{$node_id}]</h1>
     </div>
     <div id="overlay-close-wrapper">
       <a class="overlay-close" href="#" id="overlay-close"></a>
@@ -87,7 +90,7 @@
 				<span class="txt-info">[如果不填写，将使用全局定义的关键词，多个关键词以(,)分隔]</span>
 				<br class="clear"/>								
 			</div>
-			<input type="hidden" value="abc,def,gdf" placeholder="在此键入关键词" class="wf txt-select2" id="keywords" name="keywords"/>
+			<input type="hidden" value="" placeholder="在此键入关键词" class="wf txt-select2" id="keywords" name="keywords"/>
 			<div style="height: 10px"></div>
 		</div>
 	    
@@ -167,7 +170,9 @@
     					<div class="form-field">
     						<label>属性</label>
     						<ul id="page-flags">
-    						    <li><label class="checkbox"><input type="checkbox" value="2" name="flags[]">小样</label></li>
+    							{foreach $flags as $flag} 
+    						    <li><label class="checkbox"><input type="checkbox" value="{$flag.tag_id}" name="flags[]">{$flag.tag}</label></li>
+    						    {/foreach}
     						</ul>
     						<br class="clear"/>
     					</div>
@@ -187,11 +192,11 @@
 					<div class="fieldset-wrapper">
     					<div class="form-field">
     						<label>作者</label>
-    						<input class="w250" id="author" name="author" value="abc" type="hidden"/>    			            
+    						<input class="w250" id="author" name="author" value="" type="hidden"/>    			            
     					</div>
     					<div class="form-field">
     						<label>来源</label>    						
-    						<input class="w250" id="source" name="source" value="def" type="hidden"/>    			           
+    						<input class="w250" id="source" name="source" value="" type="hidden"/>    			           
     					</div>
 					</div>
 				</fieldset>

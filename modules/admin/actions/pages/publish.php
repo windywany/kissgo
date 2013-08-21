@@ -7,6 +7,7 @@ assert_login ();
  *
  *
  *
+ *
  * open the publish page
  *
  * @param Request $req        	
@@ -15,30 +16,49 @@ assert_login ();
  * @param string $type        	
  */
 function do_admin_pages_publish_get($req, $res, $type = '', $pid = 0) {
-	$data ['_CUR_URL'] = murl ( 'admin', 'pages/publish' );	
+	$data ['_CUR_URL'] = murl ( 'admin', 'pages/publish' );
 	if (empty ( $pid )) {
 		show_page_tip ( '<strong>Oops!</strong>出错啦:无效的页面编号.' );
 		Response::back ();
 	}
 	if (empty ( $type )) {
-		$type = 'article';
+		$type = 'plain';
+	}
+	$typeM = new KsgNodeTypeTable ();
+	$where = array (
+			'type' => $type
+	);
+	$typeA = $typeM->read($where);
+	if(empty($typeA)){
+		show_page_tip ( '<strong>Oops!</strong>出错啦:无效的页面类型.' );
+		Response::back ();
 	}
 	$nodeTable = new KsgNodeTable ();
 	$node = $nodeTable->read ( array (
-			'nid' => $pid 
+			'node_id' => $pid,
+			'node_type' => $type 
 	) );
 	if (empty ( $node )) {
 		show_page_tip ( '<strong>Oops!</strong>出错啦:页面不存在.' );
 		Response::back ();
 	}
+	
+	
+	$ksgTags = new KsgTagTable ();
+	$flags = $ksgTags->query ()->where ( array (
+			'type' => 'flag' 
+	) );
 	$data ['node'] = $node;
 	$data ['type'] = $type;
+	$data ['type_name'] = $typeA['name'];
 	$data ['node_id'] = $pid;
+	$data ['flags'] = $flags;
 	$data ['widgets'] = apply_filter ( 'get_page_editor_widgets', '', $node );
 	$data ['hideNavi'] = true;
 	return view ( 'admin/views/node/editor/editor.tpl', $data );
 }
 /**
+ *
  *
  *
  *
@@ -50,6 +70,6 @@ function do_admin_pages_publish_get($req, $res, $type = '', $pid = 0) {
  * @param string $type        	
  */
 function do_admin_pages_publish_post($req, $res, $type = '', $pid = 0) {
-    return "ok";
+	return "ok";
 }
 // end of admin/actions/pages/publish.php

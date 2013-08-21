@@ -136,8 +136,9 @@ abstract class View implements ArrayAccess {
         $_ksg_misc_url = BASE_URL . MISC_DIR . '/';
         $_ksg_website_url = BASE_URL . WEBSITE_DIR . '/';
         $_ksg_ueditor_home = $_ksg_misc_url . 'ueditor/';
+        $_ksg_upload_base = BASE_URL.WEBSITE_DIR.'/'.(defined('UPLOAD_DIR')?UPLOAD_DIR:'uploads');
         $em = json_encode ( ExtensionManager::getInstance ()->getAliasMap () );
-        $jsses = "window.Kissgo = { 'BASE': '{$_ksg_base_url}','WEBSITE':'{$_ksg_website_url}','MISCURL':'{$_ksg_misc_url}' ,'ROUTER_BASE':'{$_ksg_router_base}', 'AJAX':'{$_ksg_base_url}ajax.php','alias':$em};\n";
+        $jsses = "window.Kissgo = { 'BASE': '{$_ksg_base_url}','WEBSITE':'{$_ksg_website_url}','MISCURL':'{$_ksg_misc_url}' ,'UPLOAD_BASE':'{$_ksg_upload_base}/','ROUTER_BASE':'{$_ksg_router_base}', 'AJAX':'{$_ksg_base_url}ajax.php','alias':$em};\n";
         $jsses .= "window.UEDITOR_HOME_URL = '{$_ksg_ueditor_home}';\n";
         return $jsses;
     }

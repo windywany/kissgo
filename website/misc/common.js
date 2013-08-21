@@ -656,6 +656,13 @@ if(window.Kissgo){
 		}
 		return Kissgo.ROUTER_BASE + alias + (action ? '/'+action: '');
 	};
+	window.Kissgo.uploadurl = function(url){
+		if(/^https?:\/\/.+/i.test(url)){
+			return url;
+		} else {
+			return Kissgo.UPLOAD_URL + url;
+		}
+	};
 	window.Kissgo.misc = function(res){
 		return Kissgo.MISCURL + res;
 	};
