@@ -1065,3 +1065,26 @@ div.vertical-tabs .vertical-tabs-panes {
 .modal-body{
 	min-height:150px;
 }
+.sltimg img.flag{
+	height: 15px;
+    padding-right: 10px;
+    width: 20px;
+}
+img.sltimg{
+	height: 60px;    
+    width: 80px;
+	margin-right:10px;
+}
+.ajaxupload .btn-browser{
+	overflow: hidden;
+    position: relative;
+}
+.ajaxupload-new .btn-browser {
+    border-radius: 0 3px 3px 0;
+}
+.ajaxupload-new .file-upload, .ajaxupload-new .icon-file{
+	display:none;
+}
+.ajaxupload span{
+	float: none;	
+}

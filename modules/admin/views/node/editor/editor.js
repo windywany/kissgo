@@ -1,16 +1,4 @@
-$(function() {
-	$.fn.modalmanager.defaults.resize = true;	
-	var setting_menu = {
-			treeId : 'tpls-menu-tree',
-			async : {
-				enable : true,
-				url : Kissgo.AJAX,
-				autoParam : [ "id" ],
-				otherParam : {
-					"__op" : "browser_all_template_files"
-				}
-			}
-	};
+$(function() {			
 	$('.overlay-close').click(function() {
 		Kissgo.closeIframe();
 		return false;
@@ -73,6 +61,15 @@ $(function() {
 		        callback(data);
 		    }
 	});
+	$('#quicktags').quicktags('summary');
+	$('#page-picture').selectimg().change(function(){
+		var img = $('#page-picture').select2('data');
+		if(img){
+			$('#page-figure').attr('src',Kissgo.uploadurl(img.t2));
+		}else{
+			$('#page-figure').attr('src',Kissgo.misc('images/260x180.gif'));
+		}
+	}).change();
 	
 	$('#btn-select-tpl').click(function() {		
 		$('#tpls-tree').empty();

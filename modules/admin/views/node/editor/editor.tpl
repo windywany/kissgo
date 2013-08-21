@@ -23,6 +23,10 @@
         #page-flags{
         	margin:0 0 10px 0;
         }
+        #page-figure{
+	        width:260px;
+            height:180px;
+        }
     </style>
 {/block} 
 {block name="breadcrumb" nocache}
@@ -100,38 +104,34 @@
 				<span class="txt-info">[如果不填写，将使用全局定义的描述]</span>									
 				<br class="clear"/>								
 			</div>
-			<textarea rows="2" id="descripition" placeholder="在此键入页面描述" name="descripition" class="span12"></textarea>
-		</div>
-	    
-	    <div class="row-fluid">
-	        <label class="strong">内容摘要</label>			
-			<textarea rows="3" id="summary" placeholder="在此键入页面描述" name="summary" class="span12"></textarea>
+			<textarea rows="1" id="descripition" placeholder="在此键入页面描述" name="descripition" class="span12"></textarea>
 		</div>
 	    
 	    <div class="vertical-tabs clearfix">
 	    	<ul class="vertical-tabs-list">
 	    		<li tabindex="-1" class="vertical-tab-button">
 	    			<a href="#page-options">
-	    				<strong>发布选项</strong>
-	    				<span class="summary"></span>
+	    				<strong>发布选项</strong>	    				
 	    			</a>
 	    		</li>
 	    		<li tabindex="-1" class="vertical-tab-button">
 	    			<a href="#page-tags">
-	    				<strong>标签与属性</strong>
-	    				<span class="summary"></span>
+	    				<strong>标签与属性</strong>	    				
 	    			</a>
 	    		</li>
 	    		<li tabindex="-1" class="vertical-tab-button">
 	    			<a href="#page-author">
-	    				<strong>作者与来源</strong>
-	    				<span class="summary"></span>
+	    				<strong>作者与来源</strong>	    				
+	    			</a>
+	    		</li>
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#page-summary">
+	    				<strong>内容摘要</strong>	    				
 	    			</a>
 	    		</li>	    		
 	    		<li tabindex="-1" class="vertical-tab-button">
 	    			<a href="#page-image">
-	    				<strong>页面插图</strong>
-	    				<span class="summary">无插图</span>
+	    				<strong>页面插图</strong>	    				
 	    			</a>
 	    		</li>	    		
 	    	</ul>
@@ -172,6 +172,8 @@
     						<ul id="page-flags">
     							{foreach $flags as $flag} 
     						    <li><label class="checkbox"><input type="checkbox" value="{$flag.tag_id}" name="flags[]">{$flag.tag}</label></li>
+    						    {foreachelse}
+    						    <li class="txt-info">暂无属性</li>
     						    {/foreach}
     						</ul>
     						<br class="clear"/>
@@ -200,9 +202,39 @@
     					</div>
 					</div>
 				</fieldset>
-				
+				<fieldset id="page-summary" class="vertical-tabs-pane">
+				    <div class="row-fluid">
+				        <div class="quicktags" id="quicktags">           	        		
+            			    <textarea rows="6" id="summary" placeholder="在此键入页面描述" name="summary" class="span12 quicktags-editor"></textarea>
+            			</div>
+            		</div>
+				</fieldset>
 				<fieldset id="page-image" class="vertical-tabs-pane">
-					<div class="fieldset-wrapper"></div>
+					<div class="row-fluid">
+					    <div class="thumbnail span5">
+						    <img alt="页面插图" id="page-figure" src="{'images/260x180.gif'|static}"/>
+						</div>
+						<div class="span7">
+						    <div class="form-field">
+        						<label class="checkbox"><input id="usefirstpic" type="checkbox">由内容自行处理</label>
+        					</div>
+						    <div class="form-field">
+        						<label>选择插图</label>
+        						<input class="w300" id="page-picture" name="figure" value="" type="hidden"/>    			            
+        					</div>
+        					<div class="form-field">
+        						<label>上传插图</label>
+        						<div class="ajaxupload ajaxupload-new">
+                                 	<div class="input-append">
+                                		<div class="uneditable-input w220">
+                                			<i class="icon-file fileupload-exists"></i>
+                                			<span class="fileupload-preview"></span>
+                                		</div><a class="btn btn-browser">浏览...</a><a class="btn file-upload">上传</a>
+                                	</div>
+                                 </div>   			            
+        					</div>
+						</div>
+					</div>
 				</fieldset>
 			</div>
 		</div>
@@ -247,5 +279,6 @@
 {/block}
 
 {block name="admincp_foot_js_block"}
+<script type="text/javascript" src="{'jquery/plugins/plupload/plupload.js'|static}"></script>
 <script type="text/javascript" src="{'editor.js'|here}"></script>
 {/block}

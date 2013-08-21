@@ -182,12 +182,39 @@ function do_ajax_nodes_autocomplete($req) {
     }
     $nodes->where ( $where )->limit ( $p, 10 )->sort ( 'publish_time', 'd' );
     if ($more) {
-        $more = $nodes->size () > 0;
+        $more = $nodes->size () == 10;
     }
     $data = array ('more' => $more, 'results' => $nodes->toArray () );
     echo json_encode ( $data );
 }
-
+/**
+ * 读取页面
+ * @param Request $req
+ */
+function do_ajax_images_autocomplete($req) {
+    $q = rqst ( 'q', '' );
+    $p = irqst ( 'p', 1 );
+    $attach = new KsgAttachmentTable ();
+    $imgs = $attach->query ( 'url as id,name as text' );
+    $where ['type'] = 'image';
+    if (empty ( $q )) {
+        $more = false;
+    } else {
+        $where ['name LIKE'] = "%{$q}%";
+    }
+    $imgs->where ( $where )->limit ( $p, 10 )->sort ( 'create_time', 'd' );
+    if ($more) {
+        $more = $imgs->size () == 0;
+    }
+    $data = array ('more' => $more, 'results' => array () );
+    $rst = $imgs->toArray ();
+    foreach ( $rst as $img ) {
+        $img ['t1'] = the_thumbnail_src ( $img ['id'], 80, 60 );
+        $img ['t2'] = the_thumbnail_src ( $img ['id'], 260, 180 );
+        $data ['results'] [] = $img;
+    }
+    echo json_encode ( $data );
+}
 /**
  * 
  * 测试邮件发送功能

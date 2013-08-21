@@ -586,7 +586,43 @@
 			return $tag.select2(opt);
 		}
 		return $tag;
-	}
+	};
+	$.fn.selectimg = function(options){
+		var $tag = $(this);
+		if(window.Kissgo){		
+			options = options || {};
+			var format = function(state) {			
+				var img = Kissgo.uploadurl(state.t1.toLowerCase());
+				return "<img class='flag sltimg' src='" + img + "'/>" + state.text;
+			};			
+			options.minimumInputLength = 1;
+			options.formatResult = format;
+			options.formatSelection = format;
+			options.escapeMarkup = function(m) { return m; };
+			options.containerCssClass = 'sltimg';	
+			options.allowClear = true;
+			options.placeholder = "Select Image";
+			options.ajax = {
+				cache:true,
+				url : Kissgo.AJAX + '?__op=images_autocomplete',
+				data : function(term, page) {
+					if(term.length < 1){
+						return null;
+					}
+					return {q : term,p : page};					
+				},
+				results : function(data, page) {
+					return data;
+				}
+			};
+			options.initSelection = function (element, callback) {
+				var val = element.val(),data = {id: val, text: 'img',t1:val,t2:val};		        
+		        callback(data);		        
+		    };
+			$tag.select2(options);
+		}
+		return $tag;
+	};
 	$(function() {
 		$('table.ui-table').uiTable();
 		$('.stuffbox').on('click','.handlediv',function(){
@@ -609,7 +645,7 @@ function showWaitMask(text, keep) {
 			ob.find('img').attr('src',Kissgo.misc('images/overlay.gif'));
 		}else{
 			ob.find('img').attr('src','/website/misc/images/overlay.gif');
-		}		
+		}
 	}
     text = text ? text : '处理中...';
     var msg = ob.find('div.msg');
@@ -660,7 +696,7 @@ if(window.Kissgo){
 		if(/^https?:\/\/.+/i.test(url)){
 			return url;
 		} else {
-			return Kissgo.UPLOAD_URL + url;
+			return Kissgo.WEBSITE + url;
 		}
 	};
 	window.Kissgo.misc = function(res){
@@ -730,9 +766,5 @@ if(window.Kissgo){
 		$('#navbar').width('auto');
 		$('#foot').width('auto');
 		$('body').removeClass('show-overlay');
-	};
-	
-	window.Kissgo.selectMedia = function(type,callback,element){
-		
 	};
 }
