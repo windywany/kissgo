@@ -48,6 +48,7 @@ bind ( 'do_ajax_browser_all_template_files', array ('do_ajax_browser_all_templat
 bind ( 'do_ajax_tags_autocomplete', array ('do_ajax_tags_autocomplete', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_nodes_autocomplete', array ('do_ajax_nodes_autocomplete', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_test_email', array ('do_ajax_test_email', 'admin/callbacks/do_ajax.php' ) );
+bind ( 'do_ajax_browser_menus', array ('do_ajax_browser_menus', 'admin/callbacks/do_ajax.php' ) );
 // end register hooks
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // end of __init__.php

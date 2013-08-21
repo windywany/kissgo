@@ -24,7 +24,7 @@
         <select name="flag" class="input-medium">
             {html_options options=$flags selected=$flag}
         </select>
-        <input type="hidden" name="tag" id="ipt-tag" style="width:350px" data-placeholder="标签"/>
+        <input type="hidden" name="tag" id="ipt-tag" class="txt-select2" style="width:350px" data-placeholder="标签"/>
         
         <button type="submit" class="btn">搜索</button>
         <a href="{$_CUR_URL}/{$status}" class="btn">重置</a>

@@ -555,6 +555,38 @@
 		scrollDiv.remove();
 		return scrollbarWidth;
 	};
+	$.fn.selectag = function(options){
+		var $tag = $(this),opt = options;
+		opt.tags = [];
+		opt.tokenizer = function(input, selection, selectCallback, opts){
+			if(input.length > 1){
+				var len = input.length ,token = input.substring(len - 1,len);
+				if(token == ',' || token == ' '){
+					var sl = selection.length;
+					input = input.replace(/[, ]+$/g,'');
+					for(var i=0;i<sl;i++){
+						if(input == selection[i].id){
+							$tag.select2('close');
+							return;
+						}
+					}
+					selectCallback({id:input,text:input});					
+				}
+			}
+		};
+		opt.initSelection = function (element, callback) {
+	        var val = element.val().split(','),data = [];
+	        $.each(val,function(i,n){
+	        	data.push({id:n,text:n});
+	        });
+	        callback(data);
+	    };
+	    opt.tokenSeparators = [',',' '];	    
+		if($.fn.select2){
+			return $tag.select2(opt);
+		}
+		return $tag;
+	}
 	$(function() {
 		$('table.ui-table').uiTable();
 		$('.stuffbox').on('click','.handlediv',function(){
@@ -674,8 +706,8 @@ if(window.Kissgo){
 		$('#navbar').width(sw);
 		$('#foot').width(sw-20);
 		$('body').addClass('show-overlay');
+		url += (url.indexOf('?')>0?'&':'?')+'__ifm='+ encodeURIComponent(window.location.href);
 		overIframe.find('#overlay-iframe').attr('src',url);
-		
 	};
 	
 	window.Kissgo.closeIframe = function(args){
@@ -691,5 +723,9 @@ if(window.Kissgo){
 		$('#navbar').width('auto');
 		$('#foot').width('auto');
 		$('body').removeClass('show-overlay');
+	};
+	
+	window.Kissgo.selectMedia = function(type,callback,element){
+		
 	};
 }

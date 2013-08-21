@@ -52,8 +52,17 @@ class Response {
         }
     }
     public static function back($args = null) {
-        $_SESSION ['__IS_BACK'] = true;
-        self::redirect ( isset ( $_SERVER ['HTTP_REFERER'] ) ? $_SERVER ['HTTP_REFERER'] : BASE_URL, $args );
+        $req = Request::getInstance();
+        if(isset($req['__ifm'])){
+            self::closeIframe();
+        }else{
+            $_SESSION ['__IS_BACK'] = true;
+            self::redirect ( isset ( $_SERVER ['HTTP_REFERER'] ) ? $_SERVER ['HTTP_REFERER'] : BASE_URL, $args );
+        }
+    }
+    public static function closeIframe(){
+        echo '<html><head><script type="text/javascript">var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.reload()</script></head></html>';
+        exit ();
     }
     /**
      * 

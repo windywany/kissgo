@@ -1,7 +1,28 @@
 * html body,* html{
 	overflow:auto;	
 }
+body.show-overlay {
+	overflow:hidden;	
+}
+body.nonavibar{
+	background: transparent !important;
+    margin: 55px 0 0 0;
+    padding: 20px 0;    
+	overflow-y: scroll;
+}
 
+body.nonavibar .page-containerx{
+	display: table;
+    margin: 0 auto;
+    min-height: 100px;
+    min-width: 700px;
+    padding: 0.2em 26px 2em 0.2em !important;
+    position: relative;
+    width: 88%;
+}
+body.nonavibar .container-fluid-r25 {
+    padding: 0 !important;
+}
 body.nonavibar #navbar,body.nonavibar #foot,body.nonavibar #sideTools{
 	display: none;
 }
@@ -361,6 +382,10 @@ i.handl {
 	margin-bottom: 0;
 }
 
+.form-field span.select2-arrow{
+	float: none;
+	margin: 0;
+}
 .has-row-actions .thumbnail {
 	width: 90px;
 	text-align: center;
@@ -847,29 +872,6 @@ span.tip {
     font-weight: bold;
 }
 
-body.show-overlay {
-	overflow:hidden;	
-}
-body.nonavibar{
-	background: transparent !important;
-    margin: 55px 0 0 0;
-    padding: 20px 0;    
-	overflow-y: scroll;
-}
-
-body.nonavibar .page-containerx{
-	display: table;
-    margin: 0 auto;
-    min-height: 100px;
-    min-width: 700px;
-    padding: 0.2em 26px 2em 0.2em !important;
-    position: relative;
-    width: 88%;
-}
-body.nonavibar .container-fluid-r25 {
-    padding: 0 !important;
-}
-
 #overlay-titlebar {
     padding: 0 20px;
     position: relative;
@@ -1059,4 +1061,7 @@ div.vertical-tabs .vertical-tabs-panes {
 * html .vertical-tabs .form-type-textfield,
 * html .vertical-tabs .form-textarea-wrapper {
   width: 95%; 
+}
+.modal-body{
+	min-height:150px;
 }

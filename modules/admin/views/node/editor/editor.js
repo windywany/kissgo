@@ -1,15 +1,15 @@
 $(function() {
-	$.fn.modalmanager.defaults.resize = true;
-	var setting = {
-		treeId : 'tpls-tree',
-		async : {
-			enable : true,
-			url : Kissgo.AJAX,
-			autoParam : [ "id" ],
-			otherParam : {
-				"__op" : "browser_all_template_files"
+	$.fn.modalmanager.defaults.resize = true;	
+	var setting_menu = {
+			treeId : 'tpls-menu-tree',
+			async : {
+				enable : true,
+				url : Kissgo.AJAX,
+				autoParam : [ "id" ],
+				otherParam : {
+					"__op" : "browser_all_template_files"
+				}
 			}
-		}
 	};
 	$('.overlay-close').click(function() {
 		Kissgo.closeIframe();
@@ -44,36 +44,32 @@ $(function() {
 		}
 	});
 	
-	$('#keywords').select2({tags:['abc','def','qbc'],tokenSeparators:[',',' ']});
-	$('#tags').select2({tags:['abc','def','qbc'],tokenSeparators:[',',' ']});
+	$('#keywords').selectag({
+		minimumInputLength: 1,					
+		ajax :tag_ajax('keyword')
+	});
+	$('#tags').selectag({
+		minimumInputLength: 1,		
+		ajax :tag_ajax('tag')
+	});
 	$('#source').select2({
 			minimumInputLength: 1,
-			query: function (query) {
-				var data = {results: []};
-				data.results.push({id: query.term, text: query.term});				
-				query.callback(data);
-			},
+			placeholder: "Select Source",
+			allowClear: true,
+			ajax : tag_ajax('source'),
 			initSelection : function (element, callback) {
-		        var data = [];
-		        $(element.val().split(",")).each(function () {
-		            data.push({id: this, text: this});
-		        });
+		        var val = element.val(),data = {id: val, text: val};		        
 		        callback(data);
 		    }
-	}).select2('val','def');
+	});
 	
 	$('#author').select2({
 			minimumInputLength: 1,
-			query: function (query) {
-				var data = {results: []};
-				data.results.push({id: query.term, text: query.term});				
-				query.callback(data);
-			},
+			placeholder: "Select Author",
+			allowClear: true,
+			ajax : tag_ajax('author'),
 			initSelection : function (element, callback) {
-		        var data = [];
-		        $(element.val().split(",")).each(function () {
-		            data.push({id: this, text: this});
-		        });
+				var val = element.val(),data = {id: val, text: val};		        
 		        callback(data);
 		    }
 	});
@@ -81,10 +77,11 @@ $(function() {
 	$('#btn-select-tpl').click(function() {		
 		$('#tpls-tree').empty();
 		$.fn.zTree.destroy('tpls-tree');
-		$.fn.zTree.init($('#tpls-tree'), setting);		
+		$.fn.zTree.init($('#tpls-tree'), ztree_setting('tpls-tree','browser_all_template_files'));		
 		$('#tpl-selector-box').modal('show');
 		return false;
 	});
+	
 	$('#btn-done').click(function() {
 		var treeObj = $.fn.zTree.getZTreeObj("tpls-tree");
 		var nodes = treeObj.getSelectedNodes();
@@ -97,6 +94,48 @@ $(function() {
 		$('#template_file').val(template);
 		return false;
 	});
+	
+	$('#menu').click(function() {		
+		$('#tpls-menu-tree').empty();
+		$.fn.zTree.destroy('tpls-menu-tree');
+		$.fn.zTree.init($('#tpls-menu-tree'), ztree_setting('tpls-menu-tree','browser_menus'));		
+		$('#menu-selector-box').modal('show');
+		return false;
+	});
+	
+	function tag_ajax (type){
+		return {
+			cache:true,
+			url : Kissgo.AJAX + '?__op=tags_autocomplete',
+			data : function(term, page) {
+				if(term.length<1){
+					return null;
+				}
+				return {
+					q : term,
+					t: type,
+					m:'m',
+					p : page
+				};					
+			},
+			results : function(data, page) {
+				return data;
+			}
+		};
+	};
+	function ztree_setting(id,op){
+		return {
+			treeId : id,
+			async : {
+				enable : true,
+				url : Kissgo.AJAX,
+				autoParam : [ "id" ],
+				otherParam : {
+					"__op" : op
+				}
+			}
+		};
+	};
 	window.setNodeData = function(data) {
 		//alert('ok');
 	};

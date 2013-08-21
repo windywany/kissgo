@@ -14,7 +14,7 @@ function do_ajax_validate_check($req) {
     if (! isset ( $req ['__cb'] )) {
         echo 'false';
     } else {
-        BaseForm::load_callbacks();
+        BaseForm::load_callbacks ();
         $cb = $req ['__cb'];
         $rst = false;
         if (is_callable ( $cb )) {
@@ -65,28 +65,58 @@ function do_ajax_browser_template_files($req) {
  * @param Request $req
  */
 function do_ajax_browser_all_template_files($req) {
-	
-	$id = rqst ( 'id', '' );
-	$path = THEME_PATH . THEME_DIR . DS . $id;
-	$hd = opendir ( $path );
-	$dirs = array ();
-	$files = array ();
-	if ($hd) {
-		while ( ($f = readdir ( $hd )) != false ) {
-			if (is_dir ( $path . DS . $f ) && $f != '.' && $f != '..' && $f != 'admin') {
-				$dirs [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => true );
-			}
-			if (is_file ( $path . DS . $f ) && preg_match ( '/.+\.tpl$/', $f )) {
-				$files [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => false );
-			}
-		}
-		closedir ( $hd );
-		ksort ( $dirs );
-		ksort ( $files );
-		$dirs = $dirs + $files;
-		$dirs = array_values ( $dirs );
-	}
-	echo json_encode ( $dirs );
+    $id = rqst ( 'id', '' );
+    $path = THEME_PATH . THEME_DIR . DS . $id;
+    $hd = opendir ( $path );
+    $dirs = array ();
+    $files = array ();
+    if ($hd) {
+        while ( ($f = readdir ( $hd )) != false ) {
+            if (is_dir ( $path . DS . $f ) && $f != '.' && $f != '..' && $f != 'admin') {
+                $dirs [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => true );
+            }
+            if (is_file ( $path . DS . $f ) && preg_match ( '/.+\.tpl$/', $f )) {
+                $files [$f] = array ('id' => $id . '/' . $f, 'name' => $f, 'isParent' => false );
+            }
+        }
+        closedir ( $hd );
+        ksort ( $dirs );
+        ksort ( $files );
+        $dirs = $dirs + $files;
+        $dirs = array_values ( $dirs );
+    }
+    echo json_encode ( $dirs );
+}
+/**
+ * 
+ * browser_menus
+ * @param Request $req
+ */
+function do_ajax_browser_menus($req) {
+    $id = rqst ( 'id', '' );
+    $rtn = array ();
+    if (empty ( $id )) {
+        $ksgMenu = new KsgMenuTable ();
+        $menus = $ksgMenu->query ()->sort ( 'menu_default' );
+        $rtn [0] = array ('id' => '*none', 'name' => 'None', 'isParent' => true, 'open' => true );
+        foreach ( $menus as $menu ) {
+            $rtn [0] ['children'] [] = array ('id' => 'm.' . $menu ['menu_name'], 'name' => $menu ['menu_title'], 'isParent' => true );
+        }
+    } else {
+        $ksgMenuItem = new KsgMenuItemTable ();
+        $where ['is_navi'] = 1;
+        if (is_numeric ( $id )) {
+            $where ['up_id'] = $id;
+        } else {
+            $where ['up_id'] = 0;
+            $where ['menu_name'] = str_replace ( 'm.', '', $id );
+        }
+        $items = $ksgMenuItem->query ( 'menuitem_id,item_name' )->where ( $where )->sort ( 'sort', 'a' );
+        foreach ( $items as $item ) {
+            $rtn [] = array ('id' => $item ['menuitem_id'], 'name' => $item ['item_name'], 'isParent' => true );
+        }
+    }
+    echo json_encode ( $rtn );
 }
 /**
  * 
@@ -94,12 +124,18 @@ function do_ajax_browser_all_template_files($req) {
  * @param Request $req
  */
 function do_ajax_tags_autocomplete($req) {
-    $q = rqst ( 'q', '' );
-    $p = irqst ( 'p', 1 );
+    $q = trim ( rqst ( 'q', '' ), ', ' ); // query term
+    $p = irqst ( 'p', 1 ); //page
+    $type = rqst ( 't', 'tag' ); // tags type
+    $mode = rqst ( 'm', 'n' ); // return value mode 
     $tagTable = new KsgTagTable ();
     $more = true;
-    $where = array ('type' => 'tag' );
-    $tags = $tagTable->query ( 'TG.tag_id as id, tag as text', 'TG' );
+    $where = array ('type' => $type );
+    if ($mode == 'n') {
+        $tags = $tagTable->query ( 'TG.tag_id as id, tag as text', 'TG' );
+    } else {
+        $tags = $tagTable->query ( 'tag as text', 'TG' );
+    }
     if (empty ( $q )) {
         $more = false;
     } else {
@@ -110,9 +146,21 @@ function do_ajax_tags_autocomplete($req) {
     $tags->field ( $hots, 'hots' );
     $tags->where ( $where )->limit ( $p, 10 )->sort ( 'hots', 'd' );
     if ($more) {
-        $more = $tags->size () > 0;
+        $more = $tags->size () == 10;
     }
-    $data = array ('more' => $more, 'results' => $tags->toArray () );
+    if ($mode == 'n') {
+        $data = array ('more' => $more, 'results' => $tags->toArray () );
+    } else {
+        $data = array ('more' => $more, 'results' => array () );
+        foreach ( $tags->toArray () as $val ) {
+            if ($val ['text'] != $q) {
+                $data ['results'] [] = array ('id' => $val ['text'], 'text' => $val ['text'] );
+            }
+        }
+        if (! empty ( $q )) {
+            array_unshift ( $data ['results'], array ('id' => $q, 'text' => $q ) );
+        }
+    }
     echo json_encode ( $data );
 }
 
