@@ -98,11 +98,12 @@ function do_ajax_browser_menus($req) {
     if (empty ( $id )) {
         $ksgMenu = new KsgMenuTable ();
         $menus = $ksgMenu->query ()->sort ( 'menu_default' );
-        $rtn [0] = array ('id' => '*none', 'name' => 'None', 'isParent' => true, 'open' => true );
+        $rtn [0] = array ('id' => '*none', 'name' => 'Home', 'isParent' => true, 'open' => true );
         foreach ( $menus as $menu ) {
-            $rtn [0] ['children'] [] = array ('id' => 'm.' . $menu ['menu_name'], 'name' => $menu ['menu_title'], 'isParent' => true );
+            $rtn [0] ['children'] [] = array ('id' => 'm.' . $menu ['menu_name'], 'name' => $menu ['menu_title'],'cb'=>$menu ['menu_title'], 'isParent' => true );
         }
     } else {
+        $name = rqst('cb').' / ';
         $ksgMenuItem = new KsgMenuItemTable ();
         $where ['is_navi'] = 1;
         if (is_numeric ( $id )) {
@@ -113,7 +114,7 @@ function do_ajax_browser_menus($req) {
         }
         $items = $ksgMenuItem->query ( 'menuitem_id,item_name' )->where ( $where )->sort ( 'sort', 'a' );
         foreach ( $items as $item ) {
-            $rtn [] = array ('id' => $item ['menuitem_id'], 'name' => $item ['item_name'], 'isParent' => true );
+            $rtn [] = array ('id' => $item ['menuitem_id'], 'name' => $item ['item_name'],'cb'=>$name.$item ['item_name'], 'isParent' => true );
         }
     }
     echo json_encode ( $rtn );

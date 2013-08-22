@@ -71,6 +71,15 @@ $(function() {
 		}
 	}).change();
 	
+	$('#ajaxupload-figure').ajaxupload({
+		max_file_size: '20mb',
+		filters : [ { title : "图片", extensions : "jpg,gif,png,jpeg,bmp" }],
+		onUpladed:function(rst,uploader){
+			$('#page-picture').data('imgData',rst).select2('val',rst.url).change();
+			uploader.addClass('ajaxupload-new');
+		}
+	});
+	
 	$('#btn-select-tpl').click(function() {		
 		$('#tpls-tree').empty();
 		$.fn.zTree.destroy('tpls-tree');
@@ -99,7 +108,23 @@ $(function() {
 		$('#menu-selector-box').modal('show');
 		return false;
 	});
-	
+	$('#btn-menu-done').click(function(){
+		var treeObj = $.fn.zTree.getZTreeObj("tpls-menu-tree");
+		var nodes = treeObj.getSelectedNodes();
+		if (nodes.length == 0) {			
+			return false;
+		}
+		$('#menu-selector-box').modal('hide');
+		var menu = nodes[0];
+		if(menu.id == '*none'){
+			$('#menu').val('');
+			$('#navi-menu').val(0);
+		}else{
+			$('#menu').val(menu.cb);
+			$('#navi-menu').val(menu.id);
+		}
+		return false;
+	});
 	function tag_ajax (type){
 		return {
 			cache:true,
@@ -126,7 +151,7 @@ $(function() {
 			async : {
 				enable : true,
 				url : Kissgo.AJAX,
-				autoParam : [ "id" ],
+				autoParam : [ "id",'cb' ],
 				otherParam : {
 					"__op" : op
 				}

@@ -69,6 +69,15 @@
 	        </div>
 	    </div>
 	    
+	    <div class="row-fluid">
+			<div>
+				<span class="strong">添加至导航菜单</span>
+				<br class="clear"/>								
+			</div>
+			<input type="hidden" id="navi-path" value=""/>
+			<input type="hidden" name="menu" id="navi-menu" value=""/>
+			<input type="text" value="" readonly="readonly" class="span12" id="menu" placeholder="点击选择导航菜单"/>
+		</div>
 	    
         <div class="row-fluid">
 			<div>
@@ -78,15 +87,7 @@
 				<br class="clear"/>								
 			</div>
 			<input type="text" value="2.html" class="span12" id="url" name="url"/>
-		</div>
-	   
-	   <div class="row-fluid">
-			<div>
-				<span class="strong">添加至导航菜单</span>
-				<br class="clear"/>								
-			</div>
-			<input type="text" value="" readonly="readonly" class="span12" id="menu" name="menu" placeholder="点击选择导航菜单"/>
-		</div>
+		</div>	   
 	    
 	    <div class="row-fluid">
 			<div>
@@ -224,13 +225,8 @@
         					</div>
         					<div class="form-field">
         						<label>上传插图</label>
-        						<div class="ajaxupload ajaxupload-new">
-                                 	<div class="input-append">
-                                		<div class="uneditable-input w220">
-                                			<i class="icon-file fileupload-exists"></i>
-                                			<span class="fileupload-preview"></span>
-                                		</div><a class="btn btn-browser">浏览...</a><a class="btn file-upload">上传</a>
-                                	</div>
+        						<div id="ajaxupload-figure">
+                                 	
                                  </div>   			            
         					</div>
 						</div>
@@ -280,5 +276,6 @@
 
 {block name="admincp_foot_js_block"}
 <script type="text/javascript" src="{'jquery/plugins/plupload/plupload.js'|static}"></script>
+<script type="text/javascript" src="{'jquery/plugins/ajaxupload.js'|static}"></script>
 <script type="text/javascript" src="{'editor.js'|here}"></script>
 {/block}

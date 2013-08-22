@@ -1079,12 +1079,21 @@ img.sltimg{
 	overflow: hidden;
     position: relative;
 }
+.ajaxupload .fileupload-name,.ajaxupload .fileupload-name:focus{
+	border-radius:0;
+	border:0;
+	padding:1px 2px;
+	box-shadow:none;
+	font-size:12px;
+	width:230px;
+}
 .ajaxupload-new .btn-browser {
     border-radius: 0 3px 3px 0;
 }
-.ajaxupload-new .file-upload, .ajaxupload-new .icon-file{
+.ajaxupload-new .file-upload, .ajaxupload-new .icon-file, .ajaxupload-new .fileupload-name, .ajaxupload-new .fileupload-preview{
 	display:none;
 }
 .ajaxupload span{
-	float: none;	
+	float: none;
+	font-size: 12px;
 }

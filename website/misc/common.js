@@ -616,7 +616,12 @@
 				}
 			};
 			options.initSelection = function (element, callback) {
-				var val = element.val(),data = {id: val, text: 'img',t1:val,t2:val};		        
+				var val = element.val(),imgData = element.data('imgData'),data = {id: val, text: '',t1:val,t2:val};
+				if(imgData){
+					data.text = imgData.name || '';
+					data.t1   = imgData.t1 || val;
+					data.t2   = imgData.t2 || val;
+				}						        
 		        callback(data);		        
 		    };
 			$tag.select2(options);
@@ -766,5 +771,17 @@ if(window.Kissgo){
 		$('#navbar').width('auto');
 		$('#foot').width('auto');
 		$('body').removeClass('show-overlay');
+	};
+	window.Kissgo.parseJson = function (data) {
+		if(typeof data == 'string'){
+			if ((data.substring(0, 1) != '{') && (data.substring(0, 1) != '[')) {
+				return { success: false, msg: data };
+			}
+			return eval('(' + data + ');');
+		}else if(typeof data == 'object'){
+			return data;
+		}else{
+			return { success: false, msg: 'Unspecified error!',data:data };
+		}
 	};
 }

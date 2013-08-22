@@ -2,8 +2,9 @@
 /**
  * upload file by chuck
  */
-assert_login ();
-function do_admin_media_plupload_post($req, $res) {
+
+function do_admin_media_plupload_post($req, $res, $automove = false) {
+    $I = assert_login ();
     $targetDir = TMP_PATH . "plupload";
     
     $cleanupTargetDir = true; // Remove old files
@@ -21,6 +22,7 @@ function do_admin_media_plupload_post($req, $res) {
     $filext = strtolower ( strrchr ( $fileName, '.' ) );
     $uploader = apply_filter ( 'get_uploader', new PlUploader () ); //得到文件上传器
     if (! $uploader->allowed ( $filext )) {
+        @header ( '错误的文件类型.', true, 500 );
         die ( '{"jsonrpc" : "2.0", "error" : {"code": 200, "message": "错误的文件类型."}, "id" : "id"}' );
     }
     // Make sure the fileName is unique but only if chunking is disabled
@@ -53,6 +55,7 @@ function do_admin_media_plupload_post($req, $res) {
         }
         closedir ( $dir );
     } else {
+        @header ( 'Failed to open temp directory.', true, 500 );
         die ( '{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}' );
     }
     
@@ -66,10 +69,8 @@ function do_admin_media_plupload_post($req, $res) {
     // Handle non multipart uploads older WebKit versions didn't support multipart in HTML5
     if (strpos ( $contentType, "multipart" ) !== false) {
         if (isset ( $_FILES ['file'] ['tmp_name'] ) && is_uploaded_file ( $_FILES ['file'] ['tmp_name'] )) {
-            // Open temp file
             $out = fopen ( "{$filePath}.part", $chunk == 0 ? "wb" : "ab" );
             if ($out) {
-                // Read binary input stream and append it to temp file
                 $in = fopen ( $_FILES ['file'] ['tmp_name'], "rb" );
                 if ($in) {
                     do {
@@ -78,19 +79,21 @@ function do_admin_media_plupload_post($req, $res) {
                             fwrite ( $out, $buff );
                     } while ( $buff );
                 } else {
+                    @header ( 'Failed to open input stream.', true, 500 );
                     die ( '{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}' );
                 }
                 fclose ( $in );
                 fclose ( $out );
                 @unlink ( $_FILES ['file'] ['tmp_name'] );
             } else {
+                @header ( 'Failed to open output stream.', true, 500 );
                 die ( '{"jsonrpc" : "2.0", "error" : {"code": 102, "message": "Failed to open output stream."}, "id" : "id"}' );
             }
         } else {
+            @header ( 'Failed to move uploaded file.', true, 500 );
             die ( '{"jsonrpc" : "2.0", "error" : {"code": 103, "message": "Failed to move uploaded file."}, "id" : "id"}' );
         }
     } else {
-        // Open temp file
         $out = fopen ( "{$filePath}.part", $chunk == 0 ? "wb" : "ab" );
         if ($out) {
             // Read binary input stream and append it to temp file
@@ -103,20 +106,36 @@ function do_admin_media_plupload_post($req, $res) {
                         fwrite ( $out, $buff );
                 } while ( $buff );
             } else {
+                @header ( 'Failed to open input stream.', true, 500 );
                 die ( '{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}' );
             }
             fclose ( $in );
             fclose ( $out );
         } else {
+            @header ( 'Failed to open output stream.', true, 500 );
             die ( '{"jsonrpc" : "2.0", "error" : {"code": 102, "message": "Failed to open output stream."}, "id" : "id"}' );
         }
     }
-    
     // Check if file has been uploaded
     if (! $chunks || $chunk == $chunks - 1) {
-        // Strip the temp .part suffix off
         rename ( "{$filePath}.part", $filePath );
+        if ($automove) {
+            $title = rqst ( 'filename', '' );
+            $tmpfile = array ('tmpname' => $fileName, 'name' => rqst ( 'name' ), 'filesize' => rqst ( 'filesize', 0 ), 'title' => $title, 'alt' => $title );
+            $file = new UploadTmpFile ( $tmpfile, $targetDir );
+            $ret = $file->save ( $uploader, $I ['uid'] );
+            if ($ret !== false) {
+                $ret ['id'] = $ret ['attachment_id'];
+                unset ( $ret ['attachment_id'] );
+                $ret ['t1'] = the_thumbnail_src ( $ret ['url'], 80, 60 );
+                $ret ['t2'] = the_thumbnail_src ( $ret ['url'], 260, 180 );
+                $ret = json_encode ( $ret );
+                die ( '{"jsonrpc" : "2.0", "result" : ' . $ret . ', "id" : "id"}' );
+            } else {
+                @header ( 'failed to save file information.', true, 500 );
+                die ( '{"jsonrpc" : "2.0", "error" : {"code": 109, "message":"Failed to move file."}, "id" : "id"}' );
+            }
+        }
     }
-    // Return JSON-RPC response
     die ( '{"jsonrpc" : "2.0", "result" : null, "id" : "id"}' );
 }
