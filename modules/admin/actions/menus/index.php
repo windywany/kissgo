@@ -79,7 +79,7 @@ function do_admin_menus_post($req, $res) {
         }
         if ($rst) {
             $mM->getDialect ()->commit ();
-            Response::redirect ( $menu_url . '?mid=' . $mid );
+            Response::redirect ( $menu_url . '/' . $mid );
         }
     }
     $mM->getDialect ()->rollBack ();

@@ -13,7 +13,7 @@
             overflow: hidden;
             width: 60px;
         }
-        #menu {
+        #menu,#vpath {
 	         background-color: #FFF;
             cursor: pointer;
         }
@@ -37,7 +37,7 @@
 
 <div class="clearfix" id="overlay-titlebar">
     <div class="clearfix" id="overlay-title-wrapper">
-      <h1 id="overlay-title">{'Publish'|ts} - {$type_name} {if $node_id}[{$node_id}]{/if}</h1>
+      <h1 id="overlay-title">{$type_name} {if $node_id}[{$node_id}]{/if}</h1>
     </div>
     <div id="overlay-close-wrapper">
       <a class="overlay-close" href="#" id="overlay-close"></a>
@@ -48,7 +48,7 @@
 <div id="overlay-content" class="clearfix">
 	<div class="overlay-body">
 	<form action="{'admin'|murl:'pages/publish'}" method="POST" id="node-form">
-	    <input type="hidden" name="type" value="{$type}"/>
+	    <input type="hidden" id="node_type" name="type" value="{$type}"/>
 	    <input type="hidden" id="node_id" name="node_id" value="{$node_id}"/>
 	    <div class="row-fluid">
 	        <div class="span8">
@@ -68,22 +68,22 @@
 	            <input type="text" class="title1" name="subtitle" placeholder="页面副标题"/>
 	        </div>
 	    </div>
-	    
 	    <div class="row-fluid">
 			<div>
-				<span class="strong">添加至导航菜单</span>
+				<span class="strong">存放到虚拟路径</span>
 				<br class="clear"/>								
 			</div>
-			<input type="hidden" id="navi-path" value=""/>
-			<input type="hidden" name="menu" id="navi-menu" value=""/>
-			<input type="text" value="" readonly="readonly" class="span12" id="menu" placeholder="点击选择导航菜单"/>
-		</div>
-	    
+			<input type="hidden" name="vpath" id="vpath-id" value=""/>	
+			<input type="text" value="" readonly="readonly" class="span12" id="vpath" placeholder="点击选择虚拟路径"/>
+		</div>	
         <div class="row-fluid">
 			<div>
-				<span class="strong">URL</span>										
+				{if $type == 'catalog'}
+				<span class="strong">目录名</span>
+				{else}
+				<span class="strong">文件名或URL</span>
 				<span class="txt-info">[以http://开头的URL将自动跳转.]</span>
-				<span class="txt-error"></span>
+				{/if}
 				<br class="clear"/>								
 			</div>
 			<input type="text" value="" class="span12" id="url" name="url"/>
@@ -125,9 +125,20 @@
 	    	<div class="vertical-tabs-panes vertical-tabs-processed">
 	    	    <fieldset id="page-options" class="vertical-tabs-pane">
 					<div class="fieldset-wrapper">
+						
+						<div class="row-fluid">
+							<div>
+								<span class="strong">添加至导航菜单</span>
+								<br class="clear"/>								
+							</div>
+							<input type="hidden" id="navi-path" value=""/>
+							<input type="hidden" name="menu" id="navi-menu" value=""/>
+							<input type="text" value="" readonly="readonly" class="span12" id="menu" placeholder="点击选择导航菜单"/>
+						</div>
+						
     					<div class="form-field">
     						<div>
-    							<span>模板</span>
+    							<span class="strong">模板</span>
     							<label class="checkbox pull-left mg-r5"><input name="custome_tpl_chk" id="custom-set-tpl" type="checkbox">自定义</label>
     							<br class="clear">								
     						</div>
@@ -213,7 +224,7 @@
             				<span class="txt-info">[如果不填写，将使用全局定义的描述]</span>									
             				<br class="clear"/>								
             			</div>
-            			<textarea rows="1" id="descripition" placeholder="在此键入页面描述" name="descripition" class="span12"></textarea>
+            			<textarea rows="3" id="descripition" placeholder="在此键入页面描述" name="descripition" class="span12"></textarea>
             		</div>
 				</fieldset>
 				<fieldset id="page-image" class="vertical-tabs-pane">
@@ -242,7 +253,7 @@
 		</div>
 	    
 	    
-	    <div class="form-actions" style="text-align:center;padding:10px">
+	    <div style="text-align:center;padding:5px">
 	        <a class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>	            
 	        <a class="btn btn-warning overlay-close"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
 	    </div>
@@ -275,6 +286,20 @@
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">关闭</a>
         <a href="#" class="btn btn-primary" id="btn-menu-done">确定</a>
+    </div>
+</div>
+
+<div class="modal hide fade" tabindex="-1" id="path-selector-box" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>选择</h3>
+    </div>
+    <div class="modal-body" style="max-height:300px;overflow-y:auto;">
+        <ul class="ztree" id="path-browser-tree"></ul>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">关闭</a>
+        <a href="#" class="btn btn-primary" id="btn-path-done">确定</a>
     </div>
 </div>
 

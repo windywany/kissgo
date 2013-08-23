@@ -4,14 +4,14 @@ function do_admin_media_thumb_get($req, $res) {
     $data ['success'] = false;
     $aid = safe_ids ( rqst ( 'aid' ), ',', true );
     if ($aid) {
-        $atM = new VFSTable ();
-        $atts = $atM->query ( 'attachment_id,url' )->where ( array ('attachment_id IN' => $aid, 'type' => 'image' ) );
+        $atM = new MediaTable ();
+        $atts = $atM->query ( 'fid,url' )->where ( array ('fid IN' => $aid, 'type' => 'image' ) );
         $cnt = 0;
         if ($atts->size ()) {
             $uploader = apply_filter ( 'get_uploader', new PlUploader () ); //得到文件上传器
             foreach ( $atts as $att ) {
                 $rst = $uploader->thumbnail ( $att ['url'], array (array (80, 60 ), array (260, 180 ), array (300, 200 ) ) );
-                $data ['rst'] ['a' . $att ['attachment_id']] = $rst;
+                $data ['rst'] ['a' . $att ['fid']] = $rst;
             }
         }
         $data ['success'] = true;

@@ -11,9 +11,9 @@ function do_admin_media_edit_get($req, $res) {
     if ($aid) {
         $att ['name'] = $name;
         $att ['alt_text'] = $alt;
-        $atM = new VFSTable ();
+        $atM = new MediaTable ();
         $saver = $atM->save ( $att );
-        $saver->where ( array ('attachment_id' => $aid ) );
+        $saver->where ( array ('fid' => $aid ) );
         if (count ( $saver ) >= 0) {
             $data ['success'] = true;
         } else {

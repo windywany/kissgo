@@ -25,11 +25,8 @@ function do_admin_media_get($req, $res) {
     if (! empty ( $time2 )) {
         $data ['time2'] = $time2;
         $where ['create_time <='] = strtotime ( $time2 . ' 23:59:59' );
-    }
-    if(!isset($where['type'])){
-        $where['type <>'] = 'path';
-    }
-    $attModel = new VFSTable();
+    }    
+    $attModel = new MediaTable();
     $query = $attModel->query ( "AMT.*,U.login AS author", 'AMT' );
     
     $query->ljoin ( new KsgUserTable(), "AMT.create_uid  = U.uid" ,'U');
@@ -75,10 +72,10 @@ function admin_get_media_actions($actions, $item) {
         $urls ['delete'] = murl ( 'admin', 'media/delete' );
         $urls ['thumb'] = murl ( 'admin', 'media/thumb' );
     }
-    $actions .= '<a title="编辑" class="edit-media"  href="' . $urls ['edit'] . '?aid=' . $item ['media_id'] . '"><i class="icon-edit"></i>编辑</a>';
-    $actions .= '<a title="删除" onclick="return confirm(\'确定要删除该文件?\');" href="' . $urls ['delete'] . '?aid=' . $item ['media_id'] . '"><i class="icon-trash"></i>删除</a>';
+    $actions .= '<a title="编辑" class="edit-media"  href="' . $urls ['edit'] . '?aid=' . $item ['fid'] . '"><i class="icon-edit"></i>编辑</a>';
+    $actions .= '<a title="删除" onclick="return confirm(\'确定要删除该文件?\');" href="' . $urls ['delete'] . '?aid=' . $item ['fid'] . '"><i class="icon-trash"></i>删除</a>';
     if ($item ['type'] == 'image') {
-        $actions .= '<a title="生成缩略图" class="g_thumb" href="' . $urls ['thumb'] . '?aid=' . $item ['media_id'] . '"><i class="icon-picture"></i>生成缩略图</a>';
+        $actions .= '<a title="生成缩略图" class="g_thumb" href="' . $urls ['thumb'] . '?aid=' . $item ['fid'] . '"><i class="icon-picture"></i>生成缩略图</a>';
     }
     return $actions;
 }

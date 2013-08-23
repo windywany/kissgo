@@ -1,8 +1,8 @@
 <?php
-class VFSTable extends DbTable {
-    var $table = 'system_vfs';
+class MediaTable extends DbTable {
+    var $table = 'system_media';
     public function schema() {
-        $schema = new DbSchema ( 'virtaul file system' );
+        $schema = new DbSchema ( 'medias' );
         
         $schema->addPrimarykey ( array ('fid' ) );
         
@@ -11,8 +11,7 @@ class VFSTable extends DbTable {
         
         $schema ['fid'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
         $schema ['create_uid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '用户' );
-        $schema ['create_time'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '时间' );
-        $schema ['pfid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => 'parent file id' );
+        $schema ['create_time'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0, Idao::CMMT => '时间' );        
         $schema ['hasthumbnail'] = array ('type' => 'int', 'extra' => 'small', Idao::LENGTH => 4, Idao::DEFT => 0, Idao::CMMT => '缩略图的数量' );
         $schema ['type'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 16, Idao::CMMT => '类型' );
         $schema ['mine_type'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 32, Idao::CMMT => '附件多媒体类型' );

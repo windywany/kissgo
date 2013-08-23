@@ -50,7 +50,7 @@
 				<tbody>
 					{foreach from=$items item=item}
 					<tr>
-						<td class="col_chk"><input type="checkbox" class="chkbx" aid="{$item.url}" value="{$item.attachment_id}"/></td>						
+						<td class="col_chk"><input type="checkbox" class="chkbx" aid="{$item.url}" value="{$item.fid}"/></td>						
 						<td class="has-row-actions">
 							<div class="thumbnail pull-left mg-r5">								
 								<a href="{$item.url|uploaded}" title="{$item.name}" {if $item.type == 'image'}rel="prettyPhoto[pp_gal]"{/if}>								

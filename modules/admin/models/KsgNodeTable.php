@@ -12,6 +12,7 @@ class KsgNodeTable extends DbTable {
         $schema->addUnique ( 'IDX_URL_SLUG', array ('url_slug', 'nid' ) );
         
         $schema ['nid'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
+        $schema ['pnid'] = array ('type' => 'int', 'extra' => 'normal',Idao::DEFT=>0, Idao::NN, Idao::UNSIGNED );
         $schema ['deleted'] = array ('type' => 'bool', 'extra' => 'normal', Idao::NN, Idao::DEFT => false, Idao::CMMT => '是否删除' );
         
         $schema ['create_uid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::AUTOINSERT_UID, Idao::CMMT => '创建用户' );

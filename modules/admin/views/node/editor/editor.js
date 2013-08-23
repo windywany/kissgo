@@ -20,23 +20,16 @@ $(function() {
 		'format' : 'yyyy-mm-dd',
 		autoclose : true
 	});
-	$('#title,#cachetime').click(function(){
+	$('#title,#cachetime,#url').click(function(){
 		$(this).removeClass('error');
 	});
 	$("a.btn-save").on("click", function(event) {
-		var pid = $('#node_id').val();		
-		if(pid == '0'){
-			var node = validateForm(true);
-			if(node){
-				Kissgo.closeIframe(node);
-			}
-			return false;
-		}else{
-			if(validateForm(false)){
-				$('#node-form').submit();
-			}
-			return false;
-		}		
+		
+		if(validateForm(false)){
+			$('#node-form').submit();
+		}
+		return false;
+				
 	});
 	
 	$('#node-form').ajaxForm({
@@ -139,6 +132,31 @@ $(function() {
 		}
 		return false;
 	});
+	
+	$('#vpath').click(function() {		
+		$('#path-browser-tree').empty();
+		$.fn.zTree.destroy('path-browser-tree');
+		$.fn.zTree.init($('#path-browser-tree'), ztree_setting('path-browser-tree','browser_vfs'));		
+		$('#path-selector-box').modal('show');
+		return false;
+	});
+	$('#btn-path-done').click(function(){
+		var treeObj = $.fn.zTree.getZTreeObj("path-browser-tree");
+		var nodes = treeObj.getSelectedNodes();
+		if (nodes.length == 0) {			
+			return false;
+		}
+		$('#path-selector-box').modal('hide');
+		var path = nodes[0];
+		if(path.id == ''){
+			$('#vpath').val('/');
+			$('#vpath-id').val(0);
+		}else{
+			$('#vpath').val(path.cb+'/');
+			$('#vpath-id').val(path.id);
+		}
+		return false;
+	});
 	function tag_ajax (type){
 		return {
 			cache:true,
@@ -180,15 +198,11 @@ $(function() {
 			$.alert('标题不能为空.');
 			$('#title').addClass('error').focus();			
 			return false;
-		}else{
-			$('#title').removeClass('error');
 		}
 		if(!/^(0|[1-9][0-9]*)$/.test(ct)){
 			$.alert('缓存时间只能是数字.');
 			$('#cachetime').addClass('error');
 			return false;
-		}else{
-			$('#cachetime').removeClass('error').unbind();
 		}
 		if($('#custom-set-tpl').attr('checked') && tmp.length == 0){
 			$.alert('请选择模板.',function(){
@@ -196,7 +210,20 @@ $(function() {
 			});
 			return false;	
 		}
-		
+		var type = $('#node_type').val(), url = $.trim($('#url').val());
+		if(url.length >0){
+			var reg = null;
+			if(type == 'catalog'){
+				reg = /^[\d\w][\d\w_-]*$/;
+			}else{
+				reg = /^(https?:\/{2})?.+/;
+			}			
+			if(!reg.test(url)){
+				$.alert('目录名或文件名或URL不能为空.');
+				$('#url').addClass('error').focus();
+				return false;
+			}
+		}
 		if(ret){
 			return $('#node-form').serializeArray();
 		}

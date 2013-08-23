@@ -140,23 +140,7 @@ $(function() {
 			menu_name : mid
 		};
 		addMenuItem(data);
-	});
-	$.fn.zTree.init($('#browser-vfs'),{
-		treeId : 'browser-vfs',
-		view: {
-			addHoverDom: addHoverDom,
-			removeHoverDom: removeHoverDom,
-			selectedMulti: false
-		},
-		async : {
-			enable : true,
-			url : Kissgo.AJAX,
-			autoParam : [ "id",'path' ],
-			otherParam : {
-				"__op" : 'browser_vfs'
-			}
-		}
-	});
+	});	
 	function addMenuItem(data) {
 		$.ajax({
 			url : url + '/add/',
@@ -177,43 +161,5 @@ $(function() {
 				}
 			}
 		});
-	}
-	function addHoverDom(treeId, treeNode) {
-		var sObj = $("#" + treeNode.tId + "_span");
-		if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) return;
-		var addStr = "<span class='button addCatalog' id='addBtn_" + treeNode.tId
-			+ "' title='Create Virtual Directory' onfocus='this.blur();'></span>";
-		sObj.after(addStr);
-		var btn = $("#addBtn_"+treeNode.tId);
-		if (btn) btn.bind("click", function(){
-			var zTree = $.fn.zTree.getZTreeObj("browser-vfs");			
-			$.prompt('Create Virtual Directory',['Path','Name'],function(get,setError){
-				var path = $.trim(get(0)),name = get(1);
-				if(!path){
-					setError(0);
-					return false;
-				}
-				if(!name){
-					name = path;
-				}
-				showWaitMask();
-				$.post(Kissgo.murl('admin','vfs'),{path:path,name:name,pfid:treeNode.id},function(data){
-					if(data.success){
-						path = treeNode.id?treeNode.path+'/'+path:path;
-						zTree.addNodes(treeNode, {id:data.id, pId:treeNode.id, name:name,path:path,isParent:true});
-						$.confirm('Do you want publish this path to a front page?',function(){
-							Kissgo.publish('catalog',data.id,null,{title:name,url:'{path}/index.html'});
-						});
-					}else{
-						$.alert(data.msg);
-					}
-					hideWaitMask();
-				},'json');
-			});			
-			return false;
-		});
-	};
-	function removeHoverDom(treeId, treeNode) {
-		$("#addBtn_"+treeNode.tId).unbind().remove();
-	};
+	}	
 });

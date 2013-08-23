@@ -127,22 +127,22 @@ function do_ajax_browser_vfs($req) {
     $id = rqst ( 'id', '' );
     $rtn = array ();
     if (empty ( $id )) {
-        if (! isset ( $req ['path'] )) {
-            $vfs = new VFSTable ();
-            $fs = $vfs->query ( 'fid,url' )->where ( array ('pfid' => 0, 'type' => 'path', 'url <>' => '/' ) )->sort ( 'url', 'a' );
-            $rtn [0] = array ('id' => '', 'name' => 'Web Root', 'path' => '/', 'isParent' => true, 'open' => true, 'children' => array () );
+        if (! isset ( $req ['cb'] )) {
+            $vfs = new KsgNodeTable();
+            $fs = $vfs->query ( 'nid,url,title' )->where ( array ('pnid' => 0, 'node_type' => 'catalog') )->sort ( 'url', 'a' );
+            $rtn [0] = array ('id' => '', 'name' => 'root', 'cb' => '/', 'isParent' => true, 'open' => true, 'children' => array () );
             foreach ( $fs as $f ) {
-                $rtn [0] ['children'] [] = array ('id' => $f ['fid'], 'name' => $f ['url'], 'path' => $f ['url'], 'isParent' => true );
+                $rtn [0] ['children'] [] = array ('id' => $f ['nid'], 'name' => $f ['url'], 'cb' => '/'.$f ['url'], 'isParent' => true );
             }
         }
     } else {
-        $path = rqst ( 'path' ) . ' / ';
-        $vfs = new VFSTable ();
-        $where ['pfid'] = $id;
-        $where ['type'] = 'path';
-        $items = $vfs->query ( 'fid,url' )->where ( $where )->sort ( 'url', 'a' );
+        $path = rqst ( 'cb' ) . ' / ';
+        $vfs = new KsgNodeTable ();
+        $where ['pnid'] = $id;
+        $where ['node_type'] = 'catalog';
+        $items = $vfs->query ( 'nid,url,title' )->where ( $where )->sort ( 'url', 'a' );
         foreach ( $items as $item ) {
-            $rtn [] = array ('id' => $item ['fid'], 'name' => $item ['url'], 'path' => $path . $item ['url'], 'isParent' => true );
+            $rtn [] = array ('id' => $item ['nid'], 'name' => $item ['url'], 'cb' => $path . $item ['url'], 'isParent' => true );
         }
     }
     echo json_encode ( $rtn );
@@ -223,7 +223,7 @@ function do_ajax_nodes_autocomplete($req) {
 function do_ajax_images_autocomplete($req) {
     $q = rqst ( 'q', '' );
     $p = irqst ( 'p', 1 );
-    $attach = new VFSTable ();
+    $attach = new MediaTable();
     $imgs = $attach->query ( 'url as id,name as text' );
     $where ['type'] = 'image';
     if (empty ( $q )) {
