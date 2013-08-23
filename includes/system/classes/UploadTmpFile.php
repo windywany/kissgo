@@ -201,7 +201,7 @@ class UploadTmpFile {
         }
         if ($rst !== false) { //保存文件成功
             if (! $atM) {
-                $atM = new KsgAttachmentTable ();
+                $atM = new VFSTable ();
             }
             $data ['create_uid'] = $uid;
             $data ['create_time'] = time ();

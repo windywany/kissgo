@@ -125,8 +125,8 @@ function do_admin_media_plupload_post($req, $res, $automove = false) {
             $file = new UploadTmpFile ( $tmpfile, $targetDir );
             $ret = $file->save ( $uploader, $I ['uid'] );
             if ($ret !== false) {
-                $ret ['id'] = $ret ['attachment_id'];
-                unset ( $ret ['attachment_id'] );
+                $ret ['id'] = $ret ['fid'];
+                unset ( $ret ['fid'] );
                 $ret ['t1'] = the_thumbnail_src ( $ret ['url'], 80, 60 );
                 $ret ['t2'] = the_thumbnail_src ( $ret ['url'], 260, 180 );
                 $ret = json_encode ( $ret );

@@ -763,6 +763,12 @@ span.tip {
     line-height: 1.9;
     margin-left: 44px;
     padding-top: 8px;
+    max-width:500px;
+    max-height:300px;
+    overflow:auto;
+}
+.dialog_f_c .add-on{
+	min-width:80px;
 }
 .no-icon .dialog_f_c {
 	margin-left: 0;

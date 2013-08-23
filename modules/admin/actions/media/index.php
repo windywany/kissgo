@@ -10,7 +10,7 @@ assert_login ();
  * @return SmartyView
  */
 function do_admin_media_get($req, $res) {    
-    $data ['limit'] = 15;
+    $data ['limit'] = 10;
     $data ['_CUR_URL'] = murl ( 'admin', 'media' );
     $data ['type_options'] = array_merge ( array ('' => '-请选择-' ), UploadTmpFile::getAttachmentTypes());
     
@@ -26,8 +26,10 @@ function do_admin_media_get($req, $res) {
         $data ['time2'] = $time2;
         $where ['create_time <='] = strtotime ( $time2 . ' 23:59:59' );
     }
-    
-    $attModel = new KsgAttachmentTable();
+    if(!isset($where['type'])){
+        $where['type <>'] = 'path';
+    }
+    $attModel = new VFSTable();
     $query = $attModel->query ( "AMT.*,U.login AS author", 'AMT' );
     
     $query->ljoin ( new KsgUserTable(), "AMT.create_uid  = U.uid" ,'U');

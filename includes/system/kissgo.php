@@ -78,7 +78,7 @@ class KissGo {
                 register_shutdown_function ( 'session_write_close' );
             }
         }
-        $session_expire = apply_filter ( 'get_session_expire', 900 );
+        $session_expire = apply_filter ( 'get_session_expire', 0 );
         @session_set_cookie_params ( $session_expire );
         @session_cache_expire ( $session_expire );
         $session_path = apply_filter ( 'get_session_path', '' );

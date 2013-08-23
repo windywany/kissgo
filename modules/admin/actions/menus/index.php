@@ -6,11 +6,10 @@ assert_login ();
  * @param Response $res
  * @return View
  */
-function do_admin_menus_get($req, $res) {
+function do_admin_menus_get($req, $res, $menu_id = 0) {
     $data = array ();
     $data = array ();
-    $op = rqst ( 'op' );
-    $menu_id = irqst ( 'mid', 0 );
+    $op = rqst ( 'op' );    
     
     $mM = new KsgMenuTable ();
     $menus = $mM->query ();

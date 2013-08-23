@@ -11,7 +11,7 @@ function do_admin_media_edit_get($req, $res) {
     if ($aid) {
         $att ['name'] = $name;
         $att ['alt_text'] = $alt;
-        $atM = new KsgAttachmentTable ();
+        $atM = new VFSTable ();
         $saver = $atM->save ( $att );
         $saver->where ( array ('attachment_id' => $aid ) );
         if (count ( $saver ) >= 0) {

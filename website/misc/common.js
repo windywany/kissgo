@@ -441,17 +441,17 @@
 		});
 	}
 	
-	$.warn = function(msg){
-		$.showMessageBox('warn','Warn',msg);
+	$.warn = function(msg,callback){
+		$.showMessageBox('warn','Warn',msg,[{text:'OK',callback:callback}]);
 	};
-	$.error = function(msg){
-		$.showMessageBox('error','Error',msg);
+	$.error = function(msg,callback){
+		$.showMessageBox('error','Error',msg,[{text:'OK',callback:callback}]);
 	};
-	$.success = function(msg){
-		$.showMessageBox('success','Success',msg);
+	$.success = function(msg,callback){
+		$.showMessageBox('success','Success',msg,[{text:'OK',callback:callback}]);
 	};
-	$.alert = function(msg){
-		$.showMessageBox('info','Alert',msg);
+	$.alert = function(msg,callback){
+		$.showMessageBox('info','Alert',msg,[{text:'OK',callback:callback}]);
 	};
 	$.confirm = function(msg,callback){
 		$.showMessageBox('confirm','Confirm',msg,[{text:'Yes',callback:callback},{text:'No'}]);
@@ -459,6 +459,13 @@
 	$.dialog = function(title,body,buttons){
 		$.showMessageBox('prompt',title,body,buttons);
 	};
+	$.prompt = function(title,inputs,callback){
+		var msgs = [];
+		$.each(inputs,function(i,n){
+			msgs.push('<div class="input-prepend"><span class="add-on">'+n+'</span><input type="text" class="w300" id="prompt-ipt-'+i+'"></div>');			
+		});
+		$.showMessageBox('prompt',title,msgs.join('<br class="clear"/>'),[{text:'OK',callback:function(){if($.isFunction(callback)){return callback( function(x){return $('#prompt-ipt-'+x).val()},function(x){$('#prompt-ipt-'+x).unbind().click(function(){$(this).removeClass('error')}).addClass('error');$('#overlay').click()})}}},{text:'Cancel'}]);		
+	};	
 	
 	$.showMessageBoxTpl = '<div id="xui-messagebox" class="xui_dialog"><div class="dialog_head"><span></span></div>';
 	$.showMessageBoxTpl += '<div class="dialog_body"><div class="dialog_content"><div class="cnfx_content"><span class="dialog_icon"></span><div class="dialog_f_c"></div></div></div>';
@@ -492,7 +499,7 @@
 				break;			
 		}
 		msgbox.find('.dialog_head span').html(title);
-		msgbox.find('.dialog_f_c').html(message);		
+		msgbox.find('.dialog_f_c').empty().html(message);		
 		msgbox.find('.dialog_icon').attr('class','dialog_icon').addClass(cls);			
 		$.createMessageButtons(msgbox,buttons);
 		var w = msgbox.width(),h = msgbox.height(),ww = $(window).width(),wh=$(window).height();
@@ -501,11 +508,13 @@
 	};
 	$.closeMessageBox = function(){
 		var ov = $('#overlay'),msgbox = $('#xui-messagebox');
-		ov.hide();
+		if($('#overlay-body:visible').length == 0){
+			ov.hide();
+		}		
 		msgbox.hide();
 	};
 	$.createMessageButtons = function(dialog,buttons){
-		var btnWrapper = dialog.find('.cnfx_btn').empty(),$btn=null;
+		var btnWrapper = dialog.find('.cnfx_btn').find('.btn').unbind().end().empty(),$btn=null;
 		buttons = buttons || [{text:'OK'}];
 		$.each(buttons,function(i,btn){
 			$btn = $('<a class="btn '+(btn.cls?btn.cls:'')+'">'+btn.text+'</a>');
@@ -663,7 +672,9 @@ function showWaitMask(text, keep) {
 function hideWaitMask() {
 	var ov = $('#overlay'),ob = $('#overlay-body');
 	ob.fadeOut(350);
-	ov.fadeOut(350);
+	if($('#xui-messagebox:visible').length==0){
+		ov.fadeOut(350);
+	}	
 }
 
 if(window.Kissgo){
@@ -682,11 +693,12 @@ if(window.Kissgo){
 		if(!type||!id){
 			alert('error type or id');
 		}else{
-			Kissgo.openIframe(Kissgo.murl('admin','pages/publish/'+type+'/'+id), function(win){
+			id = id===true?'gb':id;
+			Kissgo.openIframe(Kissgo.murl('admin','pages/publish/'+type+'/'+id), function(win,data){
 				if($.isFunction(win.setNodeData)){
 					win.setNodeData(data);
 				}
-			},callback);
+			},callback,data);
 		}
 	};
 	
@@ -732,13 +744,14 @@ if(window.Kissgo){
 		  }
 		} 
 		if(win){
-			Kissgo.iframeOnload(win);
+			Kissgo.iframeOnload(win,Kissgo.iframeData);
 		}		
 	};
 	
-	window.Kissgo.openIframe = function(url, onload, onclose){
+	window.Kissgo.openIframe = function(url, onload, onclose,data){
 		Kissgo.iframeOnload = $.isFunction(onload)?onload:Kissgo.emptyFun;
 		Kissgo.iframeOnclosed = $.isFunction(onclose)?onclose:Kissgo.emptyFun;
+		Kissgo.iframeData = data;
 		var tpl = '<div id="overlay-container">'+
 			'<div class="overlay-modal-background"></div>'+
 			'<iframe scrolling="auto" frameborder="0" allowtransparency="true" class="overlay-element" tabindex="-1"></iframe>'+

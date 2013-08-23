@@ -39,6 +39,23 @@
                             </div>
                         </div>
                         
+                        <div class="stuffbox closed">
+                            <div class="handlediv" title="点击以切换"><br></div>
+                            <h3 class="hndle"><span>虚拟目录</span></h3>  
+                            <div class="inside">                                    
+                                <div class="form-inline">
+                                	<ul class="ztree" id="browser-vfs"></ul>
+                                	<br class="clear"/>
+                                    <div>
+	                                    <label class="radio"><input type="radio" class="n_target" name="n_f_target" value="_blank"/>新窗口</label>
+	                                    <label class="radio"><input type="radio" class="n_target" name="n_f_target" value="_self" checked="checked"/>原窗口</label>                                    
+	                                    <button id="add-page2-menu" class="btn btn-add2-menu pull-right">添加至菜单</button>
+	                                    <br class="clear"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                        
                         <div class="stuffbox">
                             <div class="handlediv" title="点击以切换"><br></div>
                             <h3 class="hndle"><span>页面</span></h3>  
@@ -85,7 +102,7 @@
                             <li>&nbsp;&nbsp;</li>                                
                                 {foreach $menus as $item}
                                     <li class="{if $item.menu_id == $menu_id}active{/if}">                                    	
-                                    	<a href="{$_CUR_URL}?mid={$item.menu_id}">
+                                    	<a href="{$_CUR_URL}/{$item.menu_id}">
                                     		{if $item.menu_default}<i class="icon-star"></i>{/if}
                                     		{$item.menu_title}({$item.menu_name})                                    		
                                     	</a>

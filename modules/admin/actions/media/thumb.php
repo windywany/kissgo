@@ -4,7 +4,7 @@ function do_admin_media_thumb_get($req, $res) {
     $data ['success'] = false;
     $aid = safe_ids ( rqst ( 'aid' ), ',', true );
     if ($aid) {
-        $atM = new KsgAttachmentTable ();
+        $atM = new VFSTable ();
         $atts = $atM->query ( 'attachment_id,url' )->where ( array ('attachment_id IN' => $aid, 'type' => 'image' ) );
         $cnt = 0;
         if ($atts->size ()) {

@@ -141,3 +141,18 @@ h3 span {
 * html .ui-autocomplete {
 	height: 150px;
 }
+
+.ztree {
+	background: #FFF;
+	border: 1px solid #DDD;
+	height:150px;
+	overflow:auto;
+}
+.ztree .addCatalog{
+	background-position: -144px -1px;
+	margin-left: 10px;
+}
+
+.ztree li {
+    line-height: 16px;
+}

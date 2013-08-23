@@ -20,15 +20,29 @@ $(function() {
 		'format' : 'yyyy-mm-dd',
 		autoclose : true
 	});
-	$("a.btn-save").on("click", function(event) {
-		$('#node-form').submit();
+	$('#title,#cachetime').click(function(){
+		$(this).removeClass('error');
 	});
+	$("a.btn-save").on("click", function(event) {
+		var pid = $('#node_id').val();		
+		if(pid == '0'){
+			var node = validateForm(true);
+			if(node){
+				Kissgo.closeIframe(node);
+			}
+			return false;
+		}else{
+			if(validateForm(false)){
+				$('#node-form').submit();
+			}
+			return false;
+		}		
+	});
+	
 	$('#node-form').ajaxForm({
-		'dataType' : 'json',
-		error : function() {
-		},
+		'dataType' : 'json',		
 		success : function(data) {
-			alert(data);
+			Kissgo.closeIframe(data);
 		}
 	});
 	
@@ -158,7 +172,39 @@ $(function() {
 			}
 		};
 	};
+	
+	function validateForm (ret){
+		var title = $('#title').val(),ct=$('#cachetime').val(),tmp = $('#template_file').val();
+		title = $.trim(title);
+		if(title.length==0){			
+			$.alert('标题不能为空.');
+			$('#title').addClass('error').focus();			
+			return false;
+		}else{
+			$('#title').removeClass('error');
+		}
+		if(!/^(0|[1-9][0-9]*)$/.test(ct)){
+			$.alert('缓存时间只能是数字.');
+			$('#cachetime').addClass('error');
+			return false;
+		}else{
+			$('#cachetime').removeClass('error').unbind();
+		}
+		if($('#custom-set-tpl').attr('checked') && tmp.length == 0){
+			$.alert('请选择模板.',function(){
+				$('#btn-select-tpl').click();
+			});
+			return false;	
+		}
+		
+		if(ret){
+			return $('#node-form').serializeArray();
+		}
+		return true;
+	}
 	window.setNodeData = function(data) {
-		//alert('ok');
+		for(f in data){			
+			$('#'+f).val(data[f]);
+		}
 	};
 });

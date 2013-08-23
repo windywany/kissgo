@@ -37,7 +37,7 @@
 
 <div class="clearfix" id="overlay-titlebar">
     <div class="clearfix" id="overlay-title-wrapper">
-      <h1 id="overlay-title">{'Publish'|ts} - {$type_name} [{$node_id}]</h1>
+      <h1 id="overlay-title">{'Publish'|ts} - {$type_name} {if $node_id}[{$node_id}]{/if}</h1>
     </div>
     <div id="overlay-close-wrapper">
       <a class="overlay-close" href="#" id="overlay-close"></a>
@@ -49,7 +49,7 @@
 	<div class="overlay-body">
 	<form action="{'admin'|murl:'pages/publish'}" method="POST" id="node-form">
 	    <input type="hidden" name="type" value="{$type}"/>
-	    <input type="hidden" name="node_id" value="{$node_id}"/>
+	    <input type="hidden" id="node_id" name="node_id" value="{$node_id}"/>
 	    <div class="row-fluid">
 	        <div class="span8">
 	            <div>
@@ -57,7 +57,7 @@
     				<span class="txt-error"></span>
     				<br class="clear"/>								
     			</div>
-	            <input type="text" class="title1" name="title" placeholder="页面标题"/>
+	            <input type="text" id="title" class="title1" name="title" placeholder="页面标题"/>
 	        </div>
 	        <div class="span4">
 	            <div>
@@ -86,26 +86,7 @@
 				<span class="txt-error"></span>
 				<br class="clear"/>								
 			</div>
-			<input type="text" value="2.html" class="span12" id="url" name="url"/>
-		</div>	   
-	    
-	    <div class="row-fluid">
-			<div>
-				<span class="strong">关键词</span>										
-				<span class="txt-info">[如果不填写，将使用全局定义的关键词，多个关键词以(,)分隔]</span>
-				<br class="clear"/>								
-			</div>
-			<input type="hidden" value="" placeholder="在此键入关键词" class="wf txt-select2" id="keywords" name="keywords"/>
-			<div style="height: 10px"></div>
-		</div>
-	    
-	    <div class="row-fluid">
-			<div>
-				<span class="strong">页面描述</span>										
-				<span class="txt-info">[如果不填写，将使用全局定义的描述]</span>									
-				<br class="clear"/>								
-			</div>
-			<textarea rows="1" id="descripition" placeholder="在此键入页面描述" name="descripition" class="span12"></textarea>
+			<input type="text" value="" class="span12" id="url" name="url"/>
 		</div>
 	    
 	    <div class="vertical-tabs clearfix">
@@ -123,6 +104,11 @@
 	    		<li tabindex="-1" class="vertical-tab-button">
 	    			<a href="#page-author">
 	    				<strong>作者与来源</strong>	    				
+	    			</a>
+	    		</li>
+	    		<li tabindex="-1" class="vertical-tab-button">
+	    			<a href="#page-seo">
+	    				<strong>SEO</strong>	    				
 	    			</a>
 	    		</li>
 	    		<li tabindex="-1" class="vertical-tab-button">
@@ -210,6 +196,26 @@
             			</div>
             		</div>
 				</fieldset>
+				<fieldset id="page-seo" class="vertical-tabs-pane">
+				    <div class="row-fluid">
+            			<div>
+            				<span class="strong">关键词</span>										
+            				<span class="txt-info">[如果不填写，将使用全局定义的关键词，多个关键词以(,)分隔]</span>
+            				<br class="clear"/>								
+            			</div>
+            			<input type="hidden" value="" placeholder="在此键入关键词" class="wf txt-select2" id="keywords" name="keywords"/>
+            			<div style="height: 10px"></div>
+            		</div>
+            	    
+            	    <div class="row-fluid">
+            			<div>
+            				<span class="strong">页面描述</span>										
+            				<span class="txt-info">[如果不填写，将使用全局定义的描述]</span>									
+            				<br class="clear"/>								
+            			</div>
+            			<textarea rows="1" id="descripition" placeholder="在此键入页面描述" name="descripition" class="span12"></textarea>
+            		</div>
+				</fieldset>
 				<fieldset id="page-image" class="vertical-tabs-pane">
 					<div class="row-fluid">
 					    <div class="thumbnail span5">
@@ -238,7 +244,7 @@
 	    
 	    <div class="form-actions" style="text-align:center;padding:10px">
 	        <a class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>	            
-	        <a href="#" class="btn btn-warning overlay-close"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
+	        <a class="btn btn-warning overlay-close"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
 	    </div>
 	</form>
 	</div>
