@@ -93,12 +93,19 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
      * @param string/int $vfield 使用指定字段值做为数组的值，如果为空则使用整条记录做为值
      * @return array
      */
-    public function toArray($field = "", $vfield = "", $results = array()) {
+    public function toArray($field = "", $vfield = "", $results = array(), $ffield = null, &$filtered = null) {
         if (! empty ( $field ) || is_numeric ( $field )) {
             foreach ( $this->rows as $key => $value ) {
+                if ($ffield && $filtered && isset ( $value [$ffield] )) {
+                    $v = $value [$ffield];
+                    $idx = array_search ( $v, $filtered );
+                    if ($idx !== false) {
+                        unset ( $filtered [$idx] );
+                    }
+                }
                 $key = $value [$field];
                 $value = empty ( $vfield ) ? $value : $value [$vfield];
-                $results [$key] = $value;
+                $results [$key] = $value;                
             }
         } else {
             $results += $this->rows;
@@ -181,13 +188,13 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
             return false;
         }
     }
-    public function offsetGet($offset) {        
+    public function offsetGet($offset) {
         if (! is_int ( $offset )) {
             return $this->rows [0] [$offset];
         } else if (isset ( $this->rows [$offset] )) {
             return $this->rows [$offset];
-        }        
-        return array ();    
+        }
+        return array ();
     }
     public function hasHavingField() {
         foreach ( $this->fields as $key => $f ) {

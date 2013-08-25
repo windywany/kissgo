@@ -72,4 +72,17 @@ function check_menu_name($value = null, $data = null, $message = '') {
     $nM = new KsgMenuTable ();
     return $nM->exist ( $where ) ? $message : true;
 }
+/**
+ * 
+ * @param string $value
+ * @param array $data
+ * @param string $message
+ */
+function check_node_url($value = null, $data = null, $message = '') {
+    if (empty ( $value )) {
+        return true;
+    }
+    $reg = '/^(https?:\/{2})?.+/';    
+    return preg_match ( $reg, $value ) ? true : $message;
+}
 //end of validator_callbacks.php

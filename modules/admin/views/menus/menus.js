@@ -39,8 +39,12 @@ $(function() {
 		if (wrap.find('.url').length > 0) {
 			$('#ipt-menu-url').val(wrap.find('.url').val());
 			$('#ipt-url-wrap').removeClass('hide');
+			$('.page-wrapper').addClass('hide');
 		} else {
+			$('.page-wrapper').removeClass('hide');
 			$('#ipt-url-wrap').addClass('hide');
+			$('#ipt-menu-vpath').val(wrap.find('.vpath').val());
+			$('#ipt-page-title').val(wrap.find('.pagename').val());
 		}
 		$('#menuitem-editor').find('input[name=item_target][value=' + wrap.find('.target').val() + ']').attr('checked', true);
 		$('#menuitem-editor').modal('show');
@@ -60,10 +64,19 @@ $(function() {
 			}
 			item.find('.url').val(url);
 		}
+		var vpath = '';
+		if (!$('#ipt-vpath-wrap').hasClass('hide')) {
+			vpath = $('#ipt-menu-vpath').val();
+			if (!/^[0-9a-z_][\d\w-_]*$/i.test(vpath)) {
+				alert('请填写正确的URL.');
+				return;
+			}
+			item.find('.vpath').val(vpath);
+		}
 		item.find('.item_name').val(item_name);
 		item.find('.title').val($('#ipt-menu-title').val());
 		item.find('.target').val($('#menuitem-editor').find('input[name=item_target]:checked').val());
-		item.find('.item-title').text($('#ipt-menu-name').val());
+		item.find('.item-title').text($('#ipt-menu-name').val()+(vpath?(' ['+vpath+']'):'')).css('color','blue');
 		$('#menuitem-editor').modal('hide');
 	});
 	$('.del-item').live('click', function() {

@@ -239,6 +239,12 @@ abstract class BaseForm implements ArrayAccess, Iterator {
             return $head . "\n" . $body . $foot;
         }
     }
+    /**
+     * 
+     * @param unknown_type $scope
+     * @param unknown_type $initail
+     * @return Ambigous <boolean, multitype:, unknown, multitype:NULL >
+     */
     public function validate($scope = null, $initail = false) {
         if (self::$callbacks_loaded == false) {
             self::load_callbacks ();

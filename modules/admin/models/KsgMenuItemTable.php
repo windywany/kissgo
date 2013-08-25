@@ -20,6 +20,7 @@ class KsgMenuItemTable extends DbTable {
         $schema ['target'] = array ('type' => 'enum', 'extra' => 'normal', Idao::NN, Idao::ENUM_VALUES => "_blank,_self", Idao::DEFT => '_self', Idao::CMMT => '打开网页的目标' );
         $schema ['title'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 64, Idao::CMMT => '提示' );
         $schema ['url'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 512, Idao::CMMT => '自定义URL' );
+        $schema ['vpath'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 128, Idao::CMMT => '虚拟目录' );
         return $schema;
     }
     public function getMenuItems($menu_name) {
@@ -27,10 +28,39 @@ class KsgMenuItemTable extends DbTable {
         return $nodes;
     }
     public function getSubItems($menu_name, $up_id) {
-        $nodes = $this->query ()->where ( array ('menu_name' => $menu_name, 'up_id' => $up_id ) )->sort ( 'sort', 'a' );
+        $nodes = $this->query ( 'MNI.*,KNT.title as pagename', 'MNI' )->where ( array ('menu_name' => $menu_name, 'up_id' => $up_id ) )->sort ( 'sort', 'a' );
+        $nodes->ljoin ( new KsgNodeTable (), 'MNI.page_id = KNT.nid', 'KNT' );
         return $nodes;
     }
-    public function addToMenuItem($nid) {
-
+    public function crumb($mid, $flat = false) {
+        if ($flat) {
+            $menu = $this->query ( 'menuitem_id as id,menu_title,item_name as name,title,url,vpath,up_id', 'KMIT' )->where ( array ('menuitem_id' => $mid ) );
+            $menu->ljoin ( new KsgMenuTable (), 'KMT.menu_name = KMIT.menu_name', 'KMT' );
+        } else {
+            $menu = $this->query ( 'menuitem_id as id,item_name as name,title,url,vpath,up_id', 'KMIT' )->where ( array ('menuitem_id' => $mid ) );
+        }
+        $menu = $menu [0];
+        if ($menu) {
+            $crumb [] = $menu;
+            $this->_crumb ( $menu ['up_id'], $crumb );
+            if ($flat) {
+                $crumb [0] ['name'] = $crumb [0] ['name'] . '[' . $menu ['menu_title'] . ']';
+            }
+            return $crumb;
+        }
+        return array ('mid' => 0, 'name' => __ ( 'Home' ), 'url' => BASE_URL, 'title' => cfg ( 'site_name', '' ), 'vpath' => '' );
+    }
+    private function _crumb($id, &$crumb) {
+        if (empty ( $id )) {
+            $menu = array ('mid' => 0, 'name' => __ ( 'Home' ), 'url' => BASE_URL, 'title' => cfg ( 'site_name', '' ), 'vpath' => '' );
+            array_unshift ( $crumb, $menu );
+            return;
+        }
+        $menu = $this->query ( 'menuitem_id as id,item_name as name,title,url,vpath,up_id' )->where ( array ('menuitem_id' => $id ) );
+        $menu = $menu [0];
+        if ($menu) {
+            array_unshift ( $crumb, $menu );
+            $this->_crumb ( $menu ['up_id'], $crumb );
+        }
     }
 }

@@ -5,7 +5,7 @@
 <div class="menu-wrap menu-wrap-inactive">
 	<dl class="menu-item-bar">
 		<dt class="menu-item-handle">
-			<span class="item-title">{$item.item_name}</span>
+			<span class="item-title">{$item.item_name}{if $item.vpath} [{$item.vpath}]{/if}</span>
 			<span class="item-controls">
 				<span class="item-type">{$item.type_name}</span>
 				<a href="#" class="item-edit edit-item" title="编辑"><i class="icon-edit"></i></a>
@@ -19,6 +19,9 @@
         <input type="hidden" name="item[{$item.menuitem_id}][title]" class="title span3" value="{$item.title}"/>
         {if $item.type == 'url'}
         <input type="hidden" name="item[{$item.menuitem_id}][url]" class="url span3" value="{$item.url}"/>
+        {else}
+        <input type="hidden" class="pagename span3" value="{$item.pagename}"/>
+        <input type="hidden" name="item[{$item.menuitem_id}][vpath]" class="vpath span3" value="{$item.vpath}"/>
         {/if}
         <input type="hidden" name="item[{$item.menuitem_id}][target]" class="target span3" value="{$item.target}"/>	
 </div>

@@ -28,6 +28,11 @@
         </ul>
         <p class="lead">请修改{$_current_template_file}模板文件以自定义此页面。</p>
       </div>
+      <ul>
+          {foreach $crumb as $c}
+              <li><a href="{$c.url}" title="{$c.title}">{$c.name}</a></li>
+          {/foreach}
+      </ul>
       <div id="push"></div>
       <div>
       {cts from=testabc item=a name=1 order=1 age='10' tags=$tags}

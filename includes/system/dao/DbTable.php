@@ -41,7 +41,12 @@ abstract class DbTable extends DbView {
      */
     public function remove($where) {
         $deletor = $this->delete ()->where ( $where );
-        return count ( $deletor ) >= 0;
+        $rst = count ( $deletor );
+        if ($rst == false) {
+            return false;
+        } else {
+            return $rst >= 0;
+        }
     }
     /**
      * (non-PHPdoc)
@@ -49,7 +54,12 @@ abstract class DbTable extends DbView {
      */
     public function update($data, $where) {
         $saver = $this->save ( $data )->where ( $where );
-        return count ( $saver ) >= 0;
+        $rst = count ( $saver );
+        if ($rst == false) {
+            return false;
+        } else {
+            return $rst >= 0;
+        }
     }
     /**
      * (non-PHPdoc)

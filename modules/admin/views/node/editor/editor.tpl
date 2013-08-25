@@ -6,7 +6,7 @@
             display: block;
             float: left;
             overflow: hidden;
-            width: 70px;
+            width: 120px;
         }
         .form-field span.tag {
             margin: 2px;
@@ -48,7 +48,8 @@
 <div id="overlay-content" class="clearfix">
 	<div class="overlay-body">
 	<form action="{'admin'|murl:'pages/publish'}" method="POST" id="node-form">
-	    <input type="hidden" id="node_type" name="type" value="{$type}"/>
+	    <input type="hidden" id="node_type" name="node_type" value="{$type}"/>
+	    <input type="hidden" id="nid" name="nid" value="{$node.nid}"/>
 	    <input type="hidden" id="node_id" name="node_id" value="{$node_id}"/>
 	    <div class="row-fluid">
 	        <div class="span8">
@@ -57,7 +58,7 @@
     				<span class="txt-error"></span>
     				<br class="clear"/>								
     			</div>
-	            <input type="text" id="title" class="title1" name="title" placeholder="页面标题"/>
+	            <input type="text" id="title" class="title1" name="title" placeholder="页面标题" value="{$node.title}"/>
 	        </div>
 	        <div class="span4">
 	            <div>
@@ -65,28 +66,17 @@
     				<span class="txt-error"></span>
     				<br class="clear"/>								
     			</div>
-	            <input type="text" class="title1" name="subtitle" placeholder="页面副标题"/>
+	            <input type="text" class="title1" name="subtitle" placeholder="页面副标题" value="{$node.subtitle}"/>
 	        </div>
 	    </div>
-	    <div class="row-fluid">
-			<div>
-				<span class="strong">存放到虚拟路径</span>
-				<br class="clear"/>								
-			</div>
-			<input type="hidden" name="vpath" id="vpath-id" value=""/>	
-			<input type="text" value="" readonly="readonly" class="span12" id="vpath" placeholder="点击选择虚拟路径"/>
-		</div>	
+	    	
         <div class="row-fluid">
 			<div>
-				{if $type == 'catalog'}
-				<span class="strong">目录名</span>
-				{else}
-				<span class="strong">文件名或URL</span>
+				<span class="strong">URL</span>
 				<span class="txt-info">[以http://开头的URL将自动跳转.]</span>
-				{/if}
 				<br class="clear"/>								
 			</div>
-			<input type="text" value="" class="span12" id="url" name="url"/>
+			<input type="text" value="{$node.url}" class="span12" id="url" name="url"/>
 		</div>
 	    
 	    <div class="vertical-tabs clearfix">
@@ -110,12 +100,7 @@
 	    			<a href="#page-seo">
 	    				<strong>SEO</strong>	    				
 	    			</a>
-	    		</li>
-	    		<li tabindex="-1" class="vertical-tab-button">
-	    			<a href="#page-summary">
-	    				<strong>内容摘要</strong>	    				
-	    			</a>
-	    		</li>	    		
+	    		</li>	    			    		
 	    		<li tabindex="-1" class="vertical-tab-button">
 	    			<a href="#page-image">
 	    				<strong>页面插图</strong>	    				
@@ -130,10 +115,9 @@
 							<div>
 								<span class="strong">添加至导航菜单</span>
 								<br class="clear"/>								
-							</div>
-							<input type="hidden" id="navi-path" value=""/>
-							<input type="hidden" name="menu" id="navi-menu" value=""/>
-							<input type="text" value="" readonly="readonly" class="span12" id="menu" placeholder="点击选择导航菜单"/>
+							</div>							
+							<input type="hidden" name="mid" id="navi-menu" value="{$node.mid}"/>
+							<input type="text" value="{$node.crumb}" readonly="readonly" class="span12" id="menu" placeholder="点击选择导航菜单"/>
 						</div>
 						
     					<div class="form-field">
@@ -143,23 +127,23 @@
     							<br class="clear">								
     						</div>
     						<div class="input-append hide" id="tpl-wrapper">
-    			                <input class="w250" id="template_file" name="template_file" value="" readonly="readonly" type="text"/><button class="btn" type="button" id="btn-select-tpl">选择..</button>
+    			                <input class="w250" id="template_file" name="template" value="{$node.template}" readonly="readonly" type="text"/><button class="btn" type="button" id="btn-select-tpl">选择..</button>
     			            </div>
     					</div>
     					<div class="form-field">
     						<label>置顶到</label>
     						<div id="time1" class="input-append date datepicker">
-        				    	<input class="w250" id="ontopto" name="ontopto" placeholder="默认不置顶" value="" type="text"/><span class="add-on"><i class="icon-calendar"></i></span>
+        				    	<input class="w250" id="ontopto" name="ontopto" placeholder="默认不置顶" value="{$node.ontopto}" type="text"/><span class="add-on"><i class="icon-calendar"></i></span>
         				    </div>
     					</div>
     					<div class="form-field">
     						<label>缓存时间</label>												  									
-    			            <input class="w80 mg-r5" style="float:left;" id="cachetime" name="cachetime" value="0" type="text"/>
+    			            <input class="w80 mg-r5" style="float:left;" id="cachetime" name="cachetime" value="{$node.cachetime}" type="text"/>
     			            <span class="txt-info info">0表示不缓存，单位秒.</span>
     			            <br class="clear">
     					</div>
     					<div class="form-field">
-    						<label class="checkbox"><input name="commentable" id="commentable" type="checkbox">允许评论</label>
+    						<label class="checkbox"><input name="commentable" id="commentable" type="checkbox" {$node.commentable|checked:1}>允许评论</label>
     					</div>
 					</div>
 				</fieldset>	    		
@@ -169,7 +153,7 @@
     						<label>属性</label>
     						<ul id="page-flags">
     							{foreach $flags as $flag} 
-    						    <li><label class="checkbox"><input type="checkbox" value="{$flag.tag_id}" name="flags[]">{$flag.tag}</label></li>
+    						    <li><label class="checkbox"><input type="checkbox" value="{$flag.tag_id}" name="flags[]" {$flag.tag|checked:$node.flags}>{$flag.tag}</label></li>
     						    {foreachelse}
     						    <li class="txt-info">暂无属性</li>
     						    {/foreach}
@@ -183,7 +167,7 @@
     							<br class="clear">								
     						</div>
     						<div>		  									
-    				        	<input type="hidden" id="tags" class="wf txt-select2"/>
+    				        	<input type="hidden" name="tags" id="tags" class="wf txt-select2" value="{$node.tags}"/>
     				        </div>								        
     					</div>    					
 					</div>
@@ -192,21 +176,14 @@
 					<div class="fieldset-wrapper">
     					<div class="form-field">
     						<label>作者</label>
-    						<input class="w250" id="author" name="author" value="" type="hidden"/>    			            
+    						<input class="w250" id="author" name="author" value="{$node.author}" type="hidden"/>    			            
     					</div>
     					<div class="form-field">
     						<label>来源</label>    						
-    						<input class="w250" id="source" name="source" value="" type="hidden"/>    			           
+    						<input class="w250" id="source" name="source" value="{$node.source}" type="hidden"/>    			           
     					</div>
 					</div>
-				</fieldset>
-				<fieldset id="page-summary" class="vertical-tabs-pane">
-				    <div class="row-fluid">
-				        <div class="quicktags" id="quicktags">           	        		
-            			    <textarea rows="6" id="summary" placeholder="在此键入页面描述" name="summary" class="span12 quicktags-editor"></textarea>
-            			</div>
-            		</div>
-				</fieldset>
+				</fieldset>				
 				<fieldset id="page-seo" class="vertical-tabs-pane">
 				    <div class="row-fluid">
             			<div>
@@ -214,7 +191,7 @@
             				<span class="txt-info">[如果不填写，将使用全局定义的关键词，多个关键词以(,)分隔]</span>
             				<br class="clear"/>								
             			</div>
-            			<input type="hidden" value="" placeholder="在此键入关键词" class="wf txt-select2" id="keywords" name="keywords"/>
+            			<input type="hidden" value="{$node.keywords}" placeholder="在此键入关键词" class="wf txt-select2" id="keywords" name="keywords"/>
             			<div style="height: 10px"></div>
             		</div>
             	    
@@ -224,7 +201,7 @@
             				<span class="txt-info">[如果不填写，将使用全局定义的描述]</span>									
             				<br class="clear"/>								
             			</div>
-            			<textarea rows="3" id="descripition" placeholder="在此键入页面描述" name="descripition" class="span12"></textarea>
+            			<textarea rows="3" id="description" placeholder="在此键入页面描述" name="description" class="span12">{$node.description}</textarea>
             		</div>
 				</fieldset>
 				<fieldset id="page-image" class="vertical-tabs-pane">
@@ -238,13 +215,11 @@
         					</div>
 						    <div class="form-field">
         						<label>选择插图</label>
-        						<input class="w300" id="page-picture" name="figure" value="" type="hidden"/>    			            
+        						<input class="w300" id="page-picture" name="figure" value="{$node.figure}" type="hidden"/>    			            
         					</div>
         					<div class="form-field">
         						<label>上传插图</label>
-        						<div id="ajaxupload-figure">
-                                 	
-                                 </div>   			            
+        						<div id="ajaxupload-figure"></div>   			            
         					</div>
 						</div>
 					</div>

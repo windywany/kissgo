@@ -13,6 +13,9 @@ $(function() {
 			$('#tpl-wrapper').hide();
 		}
 	});
+	if($.trim($('#tpl-wrapper').val()).length > 0){
+		$('#custom-set-tpl').attr('checked','checked') ;
+	}
 	if($('#custom-set-tpl').attr('checked')){
 		$('#tpl-wrapper').show();
 	}
@@ -24,21 +27,20 @@ $(function() {
 		$(this).removeClass('error');
 	});
 	$("a.btn-save").on("click", function(event) {
-		
-		if(validateForm(false)){
-			$('#node-form').submit();
+		if(validateForm()){
+			$('#node-form').ajaxSubmit({
+				'dataType' : 'json',		
+				success : function(data) {					
+					if(data.success){						
+						Kissgo.closeIframe(data);
+					}else{
+						$.error(data.msg);
+					}
+				}
+			});
 		}
 		return false;
-				
 	});
-	
-	$('#node-form').ajaxForm({
-		'dataType' : 'json',		
-		success : function(data) {
-			Kissgo.closeIframe(data);
-		}
-	});
-	
 	$('#keywords').selectag({
 		minimumInputLength: 1,					
 		ajax :tag_ajax('keyword')
@@ -48,14 +50,14 @@ $(function() {
 		ajax :tag_ajax('tag')
 	});
 	$('#source').select2({
-			minimumInputLength: 1,
-			placeholder: "Select Source",
-			allowClear: true,
-			ajax : tag_ajax('source'),
-			initSelection : function (element, callback) {
-		        var val = element.val(),data = {id: val, text: val};		        
-		        callback(data);
-		    }
+		minimumInputLength: 1,
+		placeholder: "Select Source",
+		allowClear: true,
+		ajax : tag_ajax('source'),
+		initSelection : function (element, callback) {
+	        var val = element.val(),data = {id: val, text: val};		        
+	        callback(data);
+	    }
 	});
 	
 	$('#author').select2({
@@ -68,7 +70,7 @@ $(function() {
 		        callback(data);
 		    }
 	});
-	$('#quicktags').quicktags('summary');
+	
 	$('#page-picture').selectimg().change(function(){
 		var img = $('#page-picture').select2('data');
 		if(img){
@@ -132,31 +134,7 @@ $(function() {
 		}
 		return false;
 	});
-	
-	$('#vpath').click(function() {		
-		$('#path-browser-tree').empty();
-		$.fn.zTree.destroy('path-browser-tree');
-		$.fn.zTree.init($('#path-browser-tree'), ztree_setting('path-browser-tree','browser_vfs'));		
-		$('#path-selector-box').modal('show');
-		return false;
-	});
-	$('#btn-path-done').click(function(){
-		var treeObj = $.fn.zTree.getZTreeObj("path-browser-tree");
-		var nodes = treeObj.getSelectedNodes();
-		if (nodes.length == 0) {			
-			return false;
-		}
-		$('#path-selector-box').modal('hide');
-		var path = nodes[0];
-		if(path.id == ''){
-			$('#vpath').val('/');
-			$('#vpath-id').val(0);
-		}else{
-			$('#vpath').val(path.cb+'/');
-			$('#vpath-id').val(path.id);
-		}
-		return false;
-	});
+		
 	function tag_ajax (type){
 		return {
 			cache:true,
@@ -191,7 +169,7 @@ $(function() {
 		};
 	};
 	
-	function validateForm (ret){
+	function validateForm (){
 		var title = $('#title').val(),ct=$('#cachetime').val(),tmp = $('#template_file').val();
 		title = $.trim(title);
 		if(title.length==0){			
@@ -210,23 +188,14 @@ $(function() {
 			});
 			return false;	
 		}
-		var type = $('#node_type').val(), url = $.trim($('#url').val());
-		if(url.length >0){
-			var reg = null;
-			if(type == 'catalog'){
-				reg = /^[\d\w][\d\w_-]*$/;
-			}else{
-				reg = /^(https?:\/{2})?.+/;
-			}			
-			if(!reg.test(url)){
-				$.alert('目录名或文件名或URL不能为空.');
+		var url = $.trim($('#url').val());
+		if(url.length>0){
+			if(!/^(https?:\/{2})?.+/.test(url) ){				
+				$.alert('URL不能为空.');							
 				$('#url').addClass('error').focus();
 				return false;
 			}
-		}
-		if(ret){
-			return $('#node-form').serializeArray();
-		}
+		}		
 		return true;
 	}
 	window.setNodeData = function(data) {

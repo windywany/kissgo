@@ -85,15 +85,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             if ($wsql) {
                 $sql .= ' WHERE ' . $wsql;
             }
-        }
-        $order = $sqlHelper->getOrder ();
-        if (! empty ( $order )) {
-            $sql .= $this->buildOrder ( $order );
-        }
-        $limit = $sqlHelper->getLimit ();
-        if (! empty ( $limit )) {
-            $sql .= $this->buildLimit ( $limit, $values );
-        }
+        }        
         $data = $values->getValues ();
         return new DbSQL ( $sql, $data );
     }
@@ -205,15 +197,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             if ($wsql) {
                 $sql .= ' WHERE ' . $wsql;
             }
-        }
-        $order = $sqlHelper->getOrder ();
-        if (! empty ( $order )) {
-            $sql .= $this->buildOrder ( $order );
-        }
-        $limit = $sqlHelper->getLimit ();
-        if (! empty ( $limit )) {
-            $sql .= $this->buildLimit ( $limit, $values );
-        }
+        }        
         $data = $values->getValues ();
         $dbSql = new DbSQL ( $sql, $data );
         return $dbSql;

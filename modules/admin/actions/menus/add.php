@@ -79,6 +79,7 @@ function do_admin_menus_add_page_item($menu_name, $target) {
         if ($item) {
             $item ['type_name'] = '页面';
             $items [] = $item;
+            $pM->update ( array ('mid' => $item ['menuitem_id'] ), array ('nid' => $pid ) );
         }
     }
     return $items;

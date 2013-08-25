@@ -13,7 +13,9 @@ defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 function _kissgo_default_index($view) {
     $url = Request::getVirtualPageUrl ();
     if ($view == null && ($url == '/' || $url == '/index.html')) {
-        return template ( 'index.tpl' );
+        $data ['crumb'] = array (array ('mid' => 0, 'name' => 'Home', 'url' => BASE_URL, 'title' => cfg ( 'site_name', '' ) ) );
+        $data ['mid'] = 0;
+        return template ( 'index.tpl', $data );
     } else if (preg_match ( '#.+style\.css$#', $url )) {
         return merge_css ( $url );
     } else if (preg_match ( '#.+script\.js$#', $url )) {

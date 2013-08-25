@@ -100,10 +100,11 @@ function do_ajax_browser_menus($req) {
         $menus = $ksgMenu->query ()->sort ( 'menu_default' );
         $rtn [0] = array ('id' => '*none', 'name' => 'Home', 'isParent' => true, 'open' => true );
         foreach ( $menus as $menu ) {
-            $rtn [0] ['children'] [] = array ('id' => 'm.' . $menu ['menu_name'], 'name' => $menu ['menu_title'], 'cb' => $menu ['menu_title'], 'isParent' => true );
+            $rtn [0] ['children'] [] = array ('id' => 'm.' . $menu ['menu_name'], 'name' => $menu ['menu_title'], 'cb' => 'Home['.$menu['menu_title'].']', 'isParent' => true );
         }
     } else {
-        $name = rqst ( 'cb' ) . ' / ';
+        $name = rqst ( 'cb' ) . ' > ';
+        
         $ksgMenuItem = new KsgMenuItemTable ();
         if (is_numeric ( $id )) {
             $where ['up_id'] = $id;
@@ -114,35 +115,6 @@ function do_ajax_browser_menus($req) {
         $items = $ksgMenuItem->query ( 'menuitem_id,item_name' )->where ( $where )->sort ( 'sort', 'a' );
         foreach ( $items as $item ) {
             $rtn [] = array ('id' => $item ['menuitem_id'], 'name' => $item ['item_name'], 'cb' => $name . $item ['item_name'], 'isParent' => true );
-        }
-    }
-    echo json_encode ( $rtn );
-}
-/**
- * 
- * browser vfs path
- * @param Request $req
- */
-function do_ajax_browser_vfs($req) {
-    $id = rqst ( 'id', '' );
-    $rtn = array ();
-    if (empty ( $id )) {
-        if (! isset ( $req ['cb'] )) {
-            $vfs = new KsgNodeTable();
-            $fs = $vfs->query ( 'nid,url,title' )->where ( array ('pnid' => 0, 'node_type' => 'catalog') )->sort ( 'url', 'a' );
-            $rtn [0] = array ('id' => '', 'name' => 'root', 'cb' => '/', 'isParent' => true, 'open' => true, 'children' => array () );
-            foreach ( $fs as $f ) {
-                $rtn [0] ['children'] [] = array ('id' => $f ['nid'], 'name' => $f ['url'], 'cb' => '/'.$f ['url'], 'isParent' => true );
-            }
-        }
-    } else {
-        $path = rqst ( 'cb' ) . ' / ';
-        $vfs = new KsgNodeTable ();
-        $where ['pnid'] = $id;
-        $where ['node_type'] = 'catalog';
-        $items = $vfs->query ( 'nid,url,title' )->where ( $where )->sort ( 'url', 'a' );
-        foreach ( $items as $item ) {
-            $rtn [] = array ('id' => $item ['nid'], 'name' => $item ['url'], 'cb' => $path . $item ['url'], 'isParent' => true );
         }
     }
     echo json_encode ( $rtn );

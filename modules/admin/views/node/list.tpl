@@ -58,6 +58,14 @@
     							{$item.update_time|date_format:'%Y-%m-%d %H:%M'}
     						</span>
     					{/if}
+    					{if $item.menu_name}
+    					    <span class="label mg-r5 pull-right">所在导航
+    							{$item.menu_name}
+    							{if $item.vpath}
+    							[{$item.vpath}]
+    							{/if}
+    						</span>
+    					{/if}
     					{if $item.comments gt 0}
     					<a href="../comment/?nid={$item.nid}"><span class="badge badge-info">{$item.comments}</span></a>
     					{/if}																

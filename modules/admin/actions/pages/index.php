@@ -13,22 +13,24 @@ function do_admin_pages_get($req, $res, $status = 'draft') {
     
     $draftTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'draft' ), 'nid' );
     $approvingTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'approving' ), 'nid' );
+    $where = where(array('NT.node_type'=>array('node_type')),$data);
+    
     $where ['ND.deleted'] = 0;
     
-    if($status == 'trash'){
+    if ($status == 'trash') {
         $where ['ND.deleted'] = 1;
-    }else{
+    } else {
         $where ['ND.status'] = $status;
-    }    
+    }
     
     $start = irqst ( 'start', 1 );
     
-    $items = $nodeTable->query ( 'ND.*,NT.name AS node_type_name,UC.login AS user_name,UU.login AS update_user_name', 'ND' );
+    $items = $nodeTable->query ( 'ND.*,MIT.vpath,MIT.item_name as menu_name,NT.name AS node_type_name,UC.login AS user_name,UU.login AS update_user_name', 'ND' );
     
     $items->ljoin ( $nodeTypeTable, 'ND.node_type = NT.type', 'NT' );
     $items->ljoin ( new KsgUserTable (), 'ND.create_uid = UC.uid', 'UC' );
     $items->ljoin ( new KsgUserTable (), 'ND.update_uid = UU.uid', 'UU' );
-    
+    $items->ljoin ( new KsgMenuItemTable (), 'ND.mid = MIT.menuitem_id', 'MIT' );
     $items->where ( $where )->limit ( $start, $data ['limit'] )->sort ( 'nid', 'd' );
     
     $data ['countTotal'] = count ( $items );
@@ -74,7 +76,7 @@ class NodeHooks {
             $options .= '<a title="永久删除" onclick="return confirm(\'网页删除后不可恢复,你确定要删除该网页吗?\')" class="delete tred" href="' . $this->delete_url . '?pid=' . $item ['nid'] . '"><i class="icon-remove-sign"></i>永久删除</a>';
         } else {
             if ($status == 'draft') {
-                $options .= '<a title="编辑" class="edit-page" href="#" data-type="'.$item ['node_type'].'" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
+                $options .= '<a title="编辑" class="edit-page" href="#" data-type="' . $item ['node_type'] . '" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
                 //if (icando ( 'publish', 'page' )) {
                 $options .= '<a title="发布" class="published tgre" href="' . $this->url . '?s=published&pid=' . $item ['nid'] . '"><i class="icon-check"></i>发布</a>';
                 //}
@@ -86,19 +88,19 @@ class NodeHooks {
                 $options .= '<a title="驳回" class="unapproved torg" href="' . $this->url . '?s=unapproved&pid=' . $item ['nid'] . '"><i class="icon-thumbs-down"></i>驳回</a>';
             }
             if ($status == 'approved') {
-                $options .= '<a title="编辑" class="edit-page" href="#" data-type="'.$item ['node_type'].'" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
+                $options .= '<a title="编辑" class="edit-page" href="#" data-type="' . $item ['node_type'] . '" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
                 $options .= '<a title="发布" class="published tgre" href="' . $this->url . '?s=published&pid=' . $item ['nid'] . '"><i class="icon-check"></i>发布</a>';
                 $options .= '<a title="移至草稿箱" class="draft torg" href="' . $this->url . '?s=draft&pid=' . $item ['nid'] . '"><i class="icon-share"></i>移至草稿箱</a>';
                 $options .= '<a title="移至回收站" class="trash tred" href="' . $this->url . '?del=1&pid=' . $item ['nid'] . '"><i class="icon-trash"></i>移至回收站</a>';
             }
             if ($status == 'unapproved') {
-                $options .= '<a title="编辑" class="edit-page" href="#" data-type="'.$item ['node_type'].'" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
+                $options .= '<a title="编辑" class="edit-page" href="#" data-type="' . $item ['node_type'] . '" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
                 $options .= '<a title="移至草稿箱" class="draft torg" href="' . $this->url . '?s=draft&pid=' . $item ['nid'] . '"><i class="icon-share"></i>移至草稿箱</a>';
                 $options .= '<a title="移至回收站" class="trash tred" href="' . $this->url . '?del=1&pid=' . $item ['nid'] . '"><i class="icon-trash"></i>移至回收站</a>';
             }
             if ($status == 'published') {
                 $options .= '<a title="查看" href="' . safe_url ( $item ) . '" target="_blank"><i class="icon-eye-open"></i>查看</a>';
-                $options .= '<a title="编辑" class="edit-page" href="#" data-type="'.$item ['node_type'].'" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
+                $options .= '<a title="编辑" class="edit-page" href="#" data-type="' . $item ['node_type'] . '" data-content="' . $item ['nid'] . '" id="edit-page-' . $item ['nid'] . '"><i class="icon-edit"></i>编辑</a>';
                 $options .= '<a title="移至草稿箱" class="draft torg" href="' . $this->url . '?s=draft&pid=' . $item ['nid'] . '"><i class="icon-share"></i>移至草稿箱</a>';
                 $options .= '<a title="移至回收站" class="trash tred" href="' . $this->url . '?del=1&pid=' . $item ['nid'] . '"><i class="icon-trash"></i>移至回收站</a>';
             }

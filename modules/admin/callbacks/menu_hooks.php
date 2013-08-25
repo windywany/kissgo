@@ -58,8 +58,7 @@ function hook_for_admincp_menu($mm) {
  * applier for 'add_new_menu_items'
  * @param string $items
  */
-function hook_add_new_menu_items($items) {
-    $items .= '<li><a href="#"><i class="icon-file"></i> 假的</a></li>';
+function hook_add_new_menu_items($items) {    
     return $items;
 }
 /**

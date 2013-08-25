@@ -464,7 +464,7 @@
 		$.each(inputs,function(i,n){
 			msgs.push('<div class="input-prepend"><span class="add-on">'+n+'</span><input type="text" class="w300" id="prompt-ipt-'+i+'"></div>');			
 		});
-		$.showMessageBox('prompt',title,msgs.join('<br class="clear"/>'),[{text:'OK',callback:function(){if($.isFunction(callback)){return callback( function(x){return $('#prompt-ipt-'+x).val()},function(x){$('#prompt-ipt-'+x).unbind().click(function(){$(this).removeClass('error')}).addClass('error');$('#overlay').click()})}}},{text:'Cancel'}]);		
+		$.showMessageBox('prompt',title,msgs.join('<br class="clear"/>'),[{text:'OK',callback:function(){if($.isFunction(callback)){return callback( function(x){return $('#prompt-ipt-'+x).val();},function(x){$('#prompt-ipt-'+x).unbind().click(function(){$(this).removeClass('error');}).addClass('error');$('#overlay').click();});}}},{text:'Cancel'}]);		
 	};	
 	
 	$.showMessageBoxTpl = '<div id="xui-messagebox" class="xui_dialog"><div class="dialog_head"><span></span></div>';
@@ -503,7 +503,7 @@
 		msgbox.find('.dialog_icon').attr('class','dialog_icon').addClass(cls);			
 		$.createMessageButtons(msgbox,buttons);
 		var w = msgbox.width(),h = msgbox.height(),ww = $(window).width(),wh=$(window).height();
-		msgbox.css({top:(wh-h)/2,left:(ww-w)/2}).show();
+		msgbox.css({top:$(window).scrollTop()+(wh-h)/2,left:(ww-w)/2}).show();
 		ov.show();
 	};
 	$.closeMessageBox = function(){
@@ -648,6 +648,13 @@
 			$e.find('.nav-tabs').height(h);
 		});		
 		$('input, textarea').placeholder();
+		$('.ksg-publish').click(function(){
+			var type = $(this).attr('data-type');
+			var id = $(this).attr('data-content');
+			Kissgo.publish(type,id?id:0,function(){
+				window.location.href = Kissgo.murl('admin','pages');
+			});			
+		});
 	});
 })(jQuery);
 
@@ -690,10 +697,9 @@ if(window.Kissgo){
         }
 	};
 	window.Kissgo.publish = function(type, id, callback, data){
-		if(!type||!id){
+		if(!type){
 			alert('error type or id');
-		}else{
-			id = id===true?'gb':id;
+		}else{			
 			Kissgo.openIframe(Kissgo.murl('admin','pages/publish/'+type+'/'+id), function(win,data){
 				if($.isFunction(win.setNodeData)){
 					win.setNodeData(data);

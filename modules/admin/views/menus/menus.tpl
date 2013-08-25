@@ -171,7 +171,13 @@
     <div class="modal-body">
     
         <div class="form-inline">
-                <div class="input-prepend row-fluid">
+                <div class="input-prepend  mgt5 row-fluid page-wrapper">
+    	        	<span class="add-on">页面</span><input type="text" class="span10" disabled="disabled" id="ipt-page-title"/>
+    	     	</div>
+    	     	<div class="input-prepend mgt5 row-fluid  page-wrapper" id="ipt-vpath-wrap">
+    	        	<span class="add-on">目录</span><input type="text" class="span10" id="ipt-menu-vpath"/>
+    	     	</div>
+                <div class="input-prepend  mgt5 row-fluid">
     	        	<span class="add-on">名称</span><input type="text" class="span10" id="ipt-menu-name"/>
     	     	</div>
     	        <div class="input-prepend mgt5 row-fluid">
