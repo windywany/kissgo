@@ -65,16 +65,17 @@ class CtsData implements Iterator {
     public final function onPagingRender($render, $options) {
         global $_current_page;
         $_current_page = $_current_page == null ? 1 : $_current_page;
-        $url = explode ( '.', Request::getUri () );
-        $ext = array_pop ( $url );
-        $paging = array ('prefix' => implode ( '.', $url ) . '_', 'current' => $_current_page, 'total' => $this->countTotal, 'limit' => $this->per, 'ext' => '.' . $ext );
-        $paging_data = apply_filter ( 'on_render_paging_by_' . $render, array (), $paging, $options );
-        if (empty ( $paging_data )) {
-            $paging_data = $this->getPageInfo ( $paging, $options );
-        } else if (is_array ( $paging_data )) {
-            $paging_data = array_merge2 ( array ('total' => ceil ( $this->countTotal / $this->per ), 'ctotal' => $this->countTotal, 'first' => '#', 'prev' => '#', 'next' => '#', 'last' => '#' ), $paging_data );
+        $url_info = Request::parseURL ();
+        if ($url_info) {
+            $paging = array ('orgin' => $url_info ['orgin'], 'prefix' => $url_info ['prefix'], 'current' => $_current_page, 'total' => $this->countTotal, 'limit' => $this->per, 'ext' => $url_info ['suffix'] );
+            $paging_data = apply_filter ( 'on_render_paging_by_' . $render, array (), $paging, $options );
+            if (empty ( $paging_data )) {
+                $paging_data = $this->getPageInfo ( $paging, $options );
+            } else if (is_array ( $paging_data )) {
+                $paging_data = array_merge2 ( array ('total' => ceil ( $this->countTotal / $this->per ), 'ctotal' => $this->countTotal, 'first' => '#', 'prev' => '#', 'next' => '#', 'last' => '#' ), $paging_data );
+            }
+            return $paging_data;
         }
-        return $paging_data;
     }
     
     /**
@@ -82,7 +83,6 @@ class CtsData implements Iterator {
      * @param $paging
      */
     private function getPageInfo($paging, $args) {
-        $_c_url = Request::getUri ();
         $url = safe_url ( $paging ['prefix'] );
         $cur = $paging ['current'];
         $total = $paging ['total'];
@@ -99,8 +99,8 @@ class CtsData implements Iterator {
             $pager ['first'] = '#';
             $pager ['prev'] = '#';
         } else {
-            $pager ['first'] = $_c_url;
-            $pager ['prev'] = $cur == 2 ? $_c_url : $url . ($cur - 1) . $ext;
+            $pager ['first'] = $args ['orgin'];
+            $pager ['prev'] = $cur == 2 ? $args ['orgin'] : $url . ($cur - 1) . $ext;
         }
         // 向前后各多少页
         $pp = isset ( $args ['pp'] ) ? intval ( $args ['pp'] ) : 10;
@@ -125,7 +125,7 @@ class CtsData implements Iterator {
             if ($i == $cur) {
                 $pager [$i] = '#';
             } else if ($i == 1) {
-                $pager [$i] = BASE_URL . $_c_url;
+                $pager [$i] = $args ['orgin'];
             } else {
                 $pager [$i] = $url . $i . $ext;
             }
@@ -152,7 +152,6 @@ function register_cts_provider($name, $provider, $desc = '') {
     }
     $providers [$name] = array ($provider, $desc );
 }
-
 /**
  * @param $name
  * @param $method
@@ -200,7 +199,7 @@ function get_prefer_tpl($tpl, $node) {
     if ($theme != 'default') {
         array_unshift ( $dirs, THEME_PATH . THEME_DIR . DS . $theme . DS );
     }
-    $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] . '.tpl', $tpl );
+    $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '.tpl', $tpl );
     foreach ( $dirs as $dir ) {
         foreach ( $files as $f ) {
             if (file_exists ( $dir . $f )) {
@@ -208,6 +207,7 @@ function get_prefer_tpl($tpl, $node) {
             }
         }
     }
+    log_warn ( 'The template file ' . $tpl . ' dose not exist.' );
     return '404.tpl';
 }
 

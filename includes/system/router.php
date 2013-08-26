@@ -127,40 +127,38 @@ class Router {
         $module = $alias;
         if ($alias) {
             $module = self::$extensionManager->getModuleByAlias ( $alias );
-            if ($module == null) {
-                log_warn ( 'module: ' . $alias . ' dose not exist!' );
-                Response::respond ( 404 );
-            }
-            if ($action == 'index') {
-                $cbks = array ('_index' . $suffix, '_index', $suffix, '' );
-            } else {
-                $cbks = array ('_' . $action . $suffix, '_' . $action );
-            }
-            if (! empty ( $controller )) {
-                $ctrl_func = str_replace ( '/', '_', $controller );
-                $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true, $controller . '/' . $action, $cbks );
-                $actions [2] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
-                $actions [3] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
-                $slices = explode ( '_', $ctrl_func );
-                $idx = 3;
-                if (count ( $slices ) > 1) {
-                    do {
-                        $action = array_pop ( $slices );
-                        $controller = implode ( '/', $slices );
-                        $cbks = array ('_' . $action . $suffix, '_' . $action );
-                        $ctrl_func = str_replace ( '/', '_', $controller );
-                        $actions [$idx ++] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true, $controller . '/' . $action, $cbks );
-                        $actions [$idx ++] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
-                        $actions [$idx ++] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
-                    } while ( count ( $slices ) > 1 );
-                }                
-            } else {
-                $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}", true, $action, $cbks );
-                $actions [2] = array ("{$module}/actions/{$action}/index.php", "do_{$module}", true, $action, $cbks );
-            }
-            if (! is_module_file ( $module )) {
-                unset ( $actions );
-                $actions [] = array ('index.php', 'do_show_custom_page', false, '', array ('_index' . $suffix, '_index', $suffix, '' ) );
+            if ($module != null) {
+                if ($action == 'index') {
+                    $cbks = array ('_index' . $suffix, '_index', $suffix, '' );
+                } else {
+                    $cbks = array ('_' . $action . $suffix, '_' . $action );
+                }
+                if (! empty ( $controller )) {
+                    $ctrl_func = str_replace ( '/', '_', $controller );
+                    $actions [1] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true, $controller . '/' . $action, $cbks );
+                    $actions [2] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                    $actions [3] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                    $slices = explode ( '_', $ctrl_func );
+                    $idx = 3;
+                    if (count ( $slices ) > 1) {
+                        do {
+                            $action = array_pop ( $slices );
+                            $controller = implode ( '/', $slices );
+                            $cbks = array ('_' . $action . $suffix, '_' . $action );
+                            $ctrl_func = str_replace ( '/', '_', $controller );
+                            $actions [$idx ++] = array ("{$module}/actions/{$controller}/{$action}.php", "do_{$module}_{$ctrl_func}", true, $controller . '/' . $action, $cbks );
+                            $actions [$idx ++] = array ("{$module}/actions/{$controller}/index.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                            $actions [$idx ++] = array ("{$module}/actions/{$controller}.php", "do_{$module}_{$ctrl_func}", true, $controller, array ($suffix, '' ) );
+                        } while ( count ( $slices ) > 1 );
+                    }
+                } else {
+                    $actions [1] = array ("{$module}/actions/{$action}.php", "do_{$module}", true, $action, $cbks );
+                    $actions [2] = array ("{$module}/actions/{$action}/index.php", "do_{$module}", true, $action, $cbks );
+                }
+                if (! is_module_file ( $module )) {
+                    unset ( $actions );
+                    $actions [] = array ('index.php', 'do_show_custom_page', false, '', array ('_index' . $suffix, '_index', $suffix, '' ) );
+                }
             }
         }
         ksort ( $actions );

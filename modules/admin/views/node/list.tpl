@@ -16,19 +16,31 @@
     <li {if $status=='trash'}class="active"{/if}><a href="{$_CUR_URL}/trash" class="tred"><i class="icon-trash"></i> 回收站</a></li>
 </ul>
 <div>  						
-    <form class="well form-inline" method="get" action="{$_CUR_URL}/{$status}">        							
-        <input type="text" class="input-medium" name="title" value="{$title}" placeholder="标题"/>							
+    <form class="well form-inline" method="get" action="{$_CUR_URL}/{$status}">
+    	
+    	<input type="hidden" value="{$mid}" name="mid" id="navi-menu-id"/>
+    	<div class="row-fluid mgb5">
+    		<input type="text" placeholder="点击选择导航菜单" value="{$mn}" name="mn" id="navi-menu" class="span12"/>
+    	</div>  							
+        <input type="text" class="input-xlarge" name="title" value="{$title}" placeholder="标题"/>							
         <select name="node_type" class="input-medium">
-            {html_options options=$page_types selected=$page_type}
+            {html_options options=$page_types selected=$node_type}
         </select>
         <select name="flag" class="input-medium">
             {html_options options=$flags selected=$flag}
-        </select>
-        <input type="hidden" name="tag" id="ipt-tag" class="txt-select2" style="width:350px" data-placeholder="标签"/>
-        
+        </select>        
         <button type="submit" class="btn">搜索</button>
         <a href="{$_CUR_URL}/{$status}" class="btn">重置</a>
-        <!--button type="button" class="btn">高级..</button-->
+        <a href="#" class="btn" id="use-advanced-search">高级</a>
+        <input type="hidden" value="{$ad}" name="ad" id="use-advanced"/>
+        <div id="advanced-search-wrapper" class="hide mgt5">        	
+        	<label class="checkbox">
+				<input type="checkbox" name="mc" {$mc|checked:1}/>由我创建
+			</label>
+			<label class="checkbox">
+				<input type="checkbox" name="mp" {$mp|checked:1}/>由我发布
+			</label>
+        </div>
 	</form>
         
 							    
@@ -111,20 +123,19 @@
     </div>	    
 	
 </div>
-<div class="modal hide fade" tabindex="-1" id="tpl-selector-box" data-backdrop="static" data-keyboard="false">
+<div class="modal hide fade" tabindex="-1" id="menu-selector-box" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
-        <button class="close" data-dismiss="modal">×</button>
-        <h3>选择模板</h3>
+        <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>选择</h3>
     </div>
-    <div class="modal-body" style="max-height:300px;overflow:auto;">
-        <ul class="ztree" id="tpls-tree"></ul>
+    <div class="modal-body" style="max-height:300px;overflow-y:auto;">
+        <ul class="ztree" id="tpls-menu-tree"></ul>
     </div>
     <div class="modal-footer">
-        <a href="#" class="btn" id="btn-close-form" data-dismiss="modal">关闭</a>
-        <a href="#" class="btn btn-primary" id="btn-done">确定</a>
+        <a href="#" class="btn" data-dismiss="modal">关闭</a>
+        <a href="#" class="btn btn-primary" id="btn-menu-done">确定</a>
     </div>
-</div>
-		
+</div>		
 {/block}
 {block name="admincp_foot_js_block"}
 <script type="text/javascript" src="{'list.js'|here}"></script>

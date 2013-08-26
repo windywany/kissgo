@@ -134,6 +134,61 @@ class Request implements ArrayAccess {
         $url = '/' . ltrim ( $url, '/' );
         return $url;
     }
+    public static function parseURL() {
+        global $_ksg_url_info, $_current_page;
+        if (! $_ksg_url_info) {
+            $url = self::getUri (); // for pagination
+            if (preg_match ( '#^(.+?)(~(\d+))?(\.html?)?(\?.+)?$#i', $url, $m )) {
+                $len = count ( $m );
+                $_ksg_url_info ['uri'] = $m [0];
+                if ($len == 2) {
+                    $_ksg_url_info ['prefix'] = trailingslashit ( $m [1] );
+                    $_ksg_url_info ['suffix'] = '.html';
+                    $_ksg_url_info ['current'] = $_current_page = 1;
+                    $_ksg_url_info ['orgin'] = $_ksg_url_info ['prefix'];
+                } else if ($len == 4) {
+                    $_ksg_url_info ['prefix'] = trailingslashit ( $m [1] );
+                    $_ksg_url_info ['suffix'] = '.html';
+                    $_ksg_url_info ['current'] = $_current_page = $m [3];
+                    $_ksg_url_info ['orgin'] = $_ksg_url_info ['prefix'];
+                } else if ($len >= 5) {
+                    if (empty ( $m [4] )) { //directory with params
+                        $_ksg_url_info ['prefix'] = trailingslashit ( $m [1] );
+                        $_ksg_url_info ['orgin'] = $_ksg_url_info ['prefix'];
+                    } else { // page with params
+                        $_ksg_url_info ['prefix'] = $m [1];
+                        $_ksg_url_info ['suffix'] = $m [4] . (isset ( $m [5] ) ? $m [5] : '');
+                        if (rtrim ( $m [1], '/' ) == $m [1]) {
+                            $_ksg_url_info ['orgin'] = $_ksg_url_info ['prefix'] . $_ksg_url_info ['suffix'];
+                        } else {
+                            $_ksg_url_info ['orgin'] = $_ksg_url_info ['prefix'] . (isset ( $m [5] ) ? $m [5] : '');
+                        }
+                    }
+                    if (empty ( $m [3] )) {
+                        $_ksg_url_info ['current'] = $_current_page = 1;
+                    } else {
+                        $_ksg_url_info ['current'] = $_current_page = $m [3];
+                    }
+                }
+                $uri = ltrim ( self::getVirtualPageUrl (), '/' );
+                if (preg_match ( '#^(.+?)(~(\d+))?(\.html?)?$#i', $uri, $m )) {
+                    $len = count ( $m );
+                    if ($len == 2 || $len == 4) {
+                        $_ksg_url_info ['name'] = trailingslashit ( $m [1] );
+                    } else if ($len == 5) {
+                        if (rtrim ( $m [1], '/' ) == $m [1] && ! empty ( $m [4] )) {
+                            $_ksg_url_info ['name'] = $m [1] . $m [4];
+                        } else {
+                            $_ksg_url_info ['name'] = trailingslashit ( $m [1] );
+                        }
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
+        return $_ksg_url_info;
+    }
     /**
      * 对值进行xss安全处理
      *

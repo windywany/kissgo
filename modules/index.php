@@ -46,17 +46,27 @@ function do_show_custom_page() {
  */
 function get_view_for_page() {
     global $_CURRENT_NODE;
-    $url = Request::getVirtualPageUrl ();
-    $frontPage = FrontPage::initWithPageURL ( $url );
-    if ($frontPage) {
-        $data = $frontPage->toArray ();
-        if ($data ['status'] == 'published' || canpreview ()) {
-            $tpl = $frontPage->getTemplate ();
-            $tpl = get_prefer_tpl ( $tpl, $data );
-            $data ['template'] = $tpl;
-            $_CURRENT_NODE = $data;
-            return template ( $tpl, $data );
+    $url = Request::parseURL ();
+    if ($url) {
+        $frontPage = FrontPage::initWithPageURL ( $url ['name'] );
+        if ($frontPage) {
+            $data = $frontPage->toArray ();
+            if ($data ['status'] == 'published' || canpreview ()) {
+                $tpl = $frontPage->getTemplate ();
+                $tpl = get_prefer_tpl ( $tpl, $data );
+                $data ['template'] = $tpl;
+                $_CURRENT_NODE = $data;
+                return template ( $tpl, $data );
+            } else {
+                log_warn ( "you don't have permission to view:" . Request::getUri () );
+                Response::respond ( 403 );
+            }
+        } else {
+            log_warn ( "Kissgo cannot process url:" . Request::getUri () );
         }
+    } else {
+        log_warn ( "Kissgo cannot process url:" . Request::getUri () );
+        Response::respond ( 500 );
     }
     return null;
 }

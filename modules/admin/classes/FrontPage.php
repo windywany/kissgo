@@ -84,17 +84,18 @@ class FrontPage {
             $nodeTable = new KsgNodeTable ();
         }
         $cache = Cache::getCache ();
-        $url = trim ( $url, '/' );
-        $key = md5 ( $url );
-        $page = $cache->get ( $key, 'page' );
-        if (empty ( $page )) {
-            $page = $nodeTable->query ( '*' )->where ( array ('url_slug' => md5 ( $url ) ) );
-            $page = $page [0];
-            $cache->add ( $key, $page, 0, 'page' );
-        }
-        if ($page) {
-            $frontPage = new FrontPage ( $page );
-            return $frontPage;
+        if ($url) {
+            $key = md5 ($url);
+            $page = $cache->get ( $key, 'page' );
+            if (empty ( $page )) {
+                $page = $nodeTable->query ( '*' )->where ( array ('url_slug' => $key ) );
+                $page = $page [0];
+                $cache->add ( $key, $page, 0, 'page' );
+            }
+            if ($page) {
+                $frontPage = new FrontPage ( $page );
+                return $frontPage;
+            }
         }
         return null;
     }
@@ -582,7 +583,14 @@ class FrontPage {
             if (empty ( $data ['url'] )) {
                 $data ['url'] = cfg ( 'url_pattern', '{vpath}/{title}.html' );
             }
-            if (strpos ( $data ['url'], '{' ) === false || preg_match ( '#^(http|ftp)s?://.+#', $data ['url'] )) {
+            if (preg_match ( '#^(http|ftp)s?://.+#', $data ['url'] )) {
+                return;
+            }
+            if (strpos ( $data ['url'], '{' ) === false) {
+                if (! preg_match ( '#\.html?#', $data ['url'] )) {
+                    $url = trailingslashit ( $data ['url'] );
+                    $nodeTable->update ( array ('url' => $url, 'url_slug' => md5 ( $url ) ), array ('nid' => $data ['nid'] ) );
+                }
                 return;
             }
             $varsp ['vpath'] = $this->getCrumb ( true, true );

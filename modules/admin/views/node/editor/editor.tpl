@@ -264,20 +264,6 @@
     </div>
 </div>
 
-<div class="modal hide fade" tabindex="-1" id="path-selector-box" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>选择</h3>
-    </div>
-    <div class="modal-body" style="max-height:300px;overflow-y:auto;">
-        <ul class="ztree" id="path-browser-tree"></ul>
-    </div>
-    <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal">关闭</a>
-        <a href="#" class="btn btn-primary" id="btn-path-done">确定</a>
-    </div>
-</div>
-
 {/block}
 
 {block name="admincp_foot_js_block"}

@@ -367,7 +367,7 @@ $__kissgo_exports [] = INCLUDES . 'vendors' . DS . 'smarty';
 spl_autoload_register ( '_kissgo_class_loader' );
 ///////////////////////////////////////////////////////////////
 // load applications and plugins
-global $_ksg_installed_modules, $_ksg_csjs_files,$_ksg_router_url;
+global $_ksg_installed_modules, $_ksg_csjs_files,$_ksg_router_url,$_ksg_url_info;
 ExtensionManager::getInstance ()->loadInstalledExtensions ();
 $__rqst = Request::getInstance ();
 //////////////////////////////////////////////////////////////////

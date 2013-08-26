@@ -50,6 +50,9 @@ function hook_for_admincp_menu($mm) {
     $mm->addMenuItem ( 'menu-website', 'menuitem-menus', __ ( 'Menus' ), murl ( 'admin', 'menus' ), 'icon-list' );
     $mm->addMenuItemDivider ( 'menu-website' );
     $mm->addMenuItem ( 'menu-website', 'menuitem-medias', __ ( 'Medias' ), murl ( 'admin', 'media' ), 'icon-picture' );
+    // Contents
+    $mm->addMenu2 ( 'contents', __ ( 'Contents' ), 'icon-th-list' );
+    $mm->addMenuItem ( 'contents', 'cms-article', __ ( 'Article' ), murl ( 'admin', 'article' ), 'icon-list-alt' );
     
     return $mm;
 }
@@ -58,7 +61,7 @@ function hook_for_admincp_menu($mm) {
  * applier for 'add_new_menu_items'
  * @param string $items
  */
-function hook_add_new_menu_items($items) {    
+function hook_add_new_menu_items($items) {
     return $items;
 }
 /**

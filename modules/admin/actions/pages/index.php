@@ -4,19 +4,31 @@
  */
 assert_login ();
 function do_admin_pages_get($req, $res, $status = 'draft') {
+    $I = whoami ();
     $status_ary = array ('draft', 'published', 'approving', 'approved', 'unapproved', 'published' );
     $data ['_CUR_URL'] = murl ( 'admin', 'pages' );
     $data ['limit'] = 10;
+    $data ['mn'] = $req ['mn'];
+    $data ['ad'] = $req ['ad'];
     
     $nodeTable = new KsgNodeTable ();
     $nodeTypeTable = new KsgNodeTypeTable ();
     
     $draftTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'draft' ), 'nid' );
+    
     $approvingTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'approving' ), 'nid' );
-    $where = where(array('NT.node_type'=>array('node_type')),$data);
+    
+    $where = where ( array ('ND.node_type' => array (array ('name' => 'node_type' ) ), 'ND.mid' => array (array ('name' => 'mid' ) ), 'ND.title' => array ('like' => array ('name' => 'title' ) ), 'FLG.tag_id' => array (array ('name' => 'flag' ) ) ), $data );
     
     $where ['ND.deleted'] = 0;
-    
+    if (isset ( $req ['mc'] )) {
+        $where ['ND.create_uid'] = $I ['uid'];
+        $data ['mc'] = 1;
+    }
+    if (isset ( $req ['mp'] )) {
+        $where ['ND.publish_uid'] = $I ['uid'];
+        $data ['mp'] = 1;
+    }
     if ($status == 'trash') {
         $where ['ND.deleted'] = 1;
     } else {
@@ -31,6 +43,12 @@ function do_admin_pages_get($req, $res, $status = 'draft') {
     $items->ljoin ( new KsgUserTable (), 'ND.create_uid = UC.uid', 'UC' );
     $items->ljoin ( new KsgUserTable (), 'ND.update_uid = UU.uid', 'UU' );
     $items->ljoin ( new KsgMenuItemTable (), 'ND.mid = MIT.menuitem_id', 'MIT' );
+    if (isset ( $data ['flag'] )) {
+        $items->ijoin ( new KsgNodeTagsTable (), 'FLG.node_id = ND.nid', 'FLG' );
+    }
+    if (empty ( $where ['ND.mid'] ) || ! is_numeric ( $where ['ND.mid'] )) {
+        unset ( $where ['ND.mid'] );
+    }
     $items->where ( $where )->limit ( $start, $data ['limit'] )->sort ( 'nid', 'd' );
     
     $data ['countTotal'] = count ( $items );
