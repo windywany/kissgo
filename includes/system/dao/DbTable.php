@@ -42,7 +42,7 @@ abstract class DbTable extends DbView {
     public function remove($where) {
         $deletor = $this->delete ()->where ( $where );
         $rst = count ( $deletor );
-        if ($rst == false) {
+        if ($rst === false) {
             return false;
         } else {
             return $rst >= 0;
@@ -55,7 +55,7 @@ abstract class DbTable extends DbView {
     public function update($data, $where) {
         $saver = $this->save ( $data )->where ( $where );
         $rst = count ( $saver );
-        if ($rst == false) {
+        if ($rst === false) {
             return false;
         } else {
             return $rst >= 0;

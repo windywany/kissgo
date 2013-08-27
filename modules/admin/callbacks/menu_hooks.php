@@ -53,6 +53,8 @@ function hook_for_admincp_menu($mm) {
     // Contents
     $mm->addMenu2 ( 'contents', __ ( 'Contents' ), 'icon-th-list' );
     $mm->addMenuItem ( 'contents', 'cms-article', __ ( 'Article' ), murl ( 'admin', 'article' ), 'icon-list-alt' );
+    $mm->addSubItem ( 'contents/cms-article', 'menuitem-article-list', __ ( 'List Article' ), murl ( 'admin', 'article' ), 'icon-list-alt' );
+    $mm->addSubItem ( 'contents/cms-article', 'menuitem-article-add', __ ( 'Create Article' ), murl ( 'admin', 'article/add' ), 'icon-file' );
     
     return $mm;
 }
@@ -62,6 +64,8 @@ function hook_for_admincp_menu($mm) {
  * @param string $items
  */
 function hook_add_new_menu_items($items) {
+    $items .= '<li><a href="#" class="ksg-publish" data-type="catalog"><i class="icon-folder-open"></i> ' . __ ( 'Virtual Directory' ) . '</a></li>';
+    $items .= '<li><a href="'.murl ( 'admin', 'article/add' ).'"><i class="icon-file"></i> ' . __ ( 'Article' ) . '</a></li>';
     return $items;
 }
 /**

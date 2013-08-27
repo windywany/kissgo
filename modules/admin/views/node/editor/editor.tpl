@@ -54,11 +54,11 @@
 	    <div class="row-fluid">
 	        <div class="span8">
 	            <div>
-    				<span class="strong">标题</span>	
-    				<span class="txt-error"></span>
+    				<span class="strong">{if $type == 'catalog'}目录名{else}页面标题{/if}</span>	
+    				<span class="txt-info">[必须填写]</span>
     				<br class="clear"/>								
     			</div>
-	            <input type="text" id="title" class="title1" name="title" placeholder="页面标题" value="{$node.title}"/>
+	            <input type="text" id="title" class="title1" name="title" placeholder="{if $type == 'catalog'}目录名{else}页面标题{/if}" value="{$node.title}"/>
 	        </div>
 	        <div class="span4">
 	            <div>
@@ -72,8 +72,13 @@
 	    	
         <div class="row-fluid">
 			<div>
-				<span class="strong">URL</span>
+				{if $type == 'catalog'}
+				<span class="strong">虚拟路径</span>
+				<span class="txt-info">[必须填写]</span>
+				{else}
+				<span class="strong">文件名或URL</span>
 				<span class="txt-info">[以http://开头的URL将自动跳转.]</span>
+				{/if}
 				<br class="clear"/>								
 			</div>
 			<input type="text" value="{$node.url}" class="span12" id="url" name="url"/>

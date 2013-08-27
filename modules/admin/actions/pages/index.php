@@ -5,7 +5,10 @@
 assert_login ();
 function do_admin_pages_get($req, $res, $status = 'draft') {
     $I = whoami ();
-    $status_ary = array ('draft', 'published', 'approving', 'approved', 'unapproved', 'published' );
+    $status_ary = array ('draft', 'published', 'approving', 'approved', 'unapproved','trash' );
+    if(!in_array($status, $status_ary)){
+        $status = 'draft';
+    }
     $data ['_CUR_URL'] = murl ( 'admin', 'pages' );
     $data ['limit'] = 10;
     $data ['mn'] = $req ['mn'];
@@ -160,7 +163,7 @@ class NodeHooks {
         $fls = $this->wptM->getNodeFlags ( $item ['nid'] );
         if ($fls) {
             foreach ( $fls as $fname ) {
-                $flags .= "<span class=\"label label-info\">{$fname['tag']}</span>&nbsp;";
+                $flags .= "&nbsp;[<strong>{$fname['tag']}</strong>]";
             }
         }
         return $flags;

@@ -79,10 +79,17 @@ function check_menu_name($value = null, $data = null, $message = '') {
  * @param string $message
  */
 function check_node_url($value = null, $data = null, $message = '') {
+    $type = $data ['node_type'];
     if (empty ( $value )) {
+        if ($type == 'catalog') {
+            return '请输入合法的虚拟路径.';
+        }
         return true;
     }
-    $reg = '/^(https?:\/{2})?.+/';    
+    $reg = '/^(https?:\/{2})?.+/';
+    if ($type == 'catalog') {
+        $reg = '/^[\d\w][\d\w_-]*\/?$/';
+    }
     return preg_match ( $reg, $value ) ? true : $message;
 }
 //end of validator_callbacks.php

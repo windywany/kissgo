@@ -4,7 +4,7 @@
  */
 assert_login ();
 /**
- *  
+ * 
  * open the publish page
  *
  * @param Request $req        	
@@ -63,7 +63,7 @@ function do_admin_pages_publish_post($req, $res) {
     $nodeForm = new NodeForm ();
     $node = $nodeForm->validate ();
     if ($node === false) {
-        $data ['msg'] = '出错啦.';
+        $data ['msg'] = $nodeForm->getError ( '<br/>' );
     } else {
         if ($node ['commentable'] == 'on') {
             $node ['commentable'] = 1;

@@ -170,10 +170,10 @@ $(function() {
 	};
 	
 	function validateForm (){
-		var title = $('#title').val(),ct=$('#cachetime').val(),tmp = $('#template_file').val();
+		var title = $('#title').val(),ct=$('#cachetime').val(),tmp = $('#template_file').val(),type = $('#node_type').val();
 		title = $.trim(title);
 		if(title.length==0){			
-			$.alert('标题不能为空.');
+			$.alert($('#title').attr('placeholder')+'不能为空.');
 			$('#title').addClass('error').focus();			
 			return false;
 		}
@@ -188,14 +188,23 @@ $(function() {
 			});
 			return false;	
 		}
-		var url = $.trim($('#url').val());
-		if(url.length>0){
-			if(!/^(https?:\/{2})?.+/.test(url) ){				
-				$.alert('URL不能为空.');							
-				$('#url').addClass('error').focus();
-				return false;
+		var url = $.trim($('#url').val()), reg = null,uv = url.length == 0;
+		
+		if(type == 'catalog'){
+			uv = false;
+			reg = /^[\d\w][\d\w_-]*\/?$/;
+		}else{			
+			reg = /^(https?:\/{2})?.+/;
+		}
+		if(uv || !reg.test(url)){
+			if(type == 'catalog'){
+				$.alert('请输入合法的虚拟路径.');
+			}else{
+				$.alert('文件名或URL不能为空.');
 			}
-		}		
+			$('#url').addClass('error').focus();
+			return false;
+		}	
 		return true;
 	}
 	window.setNodeData = function(data) {

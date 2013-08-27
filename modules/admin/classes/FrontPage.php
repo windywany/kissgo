@@ -85,7 +85,7 @@ class FrontPage {
         }
         $cache = Cache::getCache ();
         if ($url) {
-            $key = md5 ($url);
+            $key = md5 ( $url );
             $page = $cache->get ( $key, 'page' );
             if (empty ( $page )) {
                 $page = $nodeTable->query ( '*' )->where ( array ('url_slug' => $key ) );
@@ -149,6 +149,7 @@ class FrontPage {
      */
     public function save($publish = false) {
         $nodeTable = $this->nodeTable;
+        //TODO need transction 
         $data = $this->toArray ( true );
         $data = apply_filter ( 'before_save_node', $data );
         
@@ -183,7 +184,9 @@ class FrontPage {
         }
         if ($data) {
             $this->nid = $data ['nid'];
-            
+            if ($data ['node_type'] == 'catalog' && empty ( $data ['node_id'] )) {
+                $nodeTable->update ( array ('node_id' => $data ['nid'] ), array ('nid' => $data ['nid'] ) );
+            }
             $data ['tags'] = $tags;
             $data ['flags'] = $flags;
             $rst = true;
@@ -195,14 +198,31 @@ class FrontPage {
                 $this->generateUrl ( $data, $nodeTable );
                 if (! is_numeric ( $mid )) {
                     $menuTable = new KsgMenuItemTable ();
-                    $menu = $menuTable->insert ( array ('menu_name' => substr ( $mid, 2 ), 'item_name' => $data ['title'], 'type' => 'page', 'page_id' => $data ['nid'] ) );
+                    $item = array ('menu_name' => substr ( $mid, 2 ), 'item_name' => $data ['title'], 'type' => 'page', 'page_id' => $data ['nid'], 'title' => $data ['title'] );
+                    if ($data ['node_type'] == 'catalog') {
+                        $item ['vpath'] = trim ( $data ['url'], '/' );
+                    }
+                    $menu = $menuTable->insert ( $item );
                     if ($menu) {
                         $nodeTable->update ( array ('mid' => $menu ['menuitem_id'] ), array ('nid' => $data ['nid'] ) );
                         $this->mid = $menu ['menuitem_id'];
                     } else {
                         $this->mid = 0;
                     }
+                } else if ($data ['node_type'] == 'catalog' && ! empty ( $this->mid )) { //                    
+                    $item = array ('up_id' => $this->mid, 'type' => 'page', 'page_id' => $data ['nid'] );
+                    $menuTable = new KsgMenuItemTable ();
+                    if (! $menuTable->exist ( $item )) {
+                        $menu = $menuTable->read ( array ('menuitem_id' => $this->mid ) );
+                        if ($menu) {
+                            $item ['vpath'] = trim ( $data ['url'], '/' );
+                            $item ['menu_name'] = $menu ['menu_name'];
+                            $item ['title'] = $item ['item_name'] = $data ['title'];
+                            $menuTable->insert ( $item );
+                        }
+                    }
                 }
+                
                 if (! $this->tagTable->addTagToNode ( $data ['nid'], $tags, 'tag' )) {
                     break;
                 }
