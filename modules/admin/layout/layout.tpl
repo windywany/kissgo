@@ -51,7 +51,7 @@
                 <ul class="nav pull-right">
                 	<li class="dropdown">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-                            <i class="icon-plus"></i> {'Add'|ts}<span class="caret"></span>
+                            <i class="icon-plus"></i> {'New'|ts}<span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             {'add_new_menu_items'|fire}

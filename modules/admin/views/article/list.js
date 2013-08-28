@@ -31,4 +31,7 @@ $(function() {
 	}else{
 		$('#advanced-search-wrapper').find('input,select').attr('disabled','disabled');
 	}
+	window.onpublished = function(data){
+		window.location.reload();
+	};
 });

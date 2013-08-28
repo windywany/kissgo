@@ -83,6 +83,7 @@ function do_admin_pages_publish_post($req, $res) {
         $rst = $page->save ();
         if ($rst) {
             $data ['success'] = true;
+            $data ['page'] = $rst;
         } else {
             $data ['msg'] = '保存页面出错';
         }

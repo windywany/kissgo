@@ -195,6 +195,10 @@ class FrontPage {
                 if (! $rst) {
                     break;
                 }
+                $rst = apply_filter ( 'after_save_node_for_' . $data ['node_type'], $data );
+                if (! $rst) {
+                    break;
+                }
                 $this->generateUrl ( $data, $nodeTable );
                 if (! is_numeric ( $mid )) {
                     $menuTable = new KsgMenuItemTable ();
@@ -241,7 +245,7 @@ class FrontPage {
             } while ( false );
             
             if ($rst) {
-                return true;
+                return $data;
             }
         }
         return false;

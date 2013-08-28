@@ -651,9 +651,20 @@
 		$('.ksg-publish').click(function(){
 			var type = $(this).attr('data-type');
 			var id = $(this).attr('data-content');
-			Kissgo.publish(type,id?id:0,function(){
-				window.location.href = Kissgo.murl('admin','pages');
-			});			
+			var title = $(this).attr('data-title');
+			var url  = $(this).attr('data-url');
+			var data = {};
+			if(title){
+				data.title = title;
+				data.url = url;
+			}
+			Kissgo.publish(type,id?id:0,function(data){
+				if($.isFunction(window.onpublished)){
+					window.onpublished(data);
+				}else{
+					window.location.href = Kissgo.murl('admin','pages');
+				}
+			},data);			
 		});
 	});
 })(jQuery);

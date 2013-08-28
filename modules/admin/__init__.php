@@ -41,6 +41,7 @@ bind ( 'get_top_navigation_menu', array ('hook_for_admincp_menu', 'admin/callbac
 bind ( 'add_new_menu_items', array ('hook_add_new_menu_items', 'admin/callbacks/menu_hooks.php' ) );
 bind ( 'add_passport_menu_items', array ('hook_for_add_passport_menu_items', 'admin/callbacks/menu_hooks.php' ) );
 bind ( 'get_user_passport', array ('kissgo_hook_for_get_user_passport', 'admin/callbacks/menu_hooks.php' ) );
+bind ( 'after_save_node_for_plain', array ('after_save_node_for_plain', 'admin/callbacks/article_hooks.php' ) );
 // ajax hooks
 bind ( 'do_ajax_ajax_validate', array ('do_ajax_validate_check', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_browser_template_files', array ('do_ajax_browser_template_files', 'admin/callbacks/do_ajax.php' ) );

@@ -13,12 +13,12 @@
 
 <ul class="nav nav-tabs">
     <li>&nbsp;&nbsp;</li>
-    <li {if $status=='draft'}class="active"{/if}><a href="{$ROUTER_URL}"><i class="icon-file"></i> 草稿箱({$draftTotal})</a></li>    
+    <li {if $status=='draft'}class="active"{/if}><a href="{$ROUTER_URL}"><i class="icon-file"></i> 草稿箱</a></li>    
     <li {if $status=='published'}class="active"{/if}><a href="{$ROUTER_URL}/published" class="tgre"><i class="icon-check"></i> 已发布</a></li>        
-    <li {if $status=='trash'}class="active"{/if}><a href="{$ROUTER_URL}/new" class="tred"><i class="icon-plus-sign"></i> {'New'|ts}</a></li>
+    <li {if $status=='trash'}class="active"{/if}><a href="{$ROUTER_URL}/new" class="tgre"><i class="icon-plus-sign"></i> {'New'|ts}</a></li>
 </ul>
 <div>  						
-    <form class="well form-inline" method="get" action="{$ROUTER_URL}/{$status}">    	    								
+    <form class="well form-inline" method="get" action="{$ROUTER_URL}/{$status}">
         <input type="text" class="input-xlarge" name="title" value="{$title}" placeholder="标题"/>
         
         <div class="input-append date datepicker" id="time1">
@@ -31,7 +31,7 @@
 	    </div>
         
         <button type="submit" class="btn">搜索</button>
-        <a href="{$_CUR_URL}/{$status}" class="btn">重置</a>
+        <a href="{$ROUTER_URL}/{$status}" class="btn">重置</a>
         <a href="#" class="btn" id="use-advanced-search">高级</a>
         <input type="hidden" value="{$ad}" name="ad" id="use-advanced"/>
         <div id="advanced-search-wrapper" class="hide mgt5">        	
@@ -47,9 +47,9 @@
     		<tr>
     			<th class="col_chk"><input type="checkbox"/></th>
     			<th class="w60 txt-ac">{'#'|sorth:aid}</th>
-    			<th class="wa">{'标题'|sorth:create_time}</th>								
-    			<th class="w350 txt-ac">{'页面'|sorth:nid}</th>
-    			<th class="w120 txt-ac">{'更新'|sorth:update_time}</th>														
+    			<th class="wa">{'标题'|sorth:'ART.create_time'}</th>								
+    			<th class="w350 txt-ac">{'页面'|sorth:'ART.nid'}</th>
+    			<th class="w120 txt-ac">{'更新'|sorth:'ART.update_time'}</th>														
     		</tr>
     	</thead>
     	<tbody>
@@ -59,31 +59,24 @@
     			<td class="txt-ac">{$item.aid}</td>
     			<td class="has-row-actions">
     				<p>
-    					<span class="label label-info mg-r5">{$item.node_type_name}</span>
     					<span class="label label-info mg-r5">由 {$item.user_name} 创建于										
     					{$item.create_time|date_format:'%Y-%m-%d %H:%M'}
-    					</span>
-    					{if $item.publish_time}
-    						<span class="label label-success mg-r5">发布于
-    							{$item.update_time|date_format:'%Y-%m-%d %H:%M'}
-    						</span>
-    					{/if}
-    					{if $item.menu_name}
-    					    <span class="label mg-r5 pull-right">
-    							{$item.menu_name}
-    							{if $item.vpath}
-    							[{$item.vpath}]
-    							{/if}
-    						</span>
-    					{/if}    																				
+    					</span>																	
     				</p>
     				<p>	
-    					<a href="{$item|url}?preview" target="_blank" title="点击预览">{$item.title}</a>
-    					{'show_node_flags'|fire:$item}
+    					<a href="{$editURL}/{$item.aid}" title="点击编辑">{$item.title}</a>    					
     				</p>
     				<div class="row-actions">{'get_article_operation'|fire:$item}</div>
     			</td>								
-    			<td class="txt-ac">{$item.node_id}</td>
+    			<td>
+    				{if $item.nid gt 0}
+    					<a href="#" class="ksg-publish" data-type="plain" data-content="{$item.aid}">[{$item.nid}] {$item.page_title}</a><br/>
+    					<span class="label label-info mgt5">{$item.menu_name}</span><br/>
+    					<span class="label mgt5">{$item.status|status:$statusText}</span>
+    				{else}
+    					<a href="#" class="ksg-publish" data-type="plain" data-content="{$item.aid}" data-title="{$item.title}">发布为页面</a>
+    				{/if}
+    			</td>
     			<td class="txt-ac">
     				<strong>{$item.update_user_name}</strong><br/>
     				{$item.update_time|date_format:'%Y-%m-%d %H:%M'}
