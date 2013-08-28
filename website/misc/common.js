@@ -689,9 +689,9 @@ function showWaitMask(text, keep) {
 }
 function hideWaitMask() {
 	var ov = $('#overlay'),ob = $('#overlay-body');
-	ob.fadeOut(350);
+	ob.fadeOut(0);
 	if($('#xui-messagebox:visible').length==0){
-		ov.fadeOut(350);
+		ov.fadeOut(0);
 	}	
 }
 

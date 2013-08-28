@@ -1,6 +1,8 @@
 {extends file=$ksg_admincp_layout}
 {block name="title"}{'Articles'|ts}{/block}
-
+{block name="admincp_css_block"}
+<link rel="stylesheet" href="{'ueditor/themes/default/css/ueditor.css'|static}"/>
+{/block}   
 {block name="toolbar"}
     <a class="btn btn-mini btn-success btn-save" href="#"><i class="icon-ok-circle"></i> {'Save'|ts}</a>
     <a class="btn btn-mini btn-warning" href="{$articleURL}"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
@@ -45,8 +47,7 @@
             </div>
         </div>
     </div>
-    <textarea name="body" id="body" rows="5" class="span12">{$article.body}</textarea>
-    
+    <script type="text/plain" id="myEditor">{$article.body}</script>    
     <div style="text-align:center;padding:5px">
         <a class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>	            
         <a class="btn btn-warning" href="{$articleURL}"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
@@ -55,5 +56,6 @@
 {/block}
 
 {block name="admincp_foot_js_block"}
+{'ueditor/config.js,ueditor/editor.js'|js:misc}
 <script type="text/javascript" src="{'form.js'|here}"></script>
 {/block}
