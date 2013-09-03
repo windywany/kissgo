@@ -76,7 +76,7 @@
 				<span class="strong">虚拟路径</span>
 				<span class="txt-info">[必须填写]</span>
 				{else}
-				<span class="strong">文件名或URL</span>
+				<span class="strong">URL</span>
 				<span class="txt-info">[以http://开头的URL将自动跳转.]</span>
 				{/if}
 				<br class="clear"/>								

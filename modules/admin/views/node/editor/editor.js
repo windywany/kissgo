@@ -196,11 +196,11 @@ $(function() {
 		}else{			
 			reg = /^(https?:\/{2})?.+/;
 		}
-		if(uv || !reg.test(url)){
+		if(!uv || !reg.test(url)){
 			if(type == 'catalog'){
 				$.alert('请输入合法的虚拟路径.');
 			}else{
-				$.alert('文件名或URL不能为空.');
+				$.alert('URL不能为空.');
 			}
 			$('#url').addClass('error').focus();
 			return false;

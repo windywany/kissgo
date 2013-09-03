@@ -759,7 +759,28 @@ function array_merge2($base, $arr) {
     }
     return array_merge ( $base, $arr );
 }
-
+/** 
+ * used by smarty_modifiercompiler_cm
+ * 
+ * @see smarty_modifiercompiler_cm
+ * @param array $opts
+ * @return string 
+ */
+function is_in_current_menu($opts){
+    global $_CURRENT_NODE;
+    if(empty($opts) || empty($_CURRENT_NODE)){
+        return '';
+    }
+    $item = $opts[0];
+    if(empty($item) || !isset($item['id'])){
+        return '';
+    }    
+    $id = $item['id'];
+    if(isset($_CURRENT_NODE['active_menus'][$id])){
+        return isset($opts[1])?$opts[1]:'active';
+    }
+    return '';
+}
 /**
  *
  * 输入安全URL

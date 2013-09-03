@@ -53,5 +53,9 @@ bind ( 'do_ajax_browser_menus', array ('do_ajax_browser_menus', 'admin/callbacks
 bind ( 'do_ajax_images_autocomplete', array ('do_ajax_images_autocomplete', 'admin/callbacks/do_ajax.php' ) );
 
 // end register hooks
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// register content providers
+register_cts_provider ( 'menu', array ('cts_pd_menu', 'admin/callbacks/cts_pd.php' ), 'menu' );
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // end of __init__.php

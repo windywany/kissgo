@@ -16,7 +16,7 @@ class CtsData implements Iterator {
     private $total = 0;
     private $countTotal = 0;
     private $per = 10;
-    public function __construct($data, $countTotal = 0, $per = 0) {
+    public function __construct($data = array(), $countTotal = 0, $per = 0) {
         $this->data = $data;
         if (is_array ( $data ) || $data instanceof ResultCursor) {
             $this->total = count ( $data );
@@ -165,12 +165,18 @@ function get_data_from_cts_provider($name, $args) {
         $provider = $provider [0];
         if (is_callable ( $provider )) {
             $data = call_user_func_array ( $provider, array ($args ) );
+        } else if (is_array ( $provider )) {
+            list ( $cb, $file ) = $provider;
+            imports ( $file );
+            if (is_callable ( $cb )) {
+                $data = call_user_func_array ( $cb, array ($args ) );
+            }
         }
     }
     if ($data instanceof CtsData) {
         return $data;
     } else {
-        return new CtsData ( array () );
+        return new CtsData ();
     }
 }
 function get_theme_resource_uri($args) {
@@ -210,7 +216,27 @@ function get_prefer_tpl($tpl, $node) {
     log_warn ( 'The template file ' . $tpl . ' dose not exist.' );
     return '404.tpl';
 }
-
+/**
+ * 
+ * merge arguments
+ * @param array $args the array to be merged
+ * @param array $default the array to be merged with
+ * @return array the merged arguments array
+ */
+function merge_args($args, $default) {
+    $_args = array ();
+    foreach ( $args as $key => $val ) {
+        if (is_numeric ( $val ) || is_bool ( $val ) || ! empty ( $val )) {
+            $_args [$key] = $val;
+        }
+    }
+    foreach ( $default as $key => $val ) {
+        if (! isset ( $_args [$key] )) {
+            $_args [$key] = $val;
+        }
+    }
+    return $_args;
+}
 /**
  * load the template view
  *
@@ -716,6 +742,17 @@ function smarty_modifiercompiler_params($ary, $compiler) {
     $output = "build_page_url($url,$args)";
     return $output;
 }
+
+function smarty_modifiercompiler_cm($ary, $compiler) {
+    if (count ( $ary ) < 1) {
+        trigger_error ( 'error usage of cm', E_USER_WARNING );
+        return "'error usage of cm'";
+    }    
+    $args = empty ( $ary ) ? array () : smarty_argstr ( $ary );
+    $output = "is_in_current_menu($args)";
+    return $output;
+}
+
 /**
  * Smarty form modifier plugin
  *
