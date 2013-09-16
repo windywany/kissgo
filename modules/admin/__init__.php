@@ -55,7 +55,7 @@ bind ( 'do_ajax_images_autocomplete', array ('do_ajax_images_autocomplete', 'adm
 // end register hooks
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // register content providers
-register_cts_provider ( 'menu', array ('cts_pd_menu', 'admin/callbacks/cts_pd.php' ), 'menu' );
-
+register_cts_provider ( 'menu', array ('cts_pd_menu', 'admin/callbacks/cts_pd.php' ), 'build the navigator data' );
+register_cts_provider ( 'pages', array ('cts_pd_pages', 'admin/callbacks/cts_pd.php' ), 'retreives pages which satisfies the options' );
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // end of __init__.php

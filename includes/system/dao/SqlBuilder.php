@@ -145,4 +145,13 @@ interface SqlBuilder {
      * @return string
      */
     public function specialChar();
+    /**
+     * generate a pagination sql
+     * 
+     * @param string $sql a SELECT SQL statement
+     * @param int $start 
+     * @param int $limit
+     * @return string
+     */
+    public function page_sql($sql,$start,$limit);
 }

@@ -63,8 +63,24 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         
         $cmt = $schema->getDescription ();
         $sql .= ")ENGINE=$engine DEFAULT CHARSET $charset COMMENT '$cmt'";
-        return array($dropSQL,$sql);
+        return array ($dropSQL, $sql );
     }
+    /**
+     * generate a pagination sql
+     * 
+     * @param string $sql a SELECT SQL statement
+     * @param int $start 
+     * @param int $limit
+     * @return string
+     */
+    public function page_sql($sql, $start, $limit) {
+        if ($limit > 0) {
+            return $sql . ' LIMIT ' . $start . ',' . $limit;
+        } else {
+            return $sql;
+        }
+    }
+    
     /**
      * (non-PHPdoc)
      * @see SqlBuilder::delete()
@@ -85,7 +101,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             if ($wsql) {
                 $sql .= ' WHERE ' . $wsql;
             }
-        }        
+        }
         $data = $values->getValues ();
         return new DbSQL ( $sql, $data );
     }
@@ -197,7 +213,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             if ($wsql) {
                 $sql .= ' WHERE ' . $wsql;
             }
-        }        
+        }
         $data = $values->getValues ();
         $dbSql = new DbSQL ( $sql, $data );
         return $dbSql;
@@ -275,7 +291,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         if (! empty ( $joins )) {
             foreach ( $joins as $join ) {
                 list ( $table, $on, $dir, $alias ) = $join;
-                if ($table instanceof DbView) {                    
+                if ($table instanceof DbView) {
                     $fname = $table->getFullTableName ();
                     $falias = $table->getAlias ();
                 } else {
@@ -356,7 +372,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             } else if (is_string ( $condition )) {
                 $field = $condition;
                 $condition = '';
-            }            
+            }
             $and_ors = preg_split ( '/[\s]+/', trim ( $field ) );
             $and_ors = count ( $and_ors ) >= 2 ? $and_ors : array ($and_ors [0], '=' );
             $field = array_shift ( $and_ors ); // 字段
@@ -368,7 +384,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
             if (! $first && ! $inline_or) {
                 $c [] = 'AND';
             } else if ($inline_or) {
-                $c [] = 'OR';                
+                $c [] = 'OR';
             }
             if (is_array ( $condition ) && ! in_array ( $op, array ('BETWEEN', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL' ) )) { // 如果是嵌套条件 
                 if (! is_numeric ( $field )) {
@@ -457,7 +473,7 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
     }
     private function getType($type, $typee = 'normal') {
         static $map = array ('varchar:normal' => 'VARCHAR', 'char:normal' => 'CHAR', 'text:tiny' => 'TINYTEXT', 'text:small' => 'TINYTEXT', 'text:medium' => 'MEDIUMTEXT', 'text:big' => 'LONGTEXT', 'text:normal' => 'TEXT', 'serial:tiny' => 'TINYINT', 'serial:small' => 'SMALLINT', 'serial:medium' => 'MEDIUMINT', 'serial:big' => 'BIGINT', 'serial:normal' => 'INT', 'int:tiny' => 'TINYINT', 'int:small' => 'SMALLINT', 'int:medium' => 'MEDIUMINT', 'int:big' => 'BIGINT', 'int:normal' => 'INT', 
-                            'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'blob:big' => 'LONGBLOB', 'blob:normal' => 'BLOB', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME', 'enum:normal' => 'ENUM' );
+                'bool:normal' => 'TINYINT', 'float:tiny' => 'FLOAT', 'float:small' => 'FLOAT', 'float:medium' => 'FLOAT', 'float:big' => 'DOUBLE', 'float:normal' => 'FLOAT', 'numeric:normal' => 'DECIMAL', 'blob:big' => 'LONGBLOB', 'blob:normal' => 'BLOB', 'timestamp:normal' => 'INT', 'date:normal' => 'DATE', 'datetime:normal' => 'DATETIME', 'enum:normal' => 'ENUM' );
         $t = $type . ':' . $typee;
         if (isset ( $map [$t] )) {
             return $map [$t];
