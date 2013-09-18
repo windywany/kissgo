@@ -354,14 +354,23 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
                             $c [] = ')';
                             break;
                         default :
-                            if ($condition instanceof ResultCursor) {
-                                $c [] = $eop . ' (' . $condition->__toString () . ')';
-                                $_vs = $condition->getParams ();
-                                if (is_array ( $_vs )) {
-                                    $values->merge ( $_vs );
+                            if (! is_array ( $condition )) {
+                                $conditionx = array ($condition );
+                            }
+                            foreach ( $conditionx as $condition ) {
+                                if(!$first){
+                                    $c[] = 'AND';
                                 }
-                            } else {
-                                $c [] = $eop . ' ' . $condition;
+                                if ($condition instanceof ResultCursor) {
+                                    $c [] = $eop . ' (' . $condition->__toString () . ')';
+                                    $_vs = $condition->getParams ();
+                                    if (is_array ( $_vs )) {
+                                        $values->merge ( $_vs );
+                                    }
+                                } else {
+                                    $c [] = $eop . ' ' . $condition;
+                                }
+                                $first = false;
                             }
                     }
                     continue;

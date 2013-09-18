@@ -140,28 +140,38 @@ function cts_pd_pages($options = array()) {
     
     // 属性,属性:flags = 'aa,bbb,ccc' or flags = 'aaa|bbb|ccc'
     if (isset ( $flags ) && ! empty ( $flags )) {
-        if (strpos ( $flags, "|" ) > 0) { // 且
-            $flags = explode ( '|', $flags );
-            foreach ( $flags as $flag ) {
-                $where .= " AND EXISTS (SELECT WPT.tag_id FROM web_page_tag as WPT LEFT JOIN web_tag AS WT ON(WPT.tag_id = WT.tag_id) WHERE WPT.page_id = WP.page_id AND WT.type = 'flag' AND WT.tag = '" . $flag . "')";
+        if (strpos ( $flags, "," ) > 0) { // 且
+            $flags = explode ( ',', $flags );
+            foreach ( $flags as $_flag ) {
+                $ntt = new KsgNodeTagsTable ();
+                $flag = $ntt->query ( 'NF.tag_id', 'NF' );
+                $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag' => $_flag ) );
+                $where ['@EXISTS'] [] = $flag;
             }
         } else {
-            $flags = explode ( ',', $flags );
-            $flags = implode ( "','", $flags );
-            $where .= " AND EXISTS (SELECT WPT.tag_id FROM web_page_tag as WPT LEFT JOIN web_tag AS WT ON(WPT.tag_id = WT.tag_id) WHERE WPT.page_id = WP.page_id AND WT.type = 'flag' AND WT.tag IN ('" . $flags . "'))";
+            $flags = explode ( '|', $flags );
+            $ntt = new KsgNodeTagsTable ();
+            $flag = $ntt->query ( 'NF.tag_id', 'NF' );
+            $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag IN' => $flag ) );
+            $where ['@EXISTS'] [] = $flag;
         }
     }
     // 标签，属性：tags = 'aaaa,bbb,ccc' or tags = 'aaa|bbb|ccc'
     if (isset ( $tags ) && ! empty ( $tags )) {
-        if (strpos ( $tags, "|" ) > 0) { // 且
-            $tags = explode ( '|', $tags );
-            foreach ( $tags as $tag ) {
-                $where .= " AND EXISTS (SELECT WPT.tag_id FROM web_page_tag as WPT LEFT JOIN web_tag AS WT ON(WPT.tag_id = WT.tag_id) WHERE WPT.page_id = WP.page_id AND WT.type = 'tag' AND WT.tag = '" . $tag . "')";
-            }
-        } else { // 或
+        if (strpos ( $tags, "," ) > 0) { // 且
             $tags = explode ( ',', $tags );
-            $tags = implode ( "','", $tags );
-            $where .= " AND EXISTS (SELECT WPT.tag_id FROM web_page_tag as WPT LEFT JOIN web_tag AS WT ON(WPT.tag_id = WT.tag_id) WHERE WPT.page_id = WP.page_id AND WT.type = 'tag' AND WT.tag IN ('" . $tags . "'))";
+            foreach ( $tags as $_tag ) {
+                $ntt = new KsgNodeTagsTable ();
+                $tag = $ntt->query ( 'NF.tag_id', 'NF' );
+                $tag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'tag', 'TF.tag' => $_tag ) );
+                $where ['@EXISTS'] [] = $tag;
+            }
+        } else {
+            $tags = explode ( '|', $tags );
+            $ntt = new KsgNodeTagsTable ();
+            $tag = $ntt->query ( 'NF.tag_id', 'NF' );
+            $tag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag IN' => $tags ) );
+            $where ['@EXISTS'] [] = $tag;
         }
     }
     
@@ -169,8 +179,7 @@ function cts_pd_pages($options = array()) {
     if (isset ( $sort ) && ! empty ( $sort )) {
         $sql .= " ORDER BY {$sort} ";
     } else {
-        $sql .= " ORDER BY WP.publish_time DESC ";
-        $nodeTable->sort();
+        $nodeTable->aab();
     }
     
     // 分页
@@ -191,7 +200,7 @@ function cts_pd_pages($options = array()) {
         $nodeTable->limit ( $start - 1, $limit );
     }
     // 查询表
-    $nodeTable = apply_filter ( 'alter_cts_pages_query', $nodeTable, $options );
+    //$nodeTable = apply_filter ( 'alter_cts_pages_query', $nodeTable, $options );
     
     if ($pages) {
         return new CtsDataSet ( $pages, $totalCount, $limit );
