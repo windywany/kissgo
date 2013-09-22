@@ -43,10 +43,10 @@ class DbSQL {
                 return $this->stmt;
             } else {
                 $info = $driver->errorInfo ();
-                db_error ( $info [2] . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
+                db_error ( $info [2] . "\nSQL:" . $this->sql . "\nVALUES: <pre>" . var_export ( $values, true ) .'</pre>');
             }
         } catch ( Exception $e ) {
-            db_error ( $e->getMessage () . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
+            db_error ( $e->getMessage () . "\nSQL:" . $this->sql . "\nVALUES: <pre>" . var_export ( $values, true ).'</pre>' );
         }
         return array ();
     }
@@ -89,10 +89,10 @@ class DbSQL {
                 return $this->stmt->rowCount ();
             } else {
                 $info = $driver->errorInfo ();
-                db_error ( $info [2] . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
+                db_error ( $info [2] . "\nSQL:" . $this->sql . "\nVALUES: <pre>" . var_export ( $values, true ).'</pre>' );
             }
         } catch ( Exception $e ) {
-            db_error ( $e->getMessage () . "\nSQL:" . $this->sql . "\nVALUES:" . var_export ( $values, true ) );
+            db_error ( $e->getMessage () . "\nSQL:" . $this->sql . "\nVALUES:<pre>" . var_export ( $values, true ).'</pre>' );
         }
         return false;
     }

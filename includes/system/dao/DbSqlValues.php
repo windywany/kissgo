@@ -7,7 +7,7 @@
  */
 class DbSqlValues {
     private $values = array ();
-    private $names = array ();
+    private static $names = array ();
     /**
      * 
      * driver
@@ -21,10 +21,12 @@ class DbSqlValues {
         return $this->values;
     }
     public function merge($values) {
-        $this->values += $values;
+        foreach ($values as $v){
+            $this->values[] = $v;
+        }
     }
     public function addValue($name, $value) {
-        $index = isset ( $this->names [$name] ) ? $this->names [$name] : 0;
+        $index = isset ( self::$names [$name] ) ? self::$names [$name] : 0;
         $key = ':' . $name . '_' . $index;
         if (is_numeric ( $value )) {
             $type = PDO::PARAM_INT;
@@ -37,7 +39,7 @@ class DbSqlValues {
             $type = PDO::PARAM_STR;
         }
         $this->values [] = array ($key, $value, $type );
-        $this->names [$name] = ++ $index;
+        self::$names [$name] = ++ $index;
         return $key;
     }
 }

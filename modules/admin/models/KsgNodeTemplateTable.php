@@ -36,7 +36,7 @@ class KsgNodeTemplateTable extends DbTable {
         $nt = new KsgNodeTypeTable ();
         $ntt = new KsgNodeTemplateTable ();
         $tpls = $nt->query ( 'NT.template', 'NT' )->where ( array ('NT.type' => $type ) );
-        $rst = $ntt->query ( 'template', 'NTPL' )->where ( array ('NTPL.type' => imtf ( 'NT.type' ), 'NTPL.theme' => $theme, 'NTPL.type' => $type ) );
+        $rst = $ntt->query ( 'template', 'NTPL' )->where ( array ('NTPL.type' => imtf ( 'NT.type' ), 'NTPL.theme' => $theme/*, 'NTPL.type' => $type*/ ) );
         $tpls->field ( $rst, 'tpl' );
         $tpl = $tpls [0];
         if ($tpl) {

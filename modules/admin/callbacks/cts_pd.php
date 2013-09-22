@@ -83,7 +83,19 @@ function cts_pd_menu($opts, $upid = 0) {
  * retreives pages which satisfies the options.
  * 
  * @param array $options options to retreive the pages<br/>
+ * <ul>
+ * <li>types - the page type, use comma to separate multiple types.</li>
+ * <li>ontop - 0 or 1</li>
+ * <li>figure - the page has a figure</li>
+ * <li>author - use comma to separate multiple authors</li>
+ * <li>source - sources, using comma to separate multiple sources</li>
+ * <li>flags - the flags of page, use ',' for 'AND' and use '|' for 'OR' to separate multiple flags</li>
+ * <li>tags -  see flags</li>
+ * <li>sort - order by, eg. 'create_time d' means order by create_time desc. </li>
+ * <li>start - pagination start</li>
+ * <li>limit - how many rows will be obtained</li>
  * 
+ * </ul>
  * @return CtsData key/value array<br/>
  * 
  */
@@ -95,7 +107,7 @@ function cts_pd_pages($options = array()) {
     extract ( $options );
     $nodeTable = new KsgNodeTable ();
     // 要查询的字段
-    $nodeTable = $nodeTable->query ( 'N1.*' );
+    $nodeTable = $nodeTable->query ( 'N1.*', 'N1' );
     // 条件
     $where ['N1.deleted'] = 0;
     $where ['N1.status'] = 'published';
@@ -152,7 +164,7 @@ function cts_pd_pages($options = array()) {
             $flags = explode ( '|', $flags );
             $ntt = new KsgNodeTagsTable ();
             $flag = $ntt->query ( 'NF.tag_id', 'NF' );
-            $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag IN' => $flag ) );
+            $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag IN' => $flags ) );
             $where ['@EXISTS'] [] = $flag;
         }
     }
@@ -177,11 +189,19 @@ function cts_pd_pages($options = array()) {
     
     // 排序,属性 sort = 
     if (isset ( $sort ) && ! empty ( $sort )) {
-        $sql .= " ORDER BY {$sort} ";
+        $sort = explode ( ' ', trim ( $start ) );
+        $f = array_shift ( $sort );
+        $o = 'd';
+        if (count ( $sort ) > 0) {
+            $d = strtolower ( array_pop ( $sort ) );
+            if ($d == 'a' || $d == 'd') {
+                $o = $d;
+            }
+        }
+        $nodeTable->sort ( $f, $o );
     } else {
-        $nodeTable->aab();
-    }
-    
+        $nodeTable->sort ( 'N1.publish_time', 'd' );
+    }    
     // 分页
     if (isset ( $start )) {
         $start = intval ( $start );
@@ -199,13 +219,11 @@ function cts_pd_pages($options = array()) {
     if ($limit > 0) {
         $nodeTable->limit ( $start - 1, $limit );
     }
-    // 查询表
-    //$nodeTable = apply_filter ( 'alter_cts_pages_query', $nodeTable, $options );
     
-    if ($pages) {
-        return new CtsDataSet ( $pages, $totalCount, $limit );
+    if ($nodeTable) {
+        return new CtsData ( $nodeTable, null, $limit );
     } else {
-        return new CtsDataSet ( array (), 0, $limit );
+        return new CtsData ( array (), 0, $limit );
     }
 }
 /**

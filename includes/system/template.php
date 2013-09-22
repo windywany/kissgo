@@ -18,8 +18,10 @@ class CtsData implements Iterator {
     private $per = 10;
     public function __construct($data = array(), $countTotal = 0, $per = 0) {
         $this->data = $data;
-        if (is_array ( $data ) || $data instanceof ResultCursor) {
+        if (is_array ( $data )) {
             $this->total = count ( $data );
+        } else if ($data instanceof ResultCursor) {
+            $this->total = $data->size ();
         }
         $this->countTotal = $countTotal;
         $this->per = $per <= 0 ? 1 : intval ( $per );
@@ -66,7 +68,10 @@ class CtsData implements Iterator {
         global $_current_page;
         $_current_page = $_current_page == null ? 1 : $_current_page;
         $url_info = Request::parseURL ();
-        if ($url_info) {
+        if (is_null ( $this->countTotal ) && $this->data instanceof ResultCursor) {
+            $this->countTotal = count ( $this->data );
+        }
+        if ($url_info && $this->countTotal > 0) {
             $paging = array ('orgin' => $url_info ['orgin'], 'prefix' => $url_info ['prefix'], 'current' => $_current_page, 'total' => $this->countTotal, 'limit' => $this->per, 'ext' => $url_info ['suffix'] );
             $paging_data = apply_filter ( 'on_render_paging_by_' . $render, array (), $paging, $options );
             if (empty ( $paging_data )) {
@@ -747,7 +752,7 @@ function smarty_modifiercompiler_cm($ary, $compiler) {
     if (count ( $ary ) < 1) {
         trigger_error ( 'error usage of cm', E_USER_WARNING );
         return "'error usage of cm'";
-    }    
+    }
     $args = empty ( $ary ) ? array () : smarty_argstr ( $ary );
     $output = "is_in_current_menu($args)";
     return $output;

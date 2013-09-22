@@ -28,6 +28,10 @@
         	</li>
         {/cts}
         </ul>
+        <ul>
+        	{cts from=pages item=m tags='a,b,c'}
+        	{/cts}
+        </ul>
         <h1>Crumb</h1>
         <ul>
           {foreach $crumb as $c}

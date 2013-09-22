@@ -260,7 +260,7 @@ function log_message($message, $trace_info, $level, $origin = null) {
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
     if ($level < DEBUG_OFF) {
         if ($level >= DEBUG_DEBUG) {
-            $msg = date ( "Y-m-d H:i:s" ) . "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}\n";
+            $msg = date ( "Y-m-d H:i:s" ) . "{$message}\n".var_export($trace_info,true)."\n";
             @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
         }
         if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
@@ -280,8 +280,8 @@ function log_message($message, $trace_info, $level, $origin = null) {
                     FB::warn ( $msg );
                     break;
             }
-        } else if (DEBUG == DEBUG_DEBUG && ! Request::isAjaxRequest ()) {
-            trigger_error ( $message, E_USER_WARNING );
+        } else if (DEBUG == DEBUG_DEBUG && ! Request::isAjaxRequest ()) {            
+            trigger_error ( "{$message}", E_USER_WARNING );
         }
     }
 }

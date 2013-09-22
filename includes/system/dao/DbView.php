@@ -130,7 +130,7 @@ abstract class DbView implements Idao {
                 $field->setSpecialChar ( $specialChar );
                 $_fields [] = $field->__toString ();
             } else if ($field instanceof ResultCursor) {
-                $sql = $field->__toString ();
+                $sql = $field->__toSQL ();
                 if ($sql && is_string ( $key )) {
                     $_fields [] = '(' . $sql . ') AS ' . $specialChar . $key . $specialChar;
                     $params = $field->getParams ();

@@ -204,9 +204,9 @@ class ResultCursor extends DbSqlHelper implements Countable, IteratorAggregate, 
         }
         return false;
     }
-    public function __toString() {
+    public function __toSQL() {// I donnot know why the method __toString will be called twice, so I change it to __toSQL.
         $str = '';
-        if (! $this->stmt) {
+        if ($this->stmt == null) {
             $sql = $this->builder->select ( array ($this->dao, $this->alias ), $this );
             if ($sql) {
                 $this->params += $sql->values ();
