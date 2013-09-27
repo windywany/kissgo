@@ -18,7 +18,7 @@
  */
 class FrontPage {
     protected $nid = 0;
-    protected $mid = 0;
+    protected $vpid = 1;
     protected $deleted = 0;
     protected $create_uid = 0;
     protected $create_time;
@@ -45,6 +45,8 @@ class FrontPage {
     protected $create_user_info = null;
     protected $update_user_info = null;
     protected $publish_user_info = null;
+    protected $path;
+    protected $paths;
     protected $tags = array ();
     protected $flags = array ();
     protected $mids = array ();
@@ -79,16 +81,17 @@ class FrontPage {
      * @return FrontPage | null 如果页面表中有这个页面返回一个FrontPage实例，反之返回 null.
      */
     public static function initWithPageURL($url) {
-        static $nodeTable = false;
+        static $nodeTable = false, $vpathTable = false;
         if (! $nodeTable) {
             $nodeTable = new KsgNodeTable ();
+            $vpathTable = new KsgVpathTable ();
         }
         $cache = Cache::getCache ();
         if ($url) {
             $key = md5 ( $url );
             $page = $cache->get ( $key, 'page' );
             if (empty ( $page )) {
-                $page = $nodeTable->query ( '*' )->where ( array ('url_slug' => $key ) );
+                $page = $nodeTable->query ( 'ND.*,VP.path,VP.paths', 'ND' )->ljoin ( $vpathTable, 'ND.nid = VP.nid', 'VP' )->where ( array ('url_slug' => $key ) );
                 $page = $page [0];
                 $cache->add ( $key, $page, 0, 'page' );
             }
@@ -106,11 +109,12 @@ class FrontPage {
      * @return FrontPage | null 如果页面表中有这个页面返回一个FrontPage实例，反之返回 null.
      */
     public static function initWithPageId($id) {
-        static $nodeTable = false;
+        static $nodeTable = false, $vpathTable = false;
         if (! $nodeTable) {
             $nodeTable = new KsgNodeTable ();
+            $vpathTable = new KsgVpathTable ();
         }
-        $page = $nodeTable->query ( '*' )->where ( array ('nid' => $id ) );
+        $page = $nodeTable->query ( 'ND.*,VP.path,VP.paths', 'ND' )->ljoin ( $vpathTable, 'ND.nid = VP.nid', 'VP' )->where ( array ('ND.nid' => $id ) );
         $page = $page [0];
         if ($page) {
             $frontPage = new FrontPage ( $page );
@@ -126,11 +130,12 @@ class FrontPage {
      * @return FrontPage | null 如果页面表中有这个页面返回一个FrontPage实例，反之返回 null.
      */
     public static function initWithNodeType($type, $id, $empty = false) {
-        static $nodeTable = false;
+        static $nodeTable = false, $vpathTable = false;
         if (! $nodeTable) {
             $nodeTable = new KsgNodeTable ();
+            $vpathTable = new KsgVpathTable ();
         }
-        $page = $nodeTable->query ( '*' )->where ( array ('node_type' => $type, 'node_id' => $id ) );
+        $page = $nodeTable->query ( 'ND.*,VP.path,VP.paths', 'ND' )->ljoin ( $vpathTable, 'ND.nid = VP.nid', 'VP' )->where ( array ('node_type' => $type, 'node_id' => $id ) );
         $page = $page [0];
         if ($page) {
             $frontPage = new FrontPage ( $page );
@@ -149,11 +154,15 @@ class FrontPage {
      */
     public function save($publish = false) {
         $nodeTable = $this->nodeTable;
-        //TODO need transction 
+        //TODO need transction    
+        $dialect = $nodeTable->getDialect ();
+        $dialect->beginTransaction ();
+        
         $data = $this->toArray ( true );
         $data = apply_filter ( 'before_save_node', $data );
         
         if (! is_array ( $data ) || empty ( $data )) {
+            $dialect->rollBack ();
             return false;
         }
         if ($publish) {
@@ -170,9 +179,7 @@ class FrontPage {
         $flags = $data ['flags'];
         unset ( $data ['tags'], $data ['flags'] );
         $mid = $data ['mid'];
-        if (! is_numeric ( $mid )) {
-            $data ['mid'] = 0;
-        }
+        unset ( $data ['mid'] );
         if ($nid == 0) {
             $data = $nodeTable->insert ( $data );
         } else {
@@ -184,9 +191,7 @@ class FrontPage {
         }
         if ($data) {
             $this->nid = $data ['nid'];
-            if ($data ['node_type'] == 'catalog' && empty ( $data ['node_id'] )) {
-                $nodeTable->update ( array ('node_id' => $data ['nid'] ), array ('nid' => $data ['nid'] ) );
-            }
+            
             $data ['tags'] = $tags;
             $data ['flags'] = $flags;
             $rst = true;
@@ -199,33 +204,15 @@ class FrontPage {
                 if (! $rst) {
                     break;
                 }
-                $this->generateUrl ( $data, $nodeTable );
-                if (! is_numeric ( $mid )) {
-                    $menuTable = new KsgMenuItemTable ();
-                    $item = array ('menu_name' => substr ( $mid, 2 ), 'item_name' => $data ['title'], 'type' => 'page', 'page_id' => $data ['nid'], 'title' => $data ['title'] );
-                    if ($data ['node_type'] == 'catalog') {
-                        $item ['vpath'] = trim ( $data ['url'], '/' );
-                    }
-                    $menu = $menuTable->insert ( $item );
-                    if ($menu) {
-                        $nodeTable->update ( array ('mid' => $menu ['menuitem_id'] ), array ('nid' => $data ['nid'] ) );
-                        $this->mid = $menu ['menuitem_id'];
-                    } else {
-                        $this->mid = 0;
-                    }
-                } else if ($data ['node_type'] == 'catalog' && ! empty ( $this->mid )) { //                    
-                    $item = array ('up_id' => $this->mid, 'type' => 'page', 'page_id' => $data ['nid'] );
-                    $menuTable = new KsgMenuItemTable ();
-                    if (! $menuTable->exist ( $item )) {
-                        $menu = $menuTable->read ( array ('menuitem_id' => $this->mid ) );
-                        if ($menu) {
-                            $item ['vpath'] = trim ( $data ['url'], '/' );
-                            $item ['menu_name'] = $menu ['menu_name'];
-                            $item ['title'] = $item ['item_name'] = $data ['title'];
-                            $menuTable->insert ( $item );
-                        }
+                
+                if ($data ['node_type'] == 'catalog') {
+                    $rst = $this->savePathInfo ( $data );
+                    if (! $rst) {
+                        break;
                     }
                 }
+                
+                $this->generateUrl ( $data, $nodeTable );
                 
                 if (! $this->tagTable->addTagToNode ( $data ['nid'], $tags, 'tag' )) {
                     break;
@@ -245,9 +232,11 @@ class FrontPage {
             } while ( false );
             
             if ($rst) {
+                $dialect->commit ();
                 return $data;
             }
         }
+        $dialect->rollBack ();
         return false;
     }
     public function getId() {
@@ -390,33 +379,26 @@ class FrontPage {
     public function getFigure() {
         return $this->figure;
     }
-    public function getCrumb($flat = false, $path = false, $sep = '/') {
+    public function getCrumb() {
         $menuTable = new KsgMenuItemTable ();
-        if (empty ( $this->mid )) {
-            $menu = $menuTable->query ( 'menuitem_id as id' )->where ( array ('page_id' => $this->nid, 'type' => 'page' ) );
-            $menu = $menu [0];
-            if ($menu) {
-                $this->mid = $menu ['id'];
-            }
+        $vpathTable = new KsgVpathTable ();
+        if (empty ( $this->vpid )) {
+            $this->vpid = 1;
         }
-        $crumb [] = array ('mid' => 0, 'name' => __ ( 'Home' ), 'url' => BASE_URL, 'title' => cfg ( 'site_name', '' ), 'vpath' => '' );
-        if (! empty ( $this->mid )) {
-            $crumb = $menuTable->crumb ( $this->mid, $flat );
-        }
-        if ($flat) {
-            $key = $path ? 'vpath' : 'name';
-            $ary = array ();
-            foreach ( $crumb as $c ) {
-                if (! empty ( $c [$key] )) {
-                    $ary [] = $c [$key];
-                }
-            }
-            return implode ( $sep, $ary );
+        $crumb = $vpathTable->getFullPathName ( $this->vpid );
+        $pids = array ($this->nid );
+        foreach ( $crumb as $c ) {
+            $pids [] = $c ['nid'];
         }
         $this->mids = array ();
-        foreach ( $crumb as $c ) {
-            if (! empty ( $c ['id'] )) {
+        $mids = $menuTable->query ( 'menuitem_id as id,up_id' )->where ( array ('type' => 'page', 'page_id IN' => $pids ) );
+        foreach ( $mids as $c ) {
+            if (! isset ( $this->mids [$c ['id']] )) {
                 $this->mids [$c ['id']] = true;
+                if ($c ['up_id'] > 0 && ! isset ( $this->mids [$c ['up_id']] )) {
+                    $this->mids [$c ['up_id']] = true;
+                    $menuTable->getIds ( $c ['up_id'], $this->mids );
+                }
             }
         }
         return $crumb;
@@ -485,8 +467,27 @@ class FrontPage {
     public function setFigure($figure) {
         $this->figure = $figure;
     }
-    public function setMid($mid) {
-        $this->mid = $mid;
+    public function setVpid($vpid) {
+        $this->vpid = $vpid;
+    }
+    public function getVpath($vpid = null, $name = false) {
+        $vpid = $vpid == null ? $this->vpid : $vpid;
+        $vpTable = new KsgVpathTable ();
+        if ($name) {
+            $fpns = $vpTable->getFullPathName ( $vpid );
+            $fns = array ();
+            foreach ( $fpns as $f ) {
+                $fns [] = $f ['name'];
+            }
+            return implode ( ' > ', $fns );
+        } else {
+            $path = $vpTable->read ( array ('id' => $vpid ) );
+            if ($path) {
+                return ltrim ( $path ['paths'], '/' );
+            } else {
+                return '';
+            }
+        }
     }
     /**
      * 
@@ -517,8 +518,11 @@ class FrontPage {
             $page ['publish_time'] = $this->publish_time;
             $page ['tags'] = $this->getTags ( $flat );
             $page ['flags'] = $this->getFlags ( $flat );
-            $page ['crumb'] = $this->getCrumb ( $flat, false, ' > ' );
+            $page ['crumb'] = $this->getCrumb ();
             $page ['active_menus'] = $this->mids;
+            $page ['path'] = $this->path;
+            $page ['paths'] = $this->paths;
+            $page ['pathsname'] = $this->getVpath ( $this->vpid, true );
             if ($flat) {
                 $page ['node_type'] = $this->node_type;
                 $page ['author'] = $this->author;
@@ -540,7 +544,6 @@ class FrontPage {
             $page ['tags'] = $this->tags;
             $page ['flags'] = $this->flags;
         }
-        $page ['mid'] = $this->mid;
         $page ['cachetime'] = $this->cachetime;
         if ($this->status) {
             $page ['status'] = $this->status;
@@ -555,6 +558,7 @@ class FrontPage {
         $page ['description'] = $this->description;
         $page ['url'] = apply_filter ( 'get_url_for_' . $page ['node_type'], $this->url, $page );
         $page ['figure'] = $this->figure;
+        $page ['vpid'] = $this->vpid;
         if ($cache) {
             $cache->add ( $key, $page, 0, 'page_content' );
         }
@@ -586,6 +590,40 @@ class FrontPage {
         $rst = $userMode->query ( 'uid,email,login,username,deleted,status' )->where ( array ('uid' => $uid ) );
         return $rst [0];
     }
+    private function savePathInfo($data) {
+        $ksgVfs = new KsgVpathTable ();
+        $builder = $ksgVfs->getBuilder ();
+        $path = trim ( $data ['url'], '/' );
+        $up = $ksgVfs->read ( array ('id' => $data ['vpid'] ) );
+        if ($up) {
+            $rst = true;
+            $where = array ('nid' => $data ['nid'] );
+            $npaths = $up ['paths'] . $path . '/';
+            $node_id = 0;
+            if ($ksgVfs->exist ( $where )) {
+                $ovpid = rqst ( 'ovpid' );
+                $cp = $ksgVfs->read ( $where );
+                $node_id = $cp ['id'];
+                $rst = $ksgVfs->update ( array ('upid' => $data ['vpid'], 'name' => $data ['subtitle'], 'path' => $path, 'paths' => $npaths ), $where );
+                if ($rst && ($ovpid != $data ['vpid'] || $path != $cp ['path'])) {
+                    $opaths = $cp ['paths'];
+                    if ($rst) {
+                        $sub = imtv ( $builder->f_substr ( imtf ( 'paths' ), strlen ( $opaths ) + 1 ) );
+                        $concat = imtv ( $builder->f_concat ( $npaths, $sub ) );
+                        $rst = $ksgVfs->update ( array ('paths' => $concat ), array ('paths LIKE' => $opaths . '%' ) );
+                    }
+                }
+            } else {
+                $rst = $ksgVfs->insert ( array ('upid' => $data ['vpid'], 'nid' => $data ['nid'], 'name' => $data ['subtitle'], 'path' => $path, 'paths' => $npaths ) );
+                $node_id = $rst ? $rst ['id'] : 0;
+            }
+            $rst = $rst ? true : false;
+            if ($rst) {
+                return $this->nodeTable->update ( array ('node_id' => $node_id ), array ('nid' => $data ['nid'] ) );
+            }
+        }
+        return false;
+    }
     /**
      * 生成url,默认使用模式{vpath}/{title}.html
      * url中可使用的变量：
@@ -604,20 +642,25 @@ class FrontPage {
      */
     protected function generateUrl($data, $nodeTable) {
         if (! empty ( $data ['nid'] )) {
-            if (empty ( $data ['url'] )) {
-                $data ['url'] = cfg ( 'url_pattern', '{vpath}/{title}.html' );
-            }
-            if (preg_match ( '#^(http|ftp)s?://.+#', $data ['url'] )) {
-                return;
+            if ($data ['node_type'] == 'catalog') {
+                $data ['url'] = $this->getVpath ( $data ['vpid'] ) . $data ['url'];
+            } else {
+                $data = apply_filter ( 'get_the_url_for_' . $data ['node_type'], $data );
+                if (empty ( $data ['url'] )) {
+                    $data ['url'] = cfg ( 'url_pattern', '{vpath}/{title}.html' );
+                }
+                if (preg_match ( '#^(http|ftp)s?://.+#', $data ['url'] )) {
+                    return;
+                }
             }
             if (strpos ( $data ['url'], '{' ) === false) {
                 if (! preg_match ( '#\.html?#', $data ['url'] )) {
-                    $url = trailingslashit ( $data ['url'] );
+                    $url = trailingslashit ( ltrim ( $data ['url'], '/' ) );
                     $nodeTable->update ( array ('url' => $url, 'url_slug' => md5 ( $url ) ), array ('nid' => $data ['nid'] ) );
                 }
                 return;
             }
-            $varsp ['vpath'] = $this->getCrumb ( true, true );
+            $varsp ['vpath'] = $this->getVpath ( $data ['vpid'] );
             $varsp ['title'] = preg_replace ( '[^a-b0-9_-]', '', Pinyin::c ( $data ['title'] ) );
             $varsp ['type'] = $data ['node_type'];
             $varsp ['id'] = $data ['nid'];
@@ -628,7 +671,7 @@ class FrontPage {
             $varsp ['y'] = date ( 'y' );
             $varsp ['m'] = date ( 'm' );
             $varsp ['d'] = date ( 'd' );
-            $varsp ['.*'] = '';
+            $varsp ['.*?'] = '';
             $url = $data ['url'];
             foreach ( $varsp as $key => $val ) {
                 $url = preg_replace ( '#\{\s*' . $key . '\s*\}#', $val, $url );

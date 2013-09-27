@@ -29,6 +29,13 @@ abstract class DbView implements Idao {
         $this->builder = $this->dialect->getSqlBuilder ();
     }
     /**
+     * 
+     * @return SqlBuilder
+     */
+    public function getBuilder(){
+        return $this->builder;
+    }
+    /**
      * (non-PHPdoc)
      * @see Idao::delete()
      */

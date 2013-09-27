@@ -55,12 +55,16 @@
 								            <p>暂无可用页面</p>
 								            {/foreach}
 								          </div>
+								          <div id="page-C" class="tab-pane">
+								          		<ul class="ztree" id="path-tree"></ul>							            
+								          </div>
 								          <div id="page-B" class="tab-pane">
 								            <input type="hidden" id="autoc-id" name="autoc_id" value="" class="w240"/>								            
 								          </div>								          
 								        </div>
 								        <ul class="nav nav-tabs">
 								          <li class="active"><a data-toggle="tab" href="#page-A">常用</a></li>
+								          <li><a data-toggle="tab" href="#page-C">目录</a></li>
 								          <li><a data-toggle="tab" href="#page-B">搜索</a></li>								          
 								        </ul>
 								    </div>
@@ -173,10 +177,7 @@
         <div class="form-inline">
                 <div class="input-prepend  mgt5 row-fluid page-wrapper">
     	        	<span class="add-on">页面</span><input type="text" class="span10" disabled="disabled" id="ipt-page-title"/>
-    	     	</div>
-    	     	<div class="input-prepend mgt5 row-fluid  page-wrapper" id="ipt-vpath-wrap">
-    	        	<span class="add-on">目录</span><input type="text" class="span10" id="ipt-menu-vpath"/>
-    	     	</div>
+    	     	</div>    	     	
                 <div class="input-prepend  mgt5 row-fluid">
     	        	<span class="add-on">名称</span><input type="text" class="span10" id="ipt-menu-name"/>
     	     	</div>

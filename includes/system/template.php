@@ -210,7 +210,7 @@ function get_prefer_tpl($tpl, $node) {
     if ($theme != 'default') {
         array_unshift ( $dirs, THEME_PATH . THEME_DIR . DS . $theme . DS );
     }
-    $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '.tpl', $tpl );
+    $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '.tpl', $tpl, 'page.tpl' );
     foreach ( $dirs as $dir ) {
         foreach ( $files as $f ) {
             if (file_exists ( $dir . $f )) {

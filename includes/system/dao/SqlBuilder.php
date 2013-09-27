@@ -154,4 +154,7 @@ interface SqlBuilder {
      * @return string
      */
     public function page_sql($sql,$start,$limit);
+    public function f_substr($field,$from,$len=null);
+    public function f_concat($str1,$str2);
+    public function f_replace($field,$old,$new);
 }

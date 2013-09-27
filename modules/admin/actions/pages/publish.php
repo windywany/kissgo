@@ -27,6 +27,7 @@ function do_admin_pages_publish_get($req, $res, $type = '', $pid = 0) {
     }
     if (empty ( $pid )) {
         $node = new FrontPage ();
+        $node->setVpid ( sess_get ( 'vpath_pwd', 1 ) );
         $node = $node->toArray ( false, true );
     } else {
         $node = FrontPage::initWithNodeType ( $type, $pid );
@@ -34,6 +35,7 @@ function do_admin_pages_publish_get($req, $res, $type = '', $pid = 0) {
             $node = $node->toArray ( false, true );
         } else {
             $node = new FrontPage ();
+            $node->setVpid ( sess_get ( 'vpath_pwd', 1 ) );
             $node = $node->toArray ( false, true );
         }
     }

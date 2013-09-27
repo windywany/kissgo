@@ -42,8 +42,7 @@ $(function() {
 			$('.page-wrapper').addClass('hide');
 		} else {
 			$('.page-wrapper').removeClass('hide');
-			$('#ipt-url-wrap').addClass('hide');
-			$('#ipt-menu-vpath').val(wrap.find('.vpath').val());
+			$('#ipt-url-wrap').addClass('hide');			
 			$('#ipt-page-title').val(wrap.find('.pagename').val());
 		}
 		$('#menuitem-editor').find('input[name=item_target][value=' + wrap.find('.target').val() + ']').attr('checked', true);
@@ -63,20 +62,11 @@ $(function() {
 				return;
 			}
 			item.find('.url').val(url);
-		}
-		var vpath = '';
-		if (!$('#ipt-vpath-wrap').hasClass('hide')) {
-			vpath = $('#ipt-menu-vpath').val();
-			if (!/^[0-9a-z_][\d\w-_]*$/i.test(vpath)) {
-				alert('请填写正确的URL.');
-				return;
-			}
-			item.find('.vpath').val(vpath);
-		}
+		}		
 		item.find('.item_name').val(item_name);
 		item.find('.title').val($('#ipt-menu-title').val());
 		item.find('.target').val($('#menuitem-editor').find('input[name=item_target]:checked').val());
-		item.find('.item-title').text($('#ipt-menu-name').val()+(vpath?(' ['+vpath+']'):'')).css('color','blue');
+		item.find('.item-title').text($('#ipt-menu-name').val()).css('color','blue');
 		$('#menuitem-editor').modal('hide');
 	});
 	$('.del-item').live('click', function() {
@@ -136,8 +126,18 @@ $(function() {
 			pw.find('.npage:checked').each(function(i, e) {
 				ids[i] = $(e).val();
 			});
-		} else {
+		} else if(pid == 'page-B'){
 			ids = $('#autoc-id').select2('val');
+		}else if(pid == 'page-C'){
+			var treeObj = $.fn.zTree.getZTreeObj("path-tree");
+			var nodes = treeObj.getSelectedNodes();
+			if (nodes.length == 0) {			
+				return false;
+			}
+			ids = [nodes[0].nid];
+			if(ids[0] == 0){
+				return false;
+			}
 		}
 
 		if (ids.length == 0) {
@@ -154,6 +154,22 @@ $(function() {
 		};
 		addMenuItem(data);
 	});	
+		
+	function ztree_setting(id,op){
+		return {
+			treeId : id,
+			async : {
+				enable : true,
+				url : Kissgo.AJAX,
+				autoParam : [ "id",'cb' ],
+				otherParam : {
+					"__op" : op,
+					'nid' : 0
+				}
+			}
+		};
+	};
+	$.fn.zTree.init($('#path-tree'), ztree_setting('path-tree','browser_vpath'));
 	function addMenuItem(data) {
 		$.ajax({
 			url : url + '/add/',

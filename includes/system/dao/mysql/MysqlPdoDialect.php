@@ -218,6 +218,28 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
         $dbSql = new DbSQL ( $sql, $data );
         return $dbSql;
     }
+    
+    public function f_concat($str1, $str2) {
+        $str1 = $str1 instanceof DbImmutable ? $str1->__toString () : "'$str1'";
+        $str2 = $str2 instanceof DbImmutable ? $str2->__toString () : "'$str2'";
+        return "CONCAT($str1,$str2)";
+    }
+    
+    public function f_replace($field, $old, $new) {
+        $field = $field instanceof DbImmutableF ? $field->__toString () : "'$field'";
+        return "REPLACE($field,'$old','$new')";
+    }
+    public function f_substr($field, $from, $len = null) {
+        $field = $field instanceof DbImmutableF ? $field->__toString () : "'$field'";
+        $from = intval ( $from );
+        if ($len == null) {
+            return "SUBSTR($field,$from)";
+        } else {
+            $len = intval ( $len );
+            return "SUBSTR($field,$from,$len)";
+        }
+    }
+    
     /**
      * 
      * Enter description here ...
@@ -354,10 +376,10 @@ class MysqlPdoDialect extends PdoDialect implements SqlBuilder {
                             $c [] = ')';
                             break;
                         default :
-                            $conditionx = ! is_array ( $condition )?array ($condition ):$condition;                            
+                            $conditionx = ! is_array ( $condition ) ? array ($condition ) : $condition;
                             foreach ( $conditionx as $condition ) {
-                                if(!$first){
-                                    $c[] = 'AND';
+                                if (! $first) {
+                                    $c [] = 'AND';
                                 }
                                 if ($condition instanceof ResultCursor) {
                                     $c [] = $eop . ' (' . $condition->__toSQL () . ')';

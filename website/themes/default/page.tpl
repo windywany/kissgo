@@ -16,12 +16,20 @@
         </div>
         <h1>Menu</h1>
         <ul>
-        {cts from=menu item=m level=2}
+        {cts from=menu item=m level=3}
         	<li>{$m.name}:{$m.url}:{$m|cm}
         		{if $m.submenus}
         			<ul>
         				{foreach $m.submenus as $ms}
-        					<li>{$ms.name}:{$ms.url}:{$ms|cm}</li>
+        					<li>{$ms.name}:{$ms.url}:{$ms|cm}
+        						{if $ms.submenus}
+        							<ul>
+        								{foreach $ms.submenus as $mss}
+        									<li>{$mss.name}:{$mss.url}:{$mss|cm}</li>
+        								{/foreach}
+        							</ul>
+        						{/if}
+        					</li>
         				{/foreach}
         			</ul>
         		{/if}
@@ -29,13 +37,14 @@
         {/cts}
         </ul>
         <ul>
-        	{cts from=pages item=m tags='a,b,c'}
+        	{cts from=pages item=m pathlike='/database/'}
+        		<li>{$m.title}</li>
         	{/cts}
         </ul>
         <h1>Crumb</h1>
         <ul>
           {foreach $crumb as $c}
-              <li><a href="{$c.url}" title="{$c.title}">{$c.name}</a></li>
+              <li><a href="{$c.url|url}" title="{$c.title}">{$c.name}</a></li>
           {/foreach}
         </ul>
         <h1>标签:</h1>

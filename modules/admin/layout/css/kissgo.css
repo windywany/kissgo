@@ -18,8 +18,12 @@ body {
 .breadcrumb {
 	border-radius: 0 0 4px 4px;
     padding: 5px 15px;
-	margin: 0px;
+    border-width:0 1px 1px 1px;	
+    border-color:#ddd;
+    border-style:solid;
+    margin: 0 0 10px;    
 }
+
 .breadcrumb .btn,.breadcrumb .btn-group {
 	margin-top: -2px;
 }

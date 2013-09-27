@@ -94,7 +94,7 @@ function cts_pd_menu($opts, $upid = 0) {
  * <li>sort - order by, eg. 'create_time d' means order by create_time desc. </li>
  * <li>start - pagination start</li>
  * <li>limit - how many rows will be obtained</li>
- * 
+ * <li>path  - the virtual path</li>
  * </ul>
  * @return CtsData key/value array<br/>
  * 
@@ -107,47 +107,55 @@ function cts_pd_pages($options = array()) {
     extract ( $options );
     $nodeTable = new KsgNodeTable ();
     // 要查询的字段
-    $nodeTable = $nodeTable->query ( 'N1.*', 'N1' );
+    $nodeTable = $nodeTable->query ( 'ND.*', 'ND' );
     // 条件
-    $where ['N1.deleted'] = 0;
-    $where ['N1.status'] = 'published';
+    $where ['ND.deleted'] = 0;
+    $where ['ND.status'] = 'published';
     
     // 内容模型,属性:types = 'aaa,bbb,ccc'
     if (isset ( $types ) && ! empty ( $types )) {
         $models = explode ( ",", $models );
         if (count ( $models ) > 1) {
-            $where ['N1.node_type IN'] = $models;
+            $where ['ND.node_type IN'] = $models;
         } else {
-            $where ['N1.node_type'] = $models [0];
+            $where ['ND.node_type'] = $models [0];
         }
     }
     
     // 置顶,属性：ontop = 1
     if (isset ( $ontop ) && $ontop) {
-        $where ['N1.ontopto >= '] = date ( 'Y-m-d 00:00:00' );
+        $where ['ND.ontopto >= '] = date ( 'Y-m-d 00:00:00' );
     }
     // 有插图，属性:figure = 1
     if (isset ( $figure ) && $figure) {
-        $where ['N1.figure <>'] = '';
+        $where ['ND.figure <>'] = '';
     
     }
     //作者,属性 : author = 'aaa,bbb,ccc'
     if (isset ( $author ) && ! empty ( $author )) {
         $author = explode ( ",", $author );
         if (count ( $author ) > 1) {
-            $where ['N1.author IN'] = $author;
+            $where ['ND.author IN'] = $author;
         } else {
-            $where ['N1.author'] = $author [0];
+            $where ['ND.author'] = $author [0];
         }
     }
     //来源，属性：source = 'aaa,bbb,ccc'
     if (isset ( $source ) && ! empty ( $source )) {
         $source = explode ( ",", $source );
         if (count ( $source ) > 1) {
-            $where ['N1.source IN'] = $source;
+            $where ['ND.source IN'] = $source;
         } else {
-            $where ['N1.source'] = $source [0];
+            $where ['ND.source'] = $source [0];
         }
+    }
+    // 虚拟目录 pathlike = '/yourpath/' or path = '/yourpath/'
+    if (isset ( $pathlike ) && ! empty ( $pathlike )) {
+        $nodeTable->ljoin ( new KsgVpathTable (), 'NVP.id = ND.vpid', 'NVP' );
+        $where ['NVP.paths LIKE'] = $pathlike . '%';
+    } else if (isset ( $path ) && ! empty ( $path )) {
+        $nodeTable->ljoin ( new KsgVpathTable (), 'NVP.id = ND.vpid', 'NVP' );
+        $where ['NVP.paths'] = $path;
     }
     
     // 属性,属性:flags = 'aa,bbb,ccc' or flags = 'aaa|bbb|ccc'
@@ -157,14 +165,14 @@ function cts_pd_pages($options = array()) {
             foreach ( $flags as $_flag ) {
                 $ntt = new KsgNodeTagsTable ();
                 $flag = $ntt->query ( 'NF.tag_id', 'NF' );
-                $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag' => $_flag ) );
+                $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'ND.nid' ), 'TF.type' => 'flag', 'TF.tag' => $_flag ) );
                 $where ['@EXISTS'] [] = $flag;
             }
         } else {
             $flags = explode ( '|', $flags );
             $ntt = new KsgNodeTagsTable ();
             $flag = $ntt->query ( 'NF.tag_id', 'NF' );
-            $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag IN' => $flags ) );
+            $flag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'ND.nid' ), 'TF.type' => 'flag', 'TF.tag IN' => $flags ) );
             $where ['@EXISTS'] [] = $flag;
         }
     }
@@ -175,14 +183,14 @@ function cts_pd_pages($options = array()) {
             foreach ( $tags as $_tag ) {
                 $ntt = new KsgNodeTagsTable ();
                 $tag = $ntt->query ( 'NF.tag_id', 'NF' );
-                $tag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'tag', 'TF.tag' => $_tag ) );
+                $tag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'ND.nid' ), 'TF.type' => 'tag', 'TF.tag' => $_tag ) );
                 $where ['@EXISTS'] [] = $tag;
             }
         } else {
             $tags = explode ( '|', $tags );
             $ntt = new KsgNodeTagsTable ();
             $tag = $ntt->query ( 'NF.tag_id', 'NF' );
-            $tag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'N1.nid' ), 'TF.type' => 'flag', 'TF.tag IN' => $tags ) );
+            $tag->ljoin ( new KsgTagTable (), 'NF.tag_id = TF.tag_id', 'TF' )->where ( array ('NF.node_id' => imtf ( 'ND.nid' ), 'TF.type' => 'tag', 'TF.tag IN' => $tags ) );
             $where ['@EXISTS'] [] = $tag;
         }
     }
@@ -200,8 +208,8 @@ function cts_pd_pages($options = array()) {
         }
         $nodeTable->sort ( $f, $o );
     } else {
-        $nodeTable->sort ( 'N1.publish_time', 'd' );
-    }    
+        $nodeTable->sort ( 'ND.publish_time', 'd' );
+    }
     // 分页
     if (isset ( $start )) {
         $start = intval ( $start );

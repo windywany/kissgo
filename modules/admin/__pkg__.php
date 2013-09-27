@@ -39,6 +39,14 @@ function on_install_module_cn_usephp_core_gui($rst) {
         }
     }
     
+    if ($rtn === true) {
+        $path = array ('id' => 1, 'upid' => 0, 'name' => 'Root', 'path' => '/', 'paths' => '/' );
+        $pT = new KsgVpathTable ();
+        if (! $pT->insert ( $path )) {
+            $rtn = db_error ();
+        }
+    }
+    
     return empty ( $rtn ) ? '安装核心模块出错啦！' : $rtn;
 }
 bind ( 'on_install_module_cn.usephp.core.gui', 'on_install_module_cn_usephp_core_gui' );

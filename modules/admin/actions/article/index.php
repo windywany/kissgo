@@ -28,9 +28,8 @@ function do_admin_article_get($req, $res, $status = 'draft') {
     $articleTable = new ArticleTable ();
     if ($status == 'published') {
         $where ['ART.nid >'] = 0;
-        $articles = $articleTable->query ( 'ART.*,MIT.item_name as menu_name,UC.username AS user_name,UU.username AS update_user_name,ND.title as page_title,ND.url,ND.status', 'ART' );
-        $articles->ljoin ( new KsgNodeTable (), "ND.node_type = 'plain' AND ND.node_id = ART.aid", 'ND' );
-        $articles->ljoin ( new KsgMenuItemTable (), 'ND.mid = MIT.menuitem_id', 'MIT' );
+        $articles = $articleTable->query ( 'ART.*,UC.username AS user_name,UU.username AS update_user_name,ND.title as page_title,ND.url,ND.status', 'ART' );
+        $articles->ljoin ( new KsgNodeTable (), "ND.node_type = 'plain' AND ND.node_id = ART.aid", 'ND' );        
     } else {
         $where ['ART.nid'] = 0;
         $articles = $articleTable->query ( 'ART.*,UC.username AS user_name,UU.username AS update_user_name', 'ART' );

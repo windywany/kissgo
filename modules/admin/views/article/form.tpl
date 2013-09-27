@@ -5,6 +5,9 @@
 {/block}   
 {block name="toolbar"}
     <a class="btn btn-mini btn-success btn-save" href="#"><i class="icon-ok-circle"></i> {'Save'|ts}</a>
+    {if !$article.aid}
+    <a class="btn btn-mini btn-primary btn-save"><i class="icon-globe"></i> {'Save & Publish'|ts}</a>
+    {/if}
     <a class="btn btn-mini btn-warning" href="{$articleURL}"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
 {/block}
 
@@ -28,6 +31,9 @@
                 <div>
     				<span class="strong">文章标题</span>	
     				<span class="txt-info">[必须填写]</span>
+    				{if $article.aid}
+    				<span class="txt-info"><input type="checkbox" name="sync" style="vertical-align: top"/>同步修改已经发布页面标题.</span>
+    				{/if}
     				<br class="clear"/>								
     			</div>
                 <input type="text" id="title" class="title1" name="title" placeholder="请填写文章标题" value="{$article.title}"/>
@@ -49,7 +55,10 @@
     </div>
     <script type="text/plain" id="myEditor">{$article.body}</script>    
     <div style="text-align:center;padding:5px">
-        <a class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>	            
+        <a class="btn btn-success btn-save"><i class="icon-ok-circle"></i> {'Save'|ts}</a>
+        {if !$article.aid}
+        <a class="btn btn-primary btn-save"><i class="icon-globe"></i> {'Save & Publish'|ts}</a>
+        {/if}
         <a class="btn btn-warning" href="{$articleURL}"><i class="icon-refresh"></i> {'Cancel'|ts}</a>
     </div>	
 </form>

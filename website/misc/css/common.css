@@ -701,7 +701,7 @@ span.tip {
     min-width: 440px;
     overflow: hidden;
     position: absolute;
-    z-index: 1035;
+    z-index: 1065;
     display: none;
 }
 .dialog_head {
@@ -794,6 +794,59 @@ span.tip {
 .icon_con_b {
     background-position:-224px 0;
 }
+
+.sidenav {
+  width: 99%;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+     -moz-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+          box-shadow: 0 1px 4px rgba(0,0,0,.065);
+}
+.sidenav > li > a {
+  display: block;
+  width: 90%;
+  margin: 0 0 -1px;
+  padding: 8px 14px;
+  border: 1px solid #e5e5e5;
+}
+.sidenav > li:first-child > a {
+  -webkit-border-radius: 6px 6px 0 0;
+     -moz-border-radius: 6px 6px 0 0;
+          border-radius: 6px 6px 0 0;
+}
+.sidenav > li:last-child > a {
+  -webkit-border-radius: 0 0 6px 6px;
+     -moz-border-radius: 0 0 6px 6px;
+          border-radius: 0 0 6px 6px;
+}
+.sidenav > .active > a {
+  position: relative;
+  z-index: 2;
+  padding: 9px 15px;
+  border: 0;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+  -webkit-box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+     -moz-box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+          box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+}
+/* Chevrons */
+.sidenav .icon-chevron-right ,.sidenav .icon-plus,.sidenav .icon-chevron-left{
+  float: right;
+  margin-top: 2px;
+  margin-right: -6px;
+  opacity: .25;
+}
+.sidenav > li > a:hover {
+  background-color: #f5f5f5;
+}
+.sidenav a:hover .icon-chevron-right,.sidenav a:hover .icon-chevron-left,.sidenav a:hover .icon-plus {
+  opacity: 1;
+}
 .ui-form {
 	position: relative;
 	padding: 39px 19px 14px;
@@ -823,10 +876,12 @@ span.tip {
 #overlay-container, .overlay-modal-background, .overlay-element {
     height: 100%;
     left: 0;
-    position: absolute;
+    position: fixed;
     top: 0;
+    right: 0;
+    bottom:0;
     width: 100%;
-    z-index: 1020;
+    z-index: 1088;
 }
 
 .overlay-modal-background {
@@ -836,7 +891,7 @@ span.tip {
 .overlay-element {
     background: none repeat scroll 0 0 transparent;
     left: -200%;
-    z-index: 1021;
+    z-index: 1089;
 }
    
 .overlay-element.overlay-active {
@@ -854,7 +909,7 @@ span.tip {
     filter:  alpha(opacity=85);
     top: 0;
 	right: 0;
-    z-index: 1033;
+    z-index: 1063;
     display:none;
 }
 #overlay-body {
@@ -865,8 +920,11 @@ span.tip {
     text-align: center;
     top: 50%;
     width: 500px;
-    z-index: 1034;
+    z-index: 1064;
     display:none;
+}
+.navbar-fixed-bottom{
+	z-index: 1040;
 }
 #overlay-body img, #overlay-body div.msg {
     color: #999;
@@ -1068,6 +1126,7 @@ div.vertical-tabs .vertical-tabs-panes {
 * html .vertical-tabs .form-textarea-wrapper {
   width: 95%; 
 }
+
 .modal-body{
 	min-height:150px;
 }

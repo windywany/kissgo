@@ -51,37 +51,54 @@
 	    <input type="hidden" id="node_type" name="node_type" value="{$type}"/>
 	    <input type="hidden" id="nid" name="nid" value="{$node.nid}"/>
 	    <input type="hidden" id="node_id" name="node_id" value="{$node_id}"/>
+	    
 	    <div class="row-fluid">
-	        <div class="span8">
+	        <div class="span7">
 	            <div>
-    				<span class="strong">{if $type == 'catalog'}目录名{else}页面标题{/if}</span>	
+    				<span class="strong">页面标题</span>	
     				<span class="txt-info">[必须填写]</span>
     				<br class="clear"/>								
     			</div>
-	            <input type="text" id="title" class="title1" name="title" placeholder="{if $type == 'catalog'}目录名{else}页面标题{/if}" value="{$node.title}"/>
+	            <input type="text" id="title" class="title1" name="title" placeholder="页面标题" value="{$node.title}"/>
 	        </div>
-	        <div class="span4">
+	        <div class="span5">
 	            <div>
-    				<span class="strong">副标题</span>	
-    				<span class="txt-error"></span>
+    				<span class="strong">{if $type == 'catalog'}虚拟目录名{else}副标题{/if}</span>	
+    				{if $type == 'catalog'}<span class="txt-info">[必须填写]</span>{/if}
     				<br class="clear"/>								
     			</div>
-	            <input type="text" class="title1" name="subtitle" placeholder="页面副标题" value="{$node.subtitle}"/>
+	            <input type="text" class="title1" id="subtitle" name="subtitle" placeholder="{if $type == 'catalog'}虚拟目录名{else}副标题{/if}" value="{$node.subtitle}"/>
 	        </div>
 	    </div>
 	    	
         <div class="row-fluid">
-			<div>
-				{if $type == 'catalog'}
-				<span class="strong">虚拟路径</span>
-				<span class="txt-info">[必须填写]</span>
-				{else}
-				<span class="strong">URL</span>
-				<span class="txt-info">[以http://开头的URL将自动跳转.]</span>
-				{/if}
-				<br class="clear"/>								
+        	<div class="span7">
+    			<div>
+    				{if $type == 'catalog'}
+    				<span class="strong">虚拟路径</span>
+    				<span class="txt-info">[必须填写,只能是字母和数字的组合]</span>
+    				{else}
+    				<span class="strong">URL</span>
+    				<span class="txt-info">[以http://开头的URL将自动跳转.可用变量:vpath,title,type,id,nid,author,source,Y,y,m,d]</span>
+    				{/if}
+    				<br class="clear"/>								
+    			</div>
+    			{if $type == 'catalog'}			
+    				<input type="text" value="{$node.path}" class="span12" id="url" name="url"/>
+    			{else}
+    				<input type="text" value="{$node.url}" class="span12" id="url" name="url"/>
+    			{/if}
 			</div>
-			<input type="text" value="{$node.url}" class="span12" id="url" name="url"/>
+			<div class="span5">
+				<div>
+    				<span class="strong">存储于虚拟目录</span>	
+    				<span class="txt-info">[必须选择]</span>
+    				<br class="clear"/>								
+    			</div>
+    			<input type="hidden" value="{$node.vpid}" name="ovpid"/>
+    			<input type="hidden" value="{$node.vpid}" id="vpid" name="vpid"/>
+    			<input type="text" value="{$node.pathsname}" class="span12" id="vpath"/>
+			</div>
 		</div>
 	    
 	    <div class="vertical-tabs clearfix">
@@ -115,16 +132,7 @@
 	    	<div class="vertical-tabs-panes vertical-tabs-processed">
 	    	    <fieldset id="page-options" class="vertical-tabs-pane">
 					<div class="fieldset-wrapper">
-						
-						<div class="row-fluid">
-							<div>
-								<span class="strong">添加至导航菜单</span>
-								<br class="clear"/>								
-							</div>							
-							<input type="hidden" name="mid" id="navi-menu" value="{$node.mid}"/>
-							<input type="text" value="{$node.crumb}" readonly="readonly" class="span12" id="menu" placeholder="点击选择导航菜单"/>
-						</div>
-						
+					
     					<div class="form-field">
     						<div>
     							<span class="strong">模板</span>
@@ -255,17 +263,17 @@
     </div>
 </div>
 
-<div class="modal hide fade" tabindex="-1" id="menu-selector-box" data-backdrop="static" data-keyboard="false">
+<div class="modal hide fade" tabindex="-1" id="path-selector-box" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>选择</h3>
+        <h3>选择路径</h3>
     </div>
     <div class="modal-body" style="max-height:300px;overflow-y:auto;">
-        <ul class="ztree" id="tpls-menu-tree"></ul>
+        <ul class="ztree" id="path-tree"></ul>
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">关闭</a>
-        <a href="#" class="btn btn-primary" id="btn-menu-done">确定</a>
+        <a href="#" class="btn btn-primary" id="btn-path-done">确定</a>
     </div>
 </div>
 

@@ -4,14 +4,14 @@ class KsgNodeTable extends DbTable {
     public function schema() {
         $schema = new DbSchema ( 'all nodes' );
         $schema->addPrimarykey ( array ('nid' ) );
-        $schema->addIndex ( 'IDX_DEL_STATUS', array ('deleted', 'status' ) );
-        $schema->addIndex ( 'IDX_NODE_TYPE', array ('node_type', 'node_id' ) );        
+        $schema->addIndex ( 'IDX_DEL_STATUS', array ('deleted', 'status', 'vpid' ) );
+        $schema->addIndex ( 'IDX_NODE_TYPE', array ('node_type', 'node_id' ) );
         $schema->addIndex ( 'IDX_UPDATE_TIME', array ('update_time' ) );
-        $schema->addIndex ( 'IDX_PUBLISH_TIME', array ('publish_time' ) );        
+        $schema->addIndex ( 'IDX_PUBLISH_TIME', array ('publish_time' ) );
         $schema->addUnique ( 'IDX_URL_SLUG', array ('url_slug', 'nid' ) );
-        
-        $schema ['nid'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );        
-        $schema ['mid'] = array ('type' => 'int', 'extra' => 'normal',Idao::DEFT=>0, Idao::NN, Idao::UNSIGNED );
+        $schema->addUnique ( 'IDX_VPID', array ('vpid' ) );
+        $schema ['nid'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
+        $schema ['vpid'] = array ('type' => 'int', 'extra' => 'normal', Idao::DEFT => 1, Idao::NN, Idao::UNSIGNED );
         $schema ['deleted'] = array ('type' => 'bool', 'extra' => 'normal', Idao::NN, Idao::DEFT => false, Idao::CMMT => '是否删除' );
         
         $schema ['create_uid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::AUTOINSERT_UID, Idao::CMMT => '创建用户' );

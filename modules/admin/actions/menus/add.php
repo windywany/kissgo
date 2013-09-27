@@ -5,7 +5,7 @@ assert_login ();
  * @param Request $req
  * @param Response $res
  * @return View
-*/
+ */
 function do_admin_menus_add_post($req, $res) {
     $type = rqst ( 'type', 'url' );
     $target = rqst ( 'target', '_blank' );
@@ -70,6 +70,11 @@ function do_admin_menus_add_page_item($menu_name, $target) {
         }
         $page = $pM->read ( array ('nid' => $pid ) );
         if (! $page) {
+            log_info ( 'the page ' . $pid . ' does not exist.' );
+            continue;
+        }
+        if ($miM->exist ( array ('menu_name' => $menu_name, 'type' => 'page', 'page_id' => $pid ) )) {
+            log_info ( 'the page ' . $pid . ' had already been in the menu:' . $menu_name );
             continue;
         }
         $item ['page_id'] = $pid;
@@ -79,7 +84,6 @@ function do_admin_menus_add_page_item($menu_name, $target) {
         if ($item) {
             $item ['type_name'] = '页面';
             $items [] = $item;
-            $pM->update ( array ('mid' => $item ['menuitem_id'] ), array ('nid' => $pid ) );
         }
     }
     return $items;

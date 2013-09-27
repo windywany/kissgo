@@ -1,6 +1,6 @@
 $(function() {			
 	$('.overlay-close').click(function() {
-		Kissgo.closeIframe();
+		Kissgo.closeIframe(false);
 		return false;
 	});
 	
@@ -108,33 +108,30 @@ $(function() {
 		var template = nodes[0].id.substring(1);
 		$('#template_file').val(template);
 		return false;
-	});
+	});		
 	
-	$('#menu').click(function() {		
-		$('#tpls-menu-tree').empty();
-		$.fn.zTree.destroy('tpls-menu-tree');
-		$.fn.zTree.init($('#tpls-menu-tree'), ztree_setting('tpls-menu-tree','browser_menus'));		
-		$('#menu-selector-box').modal('show');
+	$('#vpath').click(function() {		
+		$('#path-tree').empty();
+		$.fn.zTree.destroy('path-tree');
+		$.fn.zTree.init($('#path-tree'), ztree_setting('path-tree','browser_vpath'));		
+		$('#path-selector-box').modal('show');
 		return false;
 	});
-	$('#btn-menu-done').click(function(){
-		var treeObj = $.fn.zTree.getZTreeObj("tpls-menu-tree");
+	
+	$('#btn-path-done').click(function(){
+		var treeObj = $.fn.zTree.getZTreeObj("path-tree");
 		var nodes = treeObj.getSelectedNodes();
 		if (nodes.length == 0) {			
 			return false;
 		}
-		$('#menu-selector-box').modal('hide');
-		var menu = nodes[0];
-		if(menu.id == '*none'){
-			$('#menu').val('');
-			$('#navi-menu').val(0);
-		}else{
-			$('#menu').val(menu.cb);
-			$('#navi-menu').val(menu.id);
-		}
+		$('#path-selector-box').modal('hide');
+		var path = nodes[0];
+		$('#vpid').val(path.id);
+		$('#vpath').val(path.cb);
 		return false;
 	});
-		
+	
+	
 	function tag_ajax (type){
 		return {
 			cache:true,
@@ -163,7 +160,8 @@ $(function() {
 				url : Kissgo.AJAX,
 				autoParam : [ "id",'cb' ],
 				otherParam : {
-					"__op" : op
+					"__op" : op,
+					'nid' : $('#node_id').val()
 				}
 			}
 		};
@@ -177,9 +175,33 @@ $(function() {
 			$('#title').addClass('error').focus();			
 			return false;
 		}
+		var subtitle = $.trim($('#subtitle').val());
+		if(type == 'catalog' && subtitle.length == 0){
+			$.alert('请输入合法的虚拟路径.');
+			$('#subtitle').addClass('error').focus();
+			return false;
+		}
+		var url = $.trim($('#url').val()), reg = null,uv = url.length == 0;		
+		if(type == 'catalog' && !/^[\d\w][\d\w]*\/?$/.test(url)){
+			$.alert('请输入合法的虚拟路径.');
+			$('#url').addClass('error').focus();
+			return false;
+		}else if(!uv && !/^(https?:\/{2})?.+/.test(url)){			
+			$.alert('URL不能为空.');
+			$('#url').addClass('error').focus();
+			return false;
+		}
+		
+		var vpid = $('#vpid').val();
+		if(!/^(0|[1-9][0-9]*)$/.test(vpid)){
+			$.alert('请选择页面将存储于哪个虚拟目录.');
+			$('#vpid').addClass('error').focus;
+			return false;
+		}
+		
 		if(!/^(0|[1-9][0-9]*)$/.test(ct)){
 			$.alert('缓存时间只能是数字.');
-			$('#cachetime').addClass('error');
+			$('#cachetime').addClass('error').focus;
 			return false;
 		}
 		if($('#custom-set-tpl').attr('checked') && tmp.length == 0){
@@ -187,24 +209,8 @@ $(function() {
 				$('#btn-select-tpl').click();
 			});
 			return false;	
-		}
-		var url = $.trim($('#url').val()), reg = null,uv = url.length == 0;
-		
-		if(type == 'catalog'){
-			uv = false;
-			reg = /^[\d\w][\d\w_-]*\/?$/;
-		}else{			
-			reg = /^(https?:\/{2})?.+/;
-		}
-		if(!uv || !reg.test(url)){
-			if(type == 'catalog'){
-				$.alert('请输入合法的虚拟路径.');
-			}else{
-				$.alert('URL不能为空.');
-			}
-			$('#url').addClass('error').focus();
-			return false;
 		}	
+		
 		return true;
 	}
 	window.setNodeData = function(data) {

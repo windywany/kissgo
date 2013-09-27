@@ -6,6 +6,7 @@ $(function() {
 
 	$('.btn-save').click(function() {
 		showWaitMask();
+		var publish = $(this).hasClass('btn-primary');
 		$('#article-form').ajaxSubmit({
 			beforeSerialize : function($form, ops) {
 				var title = $.trim($('#title').val());
@@ -29,7 +30,14 @@ $(function() {
 			},
 			success : function(data) {
 				if (data.success) {
-					window.location.href = Kissgo.murl('admin', 'article');
+					if(publish){
+						hideWaitMask();
+						Kissgo.publish('plain',data.article.aid,function(data){
+							window.location.href = Kissgo.murl('admin', 'article');
+						},{title:data.article.title,url:''});
+					}else{
+						window.location.href = Kissgo.murl('admin', 'article');
+					}					
 				} else {
 					hideWaitMask();
 					$.error(data.msg);

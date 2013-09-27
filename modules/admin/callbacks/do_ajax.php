@@ -100,7 +100,7 @@ function do_ajax_browser_menus($req) {
         $menus = $ksgMenu->query ()->sort ( 'menu_default' );
         $rtn [0] = array ('id' => '*none', 'name' => 'Home', 'isParent' => true, 'open' => true );
         foreach ( $menus as $menu ) {
-            $rtn [0] ['children'] [] = array ('id' => 'm.' . $menu ['menu_name'], 'name' => $menu ['menu_title'], 'cb' => 'Home['.$menu['menu_title'].']', 'isParent' => true );
+            $rtn [0] ['children'] [] = array ('id' => 'm.' . $menu ['menu_name'], 'name' => $menu ['menu_title'], 'cb' => 'Home[' . $menu ['menu_title'] . ']', 'isParent' => true );
         }
     } else {
         $name = rqst ( 'cb' ) . ' > ';
@@ -115,6 +115,29 @@ function do_ajax_browser_menus($req) {
         $items = $ksgMenuItem->query ( 'menuitem_id,item_name' )->where ( $where )->sort ( 'sort', 'a' );
         foreach ( $items as $item ) {
             $rtn [] = array ('id' => $item ['menuitem_id'], 'name' => $item ['item_name'], 'cb' => $name . $item ['item_name'], 'isParent' => true );
+        }
+    }
+    echo json_encode ( $rtn );
+}
+/**
+ * 
+ * browser vpath
+ * @param Request $req
+ */
+function do_ajax_browser_vpath($req) {
+    $id = rqst ( 'id', '' );
+    $rtn = array ();
+    if (empty ( $id )) {
+        $rtn [0] = array ('id' => 1, 'name' => __ ( 'Home' ), 'nid' => 0, 'cb' => __ ( 'Home' ), 'isParent' => true, 'open' => false );
+    } else {
+        $nid = $req ['nid'];
+        $name = rqst ( 'cb' ) . ' > ';
+        $ksgMenuItem = new KsgVpathTable ();
+        $where ['upid'] = $id;
+        $where ['nid <>'] = $nid;
+        $items = $ksgMenuItem->query ( 'id,name,nid' )->where ( $where )->sort ( 'name', 'a' );
+        foreach ( $items as $item ) {
+            $rtn [] = array ('id' => $item ['id'], 'nid' => $item ['nid'], 'name' => $item ['name'], 'cb' => $name . $item ['name'], 'isParent' => true );
         }
     }
     echo json_encode ( $rtn );
@@ -195,7 +218,7 @@ function do_ajax_nodes_autocomplete($req) {
 function do_ajax_images_autocomplete($req) {
     $q = rqst ( 'q', '' );
     $p = irqst ( 'p', 1 );
-    $attach = new MediaTable();
+    $attach = new MediaTable ();
     $imgs = $attach->query ( 'url as id,name as text' );
     $where ['type'] = 'image';
     if (empty ( $q )) {

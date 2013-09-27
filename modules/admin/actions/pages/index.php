@@ -5,25 +5,37 @@
 assert_login ();
 function do_admin_pages_get($req, $res, $status = 'draft') {
     $I = whoami ();
-    $status_ary = array ('draft', 'published', 'approving', 'approved', 'unapproved','trash' );
-    if(!in_array($status, $status_ary)){
+    $status_ary = array ('draft', 'published', 'approving', 'approved', 'unapproved', 'trash' );
+    if (! in_array ( $status, $status_ary )) {
         $status = 'draft';
     }
     $data ['_CUR_URL'] = murl ( 'admin', 'pages' );
     $data ['limit'] = 10;
-    $data ['mn'] = $req ['mn'];
     $data ['ad'] = $req ['ad'];
     
     $nodeTable = new KsgNodeTable ();
     $nodeTypeTable = new KsgNodeTypeTable ();
+    $userTable = new KsgUserTable ();
+    $vpathTable = new KsgVpathTable ();
     
     $draftTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'draft' ), 'nid' );
-    
     $approvingTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'approving' ), 'nid' );
     
-    $where = where ( array ('ND.node_type' => array (array ('name' => 'node_type' ) ), 'ND.mid' => array (array ('name' => 'mid' ) ), 'ND.title' => array ('like' => array ('name' => 'title' ) ), 'FLG.tag_id' => array (array ('name' => 'flag' ) ) ), $data );
+    //build condition array
+    $where = where ( array ('ND.node_type' => array (array ('name' => 'node_type' ) ), 'ND.title' => array ('like' => array ('name' => 'title' ) ), 'FLG.tag_id' => array (array ('name' => 'flag' ) ) ), $data );
+    
+    $vpid = irqst ( 'vpid', 1 ); //current directory
+    
+
+    if (isset ( $req ['pwd'] ) || $status == 'trash') {
+        $data ['pwd'] = 1;
+    } else {
+        $data ['pwd'] = 0;
+        $where ['ND.vpid'] = $vpid;
+    }
     
     $where ['ND.deleted'] = 0;
+    
     if (isset ( $req ['mc'] )) {
         $where ['ND.create_uid'] = $I ['uid'];
         $data ['mc'] = 1;
@@ -40,17 +52,14 @@ function do_admin_pages_get($req, $res, $status = 'draft') {
     
     $start = irqst ( 'start', 1 );
     
-    $items = $nodeTable->query ( 'ND.*,MIT.vpath,MIT.item_name as menu_name,NT.name AS node_type_name,UC.login AS user_name,UU.login AS update_user_name', 'ND' );
+    $items = $nodeTable->query ( 'ND.*,NT.name AS node_type_name,UC.login AS user_name,UU.login AS update_user_name', 'ND' );
     
     $items->ljoin ( $nodeTypeTable, 'ND.node_type = NT.type', 'NT' );
-    $items->ljoin ( new KsgUserTable (), 'ND.create_uid = UC.uid', 'UC' );
-    $items->ljoin ( new KsgUserTable (), 'ND.update_uid = UU.uid', 'UU' );
-    $items->ljoin ( new KsgMenuItemTable (), 'ND.mid = MIT.menuitem_id', 'MIT' );
+    $items->ljoin ( $userTable, 'ND.create_uid = UC.uid', 'UC' );
+    $items->ljoin ( $userTable, 'ND.update_uid = UU.uid', 'UU' );
+    
     if (isset ( $data ['flag'] )) {
         $items->ijoin ( new KsgNodeTagsTable (), 'FLG.node_id = ND.nid', 'FLG' );
-    }
-    if (empty ( $where ['ND.mid'] ) || ! is_numeric ( $where ['ND.mid'] )) {
-        unset ( $where ['ND.mid'] );
     }
     $items->where ( $where )->limit ( $start, $data ['limit'] )->sort ( 'nid', 'd' );
     
@@ -64,7 +73,23 @@ function do_admin_pages_get($req, $res, $status = 'draft') {
     $data ['page_types'] = $nodeTypeTable->query ( 'type,name' )->where ( array ('creatable' => 1 ) )->toArray ( 'type', 'name', array ('' => '-页面类型-' ) );
     $tagM = new KsgTagTable ();
     $data ['flags'] = $tagM->query ( 'tag_id,tag' )->where ( array ('type' => 'flag' ) )->toArray ( 'tag_id', 'tag', array ('' => '-页面属性-' ) );
-    
+    if ($data ['pwd'] == 0) {
+        $data ['fullpaths'] = $vpathTable->getFullPathName ( $vpid );
+        $depth = count ( $data ['fullpaths'] );
+        if ($depth > 1) {
+            $data ['prepid'] = $data ['fullpaths'] [$depth - 2] ['id'];
+        } else {
+            $data ['prepid'] = 1;
+        }
+        $data ['paths'] = $vpathTable->query ( 'id,name' )->where ( array ('upid' => $vpid ) );
+    } else {
+        $data ['prepid'] = 1;
+        $data ['paths'] = array ();
+        $data ['fullpaths'] [] = array ('id' => '1', 'name' => __ ( 'Home' ) );
+        $data ['fullpaths'] [] = array ('id' => '0', 'name' => __ ( 'Search Results' ) );
+    }
+    $data ['vpid'] = $vpid;
+    $_SESSION ['vpath_pwd'] = $vpid;
     $nk = new NodeHooks ();
     bind ( 'get_page_operation', array ($nk, 'get_page_operation' ), 1, 2 );
     bind ( 'get_page_bench_options', array ($nk, 'get_page_bench_options' ), 1, 2 );
@@ -154,9 +179,8 @@ class NodeHooks {
         if ($status == 'published') {
             $options .= '<li><a title="移至草稿箱" class="draft" href="' . $this->url . '?s=draft"><i class="icon-share"></i>移至草稿箱</a></li>';
             $options .= '<li><a title="移至回收站" class="trash" href="' . $this->url . '?del=1"><i class="icon-trash"></i>移至回收站</a></li>';
-        }
-        
-        return $options;
+        }        
+        return '';// $options;
     }
     // 显示页面属性
     public function show_node_flags($flags, $item) {
@@ -173,7 +197,7 @@ class NodeHooks {
         $fls = $this->wptM->getNodeTags ( $item ['nid'] );
         if ($fls) {
             foreach ( $fls as $fname ) {
-                $flags .= "<span class=\"label label-info pull-left mg-r5\">{$fname['tag']}</span>";
+                $flags .= "&nbsp;{<strong>{$fname['tag']}</strong>}";
             }
         }
         return $flags;

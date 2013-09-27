@@ -42,6 +42,9 @@ bind ( 'add_new_menu_items', array ('hook_add_new_menu_items', 'admin/callbacks/
 bind ( 'add_passport_menu_items', array ('hook_for_add_passport_menu_items', 'admin/callbacks/menu_hooks.php' ) );
 bind ( 'get_user_passport', array ('kissgo_hook_for_get_user_passport', 'admin/callbacks/menu_hooks.php' ) );
 bind ( 'after_save_node_for_plain', array ('after_save_node_for_plain', 'admin/callbacks/article_hooks.php' ) );
+bind ( 'on_delete_node_plain', array ('on_delete_node_plain', 'admin/callbacks/article_hooks.php' ), 1, 2 );
+
+bind ( 'on_delete_node_catalog', array ('on_delete_node_catalog', 'admin/callbacks/catalog_hooks.php' ), 1, 2 );
 // ajax hooks
 bind ( 'do_ajax_ajax_validate', array ('do_ajax_validate_check', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_browser_template_files', array ('do_ajax_browser_template_files', 'admin/callbacks/do_ajax.php' ) );
@@ -50,6 +53,7 @@ bind ( 'do_ajax_tags_autocomplete', array ('do_ajax_tags_autocomplete', 'admin/c
 bind ( 'do_ajax_nodes_autocomplete', array ('do_ajax_nodes_autocomplete', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_test_email', array ('do_ajax_test_email', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_browser_menus', array ('do_ajax_browser_menus', 'admin/callbacks/do_ajax.php' ) );
+bind ( 'do_ajax_browser_vpath', array ('do_ajax_browser_vpath', 'admin/callbacks/do_ajax.php' ) );
 bind ( 'do_ajax_images_autocomplete', array ('do_ajax_images_autocomplete', 'admin/callbacks/do_ajax.php' ) );
 
 // end register hooks

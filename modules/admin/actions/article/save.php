@@ -18,10 +18,16 @@ function do_admin_article_save_post($req, $res, $id = 0) {
         $rst = $articleTable->insert ( $article );
     } else {
         $rst = $articleTable->update ( $article, array ('aid' => $id ) );
+        if ($rst && isset ( $req ['sync'] )) {
+            $node = new KsgNodeTable ();
+            $node->update ( array ('title' => $article ['title'] ), array ('node_type' => 'plain', 'node_id' => $id ) );
+        }
     }
     if (! $rst) {
         $data ['success'] = false;
         $data ['msg'] = 'Cannot save the article';
+    } else {
+        $data ['article'] = array ('aid' => $rst ['aid'], 'title' => $rst ['title'] );
     }
     return new JsonView ( $data );
 }

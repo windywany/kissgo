@@ -12,7 +12,7 @@ class NodeForm extends DataForm {
     var $description = array ();
     var $figure = array ();
     var $keywords = array ();
-    var $mid = array ();
+    var $vpid = array ();
     var $nid = array ();
     var $node_id = array ();
     var $ontopto = array ();

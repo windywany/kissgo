@@ -1,8 +1,16 @@
 {extends file=$ksg_admincp_layout}
 {block name="title"}{'Web Pages'|ts}{/block}
 
-{block name="breadcrumb" nocache}
-<li>{'Web Pages'|ts}</li>
+{block name="breadcrumb" nocache}	  
+    {foreach $fullpaths as $path}
+    <li>
+    	{if $path.id}
+    	<a href="{$_CUR_URL}/{$status}?vpid={$path.id}">{$path.name}</a><span class="divider">/</span>
+    	{else}
+    	{$path.name}
+    	{/if}
+    </li>
+    {/foreach}    
 {/block}
 {block name="admincp_body"}
 
@@ -17,11 +25,7 @@
 </ul>
 <div>  						
     <form class="well form-inline" method="get" action="{$_CUR_URL}/{$status}">
-    	
-    	<input type="hidden" value="{$mid}" name="mid" id="navi-menu-id"/>
-    	<div class="row-fluid mgb5">
-    		<input type="text" placeholder="点击选择导航菜单" value="{$mn}" name="mn" id="navi-menu" class="span12"/>
-    	</div>  							
+    	<input type="hidden" value="{$vpid}" name="vpid"/>    	    	
         <input type="text" class="input-xlarge" name="title" value="{$title}" placeholder="标题"/>							
         <select name="node_type" class="input-medium">
             {html_options options=$page_types selected=$node_type}
@@ -40,18 +44,29 @@
 			<label class="checkbox">
 				<input type="checkbox" name="mp" {$mp|checked:1}/>由我发布
 			</label>
+			<label class="checkbox">
+				<input type="checkbox" name="pwd" {$pwd|checked:1}/>全局搜索
+			</label>
         </div>
-	</form>
-        
-							    
+	</form> 
+	<div class="row-fluid">
+		<div class="span2 sidebar">
+			<ul class="nav nav-list sidenav">
+			  <li><a href="{$_CUR_URL}/{$status}?vpid={$prepid}"><i class="icon-chevron-left"></i> {'Go Back'|ts}</a></li>
+	          {foreach $paths as $path}
+	          <li><a href="{$_CUR_URL}/{$status}?vpid={$path.id}"><i class="icon-chevron-right"></i> {$path.name}</a></li>
+	          {/foreach}
+	          <li><a class="ksg-publish" data-type="catalog" href="#"><i class="icon-plus"></i>{'New Virtual Directory'|ts}</a></li>
+	        </ul>
+		</div>
+		<div class="span10">	    
     <table id="page-list" class="table table-striped table-bordered table-condensed ui-table">
     	<thead>
     		<tr>
     			<th class="col_chk"><input type="checkbox"/></th>
     			<th class="w60 txt-ac">{'#'|sorth:nid}</th>
     			<th class="wa">{'详细'|sorth:create_time}</th>								
-    			<th class="w80 txt-ac">{'内容'|sorth:node_type}</th>															
-    			<th class="w200 txt-ac">标签</th>
+    			<th class="w80 txt-ac">{'类型'|sorth:node_type}</th>
     			<th class="w120 txt-ac">{'更新'|sorth:update_time}</th>														
     		</tr>
     	</thead>
@@ -62,7 +77,6 @@
     			<td class="txt-ac">{$item.nid}</td>
     			<td class="has-row-actions">
     				<p>
-    					<span class="label label-info mg-r5">{$item.node_type_name}</span>
     					<span class="label label-info mg-r5">由 {$item.user_name} 创建于										
     					{$item.create_time|date_format:'%Y-%m-%d %H:%M'}
     					</span>
@@ -70,27 +84,17 @@
     						<span class="label label-success mg-r5">发布于
     							{$item.update_time|date_format:'%Y-%m-%d %H:%M'}
     						</span>
-    					{/if}
-    					{if $item.menu_name}
-    					    <span class="label mg-r5 pull-right">
-    							{$item.menu_name}
-    							{if $item.vpath}
-    							[{$item.vpath}]
-    							{/if}
-    						</span>
-    					{/if}    																				
+    					{/if}    					    																				
     				</p>
     				<p>	
     					<a href="{$item|url}?preview" target="_blank" title="点击预览">{$item.title}</a>
     					{'show_node_flags'|fire:$item}
+    					{'show_node_tags'|fire:$item}
     				</p>
     				<div class="row-actions">{'get_page_operation'|fire:$item}</div>
     			</td>								
-    			<td class="txt-ac">{$item.node_id}</td>						
-    			<td>
-    			    <div class="row-fluid">
-    				    {'show_node_tags'|fire:$item}
-    				</div>
+    			<td class="txt-ac">
+        			{$item.node_type_name}        			
     			</td>
     			<td class="txt-ac">
     				<strong>{$item.update_user_name}</strong><br/>
@@ -99,14 +103,14 @@
     		</tr>
     		{foreachelse}
     		<tr>
-    			<td colspan="6" class="txt-ac">无页面</td>
+    			<td colspan="5" class="txt-ac">无页面</td>
     		</tr>
     		{/foreach}
     	</tbody>
     </table>    
     		    
     <div class="form-horizontal">
-    	<div class="control-group pull-left">
+    	<!-- div class="control-group pull-left">
     		<div class="btn-group">
     			<button class="btn" id="btn-selectall"><i class="icon-check"></i>全选/反选</button>
     			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
@@ -114,25 +118,13 @@
     			{'get_page_bench_options'|fire:$status}
     			</ul>
     		</div>
-    	</div>
+    	</div -->
     	<div class="pagination pull-right">
     		{$countTotal|paging:$limit}
     	</div>
     </div>	    
-	
-</div>
-<div class="modal hide fade" tabindex="-1" id="menu-selector-box" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <button class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3>选择</h3>
-    </div>
-    <div class="modal-body" style="max-height:300px;overflow-y:auto;">
-        <ul class="ztree" id="tpls-menu-tree"></ul>
-    </div>
-    <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal">关闭</a>
-        <a href="#" class="btn btn-primary" id="btn-menu-done">确定</a>
-    </div>
+	</div>
+	</div>					
 </div>		
 {/block}
 {block name="admincp_foot_js_block"}

@@ -661,8 +661,8 @@
 			Kissgo.publish(type,id?id:0,function(data){
 				if($.isFunction(window.onpublished)){
 					window.onpublished(data);
-				}else{
-					window.location.href = Kissgo.murl('admin','pages');
+				}else if(data != false){
+					window.location.reload();
 				}
 			},data);			
 		});
@@ -782,7 +782,7 @@ if(window.Kissgo){
 			sw = $(window).width() - $.scrollbarWidth();	
 		}
 		$('#navbar').width(sw);
-		$('#foot').width(sw-20);
+		$('#foot').width(sw);
 		$('body').addClass('show-overlay');
 		url += (url.indexOf('?')>0?'&':'?')+'__ifm='+ encodeURIComponent(window.location.href);
 		overIframe.find('#overlay-iframe').attr('src',url);
