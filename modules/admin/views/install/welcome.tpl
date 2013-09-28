@@ -3,14 +3,14 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title>{$page_title} -- Powered by KissGo! {$_KISSGO_VERSION}</title>
-		<link href="{'bootstrap/css/bootstrap.css'|static}" rel="stylesheet"/>
-		<link href="{'bootstrap/css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
-		<link href="{'common.css'|static}" rel="stylesheet"/>
+		<link href="{'css/bootstrap.css'|static}" rel="stylesheet"/>
+		<link href="{'css/bootstrap-responsive.css'|static}" rel="stylesheet"/>
+		<link href="{'css/common.css'|static}" rel="stylesheet"/>
 		<link href="{'install.css'|here}" rel="stylesheet"/>	
 		<script src="{'jquery/jquery.js'|static}"></script>	
 		<script src="{'bootstrap/bootstrap.js'|static}"></script>
-		<script src="{'jquery/plugins/validate.js'|static}"></script>
-		<script src="{'jquery/plugins/validate_addons.js'|static}"></script>
+		<script src="{'jquery/validate.js'|static}"></script>
+		<script src="{'jquery/validate_addons.js'|static}"></script>
 		<script src="{'common.js'|static}"></script>        
 	</head>
 	<body data-spy="scroll" data-target=".sidebar">

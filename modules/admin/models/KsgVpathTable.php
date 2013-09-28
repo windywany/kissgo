@@ -14,7 +14,7 @@ class KsgVpathTable extends DbTable {
         $schema->addIndex ( 'IDX_IDX_PATH', array ('paths' ) );
         $schema ['id'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
         $schema ['upid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED, Idao::DEFT => 0 );
-        $schema ['nid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
+        $schema ['nid'] = array ('type' => 'int', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED,Idao::DEFT => 0 );
         $schema ['name'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 256, Idao::NN );
         $schema ['path'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 32, Idao::NN );
         $schema ['paths'] = array ('type' => 'varchar', 'extra' => 'normal', Idao::LENGTH => 1024, Idao::NN );

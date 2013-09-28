@@ -6,7 +6,7 @@ class MediaTable extends DbTable {
         
         $schema->addPrimarykey ( array ('fid' ) );
         
-        $schema->addIndex ( 'IDX_IDX_TYPE', array ('type','pfid' ) );
+        $schema->addIndex ( 'IDX_IDX_TYPE', array ('type' ) );
         $schema->addIndex ( 'IDX_IDX_CREATE_TIME', array ('create_time' ) );
         
         $schema ['fid'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );

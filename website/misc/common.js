@@ -646,8 +646,10 @@
 		$('.autoset').each(function(i,e){
 			var $e = $(e),h=$e.find('.tab-content').height();
 			$e.find('.nav-tabs').height(h);
-		});		
-		$('input, textarea').placeholder();
+		});
+		if($.fn.placeholder){
+			$('input, textarea').placeholder();
+		}
 		$('.ksg-publish').click(function(){
 			var type = $(this).attr('data-type');
 			var id = $(this).attr('data-content');

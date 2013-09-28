@@ -9,7 +9,7 @@ class KsgNodeTable extends DbTable {
         $schema->addIndex ( 'IDX_UPDATE_TIME', array ('update_time' ) );
         $schema->addIndex ( 'IDX_PUBLISH_TIME', array ('publish_time' ) );
         $schema->addUnique ( 'IDX_URL_SLUG', array ('url_slug', 'nid' ) );
-        $schema->addUnique ( 'IDX_VPID', array ('vpid' ) );
+        $schema->addIndex ( 'IDX_VPID', array ('vpid' ) );
         $schema ['nid'] = array ('type' => 'serial', 'extra' => 'normal', Idao::NN, Idao::UNSIGNED );
         $schema ['vpid'] = array ('type' => 'int', 'extra' => 'normal', Idao::DEFT => 1, Idao::NN, Idao::UNSIGNED );
         $schema ['deleted'] = array ('type' => 'bool', 'extra' => 'normal', Idao::NN, Idao::DEFT => false, Idao::CMMT => '是否删除' );
