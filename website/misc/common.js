@@ -601,7 +601,7 @@
 		if(window.Kissgo){		
 			options = options || {};
 			var format = function(state) {			
-				var img = Kissgo.uploadurl(state.t1.toLowerCase());
+				var img = state.t1.toLowerCase();
 				return "<img class='flag sltimg' src='" + img + "'/>" + state.text;
 			};			
 			options.minimumInputLength = 1;

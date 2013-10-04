@@ -204,13 +204,17 @@ function the_static_resource_uri($resource) {
     return $static_url . $resource;
 }
 function get_prefer_tpl($tpl, $node) {
+    $tplx = THEME_PATH . THEME_DIR . DS . $tpl;
+    if (is_file ( $tplx )) {
+        return $tpl;
+    }
     $pinfo = pathinfo ( $tpl, PATHINFO_FILENAME );
     $dirs = array (THEME_PATH . THEME_DIR . DS . 'default' . DS );
     $theme = get_theme ();
     if ($theme != 'default') {
         array_unshift ( $dirs, THEME_PATH . THEME_DIR . DS . $theme . DS );
     }
-    $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '.tpl', $tpl, 'page.tpl' );
+    $files = array ($pinfo . '-' . $node ['nid'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '-' . $node ['node_id'] . '.tpl', $pinfo . '-' . $node ['node_type'] ['type'] . '.tpl', $tpl );
     foreach ( $dirs as $dir ) {
         foreach ( $files as $f ) {
             if (file_exists ( $dir . $f )) {
@@ -252,10 +256,17 @@ function merge_args($args, $default) {
  */
 function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
     $theme = get_theme ();
-    $_tpl = THEME_DIR . '/' . $theme . '/' . $tpl;
-    if (is_file ( THEME_PATH . $_tpl )) {
-        $tpl = $_tpl;
-    } else {
+    $_tpls [] = THEME_DIR . '/' . $tpl;
+    $_tpls [] = THEME_DIR . '/' . $theme . '/' . $tpl;
+    $found = false;
+    foreach ( $_tpls as $_tpl ) {
+        if (is_file ( THEME_PATH . $_tpl )) {
+            $tpl = $_tpl;
+            $found = true;
+            break;
+        }
+    }
+    if (! $found) {
         $tpl = THEME_DIR . '/default/' . $tpl;
     }
     $data ['ksg_current_template'] = $tpl;
@@ -404,7 +415,6 @@ function smarty_modifiercompiler_here($params, $compiler) {
 function smarty_modifiercompiler_static($params, $compiler) {
     return "BASE_URL.WEBSITE_DIR.'/misc/'." . $params [0];
 }
-
 function smarty_modifiercompiler_theme($params, $compiler) {
     $params = smarty_argstr ( $params );
     return "get_theme_resource_uri($params)";
@@ -747,7 +757,6 @@ function smarty_modifiercompiler_params($ary, $compiler) {
     $output = "build_page_url($url,$args)";
     return $output;
 }
-
 function smarty_modifiercompiler_cm($ary, $compiler) {
     if (count ( $ary ) < 1) {
         trigger_error ( 'error usage of cm', E_USER_WARNING );

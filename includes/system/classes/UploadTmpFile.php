@@ -10,6 +10,7 @@ class UploadTmpFile {
      * @var string
      */
     public $name;
+    public $orName;
     /**
      * 无扩展名的文件名	 
      * @var unknown_type
@@ -45,7 +46,6 @@ class UploadTmpFile {
      * @var string
      */
     public $mimeType;
-    
     public $errors = array ();
     /**
      * 
@@ -53,7 +53,7 @@ class UploadTmpFile {
      * @param int $index
      * @param string $tmpdir
      */
-    public function __construct($i, $tmpdir, $keep = false) {
+    public function __construct($i, $tmpdir, $keep = false, $base64 = false) {
         if (is_array ( $i )) {
             $this->status = 'done';
             $this->tmpname = $i ['tmpname'];
@@ -68,6 +68,27 @@ class UploadTmpFile {
             $this->status = rqst ( "uploader_{$i}_status", '' );
             $this->title = rqst ( "uploader_{$i}_title", '' );
             $this->tmpname = rqst ( "uploader_{$i}_tmpname", '' );
+        }
+        $this->orName = $this->name;
+        if ($tmpdir === false) {
+            if ($base64 == true) {
+                $name = time () . rand ( 1, 10000 ) . '.png';
+                $content = rqst ( $this->name );
+                $img = base64_decode ( $content );
+                $this->size = strlen ( $img );
+                $this->name = $name;
+                if (file_put_contents ( TMP_PATH . 'plupload/' . $name, $img )) {
+                    $tmpdir = TMP_PATH . 'plupload';
+                    $this->tmpname = $name;
+                }
+            } else {
+                $ext = strtolower ( strrchr ( $this->name, '.' ) );
+                $name = time () . rand ( 1, 10000 ) . $ext;
+                if (move_uploaded_file ( $this->tmpname, TMP_PATH . 'plupload/' . $name )) {
+                    $tmpdir = TMP_PATH . 'plupload';
+                    $this->tmpname = $name;
+                }
+            }
         }
         if ($keep) {
             $this->tmpname = $tmpdir . $this->tmpname;
@@ -187,6 +208,9 @@ class UploadTmpFile {
         }
         return 'text/plain';
     }
+    public function errorInfo() {
+        return empty ( $this->errors ) ? '' : $this->errors [0];
+    }
     /**
      * 
      * save uploaded file
@@ -231,7 +255,7 @@ class UploadTmpFile {
                         }
                     }
                 }
-                return $ret->getData();
+                return $ret->getData ();
             } else {
                 $this->errors [] = "文件上传失败: " . $ret->errorInfo;
                 $uploader->delete ( $rst [1] );

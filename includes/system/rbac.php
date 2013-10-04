@@ -255,6 +255,7 @@ function whoami($uid = 0) {
 /**
  * 保证登录，如果用户未登录，则跳转到登录页面
  * @param string $type 用户登录类型,默认为KISSGO_ADMIN
+ * @return Passport
  */
 function assert_login($type = 'KISSGO_ADMIN') {
     $passport = Passport::getPassport ();
@@ -262,10 +263,10 @@ function assert_login($type = 'KISSGO_ADMIN') {
         $login = apply_filter ( 'get_login_page_url_for_' . $type, murl ( 'admin', 'login' ) );
         status_header ( 401 ); //需要登录验证
         if (! Request::isAjaxRequest ()) {
-            $req = Request::getInstance();
-            if(isset($req['__ifm'])){
-                 $_SESSION ['go_to_the_page_when_login'] = $req['__ifm'];
-            }else{
+            $req = Request::getInstance ();
+            if (isset ( $req ['__ifm'] )) {
+                $_SESSION ['go_to_the_page_when_login'] = $req ['__ifm'];
+            } else {
                 $_SESSION ['go_to_the_page_when_login'] = Request::getUri ();
             }
             echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$login}';</script></head><body></body></html>";

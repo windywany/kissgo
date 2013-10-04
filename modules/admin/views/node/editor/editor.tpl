@@ -136,7 +136,9 @@
     					<div class="form-field">
     						<div>
     							<span class="strong">模板</span>
-    							<label class="checkbox pull-left mg-r5"><input name="custome_tpl_chk" id="custom-set-tpl" type="checkbox">自定义</label>
+    							<label class="checkbox pull-left mg-r5">
+    							    <input name="custome_tpl_chk" id="custom-set-tpl" type="checkbox" {if $node.template}checked="checked"{/if}/>自定义
+    							</label>
     							<br class="clear">								
     						</div>
     						<div class="input-append hide" id="tpl-wrapper">
@@ -222,10 +224,7 @@
 					    <div class="thumbnail span5">
 						    <img alt="页面插图" id="page-figure" src="{'images/260x180.gif'|static}"/>
 						</div>
-						<div class="span7">
-						    <div class="form-field">
-        						<label class="checkbox"><input id="usefirstpic" type="checkbox">由内容自行处理</label>
-        					</div>
+						<div class="span7">						    
 						    <div class="form-field">
         						<label>选择插图</label>
         						<input class="w300" id="page-picture" name="figure" value="{$node.figure}" type="hidden"/>    			            

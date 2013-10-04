@@ -74,7 +74,7 @@ $(function() {
 	$('#page-picture').selectimg().change(function(){
 		var img = $('#page-picture').select2('data');
 		if(img){
-			$('#page-figure').attr('src',Kissgo.uploadurl(img.t2));
+			$('#page-figure').attr('src',img.t2);
 		}else{
 			$('#page-figure').attr('src',Kissgo.misc('images/260x180.gif'));
 		}

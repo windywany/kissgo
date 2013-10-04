@@ -28,7 +28,7 @@ function on_install_module_cn_usephp_core_gui($rst) {
     if ($rtn === true) {
         $types [] = array ('type' => 'plain', 'name' => '简单页面', 'template' => 'page.tpl', 'note' => '简单页面' );
         $types [] = array ('type' => 'index', 'name' => '首页', 'creatable' => 0, 'template' => 'index.tpl', 'note' => '网站首页, 用户不能直接创建.' );
-        $types [] = array ('type' => 'catalog', 'name' => '目录页', 'creatable' => 0, 'template' => 'catalog.tpl', 'note' => '目录列表页, 栏目页, 分类页等等.' );
+        $types [] = array ('type' => 'catalog', 'name' => '目录页', 'template' => 'catalog.tpl', 'note' => '目录列表页, 栏目页, 分类页等等.' );
         $types [] = array ('type' => 'tag', 'name' => '标签页面', 'creatable' => 0, 'template' => 'tag.tpl', 'note' => '标签页面(如果有相应的类型页模板则优先使用)' );
         $nt = new KsgNodeTypeTable ();
         foreach ( $types as $type ) {

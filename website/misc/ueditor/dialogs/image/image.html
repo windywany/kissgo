@@ -55,16 +55,54 @@
                 <div id="local" class="panel">
                     <div id="flashContainer"></div>
                     <div><div id="upload" style="display: none" ></div><div id="duiqi"></div><div id="localFloat"></div></div>
-
-                    <div class="saveDir">
-                        <var id="lang_savePath" ></var>：<select id="savePath">
-                            <option value="1">upload</option>
-                            <option value="2">upload1</option>
-                        </select>
-                    </div>
-                </div>
+				</div>
                 <div id="imgManager" class="panel">
+                	
+                	
+                	<div id="imageSearch">
+                		<div class="field">
+                			<span>类型:</span>
+                			<select id="sType">
+                				<option value="">全部</option>
+                				<option value="jpg">jpg</option>
+                				<option value="jpeg">jpeg</option>
+                				<option value="gif">gif</option>
+                				<option value="png">png</option>
+                			</select>	
+                		</div>
+                		<div class="field"><span>图片描述:</span><input id="img_alt" type="text"/></div>
+                		<div class="field">
+                			<span>上传日期:</span>
+                			<input id="sYear" type="text" size="4"/>
+                			年 
+                			<select id="sMonth">
+                				<option value="0">全部</option>
+                				<option value="01">一月</option>
+                				<option value="02">二月</option>
+                				<option value="03">三月</option>
+                				<option value="04">四月</option>
+                				<option value="05">五月</option>
+                				<option value="06">六月</option>
+                				<option value="07">七月</option>
+                				<option value="08">八月</option>
+                				<option value="09">九月</option>
+                				<option value="10">十月</option>
+                				<option value="11">十一月</option>
+                				<option value="12">十二月</option>
+                			</select>
+                		</div>
+                		<div class="btn"><button onclick="doImageSearch()" id="btn-search">搜索</button></div>
+                		<br style="clear:both;"/>
+                	</div>
+                	
+                	
                     <div id="imageList"><var id="lang_imgLoading"></var></div>
+                    <div id="pageControler">
+                    	<div id="pageInfo"></div>
+                    	<div class="btn">
+                    		<button onclick="gotePage(-1)">上一页</button><button  onclick="gotePage(1)">下一页</button>
+                    	</div>                    	
+                    </div>
                 </div>
                 <div id="imgSearch" class="panel">
                     <table style="margin-top: 5px;">
