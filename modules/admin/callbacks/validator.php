@@ -1,4 +1,9 @@
 <?php
+/*
+ * validator callbacks
+ * @author guangfeng Ning <windywany@163.com>
+ */
+// -----------------------------------------------------------
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 /**
  * 检验角色名是否已经存在

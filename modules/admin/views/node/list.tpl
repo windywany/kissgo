@@ -16,8 +16,8 @@
 
 <ul class="nav nav-tabs">
     <li>&nbsp;&nbsp;</li>
-    <li {if $status=='draft'}class="active"{/if}><a href="{$_CUR_URL}"><i class="icon-file"></i> 草稿箱({$draftTotal})</a></li>
-    <li {if $status=='approving'}class="active"{/if}><a href="{$_CUR_URL}/approving" class="torg"><i class="icon-star-empty"></i> 待审核({$approvingTotal})</a></li>
+    <li {if $status=='draft'}class="active"{/if}><a href="{$_CUR_URL}"><i class="icon-file"></i> 草稿箱</a></li>
+    <li {if $status=='approving'}class="active"{/if}><a href="{$_CUR_URL}/approving" class="torg"><i class="icon-star-empty"></i> 待审核</a></li>
     <li {if $status=='approved'}class="active"{/if}><a href="{$_CUR_URL}/approved" class="tgre"><i class="icon-thumbs-up"></i> 已审核</a></li>
     <li {if $status=='published'}class="active"{/if}><a href="{$_CUR_URL}/published" class="tgre"><i class="icon-check"></i> 已发布</a></li>
     <li {if $status=='unapproved'}class="active"{/if}><a href="{$_CUR_URL}/unapproved" class="torg"><i class="icon-thumbs-down"></i> 未批准</a></li>

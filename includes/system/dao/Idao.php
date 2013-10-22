@@ -56,7 +56,7 @@ interface Idao {
      * read one record
      * @param unknown_type $where
      */
-    public function read($where);
+    public function read($where,$fields='*');
     /**
      * 
      * query data from database

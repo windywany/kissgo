@@ -1,4 +1,5 @@
 <?php
+defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
 /**
  * hook for deleting a node of virtual path
  * 

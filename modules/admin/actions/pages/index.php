@@ -17,21 +17,21 @@ function do_admin_pages_get($req, $res, $status = 'draft') {
     $nodeTypeTable = new KsgNodeTypeTable ();
     $userTable = new KsgUserTable ();
     $vpathTable = new KsgVpathTable ();
-    
-    $draftTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'draft' ), 'nid' );
-    $approvingTotal = $nodeTable->count ( array ('deleted' => 0, 'status' => 'approving' ), 'nid' );
-    
     //build condition array
     $where = where ( array ('ND.node_type' => array (array ('name' => 'node_type' ) ), 'ND.title' => array ('like' => array ('name' => 'title' ) ), 'FLG.tag_id' => array (array ('name' => 'flag' ) ) ), $data );
-    
     $vpid = irqst ( 'vpid', 1 ); //current directory
-    
-
     if (isset ( $req ['pwd'] ) || $status == 'trash') {
         $data ['pwd'] = 1;
     } else {
         $data ['pwd'] = 0;
-        $where ['ND.vpid'] = $vpid;
+        $vpath = '/%';
+        if ($vpid > 1) {
+            $vpath = $vpathTable->read ( array ('id' => $vpid ) );
+            if ($vpath) {
+                $vpath = $vpath ['paths'] . '%';
+            }
+        }
+        $where ['VP.paths LIKE'] = $vpath;
     }
     
     $where ['ND.deleted'] = 0;
@@ -57,7 +57,9 @@ function do_admin_pages_get($req, $res, $status = 'draft') {
     $items->ljoin ( $nodeTypeTable, 'ND.node_type = NT.type', 'NT' );
     $items->ljoin ( $userTable, 'ND.create_uid = UC.uid', 'UC' );
     $items->ljoin ( $userTable, 'ND.update_uid = UU.uid', 'UU' );
-    
+    if ($data ['pwd'] == '0') {
+        $items->ljoin ( $vpathTable, 'ND.vpid = VP.id', 'VP' );
+    }
     if (isset ( $data ['flag'] )) {
         $items->ijoin ( new KsgNodeTagsTable (), 'FLG.node_id = ND.nid', 'FLG' );
     }
@@ -179,8 +181,8 @@ class NodeHooks {
         if ($status == 'published') {
             $options .= '<li><a title="移至草稿箱" class="draft" href="' . $this->url . '?s=draft"><i class="icon-share"></i>移至草稿箱</a></li>';
             $options .= '<li><a title="移至回收站" class="trash" href="' . $this->url . '?del=1"><i class="icon-trash"></i>移至回收站</a></li>';
-        }        
-        return '';// $options;
+        }
+        return ''; // $options;
     }
     // 显示页面属性
     public function show_node_flags($flags, $item) {

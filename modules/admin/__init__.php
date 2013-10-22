@@ -3,7 +3,6 @@
  * Id: $ID$
  */
 defined ( 'KISSGO' ) or exit ( 'No direct script access allowed' );
-imports ( 'admin/validator_callbacks.php' );
 /**
  *
  * @param Smarty $smarty        	
