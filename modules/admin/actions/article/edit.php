@@ -14,7 +14,7 @@ function do_admin_article_edit_get($req, $res, $id = '') {
         Response::back ();
     }
     $data ['article'] = $article;
-    $data ['crumb_title'] = 'Edit Article';
+    $data ['crumb_title'] = __('Edit Article');
     $data ['formIcon'] = 'icon-edit';
     $data ['articleURL'] = murl ( 'admin', 'article' );
     return view ( 'admin/views/article/form.tpl', $data );

@@ -766,18 +766,18 @@ function array_merge2($base, $arr) {
  * @param array $opts
  * @return string 
  */
-function is_in_current_menu($opts){
+function is_in_current_menu($opts) {
     global $_CURRENT_NODE;
-    if(empty($opts) || empty($_CURRENT_NODE)){
+    if (empty ( $opts ) || empty ( $_CURRENT_NODE )) {
         return '';
     }
-    $item = $opts[0];
-    if(empty($item) || !isset($item['id'])){
+    $item = $opts [0];
+    if (empty ( $item ) || ! isset ( $item ['id'] )) {
         return '';
-    }    
-    $id = $item['id'];
-    if(isset($_CURRENT_NODE['active_menus'][$id])){
-        return isset($opts[1])?$opts[1]:'active';
+    }
+    $id = $item ['id'];
+    if (isset ( $_CURRENT_NODE ['active_menus'] [$id] )) {
+        return isset ( $opts [1] ) ? $opts [1] : 'active';
     }
     return '';
 }
@@ -817,6 +817,9 @@ function safe_url($node, $type = 'node') {
         return $url;
     } else {
         $url = ltrim ( $url, '/' );
+        if (! defined ( "CLEAN_URL" ) || ! CLEAN_URL) {
+            $url = 'index.php/' . $url;
+        }
         if (isset ( $node ['bind'] ) && ! empty ( $node ['bind'] )) { //绑定了二级域名
             if (! empty ( $node ['domain_home'] ) || ! empty ( $node ['home'] )) { //是二级域名的首页啦，要清空url
                 $url = '';

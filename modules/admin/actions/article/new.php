@@ -6,7 +6,7 @@ function do_admin_article_new_get($req, $res) {
     
     
     $data ['article'] = array ('');
-    $data ['crumb_title'] = 'New Article';
+    $data ['crumb_title'] = __('New Article');
     $data ['formIcon'] = 'icon-plus-sign';
     $data ['articleURL'] = murl ( 'admin', 'article' );
     return view ( 'admin/views/article/form.tpl', $data );

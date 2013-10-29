@@ -125,6 +125,13 @@ function __($string) {
     }
     $args = func_get_args ();
     count ( $args ) > 0 and array_shift ( $args );
+    /*$content = file_get_contents("c:\\l.txt");
+    $content = explode("-+---+-", $content);
+    if(!in_array($string, $content)){
+        $content[] = $string;        
+        file_put_contents("c:\\l.txt", implode("-+---+-", $content));
+    }*/
+    
     if (empty ( $args )) {
         return $string;
     } else if (is_array ( $args [0] )) {
