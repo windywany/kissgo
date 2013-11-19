@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>seajs+backbone实现单页面模块自动加载</title>
+</head>
+<body>
+    <div id="container">
+    </div>
+    <script type="text/javascript" src="js/base/sea.js"></script>
+    <script type="text/javascript">
+    seajs.on("request",function(data){
+    	console.log(data);
+    });
+    seajs.on("fetch",function(data){
+    	console.log(data);
+    });
+    seajs.config({
+        base: '/autoload/js/',
+        alias: {         
+            'underscore': 'base/underscore',
+            '$': 'base/jquery-2.0.3',
+            'backbone': 'base/backbone',
+            'app': 'main/app'
+        },
+        map:[
+        	['.js','.js?20131025001']
+      ]
+    });
+    
+    seajs.use('app', function(app) {
+        app.run();
+    });
+    </script>
+</body>
+</html>

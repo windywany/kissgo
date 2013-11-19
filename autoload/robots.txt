@@ -1,0 +1,8 @@
+User-agent: * 
+Disallow: /appdata
+Disallow: /includes
+Disallow: /modules
+Disallow: /admin
+
+Disallow: /cron.php
+Disallow: /install.php
