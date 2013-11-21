@@ -9,10 +9,12 @@ abstract class Controller {
     protected $viewPath;
     protected $request;
     protected $response;
-    public function __construct($viewPath, $res, $req) {
+    protected $method;
+    public function __construct($viewPath, $res, $req, $method) {
         $this->viewPath = $viewPath;
         $this->request = $res;
         $this->response = $req;
+        $this->method = $method;
     }
     public function preRun() {}
     public function postRun($view) {

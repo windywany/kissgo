@@ -32,7 +32,7 @@ function the_ctr_url($module, $action = '', $args = array()) {
         $args = '';
     }
     if ($action) {
-        $action = '/' . $action;
+        $action = '.' . $action;
     }
     return MODULE_URL . '?do=' . $module . $action . $args;
 }
@@ -127,8 +127,8 @@ function merge_args($args, $default) {
  */
 function template($tpl, $data = array(), $headers = array('Content-Type'=>'text/html')) {
     $theme = get_theme ();
-    $_tpls [] = THEME_DIR . '/' . $tpl;
     $_tpls [] = THEME_DIR . '/' . $theme . '/' . $tpl;
+    $_tpls [] = THEME_DIR . '/' . $tpl;
     $found = false;
     foreach ( $_tpls as $_tpl ) {
         if (is_file ( THEME_PATH . $_tpl )) {
@@ -238,8 +238,11 @@ function smarty_modifiercompiler_here($params, $compiler) {
  * @param Smarty $compiler
  * @return string with compiled code
  */
-function smarty_modifiercompiler_static($params, $compiler) {
+function smarty_modifiercompiler_assets($params, $compiler) {
     return "ASSETS_URL." . $params [0];
+}
+function smarty_modifiercompiler_base($params, $compiler) {
+    return "BASE_URL." . $params [0];
 }
 function smarty_modifiercompiler_theme($params, $compiler) {
     $params = smarty_argstr ( $params );

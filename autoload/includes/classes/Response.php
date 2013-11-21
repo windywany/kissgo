@@ -8,6 +8,7 @@
  * $Id$
  */
 class Response {
+    private $before_out = false;
     private $content = '';
     private $view = null;
     private static $INSTANCE = null;
@@ -16,7 +17,17 @@ class Response {
      * 初始化
      */
     private function __construct() {
-        // nothing to do        
+        if (! @ini_get ( 'zlib.output_compression' ) && @ob_get_status ()) {
+            $this->before_out = @ob_get_contents ();
+            @ob_end_clean ();
+        }
+        @ob_start ( array ($this, 'ob_out_handler' ) );
+        if (defined ( 'GZIP_ENABLED' ) && GZIP_ENABLED && extension_loaded ( "zlib" )) {
+            $gzip = @ini_get ( 'zlib.output_compression' );
+            if (! $gzip) {
+                @ini_set ( 'zlib.output_compression', 1 );
+            }
+        }
     }
     
     /**
@@ -107,43 +118,6 @@ class Response {
         }
         exit ();
     }
-    
-    /**
-     * 内部转发,当你使用内部转发时，请一定要保证不会出现循环重写向错误。
-     * @param string $url forward to the $url
-     * @return null|View|string|array
-     */
-    public static function forward($url) {
-        static $last_forward_url = false;
-        if ($last_forward_url == $url) {
-            log_error ( '循环重定向出错:' . $url );
-            self::respond ( 500 );
-        } else {
-            $last_forward_url = $url;
-        }
-        $request = Request::getInstance ();
-        $url = preg_replace ( '#^' . BASE_URL . '#', '', $url );
-        $parsed_ary = parse_url ( preg_replace ( '#.*/?index\.php/#', '', $url ) );
-        if (isset ( $parsed_ary ['path'] )) {
-            $request ['_url'] = $parsed_ary ['path'];
-        } else {
-            $request ['_url'] = '/';
-        }
-        if (isset ( $parsed_ary ['query'] )) {
-            $args = array ();
-            parse_str ( $parsed_ary ['query'], $args );
-            foreach ( $args as $key => $value ) {
-                $request [$key] = $value;
-            }
-        }
-        $router = Router::getInstance ();
-        $action_func = $router->getAction ( $request, true );
-        if (is_callable ( $action_func )) {
-            return call_user_func_array ( $action_func, array ($request, Response::getInstance () ) );
-        }
-        return null;
-    }
-    
     /**
      *
      * @param int $status respond status code
@@ -156,7 +130,6 @@ class Response {
         }
         exit ();
     }
-    
     /**
      * 设置cookie
      *
@@ -216,7 +189,7 @@ class Response {
      */
     public function ob_out_handler($content) {
         $this->content = apply_filter ( 'filter_output_content', $content );
-        return $this->content;
+        return $this->before_out ? $this->before_out . $this->content : $this->content;
     }
     
     /**

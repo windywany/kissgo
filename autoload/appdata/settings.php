@@ -19,11 +19,11 @@ $settings ['date_format'] = 'Y-m-d';
 
 $settings ['site_name'] = '我的网站';
 
-$settings ['database'] = array ('default' => array ('driver' => 'MySQL', 'encoding' => 'UTF8', 'host' => 'localhost', 'port' => '3306', 'prefix' => '', 'user' => 'root', 'password' => '888888', 'dbname' => 'kissgodb' ) );
+$settings ['database'] = array ('default' => array ('driver' => 'MySQL', 'encoding' => 'UTF8', 'host' => 'localhost', 'port' => '3306', 'prefix' => '', 'user' => 'root', 'password' => '888888', 'dbname' => 'kissgodb' ),'postgres'=>array ('driver' => 'PostgreSQL', 'encoding' => 'UTF8', 'host' => '10.243.118.141', 'prefix' => '', 'user' => 'ngf', 'password' => '888888', 'dbname' => 'test' ) );
 
 $settings ['THEME'] = 'default';
 
-$settings ['BASE_URL'] = 'http://ndev1.covidien.com';
+# $settings ['BASE_URL'] = 'http://ndev1.covidien.com/autol';
 
 $settings ['link_types'] = 'a';
 

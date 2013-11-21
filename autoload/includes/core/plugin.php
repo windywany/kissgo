@@ -66,21 +66,20 @@ function bind($hook, $hook_func, $priority = 10, $accepted_args = 1) {
     global $__ksg_rtk_hooks, $__ksg_sorted_hooks;
     
     if (empty ( $hook )) {
-        trigger_error ( 'the hook name must not be empty!', E_USER_ERROR );
+        log_error ( 'the hook name must not be empty!' );
     }
     $file = false;
-    if (is_array ( $hook_func ) && !is_callable($hook_func)) {        
-        list ( $hook_func, $file ) = $hook_func;        
-        if ($file && ! preg_match ( '#.*\.php$#i', $file )) {
-            if (preg_match ( '#^[a-z][a-z0-9_]*$#i', $hook_func )) {
-                $file = $file . '/callbacks/' . $hook_func . '.php';
-            } else {
-                $file = $file . '/callbacks/hooks.php';
-            }
+    if (is_string ( $hook_func ) && strpos ( $hook_func, '@' ) > 0) {
+        $funcs = explode ( '@', $hook_func );
+        $trace = debug_backtrace ();
+        list ( $hook_func, $file ) = $funcs;
+        if (! $file) {
+            $file = $hook_func;
         }
+        $file = dirname ( $trace [0] ['file'] ) . DS . $file . '.php';
     }
     if (empty ( $hook_func )) {
-        trigger_error ( 'the hook function must not be empty!', E_USER_ERROR );
+        log_error ( 'the hook function must not be empty!' );
     }
     
     $idx = __rt_hook_unique_id ( $hook, $hook_func, $priority );
@@ -198,7 +197,7 @@ function fire($hook, $arg = "") {
             if (! is_null ( $the_ ['func'] )) {
                 $f = $the_ ['file'];
                 if ($f && ! isset ( $__ksg_loaded_files [$f] )) {
-                    imports ( $the_ ['file'] );
+                    include $f;
                     $__ksg_loaded_files [$f] = 1;
                 }
                 call_user_func_array ( $the_ ['func'], array_slice ( $args, 0, ( int ) $the_ ['accepted_args'] ) );
@@ -249,7 +248,7 @@ function fire_ref_array($hook, $args) {
             if (! is_null ( $the_ ['func'] )) {
                 $f = $the_ ['file'];
                 if ($f && ! isset ( $__ksg_loaded_files [$f] )) {
-                    imports ( $the_ ['file'] );
+                    include $f;
                     $__ksg_loaded_files [$f] = 1;
                 }
                 call_user_func_array ( $the_ ['func'], array_slice ( $args, 0, ( int ) $the_ ['accepted_args'] ) );
@@ -303,7 +302,7 @@ function apply_filter($filter, $value) {
             if (! is_null ( $the_ ['func'] )) {
                 $f = $the_ ['file'];
                 if ($f && ! isset ( $__ksg_loaded_files [$f] )) {
-                    imports ( $the_ ['file'] );
+                    include $f;
                     $__ksg_loaded_files [$f] = 1;
                 }
                 $args [1] = $value;

@@ -33,6 +33,7 @@ define ( 'KISSGO', INCLUDES . 'core' . DS );
 //////////////////////////////////////////////////////////////////////////
 // the default application name, this is used by session id
 defined ( 'APP_NAME' ) or define ( 'APP_NAME', basename ( WEB_ROOT ) );
+defined ( 'ADMINCP' ) or define ( 'ADMINCP', 'admincp.php' );
 // module directory
 defined ( 'MODULE_DIR' ) or define ( 'MODULE_DIR', 'modules' );
 define ( 'MODULES_PATH', APP_PATH . MODULE_DIR . DS ); // the default modules path
@@ -242,6 +243,7 @@ define ( 'ASSETS_URL', BASE_URL . MISC_DIR . '/' ); // The url for assets
 define ( 'MODULE_URL', BASE_URL . MODULE_DIR . '/' );
 define ( 'UPLOAD_URL', BASE_URL . UPLOAD_DIR . '/' );
 define ( 'THEME_URL', BASE_URL . THEME_DIR . '/' );
+define ( 'ADMINCP_URL', BASE_URL . ADMINCP );
 @date_default_timezone_set ( TIMEZONE );
 if (isset ( $_GET ['__url'] )) {
     define ( 'REQUEST_URL', $_GET ['__url'] );
@@ -266,6 +268,7 @@ include KISSGO . 'template.php';
 include KISSGO . 'session.php';
 include KISSGO . 'views.php';
 include KISSGO . 'phpcrud/phpcrud.php';
+include KISSGO . 'rbac.php';
 // ////////////////////////////////////////////////////////////
 /**
  * 自动类加载器

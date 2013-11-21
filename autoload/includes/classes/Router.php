@@ -39,7 +39,7 @@ class Router {
         $controllerClz = ucfirst ( $controller ) . 'Controller';
         if (class_exists ( $controllerClz ) && is_subclass_of2 ( $controllerClz, 'Controller' )) {
             try {
-                $clz = new $controllerClz ( $controller . '/views/', $__rqst, Response::getInstance () );
+                $clz = new $controllerClz ( $controller . '/views/', $__rqst, Response::getInstance (), $action );
                 $ref = new ReflectionObject ( $clz );
                 $method = $ref->getMethod ( $action );
                 if ($method) {

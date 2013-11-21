@@ -103,7 +103,7 @@ abstract class QueryBuilder {
             $this->dialect = DatabaseDialect::getDialect ( $this->dbconf );
         }
         if (! $this->dialect) {
-            die ( DatabaseDialect::$lastErrorMassge );
+            die ( 'Cannot connect to the database!' );
         }
     }
     public function getBindValues() {
@@ -115,6 +115,15 @@ abstract class QueryBuilder {
     }
     public function setPDOOptions($options) {
         $this->options = $options;
+    }
+    public function lastError() {
+        return $this->error;
+    }
+    public function lastSQL() {
+        return $this->errorSQL;
+    }
+    public function lastValues() {
+        return $this->errorValues;
     }
     protected function sanitize($var) {
         $this->checkDialect ();

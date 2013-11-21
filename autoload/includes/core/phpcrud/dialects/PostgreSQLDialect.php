@@ -6,6 +6,14 @@
  *
  */
 class PostgreSQLDialect extends DatabaseDialect {
+    public function __construct($options) {
+        parent::__construct ( $options );
+        $charset = isset ( $options ['encoding'] ) && ! empty ( $options ['encoding'] ) ? $options ['encoding'] : 'UTF8';
+        $rst = $this->query ( "SET NAMES '{$charset}'" );
+        if (! $rst) {
+            log_debug ( "Cannot perform the SQL: SET NAMES '{$charset}'" );
+        }
+    }
     /**
      * (non-PHPdoc)
      * @see DatabaseDialect::getSelectSQL()
@@ -111,7 +119,9 @@ class PostgreSQLDialect extends DatabaseDialect {
      * @see DatabaseDialect::prepareConstructOption()
      */
     protected function prepareConstructOption($options) {
-        return array ('pgsql:dbname=test;host=10.243.118.141;port=5432', 'ngf', '888888', array () );
+        $opts = array_merge ( array ('host' => 'localhost', 'port' => 5432, 'user' => 'root', 'password' => 'root', 'driver_options' => array () ), $options );
+        $dsn = "pgsql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']}";
+        return array ($dsn, $opts ['user'], $opts ['password'], $opts ['driver_options'] );
     }
     
     public function sanitize($string) {

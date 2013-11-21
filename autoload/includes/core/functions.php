@@ -949,63 +949,6 @@ function merge_add($ary1, $ary2, $sep = ' ') {
     return $ary1;
 }
 /**
- * 显示消息提示页面
- *
- * @param string $type
- * 消息类型 
- * @param string $message
- * 消息内容
- * @param string $redirect
- * 跳转到URL
- * @param int $timeout
- * 跳转时间,当$redirect为空时，些值无效
- */
-function show_message($type, $message, $redirect = '') {
-    static $titles = array ('error' => '出错啦!', 'warning' => '警告!', 'info' => '提示!' );
-    $msg ['type'] = $type;
-    $msg ['message'] = $message;
-    $msg ['title'] = $titles [$type];
-    if (! Request::isAjaxRequest ()) { //html 
-        if (Request::isGet ()) {
-            $redirect = $redirect ? $redirect : Request::getUri ();
-        } else {
-            $redirect = $redirect ? $redirect : $_SERVER ['HTTP_REFERER'];
-        }
-        $msg ['redirect'] = $redirect;
-        $view = view ( 'admin/layout/error.tpl', $msg );
-    } else { //ajax        
-        @header ( 'X-AJAX-MESSAGE: ' . $type );
-        status_header ( 500 );
-        $view = new JsonView ( $msg );
-    }
-    echo $view->render ();
-    Response::getInstance ()->close ();
-}
-/**
- * 
- * @param string $message
- * @param string $redirect
- */
-function show_error_message($message, $redirect = '') {
-    show_message ( 'error', $message, $redirect );
-}
-/**
- *
- * @param string $message
- * @param string $redirect
- */
-function show_warning_message($message, $redirect = '') {
-    show_message ( 'warning', $message, $redirect );
-}
-/**
- *
- * @param string $message
- * @param string $redirect
- */
-function show_info_message($message, $redirect = '') {
-    show_message ( 'info', $message, $redirect );
-}
-/**
  * 将配置保存到文件
  * 
  * @param string $file
@@ -1069,16 +1012,17 @@ function log_message($message, $trace_info, $level, $origin = null) {
     static $fb = false;
     static $log_name = array (DEBUG_INFO => 'INFO', DEBUG_WARN => 'WARN', DEBUG_DEBUG => 'DEBUG', DEBUG_ERROR => 'ERROR' );
     if ($level < DEBUG_OFF) {
+        $ln = $log_name [$level];
         if ($level >= DEBUG_DEBUG) {
-            $msg = date ( "Y-m-d H:i:s" ) . "{$message}\n" . var_export ( $trace_info, true ) . "\n";
-            @error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
+            $msg = date ( "Y-m-d H:i:s" ) . "[$ln] {$message}\n" . var_export ( array_slice ( $trace_info, 0, 2 ), true ) . "\n";
+            //@error_log ( $msg, 3, APPDATA_PATH . '/logs/kissgo.log' );
         }
         if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
             if (! $fb) {
                 $fb = true;
                 FB::setEnabled ( true );
             }
-            $msg = $origin ? $origin : "{$trace_info[0]['file']} - [{$trace_info[0]['line']}] - {$message}";
+            $msg = $origin ? $origin : "[$ln] {$message} in {$trace_info[0]['file']} at line {$trace_info[0]['line']}";
             switch ($level) {
                 case DEBUG_ERROR :
                     FB::error ( $msg );
@@ -1091,7 +1035,7 @@ function log_message($message, $trace_info, $level, $origin = null) {
                     break;
             }
         } else if (DEBUG == DEBUG_DEBUG && ! Request::isAjaxRequest ()) {
-            trigger_error ( "{$message}", E_USER_WARNING );
+            trigger_error ( "[$ln] {$message} in <b>{$trace_info[0]['file']} at line {$trace_info[0]['line']}</b>", E_USER_WARNING );
         }
     }
 }
