@@ -14,6 +14,7 @@
 	<script type="text/javascript"  src="{'ext/ext-theme-neptune.js'|assets}"></script>
 	<script type="text/javascript">
     seajs.config({
+    	vars:{ locale: 'zh-CN' },
         base: '{$siteurl}{$moduledir}/',       
         map:[
         	['.js','.js?20131121001']
