@@ -6,22 +6,32 @@
 <meta name="description" content="the content  manager" />
 <meta name="author" content="KissGO! group" />
 <title>Log in Administrator Controll Panel</title>
-<link href="{'ext/resources/ext-theme-neptune/ext-theme-neptune-all.css'|assets}" rel="stylesheet" />
+<link href="{'metroui/css/metro-bootstrap.css'|assets}"	rel="stylesheet" />
 </head>
-<body>	
-	<script type="text/javascript"  src="{'js/sea.js'|assets}"></script>
-	<script type="text/javascript"  src="{'ext/ext-all.js'|assets}"></script>
-	<script type="text/javascript"  src="{'ext/ext-theme-neptune.js'|assets}"></script>
+<body class="metro">
+	<div id="loginWin" class="window hide">
+        <div class="caption">
+            <span class="icon icon-windows"></span>
+            <div class="title">登录</div>         
+        </div>
+        <div class="content">
+            Window content
+        </div>
+	</div>
+	<script type="text/javascript" src="{'js/sea.js'|assets}"></script>
+	<script type="text/javascript" src="{'jquery/jquery-2.0.3.min.js'|assets}"></script>
+	<script type="text/javascript" src="{'metroui/metro.min.js'|assets}"></script>	
 	<script type="text/javascript">
     seajs.config({
-    	vars:{ locale: 'zh-CN' },
-        base: '{$siteurl}{$moduledir}/',       
+        base: '{$siteurl}{$moduledir}/',         
         map:[
         	['.js','.js?20131121001']
       ]
     });    
-    seajs.use('admin/js/login', function(login) {
-       login.main();
+    seajs.use(['admin/js/login'], function(login) { 
+        $(function(){
+       	 	login.main();        
+        });           
     });
     </script>
 </body>

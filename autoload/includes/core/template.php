@@ -241,6 +241,9 @@ function smarty_modifiercompiler_here($params, $compiler) {
 function smarty_modifiercompiler_assets($params, $compiler) {
     return "ASSETS_URL." . $params [0];
 }
+function smarty_modifiercompiler_module($params, $compiler) {    
+    return "MODULE_URL." . $params [0];
+}
 function smarty_modifiercompiler_base($params, $compiler) {
     return "BASE_URL." . $params [0];
 }
