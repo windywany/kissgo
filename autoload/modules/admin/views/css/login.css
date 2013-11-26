@@ -1,0 +1,9 @@
+.content form {
+	margin: 15px 10px;
+}
+.content .grid .row {
+	margin-top: 5px;
+}
+label.span2, #btn-wrap,label.fg-red{
+	text-align:right;
+}
