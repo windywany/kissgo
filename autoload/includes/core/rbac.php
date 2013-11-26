@@ -102,7 +102,11 @@ class Passport implements ArrayAccess {
         }
         return self::$INSTANCE [$uid];
     }
-    
+    public function save() {
+        $info = new LoginInfo ( $this->properties ['uid'], $this->properties ['account'], $this->properties ['name'], $this->properties ['login_time'], $this->properties ['login_ip'] );
+        $info->login ( $this->properties ['login'] );
+        LoginInfo::save ( $info );
+    }
     /**
      * @param LoginInfo $info
      */

@@ -3,11 +3,30 @@ define('admin/js/login', [ 'jquery/form', 'jquery/blockit' ], function(require,
 	require('jquery/form');
 	require('jquery/blockit');
 	$('#login-form').submit(function(e) {
+		$(this).ajaxSubmit({
+			'dataType' : 'json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader('X-AJAX-TYPE','json');
+			},
+			beforeSerialize : function() {
+				$('#loginWin').blockit();
+			},
+			success : doLogin,
+			error : function(data) {
+				$('#errorMsg').html('Oops: 服务器未返回未知数据.');
+				$('#loginWin').unblockit();
+			}
+		});
 		return false;
 	});
 	// submit the login form
 	function doLogin(data) {
-		alert(data);
+		if (data.success) {
+			window.location.href = data.to;
+		} else {
+			$('#errorMsg').html('Oops: ' + data.msg);
+			$('#loginWin').unblockit();
+		}
 	}
 	// prepare the login window
 	exports.main = function() {
@@ -20,6 +39,5 @@ define('admin/js/login', [ 'jquery/form', 'jquery/blockit' ], function(require,
 			left : (w - width) / 2,
 			top : (h - height) / 2
 		}).removeClass('hide');
-		$('#loginWin').blockit();
 	};
 });

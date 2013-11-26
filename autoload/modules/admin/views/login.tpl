@@ -35,7 +35,7 @@
                     	</div>
            			</div>
            			<div class="row">
-           				<label class="span9 fg-red" for="name"></label>
+           				<label class="span9 fg-red" for="name" id="errorMsg"></label>
            				<div data-role="input-control" class="input-control text span2"  id="btn-wrap">
                   			<button class="success"  tabindex="3">登录</button>
                     	</div>
