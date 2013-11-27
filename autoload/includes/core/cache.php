@@ -156,8 +156,10 @@ class XCacheCacher extends InnerCache {
  */
 class InnerCacher {
     private static $CACHE;
+    private static $PRE;
     public static function init() {
         if (self::$CACHE == null) {
+            self::$PRE = md5 ( WEB_ROOT );
             if (function_exists ( 'apc_store' )) {
                 self::$CACHE = new ApcCacher ();
             } else if (function_exists ( 'xcache_get' )) {
@@ -168,12 +170,15 @@ class InnerCacher {
         }
     }
     public static function add($key, $data) {
+        $key = self::$PRE.$key;
         return self::$CACHE->add ( $key, $data );
     }
     public static function get($key) {
+        $key = self::$PRE.$key;
         return self::$CACHE->get ( $key );
     }
     public static function remove($key) {
+        $key = self::$PRE.$key;
         return self::$CACHE->remove ( $key );
     }
     public static function clear() {

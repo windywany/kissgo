@@ -4,9 +4,12 @@ class AdminController extends Controller {
     public function preRun() {
         $this->user = whoami ();
     }
-    public function index($abc, $def = 12) {
+    public function index() {
         if (Request::isAjaxRequest () && Request::isPost ()) {
             return $this->login ();
+        } else if (isset ( $this->request ['logout'] )) {
+            LoginInfo::destroy ();
+            Response::redirect ( ADMINCP_URL );
         } else {
             $data ['siteurl'] = BASE_URL;
             $data ['moduledir'] = MODULE_DIR;

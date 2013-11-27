@@ -1,0 +1,21 @@
+body{
+	padding-top: 50px;
+}
+#top-menu,#workspace{
+	margin: 0 15px;
+}
+#top-search-wrap{
+	padding-left:0;
+}
+#top-search-wrap div{
+	top:-3px;	
+}
+#top-search-wrap input{
+	width:150px;
+}
+#workspace-wrapper {
+	margin-top:0;
+}
+h2 i.icon-grid-view{
+	font-size:14px !important;
+}

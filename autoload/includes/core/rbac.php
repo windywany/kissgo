@@ -83,7 +83,9 @@ class Passport implements ArrayAccess {
             return $login;
         }
     }
-    
+    public function logout() {
+
+    }
     /**
      * @param int $uid 用户ID
      * @return Passport 用户护照
@@ -195,6 +197,10 @@ class LoginInfo {
         if ($loginInfo instanceof LoginInfo) {
             $_SESSION ['_USER_LoginInfo_'] = $loginInfo;
         }
+    }
+    public static function destroy() {
+        sess_del ( '_USER_LoginInfo_' );
+        session_destroy ();
     }
 }
 
