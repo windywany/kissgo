@@ -54,9 +54,11 @@
         	['.js','.js?20131121001']
       ]
     }); 
-    seajs.assets = function(res){
-			return "{''|assets}"+res;
-    };
+    var KsgApp = {
+			assets :function(res){
+				return "{''|assets}"+res;
+	    	}
+	};
     seajs.use(['admin/js/login'], function(login) { 
         $(function(){
        	 	login.main();        

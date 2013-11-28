@@ -10,11 +10,17 @@ class AdminController extends Controller {
         } else if (isset ( $this->request ['logout'] )) {
             LoginInfo::destroy ();
             Response::redirect ( ADMINCP_URL );
+        } else if (isset ( $this->request ['clear'] )) {
+            InnerCacher::clear ();
+            Response::redirect ( ADMINCP_URL );
         } else {
             $data ['siteurl'] = BASE_URL;
             $data ['moduledir'] = MODULE_DIR;
+            $data ['moduleurl'] = MODULE_URL;
             $data ['admincp'] = ADMINCP_URL;
+            $data ['assetsurl'] = ASSETS_URL;
             if ($this->user->isLogin ()) {
+                $data ['styles'] = apply_filter ( 'get_admincp_style_files', array () );
                 return view ( 'index.tpl', $data );
             } else {
                 $formid = randstr ( 8 );

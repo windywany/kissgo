@@ -16,6 +16,9 @@ body{
 #workspace-wrapper {
 	margin-top:0;
 }
-h2 i.icon-grid-view{
-	font-size:14px !important;
+#workbench{
+	margin-top:20px;
+}
+#workbench .tile-group-title{
+	color:#000000;
 }

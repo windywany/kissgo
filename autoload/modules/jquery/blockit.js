@@ -1,6 +1,6 @@
 define('jquery/blockit', function() {
 	(function($) {
-		var loadingImg = seajs.assets('images/loading.gif');
+		var loadingImg = KsgApp.assets('images/loading.gif');
 		$.fn.blockit = function() {
 			var $this = $(this);
 			var id = $this.data('blocked');
