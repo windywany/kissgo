@@ -66,7 +66,7 @@
                                 <span class="badge bg-orange">12</span>
                             </div>
                         </div>
-                        <div class="tile bg-yellow">
+                        <div class="tile bg-yellow" onclick="KsgApp.openIframe('http://www.163.com/','评论')">
                             <div class="tile-content icon">
                                 <i class="icon-comments-4"></i>
                             </div>
