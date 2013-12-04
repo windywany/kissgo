@@ -46,19 +46,19 @@
 	</div>
 	<script type="text/javascript" src="{'js/sea.js'|assets}"></script>
 	<script type="text/javascript" src="{'jquery/jquery-2.0.3.min.js'|assets}"></script>
-	<script type="text/javascript" src="{'metroui/metro.min.js'|assets}"></script>	
+	<script type="text/javascript" src="{'metroui/metro.min.js'|assets}"></script>
+	<script type="text/javascript" src="{'js/comm.js'|assets}"></script>
 	<script type="text/javascript">
     seajs.config({
+    	vars:{
+			locale:'zh_CN',
+			assets:'{$assetsurl}'
+        },
         base: '{$siteurl}{$moduledir}/',         
         map:[
         	['.js','.js?20131121001']
       ]
-    }); 
-    var KsgApp = {
-			assets :function(res){
-				return "{''|assets}"+res;
-	    	}
-	};
+    });     
     seajs.use(['admin/js/login'], function(login) { 
         $(function(){
        	 	login.main();        

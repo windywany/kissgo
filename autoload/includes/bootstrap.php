@@ -8,8 +8,6 @@
  * $Id$
  */
 defined ( 'WEB_ROOT' ) or exit ( 'No direct script access allowed' );
-define ( 'KISSGO_VERSION', '1.0 BETA' );
-define ( 'KISSGO_R_VERSION', '20131104' );
 // -----------------------------------------------------------------------
 //////////////////////////////////////////////////////////////////////////
 // debug levels
@@ -65,7 +63,7 @@ if (version_compare ( '5.2', phpversion (), '>' )) {
     die ( sprintf ( 'Your php version is %s,but kissgo required  php 5.2+', phpversion () ) );
 }
 if (! defined ( 'RUNTIME_MEMORY_LIMIT' )) {
-    define ( 'RUNTIME_MEMORY_LIMIT', '128M' );
+    define ( 'RUNTIME_MEMORY_LIMIT', '256M' );
 }
 if (function_exists ( 'memory_get_usage' ) && (( int ) @ini_get ( 'memory_limit' ) < abs ( intval ( RUNTIME_MEMORY_LIMIT ) ))) {
     @ini_set ( 'memory_limit', RUNTIME_MEMORY_LIMIT );
@@ -78,47 +76,6 @@ if (version_compare ( phpversion (), '5.3', '<' )) {
     @set_magic_quotes_runtime ( 0 );
 }
 @ini_set ( 'magic_quotes_sybase', 0 ); // no magic quotes
-function detect_app_base_url($full = false) {
-    $script_name = $_SERVER ['SCRIPT_NAME'];
-    $script_name = trim ( str_replace ( WEB_ROOT, '', $script_name ), '/' );
-    $script_names = explode ( '/', $script_name );
-    array_pop ( $script_names );
-    $base = '/';
-    if ($full) {
-        $port = $_SERVER ['SERVER_PORT'];
-        $https = empty ( $_SERVER ['HTTPS'] ) ? false : true;
-        if (! empty ( $https ) && $https != 'off') {
-            $http = 'https://';
-        } else {
-            $http = 'http://';
-        }
-        if (($https && $port != 443) || (! $https && $port != 80)) {
-            $port = ':' . $port;
-        } else {
-            $port = '';
-        }
-        $base = $http . $_SERVER ['HTTP_HOST'] . $port . $base;
-    }
-    
-    if (! empty ( $script_names ) && ! is_file ( WEB_ROOT . $script_name )) {
-        $web_roots = explode ( '/', trim ( str_replace ( DS, '/', WEB_ROOT ), '/' ) );
-        $matchs = array ();
-        $pos = 0;
-        foreach ( $web_roots as $chunk ) {
-            if ($chunk == $script_names [$pos]) {
-                $matchs [] = $chunk;
-                $pos ++;
-            } else {
-                $matchs = array ();
-                $pos = 0;
-            }
-        }
-        if ($pos > 0) {
-            $base .= implode ( '/', $matchs ) . '/';
-        }
-    }
-    return $base;
-}
 /**
  * 应用程序设置类
  */
@@ -191,7 +148,6 @@ $_ksg_settings_file = APPDATA_PATH . 'settings.php'; // the application settings
 if (is_readable ( $_ksg_settings_file )) {
     include_once $_ksg_settings_file;
     $settings = KissGoSetting::getSetting ();
-    ///////////////////////////////////////
     if (isset ( $settings ['DEBUG'] )) {
         define ( 'DEBUG', intval ( $settings ['DEBUG'] ) );
     }
@@ -217,6 +173,30 @@ if (is_readable ( $_ksg_settings_file )) {
     }
     if (isset ( $settings ['BASE_URL'] ) && ! empty ( $settings ['BASE_URL'] )) {
         define ( 'BASE_URL', rtrim ( $settings ['BASE_URL'], '/' ) . '/' );
+    } else {
+        $script_name = $_SERVER ['SCRIPT_NAME'];
+        $script_name = trim ( str_replace ( WEB_ROOT, '', $script_name ), '/' );
+        $script_names = explode ( '/', $script_name );
+        array_pop ( $script_names );
+        $base = '/';
+        if (! empty ( $script_names ) && ! is_file ( WEB_ROOT . $script_name )) {
+            $web_roots = explode ( '/', trim ( str_replace ( DS, '/', WEB_ROOT ), '/' ) );
+            $matchs = array ();
+            $pos = 0;
+            foreach ( $web_roots as $chunk ) {
+                if ($chunk == $script_names [$pos]) {
+                    $matchs [] = $chunk;
+                    $pos ++;
+                } else {
+                    $matchs = array ();
+                    $pos = 0;
+                }
+            }
+            if ($pos > 0) {
+                $base .= implode ( '/', $matchs ) . '/';
+            }
+        }
+        define ( 'BASE_URL', $base );
     }
     if (isset ( $settings ['TIMEZONE'] ) && ! empty ( $settings ['TIMEZONE'] )) {
         define ( 'TIMEZONE', $settings ['TIMEZONE'] );
@@ -227,8 +207,6 @@ if (is_readable ( $_ksg_settings_file )) {
     if (isset ( $settings ['THEME'] ) && ! empty ( $settings ['THEME'] )) {
         define ( 'THEME', $settings ['THEME'] );
     }
-
-    ///////////////////////////////////////    
 } else if ($_kissgo_processing_installation != true) { // goto install page
 //$install_script = detect_app_base_url () . 'install.php';
 //echo "<html><head><script type='text/javascript'>var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.href = '{$install_script}';</script></head><body></body></html>";
@@ -237,8 +215,7 @@ if (is_readable ( $_ksg_settings_file )) {
 unset ( $_ksg_settings_file );
 defined ( 'DEBUG' ) or define ( 'DEBUG', DEBUG_DEBUG ); // debug level
 defined ( 'TIMEZONE' ) or define ( 'TIMEZONE', 'Asia/Shanghai' );
-defined ( 'BASE_URL' ) or define ( 'BASE_URL', detect_app_base_url () );
-defined ( 'THEME' ) or define ( 'THEME', 'defaults' );
+defined ( 'THEME' ) or define ( 'THEME', 'default' );
 define ( 'ASSETS_URL', BASE_URL . MISC_DIR . '/' ); // The url for assets
 define ( 'MODULE_URL', BASE_URL . MODULE_DIR . '/' );
 define ( 'UPLOAD_URL', BASE_URL . UPLOAD_DIR . '/' );
@@ -330,5 +307,5 @@ if ($modules) {
     }
 }
 // modules loaded
-fire ( 'kissgo_startted' );
+fire ( 'engine_initialized' );
 // end of file bootstrap.php

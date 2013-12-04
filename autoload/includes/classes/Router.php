@@ -22,13 +22,15 @@ class Router {
      */
     public function route($do) {
         global $__rqst;
-        $controllers = explode ( '.', $do );
+        $controllers = explode ( '/', $do );
+        $pms = array ();
         if (1 == count ( $controllers )) {
             $controller = $controllers [0];
             $action = 'index';
         } else if (2 <= count ( $controllers )) {
             $controller = $controllers [0];
             $action = $controllers [1];
+            $pms = array_slice ( $controller, 2 );
         } else {
             die ( 'Can not dispatch the request:' . $do );
         }
@@ -39,18 +41,24 @@ class Router {
         $controllerClz = ucfirst ( $controller ) . 'Controller';
         if (class_exists ( $controllerClz ) && is_subclass_of2 ( $controllerClz, 'Controller' )) {
             try {
-                $clz = new $controllerClz ( $controller . '/views/', $__rqst, Response::getInstance (), $action );
+                $rm = $_SERVER ['REQUEST_METHOD'];
+                $clz = new $controllerClz ( $controller . '/views/', $__rqst, Response::getInstance (), $action, $rm );
+                if (method_exists ( $clz, $action . '_' . $rm )) {
+                    $action = $action . '_' . $rm;
+                }
                 $ref = new ReflectionObject ( $clz );
                 $method = $ref->getMethod ( $action );
                 if ($method) {
                     $params = $method->getParameters ();
                     $args = array ();
                     if ($params) {
+                        $idx = 0;
                         foreach ( $params as $p ) {
                             $name = $p->getName ();
-                            $def = $p->isDefaultValueAvailable () ? $p->getDefaultValue () : null;
+                            $def = isset ( $pms [$idx] ) ? $pms [$idx] : ($p->isDefaultValueAvailable () ? $p->getDefaultValue () : null);
                             $value = rqst ( $name, $def, true );
                             $args [] = $value;
+                            $idx ++;
                         }
                     }
                     call_user_func_array ( array ($clz, 'preRun' ), array () );

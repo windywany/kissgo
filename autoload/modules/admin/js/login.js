@@ -1,12 +1,11 @@
-define('admin/js/login', [ 'jquery/form', 'jquery/blockit' ], function(require,
-		exports, module) {
+define('admin/js/login', ['jquery/form', 'jquery/blockit'], function(require, exports, module) {
 	require('jquery/form');
 	require('jquery/blockit');
 	$('#login-form').submit(function(e) {
 		$(this).ajaxSubmit({
 			'dataType' : 'json',
-			beforeSend:function(xhr){
-				xhr.setRequestHeader('X-AJAX-TYPE','json');
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader('X-AJAX-TYPE', 'json');
 			},
 			beforeSerialize : function() {
 				$('#loginWin').blockit();
@@ -28,6 +27,7 @@ define('admin/js/login', [ 'jquery/form', 'jquery/blockit' ], function(require,
 			$('#loginWin').unblockit();
 		}
 	}
+
 	// prepare the login window
 	exports.main = function() {
 		var win = $('#loginWin'), width = 400, height = 200;
@@ -40,4 +40,4 @@ define('admin/js/login', [ 'jquery/form', 'jquery/blockit' ], function(require,
 			top : (h - height) / 2
 		}).removeClass('hide');
 	};
-});
+}); 

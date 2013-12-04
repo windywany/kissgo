@@ -10,11 +10,13 @@ abstract class Controller {
     protected $request;
     protected $response;
     protected $method;
-    public function __construct($viewPath, $res, $req, $method) {
+    protected $http_method;
+    public function __construct($viewPath, $res, $req, $method, $http_method) {
         $this->viewPath = $viewPath;
         $this->request = $res;
         $this->response = $req;
         $this->method = $method;
+        $this->http_method = $http_method;
     }
     public function preRun() {}
     public function postRun($view) {

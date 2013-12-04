@@ -27,14 +27,14 @@ function register_cts_provider($name, $provider, $desc = '') {
  */
 function the_ctr_url($module, $action = '', $args = array()) {
     if ($args) {
-        $args = '&=' . http_build_query ( $args );
+        $args = '?' . http_build_query ( $args );
     } else {
         $args = '';
     }
     if ($action) {
-        $action = '.' . $action;
+        $action = '/' . $action;
     }
-    return MODULE_URL . '?do=' . $module . $action . $args;
+    return ADMINCP_URL . '/' . $module . $action . '/' . $args;
 }
 /**
  * @param $name
@@ -241,7 +241,7 @@ function smarty_modifiercompiler_here($params, $compiler) {
 function smarty_modifiercompiler_assets($params, $compiler) {
     return "ASSETS_URL." . $params [0];
 }
-function smarty_modifiercompiler_module($params, $compiler) {    
+function smarty_modifiercompiler_module($params, $compiler) {
     return "MODULE_URL." . $params [0];
 }
 function smarty_modifiercompiler_base($params, $compiler) {

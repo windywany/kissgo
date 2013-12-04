@@ -4,10 +4,15 @@ class AdminController extends Controller {
     public function preRun() {
         $this->user = whoami ();
     }
+    public function index_post() {
+        $formid = sess_get ( 'formid' );
+        $i = whoami ();
+        $i->isLogin ( true );
+        $i->save ();
+        return new JsonView ( array ('success' => true, 'to' => ADMINCP_URL ) );
+    }
     public function index() {
-        if (Request::isAjaxRequest () && Request::isPost ()) {
-            return $this->login ();
-        } else if (isset ( $this->request ['logout'] )) {
+        if (isset ( $this->request ['logout'] )) {
             LoginInfo::destroy ();
             Response::redirect ( ADMINCP_URL );
         } else if (isset ( $this->request ['clear'] )) {
@@ -29,12 +34,5 @@ class AdminController extends Controller {
                 return view ( 'login.tpl', $data );
             }
         }
-    }
-    private function login() {
-        $formid = sess_get ( 'formid' );
-        $i = whoami ();
-        $i->isLogin ( true );
-        $i->save ();
-        return new JsonView ( array ('success' => true, 'to' => ADMINCP_URL ) );
     }
 }
