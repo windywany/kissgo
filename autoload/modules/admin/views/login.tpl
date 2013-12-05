@@ -46,6 +46,7 @@
 	</div>
 	<script type="text/javascript" src="{'js/sea.js'|assets}"></script>
 	<script type="text/javascript" src="{'jquery/jquery-2.0.3.min.js'|assets}"></script>
+	<script type="text/javascript" src="{'jquery/ui/jquery-ui.min.js'|assets}"></script>
 	<script type="text/javascript" src="{'metroui/metro.min.js'|assets}"></script>
 	<script type="text/javascript" src="{'js/comm.js'|assets}"></script>
 	<script type="text/javascript">
@@ -56,7 +57,7 @@
         },
         base: '{$siteurl}{$moduledir}/',         
         map:[
-        	['.js','.js?20131121001']
+        	['.js','.js?1.0.0']
       ]
     });     
     seajs.use(['admin/js/login'], function(login) { 

@@ -1,6 +1,9 @@
 body {
 	padding-top:50px;
 }
+ul, ol {
+list-style: none;
+}
 #top-menu, #workspace {
 	margin:0 15px;
 }
@@ -13,14 +16,20 @@ body {
 #top-search-wrap input {
 	width:150px;
 }
-#workspace-wrapper {
-	margin-top:0;
-}
 #workbench {
 	margin-top:20px;
 }
-#workbench .tile-group-title {
-	color:#000000;
+.gs-w .tile{
+	height: 100%;
+    margin: 0;
+    width: 100%;
+    float: none;
+}
+#title-bar a i{
+	font-size:18px;
+}
+#title-bar a{
+	margin-left: 10px;
 }
 a:hover, a:focus {
 	color:#D54E21

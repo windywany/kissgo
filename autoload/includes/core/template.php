@@ -244,6 +244,14 @@ function smarty_modifiercompiler_assets($params, $compiler) {
 function smarty_modifiercompiler_module($params, $compiler) {
     return "MODULE_URL." . $params [0];
 }
+function smarty_modifiercompiler_admincp($params, $compiler) {
+    $module = $params [0];
+    $action = "''";
+    if (isset ( $params [1] )) {
+        $action = $params [1];
+    }
+    return 'the_ctr_url(' . $params [0] . ",$action)";
+}
 function smarty_modifiercompiler_base($params, $compiler) {
     return "BASE_URL." . $params [0];
 }
