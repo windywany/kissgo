@@ -4,17 +4,20 @@ body {
 ul, ol {
 list-style: none;
 }
-#top-menu, #workspace {
+#top-menu{
 	margin:0 15px;
 }
-#top-search-wrap {
-	padding-left:0;
+#workspace{
+	margin: 0 15px 5px 15px;
 }
 #top-search-wrap div {
 	top:-3px;
 }
 #top-search-wrap input {
 	width:150px;
+}
+#top-search-wrap input:focus{
+	width:300px;
 }
 #workbench {
 	margin-top:20px;

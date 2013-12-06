@@ -81,7 +81,7 @@
 	if (top_win.KsgApp) {
 		window.KsgApp = top_win.KsgApp;
 	} else {
-		window.KsgApp = {};
+		window.KsgApp = {};		
 		KsgApp.assets = function(res) {
 			return seajs.data.vars.assets + res;
 		};

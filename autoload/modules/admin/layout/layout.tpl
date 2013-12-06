@@ -7,7 +7,7 @@
         <meta name="author" content="KissGO! group" />
         <title>{block name="title"}Administrator Controll Panel{/block} - Kissgo!</title>
         <link href="{'metroui/css/metro-bootstrap.css'|assets}"	rel="stylesheet" />
-        <link href="{'jquery/ui/css/ui-darkness/jquery-ui.css'|assets}"	rel="stylesheet" />
+        <link href="{'jquery/ui/css/jquery-ui.min.css'|assets}"	rel="stylesheet" />
         <link href="{'css/comm.css'|assets}"	rel="stylesheet" />
         {block name="layout_style_block"}{/block}
         <script type="text/javascript" src="{'js/sea.js'|assets}"></script>
@@ -32,27 +32,8 @@
     <body class="metro">        
 	    <div class="navigation-bar dark fixed-top">
             <div class="navigation-bar-content" id="top-menu">
-                <div class="element">
-                		<a class="dropdown-toggle" href="#"><i class="icon-home"></i>我的网站</a>
-                		<ul class="dropdown-menu" data-role="dropdown">
-                				<li><a href="{$siteurl}" target="_blank">访问网站</a></li>                                    
-                		</ul>
-                </div>
+                <a class="element" href="{$siteurl}" target="_blank"><i class="icon-home"></i>我的网站</a>
                 <span class="element-divider"></span>
-                <div class="element">
-                	<a class="dropdown-toggle" href="#"><span class="icon-glasses-2"></span>页面</a>
-                	<ul data-role="dropdown" class="dropdown-menu" >
-                        <li><a href="#">页面</a></li>
-                        <li><a href="#">文章</a></li>
-                        <li><a href="#">图片</a></li>                                
-                    </ul>
-                </div>
-                <div class="element input-element" id="top-search-wrap">
-                 	<div class="input-control text" >
-							<input type="text" placeholder="Search..." />
-							<button class="btn-search"></button>
-                  	</div>
-           		 </div>               		 
                 <a href="{$admincp}?logout" class="element place-right"><i class="icon-exit fg-red"  id="btn-exit"></i></a>                
                 <span class="element-divider place-right"></span>
                 <div class="element place-right">
@@ -60,18 +41,27 @@
                                 <i class="icon-cog"></i>
                             </a>
                             <ul data-role="dropdown" class="dropdown-menu place-right" >
-                            	<li><a href="{$admincp}?clear" ><span class="icon-remove fg-red" ></span>清空运行时缓存</a></li>
+                            	<li class="divider"></li>
+                            	<li><a href="{$admincp}/admin/settings/" ><span class="icon-tools" ></span>系统设置</a></li>                            	
+                            	<li><a href="{$admincp}?clear" ><span class="icon-remove fg-red" ></span>清空运行时缓存</a></li>                            	
                             </ul>
 				</div>
                 <span class="element-divider place-right"></span>
-                <a class="element place-right"  href="{'profile'|admincp}"><i class="icon-user"></i> Welcome: Administrator</a> 
+                <a class="element place-right"  href="{$admincp}/admin/profile/"><i class="icon-user"></i>Administrator</a> 
+                <div class="element input-element place-right" id="top-search-wrap">
+                	<form action="{$admincp}/nodes/" method="get">
+                     	<div class="input-control text" >
+    							<input type="text" placeholder="Search..."  name="key"/>
+    							<button class="btn-search" id="g-btn-search"></button>
+                      	</div>
+                  	</form>
+           		 </div>
             </div>                		
         </div>
         <div id="workspace" > 
         	<h2 id="title-bar">
-        		<a href="{$admincp}" id="goto-start-screen"><span class="icon-arrow-left-3 fg-darker "></span></a> <span>{block name="subtitle"}开始{/block}</span>        		
-        		<a href="#" id="cancel-edit-start" class="place-right hide"><i class="icon-cancel fg-red"></i></a>
-        		<a href="#" id="edit-start-screen" class="place-right"><i class="icon-grid fg-blue"></i></a>
+        		<a href="{$admincp}" id="goto-start-screen"><span class="icon-arrow-left-3 fg-darker "></span></a> <span>{block name="subtitle"}开始{/block}</span>
+        		{block name="toolbar"} {/block}
         	</h2>
             <div id="workbench">
             	{block name="workbench"}{/block}

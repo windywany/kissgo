@@ -30,7 +30,7 @@ class Router {
         } else if (2 <= count ( $controllers )) {
             $controller = $controllers [0];
             $action = $controllers [1];
-            $pms = array_slice ( $controller, 2 );
+            $pms = array_slice ( $controllers, 2 );
         } else {
             die ( 'Can not dispatch the request:' . $do );
         }

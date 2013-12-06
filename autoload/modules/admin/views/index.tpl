@@ -3,6 +3,10 @@
 	<link href="{'jquery/css/gridster.css'|module}"	rel="stylesheet" />
 	{foreach $styles as $style}<link href="{$style}"	rel="stylesheet" />{/foreach}
 {/block}
+{block name="toolbar"}       		
+	<a href="#" id="cancel-edit-start" class="place-right hide"><i class="icon-cancel fg-red"></i></a>
+	<a href="#" id="edit-start-screen" class="place-right"><i class="icon-grid fg-blue"></i></a>
+{/block}
 {block name="workbench"}
 <div id="start-screen" class="gridster">
         <ul>

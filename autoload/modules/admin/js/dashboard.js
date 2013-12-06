@@ -34,6 +34,7 @@ define('admin/js/dashboard', function(require, exports) {
 			$('#edit-start-screen').removeClass('editing').find('i').removeClass('fg-green').removeClass('icon-floppy').addClass('icon-grid').addClass('fg-blue');
 			ksgGridster.disable();
 			ksgGridster.disable_resize();
+			return false;
 		});
 		$('#edit-start-screen').click(function() {
 			if ($(this).hasClass('editing')) {
@@ -51,13 +52,7 @@ define('admin/js/dashboard', function(require, exports) {
 				$('#cancel-edit-start').removeClass('hide');
 			}
 			$(this).toggleClass('editing');
-		});
-		$('#top-search-wrap input').on('focus', function() {
-			$(this).width(350);
-		}).on('blur', function() {
-			if (!$(this).val().trim()) {
-				$(this).width(150);
-			}
+			return false;
 		});
 	};
 });
