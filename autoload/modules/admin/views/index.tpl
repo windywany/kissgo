@@ -12,7 +12,7 @@
         <ul>
                 <li data-row="1" data-col="1" data-sizex="1" data-sizey="1" class="gs-w"  id="pages">
                 	<div class="tile bg-green" >
-                        <a class="tile-content icon" href="/autoload/admincp.php/nodes/">
+                        <a class="tile-content icon" href="{'nodes'|admincp}">
                             <i class="icon-files"></i>
                         </a>
                         <div class="brand">

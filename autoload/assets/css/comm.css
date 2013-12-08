@@ -1,5 +1,5 @@
 body {
-	padding-top:50px;
+	padding-top:50px;	
 }
 ul, ol {
 list-style: none;
@@ -31,8 +31,11 @@ list-style: none;
 #title-bar a i{
 	font-size:18px;
 }
-#title-bar a{
+#title-bar a.place-right{
 	margin-left: 10px;
+}
+.flexigrid .hDivBox table{
+	background:none;
 }
 a:hover, a:focus {
 	color:#D54E21
