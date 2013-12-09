@@ -1,5 +1,5 @@
 @charset UTF-8;
-.flexigrid{font-family:Arial, Helvetica, sans-serif;font-size:11px;position:relative;border:0 solid #eee;overflow:hidden;color:#000}
+.flexigrid{font-family:Arial, Helvetica, sans-serif;font-size:12px;position:relative;border:0 solid #eee;overflow:hidden;color:#000}
 .flexigrid.hideBody{height:26px!important;border-bottom:1px solid #ccc}
 .ie6fullwidthbug{border-right:0 solid #ccc;padding-right:2px}
 .flexigrid div.nDiv{background:#eee url(images/line.gif) repeat-y -1px top;border:1px solid #ccc;border-top:0;overflow:auto;left:0;position:absolute;z-index:999;float:left}
@@ -39,7 +39,7 @@
 .flexigrid div.cDrag div{float:left;background:none;display:block;position:absolute;height:24px;width:5px;cursor:col-resize}
 .flexigrid div.cDrag div:hover,.flexigrid div.cDrag div.dragging{background:url(images/line.gif) repeat-y 2px center}
 .flexigrid div.iDiv{border:1px solid #316ac5;position:absolute;overflow:visible;background:none}
-.flexigrid div.iDiv input,.flexigrid div.iDiv select,.flexigrid div.iDiv textarea{font-family:Arial, Helvetica, sans-serif;font-size:11px}
+.flexigrid div.iDiv input,.flexigrid div.iDiv select,.flexigrid div.iDiv textarea{font-family:Arial, Helvetica, sans-serif;font-size:12px}
 .flexigrid div.iDiv input.tb{border:0;width:100%;height:100%;background:none;padding:0}
 .flexigrid div.bDiv{border:1px solid #ccc;border-top:0;background:#fff;overflow:auto;position:relative}
 .flexigrid div.hGrip{position:absolute;top:0;right:0;height:5px;width:5px;background:url(images/line.gif) repeat-x center;margin-right:1px;cursor:col-resize}
@@ -51,7 +51,7 @@
 .flexigrid div.hDiv th div,.flexigrid div.bDiv td div,div.colCopy div
 /* common inner cell properties*/{border-left:0 solid #fff;padding:5px}
 .flexigrid div.hDiv th,div.colCopy{font-weight:400;height:24px;cursor:default;white-space:nowrap;overflow:hidden}
-div.colCopy{font-family:Arial, Helvetica, sans-serif;font-size:11px;background:#fafafa url(images/fhbg.gif) repeat-x bottom;border:1px solid #ccc;border-bottom:0;overflow:hidden}
+div.colCopy{font-family:Arial, Helvetica, sans-serif;font-size:12px;background:#fafafa url(images/fhbg.gif) repeat-x bottom;border:1px solid #ccc;border-bottom:0;overflow:hidden}
 .flexigrid div.hDiv th.sorted{background:url(images/wbg.gif) repeat-x 0 -1px;border-bottom:0 solid #ccc}
 .flexigrid div.hDiv th.thOver div,.flexigrid div.hDiv th.sorted.thOver div{border-bottom:1px solid orange;padding-bottom:4px}
 .flexigrid div.hDiv th.sorted div{border-bottom:0 solid #ccc;padding-bottom:5px}

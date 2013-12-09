@@ -4,6 +4,9 @@ class AdminController extends Controller {
     public function preRun() {
         $this->user = whoami ();
     }
+    /**
+     * login
+     */
     public function index_post() {
         $formid = sess_get ( 'formid' );
         $i = whoami ();
@@ -11,6 +14,9 @@ class AdminController extends Controller {
         $i->save ();
         return new JsonView ( array ('success' => true, 'to' => ADMINCP_URL ) );
     }
+    /**
+     * start page
+     */
     public function index() {
         if (isset ( $this->request ['logout'] )) {
             LoginInfo::destroy ();
@@ -18,7 +24,7 @@ class AdminController extends Controller {
         } else if (isset ( $this->request ['clear'] )) {
             InnerCacher::clear ();
             Response::redirect ( ADMINCP_URL );
-        } else {  
+        } else {
             if ($this->user->isLogin ()) {
                 $data ['styles'] = apply_filter ( 'get_admincp_style_files', array () );
                 return view ( 'index.tpl', $data );
@@ -29,5 +35,23 @@ class AdminController extends Controller {
                 return view ( 'login.tpl', $data );
             }
         }
+    }
+    /**
+     * user list page
+     */
+    public function users() {
+        $data = array ();
+        return view ( 'users.tpl', $data );
+    }
+    /**
+     * user data - JSON
+     * 
+     * @param int $page
+     * @param int $rp
+     */
+    public function users_data($page = 1, $rp = 10, $sortname = 'id', $sortorder = 'desc') {
+        $jsonData = array ('page' => $page, 'total' => 1, 'rows' => array (), 'rp' => $rp );
+        $jsonData ['rows'] = array (array ('id' => 1, 'cell' => array (1 ) ) );
+        return new JsonView ( $jsonData );
     }
 }

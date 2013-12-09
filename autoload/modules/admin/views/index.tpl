@@ -55,14 +55,26 @@
                 </li>
                 <li data-row="2" data-col="4" data-sizex="1" data-sizey="1" class="gs-w" id="menu" >
                     <div class="tile bg-darkIndigo">
-                        <div class="tile-content icon">
+                        <a class="tile-content icon" href="{'admin'|admincp:users}">
                             <i class="icon-tree-view"></i>
-                        </div>
+                        </a>
                         <div class="brand">
                             <span class="label fg-white">导航菜单</span>
                         </div>
                     </div>
                 </li>
+                
+                <li data-row="1" data-col="6" data-sizex="1" data-sizey="1" class="gs-w"  id="adminuser">
+    				<div class="tile bg-lightOrange">
+                        <a class="tile-content icon" href="{'admin'|admincp:users}">
+                            <i class="icon-user-3"></i>
+                        </a>
+                        <div class="brand">
+                            <span class="label fg-white">用户账户</span>
+                            <span class="badge bg-orange">1</span>
+                        </div>
+                    </div>  
+    			</li>
        </ul>
 </div> 
 {/block}

@@ -7,15 +7,15 @@ define('nodes/js/app', function(require, exports) {
                url : KsgApp.acturl('nodes','data'),
                dataType : 'json',
                colModel : [ {
-                   display : 'EmployeeID',
-                   name : 'employeeID',
-                   width : 90,
+                   display : 'ID',
+                   name : 'id',
+                   width : 50,
                    sortable : true,
                    align : 'center'
                    }, {
                        display : 'Name',
                        name : 'name',
-                       width : 120,
+                       width : 240,
                        sortable : true,
                        align : 'left'
                    }, {
