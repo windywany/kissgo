@@ -7,13 +7,11 @@
 			    
 	    <div class="tab-control mgb5" data-role="tab-control">
             <ul class="tabs">
-                <li class="active"><a href="#search_form"><i class="icon-search"></i>过滤</a></li>
-                <li><a href="#edit_toolbar"><i class="icon-pencil"></i>编辑</a></li>                
+                <li class="active"><a href="#search_form"><i class="icon-search"></i>过滤</a></li>                               
             </ul>
              
             <div class="frames">
-                <div class="frame" id="search_form"></div>    
-                <div class="frame" id="edit_toolbar">edit toolbar</div>                
+                <div class="frame" id="search_form"></div>
             </div>
         </div>
 	

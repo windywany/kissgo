@@ -49,9 +49,28 @@ class AdminController extends Controller {
      * @param int $page
      * @param int $rp
      */
-    public function users_data($page = 1, $rp = 10, $sortname = 'id', $sortorder = 'desc') {
-        $jsonData = array ('page' => $page, 'total' => 1, 'rows' => array (), 'rp' => $rp );
-        $jsonData ['rows'] = array (array ('id' => 1, 'cell' => array (1 ) ) );
+    public function users_data($page = 1, $rp = 15, $sortname = 'id', $sortorder = 'desc') {
+        $page = intval ( $page );
+        $rp = intval ( $rp );
+        $rp = $rp ? $rp : 15;
+        $start = ($page ? $page - 1 : $page) * $rp;
+        $users = dbselect ( 'U.*', 'G.name AS groupname' )->from ( '{users} AS U' )->join ( '{groups} AS G', 'U.gid = G.gid' )->limit ( $start, $rp );
+        $total = $users->count ( 'U.id' );
+        $jsonData = array ('page' => $page, 'total' => $total, 'rows' => array (), 'rp' => $rp );
+        if ($total > 0 && count ( $users )) {
+            foreach ( $users as $u ) { // the order is very important
+                $cell = array ();
+                $cell [] = $u ['id'];
+                $cell [] = $u ['username'];
+                $cell [] = $u ['display_name'];
+                $cell [] = $u ['groupname'];
+                $cell [] = $u ['email'];
+                $cell [] = $u ['status'] ? '' : 'blocked';
+                $cell [] = $u ['last_ip'];
+                $cell [] = $u ['last_time'];
+                $jsonData ['rows'] [] = array ('id' => $u ['id'], 'cell' => $cell );
+            }
+        }
         return new JsonView ( $jsonData );
     }
 }
