@@ -20,7 +20,7 @@ define ( 'DEBUG_DEBUG', 2 );
 
 //////////////////////////////////////////////////////////////////////////
 // common constant
-////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////
 define ( 'DS', DIRECTORY_SEPARATOR ); // the short for directory separator
 define ( 'APP_PATH', WEB_ROOT );
 define ( 'INCLUDES', WEB_ROOT . 'includes' . DS );
@@ -76,6 +76,8 @@ if (version_compare ( phpversion (), '5.3', '<' )) {
     @set_magic_quotes_runtime ( 0 );
 }
 @ini_set ( 'magic_quotes_sybase', 0 ); // no magic quotes
+
+
 /**
  * 应用程序设置类
  */
@@ -84,14 +86,15 @@ class KissGoSetting implements ArrayAccess {
     private $settings = array ();
     private $pos = 0;
     private static $INSTANCE = array ();
+
     public function __construct($name) {
         $this->setting_name = $name;
     }
-    
+
     /**
      * 取系统设置实例
      *
-     * @param string $name        	
+     * @param string $name
      * @param
      * null|KissgoSetting
      * @return KissGoSetting
@@ -104,41 +107,48 @@ class KissGoSetting implements ArrayAccess {
         }
         return self::$INSTANCE [$name];
     }
+
     public static function hasSetting($name) {
         return isset ( self::$INSTANCE [$name] );
     }
+
     public function offsetExists($offset) {
         return isset ( $this->settings [$offset] );
     }
+
     public function offsetGet($offset) {
         return $this->settings [$offset];
     }
+
     public function offsetSet($offset, $value) {
         $this->settings [$offset] = $value;
     }
+
     public function offsetUnset($offset) {
         unset ( $this->settings [$offset] );
     }
-    
+
     /**
      * 获取设置
-     * 
-     * @param string $name        	
-     * @param string $default        	
+     *
+     * @param string $name
+     * @param string $default
      * @return string
      */
     public function get($name, $default = '') {
         return isset ( $this->settings [$name] ) ? $this->settings [$name] : $default;
     }
+
     /**
      * 设置
-     * 
-     * @param string $name        	
-     * @param mixed $value        	
+     *
+     * @param string $name
+     * @param mixed $value
      */
     public function set($name, $value) {
         $this->settings [$name] = $value;
     }
+
     public function toArray() {
         return $this->settings;
     }
@@ -246,6 +256,7 @@ include KISSGO . 'session.php';
 include KISSGO . 'views.php';
 include KISSGO . 'phpcrud/phpcrud.php';
 include KISSGO . 'rbac.php';
+
 // ////////////////////////////////////////////////////////////
 /**
  * 自动类加载器
@@ -287,25 +298,44 @@ spl_autoload_register ( '_kissgo_class_loader' );
 $__rqst = Request::getInstance ();
 // load modules
 $modules = InnerCacher::get ( 'module_list' );
+$exports = InnerCacher::get ( 'class_exports' );
 if (! $modules) {
     $hd = opendir ( MODULES_PATH );
     if ($hd) {
+        $exports = array ();
         while ( ($f = readdir ( $hd )) != false ) {
             if (is_dir ( MODULES_PATH . $f ) && $f != '.' && $f != '..') {
                 $plugin = MODULES_PATH . $f . DS . 'plugin.php';
                 if (file_exists ( $plugin )) {
                     $modules [] = $plugin;
                 }
+                $fp = MODULES_PATH . $f . DS . 'forms';
+                if (is_dir ( $fp )) {
+                    $exports [] = $fp;
+                }
+                $fp = MODULES_PATH . $f . DS . 'classes';
+                if (is_dir ( $fp )) {
+                    $exports [] = $fp;
+                }
             }
         }
-        InnerCacher::add ( 'module_list', $modules );
+        if (DEBUG > DEBUG_DEBUG) {
+            InnerCacher::add ( 'module_list', $modules );
+            InnerCacher::add ( 'class_exports', $exports );
+        }
     }
 }
 if ($modules) {
     foreach ( $modules as $m ) {
         include $m;
     }
+    if ($exports) {
+        foreach ( $exports as $e ) {
+            $__kissgo_exports [] = $e;
+        }
+    }
 }
+unset ( $modules, $exports );
 // modules loaded
 fire ( 'engine_initialized' );
 // end of file bootstrap.php

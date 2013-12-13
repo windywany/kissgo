@@ -1,7 +1,12 @@
-define('admin/js/login', ['jquery/form', 'jquery/blockit'], function(require, exports, module) {
+define('admin/js/login', function(require, exports) {
 	require('jquery/form');
 	require('jquery/blockit');
+	require('jquery/validate');
+	$('#login-form').validate({focusCleanup : true});
 	$('#login-form').submit(function(e) {
+		if (!$(this).valid()) {
+			return false;
+		}
 		$(this).ajaxSubmit({
 			'dataType' : 'json',
 			beforeSerialize : function() {

@@ -1,19 +1,34 @@
 <?php
+
+/**
+ *
+ * Administrator Dashboard Controller
+ * @author guangfeng.ning
+ *
+ */
 class AdminController extends Controller {
     private $user;
+
     public function preRun() {
         $this->user = whoami ();
     }
+
     /**
      * login
      */
-    public function index_post() {
-        $formid = sess_get ( 'formid' );
-        $i = whoami ();
-        $i->isLogin ( true );
-        $i->save ();
+    public function index_post($formid, $name, $password) {
+        $data = array ('success' => false );
+        $_formid = sess_get ( 'formid' );
+        if ($_formid != $formid) {
+            $data ['msg'] = '非法表单';
+        } else {
+            $i = whoami ();
+            $i->isLogin ( true );
+            $i->save ();
+        }
         return new JsonView ( array ('success' => true, 'to' => ADMINCP_URL ) );
     }
+
     /**
      * start page
      */
@@ -36,6 +51,7 @@ class AdminController extends Controller {
             }
         }
     }
+
     /**
      * user list page
      */
@@ -43,9 +59,10 @@ class AdminController extends Controller {
         $data = array ();
         return view ( 'users.tpl', $data );
     }
+
     /**
      * user data - JSON
-     * 
+     *
      * @param int $page
      * @param int $rp
      */

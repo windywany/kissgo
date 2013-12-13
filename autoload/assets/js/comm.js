@@ -81,7 +81,7 @@
 	if (top_win.KsgApp) {
 		window.KsgApp = top_win.KsgApp;
 	} else {
-		window.KsgApp = {};		
+		window.KsgApp = {};
 		KsgApp.assets = function(res) {
 			return seajs.data.vars.assets + res;
 		};
@@ -110,4 +110,19 @@
 			});
 		};
 	}
+
+	KsgApp.validate_opts1 = function(options) {
+		return $.extend(true, {}, {
+			focusCleanup : true,
+			success : function(label, element) {				
+				$(element).removeClass(this.errorClass).addClass(this.validClass);
+			},
+			unhighlight : function(element, ecls, vcls) {
+				$(element).removeClass(ecls).removeClass(vcls);				
+			},
+			highlight : function(element, errorClass, validClass) {
+				$(element).removeClass(validClass).addClass(errorClass);
+			}
+		}, options);
+	};
 })(jQuery);
