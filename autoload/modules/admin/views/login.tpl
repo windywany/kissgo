@@ -23,7 +23,7 @@
            			<div class="row">
            				<label class="span2" for="name">账户:</label>
            				<div data-role="input-control" class="input-control text span9">
-                  			<input type="text" name="name"  id="name" tabindex="1" data-rule-required="true"/>
+                  			<input type="text" name="username"  id="username" tabindex="1"/>
                     	</div>
                     	<div class="span1">
                     		<label for="name" class="error hide"></label>
@@ -32,7 +32,7 @@
            			<div class="row">
            				<label class="span2" for="password">密码:</label>
            				<div data-role="input-control" class="input-control password span9">
-                  			<input type="password" name="password"  id="password" tabindex="2" data-rule-required="true"/>
+                  			<input type="password" name="passwd" id="passwd" tabindex="2"/>
                     	</div>
                     	<div class="span1">
                     		<label for="password" class="error hide"></label>
@@ -66,7 +66,8 @@
     });
     seajs.use(['admin/js/login'], function(login) {
         $(function(){
-       	 	login.main();
+            var validateRule = {$validateRule};
+       	 	login.main(validateRule);
         });
     });
     </script>

@@ -249,6 +249,7 @@ if (DEBUG == DEBUG_OFF) {
 if (defined ( 'DEBUG_FIREPHP' ) && DEBUG_FIREPHP) {
     include INCLUDES . 'vendors/firephp/fb.php';
 }
+include KISSGO . 'i18n.php';
 include KISSGO . 'plugin.php';
 include KISSGO . 'functions.php';
 include KISSGO . 'template.php';

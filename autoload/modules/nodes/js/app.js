@@ -111,7 +111,7 @@ define('nodes/js/app', function(require, exports) {
 			grid = $('#nodes_grid').flexigrid({
 				url : KsgApp.acturl('nodes', 'data'),
 				dataType : 'json',
-				height : 300,
+				height : 380,
 				colModel : colModel,
 				sortname : "id",
 				sortorder : "desc",

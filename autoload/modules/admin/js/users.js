@@ -49,7 +49,7 @@ define('admin/js/users', function(require, exports) {
 				url : KsgApp.acturl('admin', 'users_data'),
 				dataType : 'json',
 				colModel : colModel,
-				height : 300,
+				height : 380,
 				sortname : "id",
 				sortorder : "desc",
 				usepager : true,

@@ -16,17 +16,42 @@ class AdminController extends Controller {
     /**
      * login
      */
-    public function index_post($formid, $name, $password) {
+    public function index_post($formid) {
         $data = array ('success' => false );
         $_formid = sess_get ( 'formid' );
         if ($_formid != $formid) {
             $data ['msg'] = '非法表单';
         } else {
-            $i = whoami ();
-            $i->isLogin ( true );
-            $i->save ();
+            $form = new LoginForm ();
+            $formData = $form->valid ();
+            if ($formData) {
+                $where = new Condition ();
+                if (strpos ( $formData ['username'], '@' )) {
+                    $where ['email'] = $formData ['username'];
+                    $id = 'email';
+                } else {
+                    $where ['username'] = $formData ['username'];
+                    $id = 'username';
+                }
+
+                $user = dbselect ( '*' )->from ( '{users}' )->where ( $where );
+                if (count ( $user ) == 0 || $user [0] ['passwd'] != md5 ( $formData ['passwd'] ) || $user [0] [$id] != $formData ['username']) {
+                    $data ['msg'] = __ ( '@admin:Invalide User Name or Password' );
+                } else if (empty ( $user [0] ['status'] )) {
+                    $data ['msg'] = __ ( '@admin:User is locked!' );
+                } else {
+                    $user = $user [0];
+                    $loginInfo = new LoginInfo ( $user ['id'], $user ['username'], $user ['display_name'], time (), $_SERVER ['REMOTE_ADDR'] );
+                    $loginInfo->login ( true );
+                    LoginInfo::save ( $loginInfo );
+                    $data ['success'] = true;
+                    $data ['to'] = ADMINCP_URL;
+                }
+            } else {
+                $data ['msg'] = __ ( '@admin:Invalide User Name or Password' );
+            }
         }
-        return new JsonView ( array ('success' => true, 'to' => ADMINCP_URL ) );
+        return new JsonView ( $data );
     }
 
     /**
@@ -47,6 +72,9 @@ class AdminController extends Controller {
                 $formid = randstr ( 8 );
                 $_SESSION ['formid'] = $formid;
                 $data ['formid'] = $formid;
+                $form = new LoginForm ();
+                $data ['form'] = $form;
+                $data ['validateRule'] = $form->rules ();
                 return view ( 'login.tpl', $data );
             }
         }

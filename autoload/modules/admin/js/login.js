@@ -2,7 +2,7 @@ define('admin/js/login', function(require, exports) {
 	require('jquery/form');
 	require('jquery/blockit');
 	require('jquery/validate');
-	$('#login-form').validate({focusCleanup : true});
+
 	$('#login-form').submit(function(e) {
 		if (!$(this).valid()) {
 			return false;
@@ -28,7 +28,10 @@ define('admin/js/login', function(require, exports) {
 		return false;
 	});
 	// prepare the login window
-	exports.main = function() {
+	exports.main = function(rules) {
+		$('#login-form').validate($.extend(true, {}, rules, {
+			focusCleanup : true
+		}));
 		var win = $('#loginWin'), width = 400, height = 200;
 		var w = $(window).width(), h = $(window).height();
 		win.css({

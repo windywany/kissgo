@@ -14,7 +14,7 @@
     	<script type="text/javascript" src="{'jquery/jquery-2.0.3.min.js'|assets}"></script>
     	<script type="text/javascript" src="{'jquery/ui/jquery-ui.min.js'|assets}"></script>
     	<script type="text/javascript" src="{'metroui/metro.min.js'|assets}"></script>
-    	<script type="text/javascript" src="{'js/comm.js'|assets}"></script>    	
+    	<script type="text/javascript" src="{'js/comm.js'|assets}"></script>
     	<script type="text/javascript">
         seajs.config({
             vars:{
@@ -22,19 +22,19 @@
 				assets:'{$assetsurl}',
 				admincp:'{$admincp}'
             },
-            base: '{$moduleurl}',       
+            base: '{$moduleurl}',
             map:[
             	['.js','.js?1.0']
           ]
-        });       
+        });
         </script>
     </head>
-    <body class="metro">        
+    <body class="metro">
 	    <div class="navigation-bar dark fixed-top">
             <div class="navigation-bar-content" id="top-menu">
                 <a class="element" href="{$siteurl}" target="_blank"><i class="icon-home"></i>我的网站</a>
                 <span class="element-divider"></span>
-                <a href="{$admincp}?logout" class="element place-right"><i class="icon-exit fg-red"  id="btn-exit"></i></a>                
+                <a href="{$admincp}?logout" class="element place-right"><i class="icon-exit fg-red"  id="btn-exit"></i></a>
                 <span class="element-divider place-right"></span>
                 <div class="element place-right">
                             <a class="dropdown-toggle" href="#">
@@ -42,12 +42,12 @@
                             </a>
                             <ul data-role="dropdown" class="dropdown-menu place-right" >
                             	<li class="divider"></li>
-                            	<li><a href="{$admincp}/admin/settings/" ><span class="icon-tools" ></span>系统设置</a></li>                            	
-                            	<li><a href="{$admincp}?clear" ><span class="icon-remove fg-red" ></span>清空运行时缓存</a></li>                            	
+                            	<li><a href="{$admincp}/admin/settings/" ><span class="icon-tools" ></span>系统设置</a></li>
+                            	<li><a href="{$admincp}?clear" ><span class="icon-remove fg-red" ></span>清空运行时缓存</a></li>
                             </ul>
 				</div>
                 <span class="element-divider place-right"></span>
-                <a class="element place-right"  href="{$admincp}/admin/profile/"><i class="icon-user"></i>Administrator</a> 
+                <a class="element place-right"  href="{$admincp}/admin/profile/"><i class="icon-user"></i>{$passport->getName()}</a>
                 <div class="element input-element place-right" id="top-search-wrap">
                 	<form action="{$admincp}/nodes/" method="get">
                      	<div class="input-control text" >
@@ -56,17 +56,17 @@
                       	</div>
                   	</form>
            		 </div>
-            </div>                		
+            </div>
         </div>
-        <div id="workspace" > 
+        <div id="workspace" >
         	<h2 id="title-bar">
         		<a href="{$admincp}" id="goto-start-screen"><span class="icon-arrow-left-3 fg-darker "></span></a> <span>{block name="subtitle"}开始{/block}</span>
         		{block name="toolbar"} {/block}
         	</h2>
             <div id="workbench">
             	{block name="workbench"}{/block}
-            </div>          
-        </div> 
+            </div>
+        </div>
         {block name="layout_foot_block"}{/block}
     </body>
 </html>
