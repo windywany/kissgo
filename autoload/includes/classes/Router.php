@@ -1,12 +1,20 @@
 <?php
+/**
+ *
+ * framework router
+ * @author guangfeng.ning
+ *
+ */
 class Router {
     private static $INSTANCE;
+
     private function __construct() {
 
     }
+
     /**
      * get the system router
-     * 
+     *
      * @return Router
      */
     public static function getRouter() {
@@ -15,9 +23,10 @@ class Router {
         }
         return self::$INSTANCE;
     }
+
     /**
      * dispatch request
-     * 
+     *
      * @param string $do
      */
     public function route($do) {
@@ -79,5 +88,9 @@ class Router {
         } else {
             Response::respond ( 404 );
         }
+    }
+
+    public function cmsDispatch() {
+        echo 'cms';
     }
 }

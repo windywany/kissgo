@@ -3,12 +3,12 @@ abstract class QueryBuilder {
     const LEFT = 'LEFT';
     const RIGHT = 'RIGHT';
     protected $alias;
-    
+
     protected $dbconf;
     protected $dialect;
     protected $values;
     protected $options = array ();
-    
+
     protected $from = array ();
     protected $joins = array ();
     protected $where = null;
@@ -16,14 +16,14 @@ abstract class QueryBuilder {
     protected $limit = null;
     protected $group = array ();
     protected $order = array ();
-    
+
     protected $error = false;
     protected $errorSQL = '';
     protected $errorValues;
     public function __construct() {
         $this->dbconf = 'default';
     }
-    
+
     public function from($table) {
         $tables = func_get_args ();
         foreach ( $tables as $table ) {
@@ -38,6 +38,9 @@ abstract class QueryBuilder {
         return $this;
     }
     public function where($con = null) {
+        if(is_array($con)){
+            $con = new Condition($con);
+        }
         if ($this->where) {
             $this->where [] = $con;
         } else {
@@ -57,7 +60,7 @@ abstract class QueryBuilder {
         }
         return $this;
     }
-    
+
     public function asc($field) {
         $this->order [] = array ($field, 'ASC' );
         return $this;
@@ -91,7 +94,7 @@ abstract class QueryBuilder {
     }
     /**
      * get the dialect binding with this query.
-     * 
+     *
      * @return DatabaseDialect
      */
     public function getDialect() {
@@ -109,7 +112,7 @@ abstract class QueryBuilder {
     public function getBindValues() {
         return $this->values;
     }
-    
+
     public function setBindValues($values) {
         $this->values = $values;
     }
@@ -136,12 +139,12 @@ abstract class QueryBuilder {
             return $var;
         }
     }
-    
+
     /**
      * work through an array to sanitize it, do not call this function directly. it is used internally.
-     * 
+     *
      * @see sanitize()
-     * 
+     *
      * @param mixed $item
      * @param mixed $key
      * @deprecated
@@ -186,7 +189,7 @@ abstract class QueryBuilder {
     }
     /**
      * prepare the fields in select SQL
-     * 
+     *
      * @param array $fields
      * @param BindValues $values
      * @return string

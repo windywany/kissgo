@@ -20,7 +20,7 @@ class AdminController extends Controller {
         $data = array ('success' => false );
         $_formid = sess_get ( 'formid' );
         if ($_formid != $formid) {
-            $data ['msg'] = '非法表单';
+            $data ['msg'] = __ ( '@admin:Invalid Form!' );
         } else {
             $form = new LoginForm ();
             $formData = $form->valid ();
@@ -33,10 +33,9 @@ class AdminController extends Controller {
                     $where ['username'] = $formData ['username'];
                     $id = 'username';
                 }
-
                 $user = dbselect ( '*' )->from ( '{users}' )->where ( $where );
                 if (count ( $user ) == 0 || $user [0] ['passwd'] != md5 ( $formData ['passwd'] ) || $user [0] [$id] != $formData ['username']) {
-                    $data ['msg'] = __ ( '@admin:Invalide User Name or Password' );
+                    $data ['msg'] = __ ( '@admin:Invalide User Name or Password.' );
                 } else if (empty ( $user [0] ['status'] )) {
                     $data ['msg'] = __ ( '@admin:User is locked!' );
                 } else {
@@ -46,9 +45,11 @@ class AdminController extends Controller {
                     LoginInfo::save ( $loginInfo );
                     $data ['success'] = true;
                     $data ['to'] = ADMINCP_URL;
+                    $rst = dbupdate ( '{users}' )->set ( array ('last_time' => date ( 'Y-m-d H:i:s' ), 'last_ip' => $_SERVER ['REMOTE_ADDR'] ) )->where ( array ('id' => $user ['id'] ) );
+                    count ( $rst );
                 }
             } else {
-                $data ['msg'] = __ ( '@admin:Invalide User Name or Password' );
+                $data ['msg'] = __ ( '@admin:Invalide User Name or Password.' );
             }
         }
         return new JsonView ( $data );
@@ -67,6 +68,8 @@ class AdminController extends Controller {
         } else {
             if ($this->user->isLogin ()) {
                 $data ['styles'] = apply_filter ( 'get_admincp_style_files', array () );
+                $userTotal = dbselect ( 'id' )->from ( '{users}' );
+                $data ['userTotal'] = $userTotal->count ( 'id' );
                 return view ( 'index.tpl', $data );
             } else {
                 $formid = randstr ( 8 );
@@ -110,7 +113,7 @@ class AdminController extends Controller {
                 $cell [] = $u ['display_name'];
                 $cell [] = $u ['groupname'];
                 $cell [] = $u ['email'];
-                $cell [] = $u ['status'] ? '' : 'blocked';
+                $cell [] = $u ['status'] ? '' : __ ( '@admin:blocked' );
                 $cell [] = $u ['last_ip'];
                 $cell [] = $u ['last_time'];
                 $jsonData ['rows'] [] = array ('id' => $u ['id'], 'cell' => $cell );

@@ -7,7 +7,7 @@
  */
 class LoginForm extends AbstractForm {
     private $formid = array ();
-    private $username = array ('rules' => array ('required' ));
-    private $passwd = array ('rules' => array ('required','minlength(6)' ));
+    private $username = array ('rules' => array ('required' ) );
+    private $passwd = array ('rules' => array ('required', 'minlength(6)' ) );
 }
 ?>

@@ -57,17 +57,15 @@ define('admin/js/users', function(require, exports) {
 				rp : 15,
 				showTableToggleBtn : false,				
 				buttons : [ {
-					name : 'Add',
-					bclass : 'icon-plus fg-green',
-					onpress : function() {
-					}
-				}, {
-					name : 'Delete',
-					bclass : 'delete',
+					name : '新增',					
 					onpress : function() {
 					}
 				}, {
 					separator : true
+				} , {
+					name : '删除',					
+					onpress : function() {
+					}
 				} ]
 			});
 		}

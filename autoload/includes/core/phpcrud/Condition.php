@@ -1,4 +1,5 @@
 <?php
+
 /**
  * use this class to build SQL where sub-statement.<br/>
  * simple usage:<br/>
@@ -6,18 +7,25 @@
  * <ul>
  * <li> and :  $con['field [op]'] = condition;</li>
  * </ul>
- * 
- * 
+ *
+ *
  * @author guangfeng.ning
  *
  */
 class Condition implements ArrayAccess {
     private $conditions = array ();
-    public function __construct() {}
-    
+
+    public function __construct($con = array()) {
+        if ($con && is_array ( $con )) {
+            foreach ( $con as $key => $value ) {
+                $this->conditions [] = array ($key, $value );
+            }
+        }
+    }
+
     /**
      * get the where sql
-     * 
+     *
      * @param DatabaseDialect $dialect
      * @param BindValues $values
      */
@@ -73,7 +81,7 @@ class Condition implements ArrayAccess {
                     $val1 = $values->addValue ( $filed, $value [0] );
                     $val2 = $values->addValue ( $filed, $value [1] );
                     $cons [] = $filed . ' BETWEEN ' . $val1 . ' AND ' . $val2;
-                } else if ($op == 'IN' || $op == '!IN') { // in 
+                } else if ($op == 'IN' || $op == '!IN') { // in
                     $op = str_replace ( '!', 'NOT ', $op );
                     if ($value instanceof Query) { // sub-select as 'IN' or 'NOT IN' values.
                         $value->setBindValues ( $values );
@@ -88,7 +96,7 @@ class Condition implements ArrayAccess {
                     } else {
                         array_shift ( $cons );
                     }
-                } else if ($op == 'LIKE' || $op == '!LIKE') { // like                    
+                } else if ($op == 'LIKE' || $op == '!LIKE') { // like
                     $op = str_replace ( '!', 'NOT ', $op );
                     $cons [] = $filed . ' ' . $op . ' ' . $values->addValue ( $filed, $value );
                 } else {
@@ -111,13 +119,15 @@ class Condition implements ArrayAccess {
         }
         return '';
     }
+
     public function offsetExists($offset) {
         return false;
     }
-    
+
     public function offsetGet($offset) {
         return null;
     }
+
     /**
      * (non-PHPdoc)
      * || - or
@@ -129,5 +139,6 @@ class Condition implements ArrayAccess {
     public function offsetSet($offset, $value) {
         $this->conditions [] = array ($offset, $value );
     }
+
     public function offsetUnset($offset) {}
 }

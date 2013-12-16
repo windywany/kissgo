@@ -3,14 +3,15 @@
 <link href="{'jquery/flexigrid/flexigrid.css'|module}"	rel="stylesheet" />
 {/block}
 {block name="subtitle"}用户账户{/block}
+{block name="toolbar"} <a href="{$admincp}/admin/adduser/" class="place-right"><i class="icon-plus-2"></i></a>{/block}
 {block name="workbench"}
 <div class="tab-control mgb5" data-role="tab-control">
             <ul class="tabs">
-                <li class="active"><a href="#search_form"><i class="icon-search"></i>过滤</a></li>                
+                <li class="active"><a href="#search_form"><i class="icon-search"></i>过滤</a></li>
             </ul>
-             
+
             <div class="frames">
-                <div class="frame" id="search_form"></div> 
+                <div class="frame" id="search_form"></div>
             </div>
 </div>
 <div id="users_grid"></div>
@@ -20,7 +21,7 @@
 	seajs.use('admin/js/users', function(app) {
             $(function(){
             	app.main();
-            });        	
+            });
         });
 </script>
 {/block}

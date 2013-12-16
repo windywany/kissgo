@@ -3,7 +3,7 @@
 	<link href="{'jquery/css/gridster.css'|module}"	rel="stylesheet" />
 	{foreach $styles as $style}<link href="{$style}"	rel="stylesheet" />{/foreach}
 {/block}
-{block name="toolbar"}       		
+{block name="toolbar"}
 	<a href="#" id="cancel-edit-start" class="place-right hide"><i class="icon-cancel fg-red"></i></a>
 	<a href="#" id="edit-start-screen" class="place-right"><i class="icon-grid fg-blue"></i></a>
 {/block}
@@ -30,7 +30,7 @@
                                 <span class="label fg-white">评论</span>
                                 <span class="badge bg-orange">12</span>
                             </div>
-                        </div>                
+                        </div>
                 </li>
     			<li data-row="2" data-col="1" data-sizex="1" data-sizey="1" class="gs-w"  id="media">
     				<div class="tile bg-cyan">
@@ -41,7 +41,7 @@
                             <span class="label fg-white">多媒体</span>
                             <span class="badge bg-orange">12</span>
                         </div>
-                    </div>  
+                    </div>
     			</li>
     			<li data-row="1" data-col="4" data-sizex="1" data-sizey="1" class="gs-w"  id="theme">
             			<div class="tile bg-mauve">
@@ -49,7 +49,7 @@
                                 <i class="icon-newspaper"></i>
                             </div>
                             <div class="brand">
-                                <span class="label fg-white">主题-default</span>                                                         
+                                <span class="label fg-white">主题-default</span>
                             </div>
                         </div>
                 </li>
@@ -63,7 +63,7 @@
                         </div>
                     </div>
                 </li>
-                
+
                 <li data-row="1" data-col="6" data-sizex="1" data-sizey="1" class="gs-w"  id="adminuser">
     				<div class="tile bg-lightOrange">
                         <a class="tile-content icon" href="{'admin'|admincp:users}">
@@ -71,20 +71,20 @@
                         </a>
                         <div class="brand">
                             <span class="label fg-white">用户账户</span>
-                            <span class="badge bg-orange">1</span>
+                            <span class="badge bg-orange">{$userTotal}</span>
                         </div>
-                    </div>  
+                    </div>
     			</li>
        </ul>
-</div> 
+</div>
 {/block}
 
 {block name="layout_foot_block"}
 <script type="text/javascript">
-	seajs.use(['jquery/gridster','admin/js/dashboard'], function(gridster,app) {			
+	seajs.use(['jquery/gridster','admin/js/dashboard'], function(gridster,app) {
             $(function(){
             	app.main();
-            });        	
+            });
         });
 </script>
 {/block}
