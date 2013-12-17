@@ -492,28 +492,22 @@ textarea.error, input.error {
 	background:#FFFFFF url(../images/invalid_line.gif) repeat-x left bottom;
 	color:#D54E21;
 }
-span.error {
+span.error,label.error {
 	margin-left:2px;
 	color:red;
 	background:transparent url(../images/verror.png) no-repeat left center;
 	padding:2px 18px;
 }
-span.valid {
+span.valid,label.valid {
 	margin-left:2px;
 	padding:2px 18px;
 	background:transparent url(../images/vaccept.png) no-repeat left center;
 }
-span.tip {
+span.tip,label.tip {
 	margin-left:2px;
 	color:#888;
 	background:transparent url(../images/tip_info.png) no-repeat left center;
 	padding-left:18px;
-}
-.control-label span {
-	color:red;
-}
-.ui-tabwrap .tab-content {
-	overflow:inherit;
 }
 .xui_dialog {
 	background-color:#F5F5F5;
@@ -964,4 +958,11 @@ img.sltimg {
 .ajaxupload span {
 	float:none;
 	font-size:12px;
+}
+
+.ico-trash {
+	background:url('../icons/trash.png') no-repeat 0 50%;
+}
+.ico-add {
+	background:url('../icons/add.png') no-repeat 0 50%;
 }

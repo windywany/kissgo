@@ -1,4 +1,5 @@
 <?php
+
 /*
  * basic validator kissgo framework that keep it simple and stupid, go go go ~~
  * @author Leo Ning @package kissgo $Id$
@@ -14,7 +15,7 @@ class FormValidator {
         $this->formName = $formName;
     }
 
-    public function getRuleClass($rules, $data = array()) {
+    public function getRuleClass($rules, $data = array(), $field = '') {
         $rs = array ();
         $ms = array ();
         foreach ( $rules as $m => $exp ) {
@@ -31,13 +32,17 @@ class FormValidator {
                         $m = 'remote';
                         $exps = substr ( $exp ['option'], 1 );
                         $exps = explode ( ',', $exps );
-                        $url = BASE_URL . 'ajax.php?__op=ajax_validate&__form=' . $this->formName . '&__cb=' . $exps [0];
+                        $url = ADMINCP_URL . '/ajax/validate/' . $this->formName . '/' . $exps [0] . '/' . $field . '/';
                         if (count ( $exps ) > 1) {
                             array_shift ( $exps );
+                            $args = array ();
                             foreach ( $exps as $f ) {
                                 if (isset ( $data [$f] )) {
-                                    $url .= "&{$f}=" . urlencode ( $data [$f] );
+                                    $args [$f] = $data [$f];
                                 }
+                            }
+                            if ($args) {
+                                $url .= '?' . http_build_query ( $args );
                             }
                         }
                         $exp ['option'] = $url;
@@ -427,6 +432,7 @@ class FormValidator {
         $rst = preg_match ( '/^((http|ftp)s?:\/\/|\/).*$/', $value );
         return $rst ? true : (empty ( $message ) ? __ ( 'Please enter a valid URL.' ) : __ ( $message ));
     }
+
     // url
     protected function v_ip($value, $exp, $data, $scope, $message) {
         if ($this->emp ( $value )) {

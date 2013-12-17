@@ -60,7 +60,8 @@
         </div>
         <div id="workspace" >
         	<h2 id="title-bar">
-        		<a href="{$admincp}" id="goto-start-screen"><span class="icon-arrow-left-3 fg-darker "></span></a> <span>{block name="subtitle"}开始{/block}</span>
+        		<a href="{$admincp}" id="goto-start-screen"><span class="icon-arrow-left-3 fg-darker "></span></a>
+        		{block name="subtitle"}开始{/block}
         		{block name="toolbar"} {/block}
         	</h2>
             <div id="workbench">

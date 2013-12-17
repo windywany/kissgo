@@ -12,7 +12,7 @@ class Response {
     private $content = '';
     private $view = null;
     private static $INSTANCE = null;
-    
+
     /**
      * 初始化
      */
@@ -29,7 +29,7 @@ class Response {
             }
         }
     }
-    
+
     /**
      * 得到全局唯一Response实例
      *
@@ -41,7 +41,7 @@ class Response {
         }
         return self::$INSTANCE;
     }
-    
+
     /**
      * set response view instance
      *
@@ -52,7 +52,7 @@ class Response {
             $this->view = $view;
         }
     }
-    
+
     /**
      * 禁用浏览器缓存
      */
@@ -76,7 +76,7 @@ class Response {
         exit ();
     }
     /**
-     * 
+     *
      * @return boolean
      */
     public static function isBack() {
@@ -157,7 +157,7 @@ class Response {
         }
         setcookie ( $name, $value, $expire, $path, $domain, $security );
     }
-    
+
     /**
      * 输出view产品的内容
      * @param View $view
@@ -165,7 +165,7 @@ class Response {
     public function output($view = null) {
         if ($view instanceof View) {
             $this->view = $view;
-        } else if (is_string ( $view )) {
+        } else if (is_string ( $view ) || is_bool($view) || is_numeric($view)) {
             $this->view = new SimpleView ( $view );
         } else if (is_array ( $view )) {
             $this->view = new JsonView ( $view );
@@ -179,9 +179,9 @@ class Response {
             Response::respond ( 404 );
         }
     }
-    
+
     /**
-     * 
+     *
      * 此方法不应该直接调用，用于ob_start处理output buffer中的内容。
      *
      * @param string $content
@@ -191,9 +191,9 @@ class Response {
         $this->content = apply_filter ( 'filter_output_content', $content );
         return $this->before_out ? $this->before_out . $this->content : $this->content;
     }
-    
+
     /**
-     * 
+     *
      * 关闭响应，将内容输出的浏览器，同时触发after_content_output勾子
      *
      * @uses fire

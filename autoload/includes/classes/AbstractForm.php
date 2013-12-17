@@ -5,7 +5,7 @@
  * @author Guangfeng Ning
  *
  */
-abstract class AbstractForm{
+abstract class AbstractForm {
     protected $__form_fields = array ();
     protected $__form_data = array ();
     protected $__form_init_data = array ();
@@ -25,13 +25,33 @@ abstract class AbstractForm{
         }
     }
 
-    public function rules() {
-        if ($this->__form_rules == null) {
+    /**
+     *
+     * get the Filed
+     * @param string $name
+     * @return FormField
+     */
+    public function getField($name) {
+        if (isset ( $this->__form_fields [$name] )) {
+            return $this->__form_fields [$name];
+        }
+        return null;
+    }
+
+    public function removeRlue($name, $rule) {
+        $field = $this->getField ( $name );
+        if ($field) {
+            $field->removeValidate ( $rule );
+        }
+    }
+
+    public function initValidateRules($reinit = false) {
+        if ($this->__form_rules == null || $reinit) {
             $vrules = array ();
             $messages = array ();
             foreach ( $this->__form_fields as $key => $field ) {
                 $rule = $field->getValidateRule ();
-                list ( $r, $m ) = $this->__form_validator->getRuleClass ( $rule, $this->__form_init_data );
+                list ( $r, $m ) = $this->__form_validator->getRuleClass ( $rule, $this->__form_init_data,$key );
                 if ($r) {
                     $vrules [$key] = $r;
                     $messages [$key] = $m;
@@ -39,6 +59,10 @@ abstract class AbstractForm{
             }
             $this->__form_rules = array ('rules' => $vrules, 'messages' => $messages );
         }
+    }
+
+    public function rules() {
+        $this->initValidateRules ();
         return json_encode ( $this->__form_rules );
     }
 

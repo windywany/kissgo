@@ -86,9 +86,32 @@ class AdminController extends Controller {
     /**
      * user list page
      */
-    public function users() {
+    public function users($action = 'list', $id = 0) {
         $data = array ();
-        return view ( 'users.tpl', $data );
+
+        switch ($action) {
+            case 'add' :
+                $data ['action'] = __ ( '@admin:Add New User' );
+                $form = new UserForm ( array ('id' => 1 ) );
+                $form->removeRlue ( 'password', 'required' );
+                $data ['validateRule'] = $form->rules ();
+                $view = view ( 'user_form.tpl', $data );
+                break;
+            case 'edit' :
+                $data ['action'] = __ ( '@admin:Edit User' );
+                $form = new UserForm ();
+                $form->removeRlue ( 'password', 'required' );
+                $data ['validateRule'] = $form->rules ();
+                $view = view ( 'user_form.tpl', $data );
+                break;
+            case 'save' :
+                break;
+            case 'list' :
+            default :
+                $view = view ( 'users.tpl', $data );
+                break;
+        }
+        return $view;
     }
 
     /**

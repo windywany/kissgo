@@ -3,7 +3,7 @@
 <link href="{'jquery/flexigrid/flexigrid.css'|module}"	rel="stylesheet" />
 {/block}
 {block name="subtitle"}用户账户{/block}
-{block name="toolbar"} <a href="{$admincp}/admin/adduser/" class="place-right"><i class="icon-plus-2"></i></a>{/block}
+
 {block name="workbench"}
 <div class="tab-control mgb5" data-role="tab-control">
             <ul class="tabs">

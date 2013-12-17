@@ -1,6 +1,14 @@
 define('admin/js/users', function(require, exports) {
 	require('jquery/flexigrid');
 	var grid;
+	var preProcessData = function(data) {
+		var edit_url = KsgApp.acturl('admin/users', 'edit');
+		for ( var i = 0; i < data.rows.length; i++) {
+			data.rows[i].cell[1] = '<a href="' + edit_url + data.rows[i].id
+					+ '">' + data.rows[i].cell[1] + '</a>';
+		}
+		return data;
+	};
 	exports.main = function() {
 		if (!grid) {
 			var colModel = [ {
@@ -55,15 +63,19 @@ define('admin/js/users', function(require, exports) {
 				usepager : true,
 				useRp : true,
 				rp : 15,
-				showTableToggleBtn : false,				
+				preProcess : preProcessData,
+				showTableToggleBtn : false,
 				buttons : [ {
-					name : '新增',					
+					name : '新增',
+					bclass : 'ico-add',
 					onpress : function() {
+						window.location.href = KsgApp.acturl('admin/users/add');
 					}
 				}, {
 					separator : true
-				} , {
-					name : '删除',					
+				}, {
+					name : '删除',
+					bclass : 'ico-trash',
 					onpress : function() {
 					}
 				} ]

@@ -23,10 +23,10 @@ class FormField {
      * @param string $name
      * @param AbstractForm $form
      * @param array $options
-     *            array('field'=>'fieldname','init'=>'aaa|@func','bind'=>'func|@func','rules'
-     *            => array('required(!name)',
-     *            'maxlength(10)', 'minlength(1)', 'range(1,5)', 'min(1)',
-     *            'max(10)', 'email', 'url', 'callback(@aaa)'));
+     * array('field'=>'fieldname','init'=>'aaa|@func','bind'=>'func|@func','rules'
+     * => array('required(!name)',
+     * 'maxlength(10)', 'minlength(1)', 'range(1,5)', 'min(1)',
+     * 'max(10)', 'email', 'url', 'callback(@aaa)'));
      */
     public function __construct($name, $form, $options) {
         $this->name = $name;
@@ -91,7 +91,7 @@ class FormField {
     }
 
     public function removeValidate($rule) {
-        unset ( $this->rules [$rule] );
+        unset ( $this->rules [$rule], $this->validates [$rule] );
         $this->required = isset ( $this->rules ['required'] ) ? true : false;
     }
 
