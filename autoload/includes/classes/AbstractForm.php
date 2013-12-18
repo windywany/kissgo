@@ -67,7 +67,7 @@ abstract class AbstractForm {
     }
 
     public function valid() {
-        $this->rules ();
+        $this->initValidateRules ();
         $data = $this->toArray ();
         $this->__form_valid = array ();
         foreach ( $this->__form_fields as $key => $field ) {

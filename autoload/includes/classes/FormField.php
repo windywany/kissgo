@@ -104,10 +104,10 @@ class FormField {
                 $func = $this->bind;
             }
             if (is_callable ( $func )) {
-                $data = call_user_func_array ( $func, array () );
+                $data = call_user_func_array ( $func, array ($this->init_value ) );
             }
         }
-        return data;
+        return $data;
     }
 
     public function isValid($valiator, $data) {

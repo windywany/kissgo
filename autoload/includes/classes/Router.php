@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * framework router
@@ -33,25 +34,50 @@ class Router {
         global $__rqst;
         $controllers = explode ( '/', $do );
         $pms = array ();
-        if (1 == count ( $controllers )) {
-            $controller = $controllers [0];
+        $len = count ( $controllers );
+        if ($len == 1) {
+            $module = $controllers [0];
+            $controller = false;
             $action = 'index';
-        } else if (2 <= count ( $controllers )) {
-            $controller = $controllers [0];
-            $action = $controllers [1];
-            $pms = array_slice ( $controllers, 2 );
+        } else if ($len == 2) {
+            $module = $controllers [0];
+            $controller = ucfirst ( $controllers [1] );
+            $action = 'index';
+        } else if ($len == 3) {
+            $module = $controllers [0];
+            $controller = ucfirst ( $controllers [1] );
+            $action = $controllers [2];
+        } else if ($len > 3) {
+            $module = $controllers [0];
+            $controller = ucfirst ( $controllers [1] );
+            $action = $controllers [2];
+            $pms = array_slice ( $controllers, 3 );
         } else {
             die ( 'Can not dispatch the request:' . $do );
         }
-        $controller_file = MODULES_PATH . $controller . DS . 'controller.php';
+        if (! $controller) {
+            $controller_file = MODULES_PATH . $module . DS . 'controller.php';
+            $controllerClz = ucfirst ( $module ) . 'Controller';
+        } else {
+            $controllerClz = ucfirst ( $module ) . $controller . 'Controller';
+            $controller_file = MODULES_PATH . $module . DS . 'controllers' . DS . $controllerClz . '.php';
+            if (!file_exists ( $controller_file )) {
+if ($pms != 'index') {
+                array_unshift ( $pms, $action );
+            }
+            $action = $controller;
+            $controller_file = MODULES_PATH . $module . DS . 'controller.php';
+            $controllerClz = ucfirst ( $module ) . 'Controller';
+            }
+        }
         if (file_exists ( $controller_file )) {
             include $controller_file;
         }
-        $controllerClz = ucfirst ( $controller ) . 'Controller';
+
         if (class_exists ( $controllerClz ) && is_subclass_of2 ( $controllerClz, 'Controller' )) {
             try {
                 $rm = $_SERVER ['REQUEST_METHOD'];
-                $clz = new $controllerClz ( $controller . '/views/', $__rqst, Response::getInstance (), $action, $rm );
+                $clz = new $controllerClz ( $module . '/views/', $__rqst, Response::getInstance (), $action, $rm );
                 if (method_exists ( $clz, $action . '_' . $rm )) {
                     $action = $action . '_' . $rm;
                 }
@@ -76,7 +102,7 @@ class Router {
                     $res = Response::getInstance ();
                     $res->output ( $view );
                 } else {
-                    die ( 'the mothed of ' . $controller . ' is not found.' );
+                    die ( 'the mothed of ' . $controllerClz . ' is not found.' );
                 }
             } catch ( ReflectionException $e ) {
                 if (DEBUG == DEBUG_DEBUG) {

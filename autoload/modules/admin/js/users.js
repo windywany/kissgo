@@ -2,7 +2,7 @@ define('admin/js/users', function(require, exports) {
 	require('jquery/flexigrid');
 	var grid;
 	var preProcessData = function(data) {
-		var edit_url = KsgApp.acturl('admin/users', 'edit');
+		var edit_url = KsgApp.acturl('admin/user', 'edit');
 		for ( var i = 0; i < data.rows.length; i++) {
 			data.rows[i].cell[1] = '<a href="' + edit_url + data.rows[i].id
 					+ '">' + data.rows[i].cell[1] + '</a>';
@@ -54,7 +54,7 @@ define('admin/js/users', function(require, exports) {
 				sortable : true
 			} ];
 			grid = $('#users_grid').flexigrid({
-				url : KsgApp.acturl('admin', 'users_data'),
+				url : KsgApp.acturl('admin/user/data'),
 				dataType : 'json',
 				colModel : colModel,
 				height : 380,
@@ -69,7 +69,7 @@ define('admin/js/users', function(require, exports) {
 					name : '新增',
 					bclass : 'ico-add',
 					onpress : function() {
-						window.location.href = KsgApp.acturl('admin/users/add');
+						window.location.href = KsgApp.acturl('admin/user/add');
 					}
 				}, {
 					separator : true

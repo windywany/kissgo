@@ -12,9 +12,10 @@
 
             <div class="frames">
                 <div class="frame" id="user_frame">
-						<form action="{$admincp}/admin/users/save/" id="user_form" method="post" class="grid fluid">
+						<form action="{$admincp}/admin/user/save/" id="user_form" method="post" class="grid fluid">
 						<input type="hidden" name="id" value="{$id}"/>
 						<fieldset>
+							<legend>基本信息</legend>
 							<div class="row">
 									<div class="span2"><label for="username">用户名</label></div>
 									<div data-role="input-control" class="input-control text span5">
@@ -30,16 +31,23 @@
 									<div class="span5"><label for="display_name" class="error tip">用于显示的姓名,可以是任意字符.</label></div>
 							</div>
 							<div class="row">
+									<div class="span2"><label for="gid">用户组</label></div>
+									<div data-role="input-control" class="input-control select span5">
+                                       <select name="gid" id="gid">{html_options options=$groups selected=$gid}</select>
+                                    </div>
+									<div class="span5"><label for="gid" class="error hide"></label></div>
+							</div>
+							<div class="row">
 									<div class="span2"><label for="email">邮箱</label></div>
 									<div data-role="input-control" class="input-control text span5">
-                                        <input type="text"  tabindex="3" name="email" id="email"/>
+                                        <input type="text"  tabindex="4" name="email" id="email"/>
                                     </div>
 									<div class="span5"><label for="email" class="error hide"></label></div>
 							</div>
 							<div class="row">
 									<div class="span2"><label for="password">密码</label></div>
 									<div data-role="input-control" class="input-control password span5">
-                                        <input type="password"  tabindex="4" name="password" id="password"/>
+                                        <input type="password"  tabindex="5" name="password" id="password"/>
                                     </div>
 									<div class="span5"><label for="password" class="error tip">至少6个字符.</label></div>
 							</div>
@@ -47,19 +55,19 @@
 									<div class="span2"><label for="status">激活</label></div>
 									<div data-role="input-control" class="input-control switch span5">
                                         <label>
-                                            <input type="checkbox"  checked="checked" name="status"  id="status"tabindex="5"/>
+                                            <input type="checkbox"  checked="checked" name="status"  id="status"tabindex="6"/>
                                             <span class="check"></span>
                                         </label>
                                     </div>
 									<div class="span5"></div>
 							</div>
-							<div class="row">
+						</fieldset>
+						<div class="row">
 								<div class="span2"></div>
 								<div class="span5">
-									<button class="button large success"><i class="icon-floppy on-left"></i>保存</button>
+									<button class="button large success" tabindex="7"><i class="icon-floppy on-left"></i>保存</button>
 								</div>
 							</div>
-						</fieldset>
 						</form>
                 </div>
             </div>
