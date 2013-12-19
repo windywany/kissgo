@@ -61,13 +61,13 @@ class Router {
         } else {
             $controllerClz = ucfirst ( $module ) . $controller . 'Controller';
             $controller_file = MODULES_PATH . $module . DS . 'controllers' . DS . $controllerClz . '.php';
-            if (!file_exists ( $controller_file )) {
-if ($pms != 'index') {
-                array_unshift ( $pms, $action );
-            }
-            $action = $controller;
-            $controller_file = MODULES_PATH . $module . DS . 'controller.php';
-            $controllerClz = ucfirst ( $module ) . 'Controller';
+            if (! file_exists ( $controller_file )) {
+                if ($pms != 'index') {
+                    array_unshift ( $pms, $action );
+                }
+                $action = $controller;
+                $controller_file = MODULES_PATH . $module . DS . 'controller.php';
+                $controllerClz = ucfirst ( $module ) . 'Controller';
             }
         }
         if (file_exists ( $controller_file )) {
