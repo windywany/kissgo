@@ -2,7 +2,7 @@
 {block name="layout_style_block"}
 <link href="{'jquery/flexigrid/flexigrid.css'|module}"	rel="stylesheet" />
 {/block}
-{block name="subtitle"}<a href="{$admincp}/admin/users/">用户账户</a> - {$action} {/block}
+{block name="subtitle"}<a href="{$admincp}/admin/user/">用户账户</a> - {$action} {/block}
 {block name="workbench"}
 
 <div class="tab-control mgb5" data-role="tab-control">
@@ -13,34 +13,34 @@
             <div class="frames">
                 <div class="frame" id="user_frame">
 						<form action="{$admincp}/admin/user/save/" id="user_form" method="post" class="grid fluid">
-						<input type="hidden" name="id" value="{$id}"/>
+						<input type="hidden" name="id" id="userid" value="{$user.id}"/>
 						<fieldset>
 							<legend>基本信息</legend>
 							<div class="row">
 									<div class="span2"><label for="username">用户名</label></div>
 									<div data-role="input-control" class="input-control text span5">
-                                        <input type="text"  tabindex="1" name="username" id="username"/>
+                                        <input type="text"  tabindex="1" name="username" id="username" value="{$user.username}"/>
                                     </div>
 									<div class="span5"><label for="username" class="error tip">只能由字母,数字或下划线组成,登录系统时使用。</label></div>
 							</div>
 							<div class="row">
 									<div class="span2"><label for="display_name">姓名</label></div>
 									<div data-role="input-control" class="input-control text span5">
-                                        <input type="text"  tabindex="2" name="display_name" id="display_name"/>
+                                        <input type="text"  tabindex="2" name="display_name" id="display_name"  value="{$user.display_name}"/>
                                     </div>
 									<div class="span5"><label for="display_name" class="error tip">用于显示的姓名,可以是任意字符.</label></div>
 							</div>
 							<div class="row">
 									<div class="span2"><label for="gid">用户组</label></div>
 									<div data-role="input-control" class="input-control select span5">
-                                       <select name="gid" id="gid">{html_options options=$groups selected=$gid}</select>
+                                       <select name="gid" id="gid">{html_options options=$groups selected=$user.gid}</select>
                                     </div>
 									<div class="span5"><label for="gid" class="error hide"></label></div>
 							</div>
 							<div class="row">
 									<div class="span2"><label for="email">邮箱</label></div>
 									<div data-role="input-control" class="input-control text span5">
-                                        <input type="text"  tabindex="4" name="email" id="email"/>
+                                        <input type="text"  tabindex="4" name="email" id="email" value="{$user.email}"/>
                                     </div>
 									<div class="span5"><label for="email" class="error hide"></label></div>
 							</div>
@@ -55,7 +55,7 @@
 									<div class="span2"><label for="status">激活</label></div>
 									<div data-role="input-control" class="input-control switch span5">
                                         <label>
-                                            <input type="checkbox"  checked="checked" name="status"  id="status"tabindex="6"/>
+                                            <input type="checkbox" {if $user.status || !$user.id} checked="checked"{/if} name="status"  id="status"tabindex="6"/>
                                             <span class="check"></span>
                                         </label>
                                     </div>
@@ -65,6 +65,7 @@
 						<div class="row">
 								<div class="span2"></div>
 								<div class="span5">
+								    <a class="button large default" tabindex="7" href="#"><i class="icon-undo on-left"></i>取消</a>
 									<button class="button large success" tabindex="7"><i class="icon-floppy on-left"></i>保存</button>
 								</div>
 							</div>

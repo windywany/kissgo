@@ -50,6 +50,9 @@ class FormField {
 
     public function getValue() {
         $this->value = $this->request->get ( $this->name, $this->default_value );
+        if (method_exists ( $this->form, 'get' . ucfirst ( $this->name ) . 'Value' )) {
+            $this->value = call_user_func_array ( array ($this->form, 'get' . ucfirst ( $this->name ) . 'Value' ), array ($this->value ) );
+        }
         switch ($this->type) {
             case 'int' :
                 $this->value = intval ( $this->value );

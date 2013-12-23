@@ -9,7 +9,6 @@ class AdminUserController extends Controller {
     }
 
     public function add() {
-
         $data ['action'] = __ ( '@admin:Add New User' );
         $form = new UserForm ();
         $data ['validateRule'] = $form->rules ();
@@ -20,16 +19,42 @@ class AdminUserController extends Controller {
 
     public function edit($id) {
         $data ['action'] = __ ( '@admin:Edit User' );
-        $form = new UserForm ();
+        $user = dbselect ( '*' )->from ( '{users}' )->where ( array ('id' => intval ( $id ) ) );
+        if (count ( $user )) {
+            $user = $user [0];
+        } else {
+            $user = array ();
+        }
+        $form = new UserForm ( $user );
         $form->removeRlue ( 'password', 'required' );
         $data ['validateRule'] = $form->rules ();
+        $data ['groups'] = $form->getBindData ( 'gid' );
+        $data ['user'] = $user;
         $view = view ( 'user_form.tpl', $data );
         return $view;
     }
-    public function save(){
 
-        return new JsonView(array());
+    public function save($id = 0) {
+        $data = array ('success' => false );
+        $form = new UserForm ();
+        if (! empty ( $id )) {
+            $form->removeRlue ( 'password', 'required' );
+        }
+        if ($form->valid ()) {
+            $id = $form->save ( $id );
+            if ($id) {
+                $data ['success'] = true;
+                $data ['id'] = $id;
+            } else {
+                $data ['msg'] = '无法保存用户信息.';
+            }
+        } else {
+            $formerr = $form->getErrors ();
+            $data ['formerr'] = $formerr;
+        }
+        return new JsonView ( $data );
     }
+
     /**
      * user data - JSON
      *

@@ -109,16 +109,28 @@
 				position : 'bottom-right'
 			});
 		};
+		KsgApp.tipmsg = function(msg) {
+			$('<div class="notice marker-on-bottom fg-white" >' + msg + '</div>').appendTo($('#msgbox').empty().show());
+		};
+		KsgApp.errormsg = function(msg) {
+			$('<div class="notice marker-on-bottom bg-darkRed fg-white" >' + msg + '</div>').appendTo($('#msgbox').empty().show());
+		};
+		KsgApp.successmsg = function(msg) {
+			$('<div class="notice marker-on-bottom bg-emerald fg-white" >' + msg + '</div>').appendTo($('#msgbox').empty().show());
+		};
+		KsgApp.warnmsg = function(msg) {
+			$('<div class="notice marker-on-bottom bg-amber fg-white" >' + msg + '</div>').appendTo($('#msgbox').empty().show());
+		};
 	}
 
 	KsgApp.validate_opts1 = function(options) {
 		return $.extend(true, {}, {
 			focusCleanup : true,
-			success : function(label, element) {				
+			success : function(label, element) {
 				$(element).removeClass(this.errorClass).addClass(this.validClass);
 			},
 			unhighlight : function(element, ecls, vcls) {
-				$(element).removeClass(ecls).removeClass(vcls);				
+				$(element).removeClass(ecls).removeClass(vcls);
 			},
 			highlight : function(element, errorClass, validClass) {
 				$(element).removeClass(validClass).addClass(errorClass);

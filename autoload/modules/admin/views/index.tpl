@@ -66,7 +66,7 @@
 
                 <li data-row="1" data-col="6" data-sizex="1" data-sizey="1" class="gs-w"  id="adminuser">
     				<div class="tile bg-lightOrange">
-                        <a class="tile-content icon" href="{'admin'|admincp:users}">
+                        <a class="tile-content icon" href="{'admin'|admincp:user}">
                             <i class="icon-user-3"></i>
                         </a>
                         <div class="brand">

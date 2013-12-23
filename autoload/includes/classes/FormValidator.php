@@ -378,10 +378,13 @@ class FormValidator {
         if ($exp [0] == '@') {
             $exp = substr ( $exp, 1 );
             $exps = explode ( ',', $exp );
-            $func = array_shift ( $exps );
+            $func = array ($scope, array_shift ( $exps ) );
+        }else{
+             $exps = explode ( ',', $exp );
+            $func =array_shift ( $exps );
         }
-        if (is_callable ( $exp )) {
-            return call_user_func_array ( $exp, array ($value, $data, __ ( $message ) ) );
+        if (is_callable ( $func )) {
+            return call_user_func_array ( $func, array ($value, $data, __ ( $message ) ) );
         }
         return empty ( $message ) ? __ ( 'error callback' ) : __ ( $message );
     }

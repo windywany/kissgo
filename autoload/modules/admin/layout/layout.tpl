@@ -64,6 +64,7 @@
         		{block name="subtitle"}开始{/block}
         		{block name="toolbar"} {/block}
         	</h2>
+        	<div id="msgbox" style="display:none;"></div>
             <div id="workbench">
             	{block name="workbench"}{/block}
             </div>
