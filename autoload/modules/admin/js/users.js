@@ -71,13 +71,6 @@ define('admin/js/users', function(require, exports) {
 					onpress : function() {
 						window.location.href = KsgApp.acturl('admin/user/add');
 					}
-				}, {
-					separator : true
-				}, {
-					name : '删除',
-					bclass : 'ico-trash',
-					onpress : function() {
-					}
 				} ]
 			});
 		}

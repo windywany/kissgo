@@ -11,7 +11,9 @@
             </ul>
 
             <div class="frames">
-                <div class="frame" id="search_form"></div>
+                <div class="frame" id="search_form">
+
+                </div>
             </div>
 </div>
 <div id="users_grid"></div>

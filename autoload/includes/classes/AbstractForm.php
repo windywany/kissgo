@@ -17,7 +17,7 @@ abstract class AbstractForm {
         $this->__form_init_data = $data;
         $refObj = new ReflectionObject ( $this );
         $fields = $refObj->getProperties ( ReflectionProperty::IS_PRIVATE );
-        $this->__form_validator = new FormValidator ( dirname ( dirname ( __FILE__ ) ) . DS . 'i18n' . DS, get_class ( $this ) );
+        $this->__form_validator = new FormValidator ( get_class ( $this ) );
         foreach ( $fields as $field ) {
             $name = $field->getName ();
             $field->setAccessible ( true );
@@ -51,7 +51,7 @@ abstract class AbstractForm {
             $messages = array ();
             foreach ( $this->__form_fields as $key => $field ) {
                 $rule = $field->getValidateRule ();
-                list ( $r, $m ) = $this->__form_validator->getRuleClass ( $rule, $this->__form_init_data,$key );
+                list ( $r, $m ) = $this->__form_validator->getRuleClass ( $rule, $this->__form_init_data, $key );
                 if ($r) {
                     $vrules [$key] = $r;
                     $messages [$key] = $m;
@@ -103,11 +103,10 @@ abstract class AbstractForm {
     }
 
     public function toArray() {
-        $data = array ();
         foreach ( $this->__form_fields as $name => $field ) {
-            $data [$name] = $field->getValue ();
+            $this->__form_data [$name] = $field->getValue ();
         }
-        return $data;
+        return $this->__form_data;
     }
 
     public function getInitData($name) {

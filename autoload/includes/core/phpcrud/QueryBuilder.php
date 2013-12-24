@@ -1,4 +1,5 @@
 <?php
+
 abstract class QueryBuilder {
     const LEFT = 'LEFT';
     const RIGHT = 'RIGHT';
@@ -20,6 +21,7 @@ abstract class QueryBuilder {
     protected $error = false;
     protected $errorSQL = '';
     protected $errorValues;
+
     public function __construct() {
         $this->dbconf = 'default';
     }
@@ -31,15 +33,17 @@ abstract class QueryBuilder {
         }
         return $this;
     }
+
     public function join($table, $on, $type = QueryBuilder::LEFT) {
         $table = self::parseAs ( $table );
         $join = array ($table [0], $on, $type . '  JOIN ', $table [1] );
         $this->joins [] = $join;
         return $this;
     }
+
     public function where($con = null) {
-        if(is_array($con)){
-            $con = new Condition($con);
+        if (is_array ( $con )) {
+            $con = new Condition ( $con );
         }
         if ($this->where) {
             $this->where [] = $con;
@@ -48,12 +52,14 @@ abstract class QueryBuilder {
         }
         return $this;
     }
+
     public function having($having) {
         if (! empty ( $having )) {
             $this->having [] = $having;
         }
         return $this;
     }
+
     public function groupBy($fields) {
         if (! empty ( $fields )) {
             $this->group [] = $fields;
@@ -65,10 +71,18 @@ abstract class QueryBuilder {
         $this->order [] = array ($field, 'ASC' );
         return $this;
     }
+
     public function desc($field) {
         $this->order [] = array ($field, 'DESC' );
         return $this;
     }
+
+    public function sort($field, $order) {
+        $order = strtolower ( $order ) == 'asc' ? 'ASC' : 'DESC';
+        $this->order [] = array ($field, $order );
+        return $this;
+    }
+
     public function limit($start, $limit) {
         $start = intval ( $start );
         $limit = intval ( $limit );
@@ -78,20 +92,25 @@ abstract class QueryBuilder {
         $this->limit = array ($start, $limit );
         return $this;
     }
+
     public function alias($alias) {
         $this->alias = $alias;
         return $this;
     }
+
     public function getAlias() {
         return $this->alias;
     }
+
     public function usedb($database) {
         $this->dbconf = $database;
         return $this;
     }
+
     public function setDialect($dialect) {
         $this->dialect = $dialect;
     }
+
     /**
      * get the dialect binding with this query.
      *
@@ -101,6 +120,7 @@ abstract class QueryBuilder {
         $this->checkDialect ();
         return $this->dialect;
     }
+
     protected function checkDialect() {
         if (! $this->dialect) {
             $this->dialect = DatabaseDialect::getDialect ( $this->dbconf );
@@ -109,6 +129,7 @@ abstract class QueryBuilder {
             die ( 'Cannot connect to the database!' );
         }
     }
+
     public function getBindValues() {
         return $this->values;
     }
@@ -116,18 +137,23 @@ abstract class QueryBuilder {
     public function setBindValues($values) {
         $this->values = $values;
     }
+
     public function setPDOOptions($options) {
         $this->options = $options;
     }
+
     public function lastError() {
         return $this->error;
     }
+
     public function lastSQL() {
         return $this->errorSQL;
     }
+
     public function lastValues() {
         return $this->errorValues;
     }
+
     protected function sanitize($var) {
         $this->checkDialect ();
         if (is_string ( $var )) {
@@ -154,6 +180,7 @@ abstract class QueryBuilder {
             $item = $this->dialect->sanitize ( $item );
         }
     }
+
     protected static function parseAs($str) {
         $table = preg_split ( '#\b(as|\s+)\b#i', trim ( $str ) );
         if (count ( $table ) == 1) {
@@ -165,6 +192,7 @@ abstract class QueryBuilder {
         }
         return array (trim ( $name ), $alias );
     }
+
     protected function prepareFrom($froms) {
         $_froms = array ();
         if ($froms) {
@@ -176,6 +204,7 @@ abstract class QueryBuilder {
         }
         return $_froms;
     }
+
     protected function prepareJoins($joins) {
         $_joins = array ();
         if ($joins) {
@@ -187,6 +216,7 @@ abstract class QueryBuilder {
         }
         return $_joins;
     }
+
     /**
      * prepare the fields in select SQL
      *

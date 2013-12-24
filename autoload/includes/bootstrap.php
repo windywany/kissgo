@@ -166,11 +166,6 @@ if (is_readable ( $_ksg_settings_file )) {
     } else {
         define ( 'CLEAN_URL', false );
     }
-    if (isset ( $settings ['I18N_ENABLED'] )) {
-        define ( 'I18N_ENABLED', ! empty ( $settings ['I18N_ENABLED'] ) );
-    } else {
-        define ( 'I18N_ENABLED', false );
-    }
     if (isset ( $settings ['GZIP_ENABLED'] )) {
         define ( 'GZIP_ENABLED', ! empty ( $settings ['GZIP_ENABLED'] ) );
     } else {

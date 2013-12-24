@@ -6,12 +6,8 @@
  */
 class FormValidator {
     protected static $extra_methods = array ();
-    private $messageFile;
     private $formName;
-    private $messages;
-
-    public function __construct($messageFile, $formName) {
-        $this->messageFile = $messageFile;
+    public function __construct($formName) {
         $this->formName = $formName;
     }
 
@@ -487,13 +483,5 @@ class FormValidator {
 
     protected function emp($value) {
         return strlen ( trim ( $value ) ) == 0;
-    }
-
-    private function loadMessage() {
-        $locale = I18n::getLocale ();
-        $file = $this->messageFile . $locale . '.php';
-        if (file_exists ( $file )) {
-            include_once file;
-        }
     }
 }

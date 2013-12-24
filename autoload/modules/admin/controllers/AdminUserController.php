@@ -66,11 +66,12 @@ class AdminUserController extends Controller {
         $rp = intval ( $rp );
         $rp = $rp ? $rp : 15;
         $start = ($page ? $page - 1 : $page) * $rp;
-        $users = dbselect ( 'U.*', 'G.name AS groupname' )->from ( '{users} AS U' )->join ( '{groups} AS G', 'U.gid = G.gid' )->limit ( $start, $rp );
+        $users = dbselect ( 'U.*', 'G.name AS groupname' )->from ( '{users} AS U' )->join ( '{groups} AS G', 'U.gid = G.gid' )->limit ( $start, $rp )->sort ( $sortname, $sortorder );
         $total = $users->count ( 'U.id' );
         $jsonData = array ('page' => $page, 'total' => $total, 'rows' => array (), 'rp' => $rp );
         if ($total > 0 && count ( $users )) {
-            foreach ( $users as $u ) { // the order is very important
+            foreach ( $users as $u ) {
+                // the order is very important
                 $cell = array ();
                 $cell [] = $u ['id'];
                 $cell [] = $u ['username'];

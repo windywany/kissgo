@@ -37,6 +37,14 @@ class UserForm extends AbstractForm {
      * @return boolean|string
      */
     public function chkusername($value, $data) {
+        $where = array ('username' => $value );
+        if ($data ['id']) {
+            $where ['id <>'] = $data ['id'];
+        }
+        $rst = dbselect ( 'id' )->from ( '{users}' )->where ( $where );
+        if (count ( $rst ) > 0) {
+            return __ ( '@admin:The username %s is in used!', $value );
+        }
         return true;
     }
 
@@ -48,6 +56,14 @@ class UserForm extends AbstractForm {
      * @return boolean|string
      */
     public function chkemail($value, $data) {
+        $where = array ('email' => $value );
+        if ($data ['id']) {
+            $where ['id <>'] = $data ['id'];
+        }
+        $rst = dbselect ( 'id' )->from ( '{users}' )->where ( $where );
+        if (count ( $rst ) > 0) {
+            return __ ( '@admin:The email %s is in used!', $value );
+        }
         return true;
     }
 

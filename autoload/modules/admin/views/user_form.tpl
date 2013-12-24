@@ -65,7 +65,7 @@
 						<div class="row">
 								<div class="span2"></div>
 								<div class="span5">
-								    <a class="button large default" tabindex="7" href="#"><i class="icon-undo on-left"></i>取消</a>
+								    <a class="button large default" tabindex="7" href="{$admincp}/admin/user/"><i class="icon-undo on-left"></i>返回</a>
 									<button class="button large success" tabindex="7"><i class="icon-floppy on-left"></i>保存</button>
 								</div>
 							</div>

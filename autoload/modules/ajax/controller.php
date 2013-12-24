@@ -23,9 +23,9 @@ class AjaxController extends Controller {
     /**
      *
      * ajax validate
-     * @param string $_fm_
-     * @param string $_cb_
-     * @param string $_fd_
+     * @param string $_fm_ form name
+     * @param string $_cb_ callback
+     * @param string $_fd_ field name
      */
     public function validate($_fm_, $_cb_, $_fd_) {
         if (class_exists ( $_fm_ )) {
@@ -36,14 +36,9 @@ class AjaxController extends Controller {
                 $rst = call_user_func_array ( array ($_form, $_cb_ ), array ($value, $_form->toArray () ) );
                 if ($rst === true) {
                     return 'true';
-                } else {
-                    return $rst;
                 }
-            } else {
-                return __ ( 'Remove Validate Error!' );
             }
-        } else {
-            return __ ( 'Remove Validate Error!' );
         }
+        return 'false';
     }
 }
