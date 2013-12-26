@@ -1,4 +1,5 @@
 <?php
+
 /**
  * kissgo framework that keep it simple and stupid, go go go ~~
  *
@@ -62,27 +63,7 @@ class Response {
             @header ( $header . ': ' . $val );
         }
     }
-    public static function back($args = null) {
-        $req = Request::getInstance ();
-        if (isset ( $req ['__ifm'] )) {
-            self::closeIframe ();
-        } else {
-            $_SESSION ['__IS_BACK'] = true;
-            self::redirect ( isset ( $_SERVER ['HTTP_REFERER'] ) ? $_SERVER ['HTTP_REFERER'] : BASE_URL, $args );
-        }
-    }
-    public static function closeIframe() {
-        echo '<html><head><script type="text/javascript">var win = window;while (win.location.href != win.parent.location.href) {win = win.parent;} win.location.reload()</script></head></html>';
-        exit ();
-    }
-    /**
-     *
-     * @return boolean
-     */
-    public static function isBack() {
-        return sess_del ( '__IS_BACK', false );
-    }
-    /**
+     /**
      * 跳转
      *
      * @param string $location 要转到的网址
@@ -108,16 +89,21 @@ class Response {
                 $location .= '?' . $args;
             }
         }
-        if ($is_IIS) {
-            @header ( "Refresh: 0;url=$location" );
+        if (isset ( $_SERVER ["HTTP_X_AJAX_TYPE"] )) {
+            @header ( 'X-AJAX-REDIRECT:' . $location );
         } else {
-            if (php_sapi_name () != 'cgi-fcgi') {
-                status_header ( $status ); // This causes problems on IIS and some
+            if ($is_IIS) {
+                @header ( "Refresh: 0;url=$location" );
+            } else {
+                if (php_sapi_name () != 'cgi-fcgi') {
+                    status_header ( $status ); // This causes problems on IIS and some
+                }
+                @header ( "Location: $location", true, $status );
             }
-            @header ( "Location: $location", true, $status );
         }
         exit ();
     }
+
     /**
      *
      * @param int $status respond status code
@@ -130,6 +116,7 @@ class Response {
         }
         exit ();
     }
+
     /**
      * 设置cookie
      *
@@ -165,7 +152,7 @@ class Response {
     public function output($view = null) {
         if ($view instanceof View) {
             $this->view = $view;
-        } else if (is_string ( $view ) || is_bool($view) || is_numeric($view)) {
+        } else if (is_string ( $view ) || is_bool ( $view ) || is_numeric ( $view )) {
             $this->view = new SimpleView ( $view );
         } else if (is_array ( $view )) {
             $this->view = new JsonView ( $view );

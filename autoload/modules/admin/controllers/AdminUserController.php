@@ -1,22 +1,50 @@
 <?php
 
+/**
+ *
+ * user controller
+ * @author guangfeng.ning
+ *
+ */
 class AdminUserController extends Controller {
 
+    public function preRun() {
+        $user = whoami ();
+        if (! $user->isLogin ()) {
+            Response::redirect ( ADMINCP_URL );
+        }
+    }
+
+    /**
+     *
+     * 用户列表页
+     */
     public function index() {
         $data = array ();
+        $form = new UserForm ();
+        $data ['groups'] = $form->groups ( array ('' => '全部' ) );
         $view = view ( 'users.tpl', $data );
         return $view;
     }
 
+    /**
+     *
+     * 新增页面
+     */
     public function add() {
         $data ['action'] = __ ( '@admin:Add New User' );
         $form = new UserForm ();
         $data ['validateRule'] = $form->rules ();
-        $data ['groups'] = $form->getBindData ( 'gid' );
+        $data ['groups'] = $form->groups ();
         $view = view ( 'user_form.tpl', $data );
         return $view;
     }
 
+    /**
+     *
+     * 编辑页面
+     * @param int $id
+     */
     public function edit($id) {
         $data ['action'] = __ ( '@admin:Edit User' );
         $user = dbselect ( '*' )->from ( '{users}' )->where ( array ('id' => intval ( $id ) ) );
@@ -34,6 +62,11 @@ class AdminUserController extends Controller {
         return $view;
     }
 
+    /**
+     *
+     * 保存用户数据
+     * @param int $id
+     */
     public function save($id = 0) {
         $data = array ('success' => false );
         $form = new UserForm ();
@@ -66,7 +99,8 @@ class AdminUserController extends Controller {
         $rp = intval ( $rp );
         $rp = $rp ? $rp : 15;
         $start = ($page ? $page - 1 : $page) * $rp;
-        $users = dbselect ( 'U.*', 'G.name AS groupname' )->from ( '{users} AS U' )->join ( '{groups} AS G', 'U.gid = G.gid' )->limit ( $start, $rp )->sort ( $sortname, $sortorder );
+        $where = Condition::where ( array ('display_name', 'like' ), 'status', array ('username', 'like' ), array ('email', 'like' ), 'G.gid' );
+        $users = dbselect ( 'U.*', 'G.name AS groupname' )->from ( '{users} AS U' )->join ( '{groups} AS G', 'U.gid = G.gid' )->where ( $where )->limit ( $start, $rp )->sort ( $sortname, $sortorder );
         $total = $users->count ( 'U.id' );
         $jsonData = array ('page' => $page, 'total' => $total, 'rows' => array (), 'rp' => $rp );
         if ($total > 0 && count ( $users )) {

@@ -1,5 +1,7 @@
 <?php
+
 class MySQLDialect extends DatabaseDialect {
+
     /**
      * (non-PHPdoc)
      * @see DatabaseDialect::getSelectSQL()
@@ -23,6 +25,7 @@ class MySQLDialect extends DatabaseDialect {
         $sql = implode ( ' ', $sql );
         return $sql;
     }
+
     /**
      * (non-PHPdoc)
      * @see DatabaseDialect::getCountSelectSQL()
@@ -33,6 +36,7 @@ class MySQLDialect extends DatabaseDialect {
         $sql = implode ( ' ', $sql );
         return $sql;
     }
+
     /**
      * (non-PHPdoc)
      * @see DatabaseDialect::getInsertSQL()
@@ -55,6 +59,7 @@ class MySQLDialect extends DatabaseDialect {
         $sql .= implode ( '` , `', $fields ) . '`) VALUES (' . implode ( ' , ', $_values ) . ')';
         return $sql;
     }
+
     /**
      * (non-PHPdoc)
      * @see DatabaseDialect::getDeleteSQL()
@@ -70,12 +75,13 @@ class MySQLDialect extends DatabaseDialect {
             $sql [] = 'USING';
             $sql [] = implode ( ',', $us );
         }
-        if ($where) {
+        if ($where && count ( $where ) > 0) {
             $sql [] = 'WHERE';
             $sql [] = $where->getWhereCondition ( $this, $values );
         }
         return implode ( ' ', $sql );
     }
+
     /**
      * (non-PHPdoc)
      * @see DatabaseDialect::getUpdateSQL()
@@ -95,14 +101,15 @@ class MySQLDialect extends DatabaseDialect {
             }
         }
         $sql [] = implode ( ' , ', $fields );
-        if ($where) {
+        if ($where && count ( $where ) > 0) {
             $sql [] = 'WHERE';
             $sql [] = $where->getWhereCondition ( $this, $values );
         }
         return implode ( ' ', $sql );
     }
+
     /**
-     * 
+     *
      * @see DatabaseDialect::prepareConstructOption()
      */
     protected function prepareConstructOption($options) {
@@ -111,7 +118,7 @@ class MySQLDialect extends DatabaseDialect {
         $dsn = "mysql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']};charset={$charset}";
         return array ($dsn, $opts ['user'], $opts ['password'], $opts ['driver_options'] );
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see DatabaseDialect::sanitize()
@@ -119,9 +126,10 @@ class MySQLDialect extends DatabaseDialect {
     public function sanitize($string) {
         return $string;
     }
+
     /**
      * generate the common SQL for select and select count
-     * 
+     *
      * @param array $sql
      * @param array $from
      * @param array $joins
@@ -141,7 +149,7 @@ class MySQLDialect extends DatabaseDialect {
                 $sql [] = $join [2] . ' ' . $join [0] . ' AS ' . $join [3] . ' ON (' . $join [1] . ')';
             }
         }
-        if ($where) {
+        if ($where && count ( $where ) > 0) {
             $sql [] = 'WHERE ' . $where->getWhereCondition ( $this, $values );
         }
         if ($group) {

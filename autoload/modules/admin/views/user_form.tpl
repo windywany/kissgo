@@ -1,7 +1,4 @@
 {extends file=$layout}
-{block name="layout_style_block"}
-<link href="{'jquery/flexigrid/flexigrid.css'|module}"	rel="stylesheet" />
-{/block}
 {block name="subtitle"}<a href="{$admincp}/admin/user/">用户账户</a> - {$action} {/block}
 {block name="workbench"}
 
@@ -65,7 +62,7 @@
 						<div class="row">
 								<div class="span2"></div>
 								<div class="span5">
-								    <a class="button large default" tabindex="7" href="{$admincp}/admin/user/"><i class="icon-undo on-left"></i>返回</a>
+								    <a class="button large default" tabindex="8" href="{$admincp}/admin/user/"><i class="icon-undo on-left"></i>返回</a>
 									<button class="button large success" tabindex="7"><i class="icon-floppy on-left"></i>保存</button>
 								</div>
 							</div>
@@ -77,10 +74,10 @@
 {/block}
 {block name="layout_foot_block"}
 <script type="text/javascript">
-	seajs.use('admin/js/user_form', function(app) {
+	seajs.use(['admin/js/users','jquery/form','jquery/blockit','jquery/validate'], function(app) {
             $(function(){
             	var validateRule = {$validateRule};
-            	app.main(validateRule);
+            	app.form(validateRule);
             });
         });
 </script>

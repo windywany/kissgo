@@ -110,7 +110,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2013-12-06 09:56:49</creation_date>
-			<updated_date>2013-12-12 15:23:28</updated_date>
+			<updated_date>2013-12-26 14:39:47</updated_date>
 			<model_property>
 				<name>Project Name</name>
 				<value></value>
@@ -2073,7 +2073,7 @@
 		</table>
 		<table>
 			<id>3</id>
-			<height>178</height>
+			<height>195</height>
 			<width>232</width>
 				<font_name>Segoe UI</font_name>
 				<font_size>9</font_size>
@@ -2086,7 +2086,7 @@
 			</color>
 			<connections>
 			</connections>
-			<physical_name>nodetypes</physical_name>
+			<physical_name>nodes_type</physical_name>
 			<logical_name>Node Types</logical_name>
 			<description></description>
 			<constraint></constraint>
@@ -2260,9 +2260,9 @@
 			</complex_unique_key_list>
 			<table_properties>
 				<schema></schema>
-				<character_set></character_set>
-				<collation></collation>
-				<storage_engine></storage_engine>
+				<character_set>utf8</character_set>
+				<collation>utf8_unicode_ci</collation>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>

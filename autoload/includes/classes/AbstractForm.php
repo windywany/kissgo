@@ -94,10 +94,17 @@ abstract class AbstractForm {
         }
     }
 
-    public function getBindData($name) {
+    /**
+     *
+     *
+     * @param string $name
+     * @param mixed $initData
+     * @deprecated
+     */
+    public function getBindData($name, $initData = null) {
         $data = array ();
         if (isset ( $this->__form_fields [$name] )) {
-            $data = $this->__form_fields [$name]->getBindData ();
+            $data = $this->__form_fields [$name]->getBindData ( $initData );
         }
         return $data;
     }

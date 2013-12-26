@@ -1,10 +1,22 @@
 SET SESSION FOREIGN_KEY_CHECKS=0;
 
+/* Drop Indexes */
+
+DROP INDEX IDX_DELETED ON nodes;
+DROP INDEX IDX_STATUS ON nodes;
+DROP INDEX IDX_PATH ON nodes;
+DROP INDEX UDX_CONTENT ON nodes;
+
+
+
 /* Drop Tables */
 
 DROP TABLE groups;
 DROP TABLE nodes;
+DROP TABLE nodes_type;
 DROP TABLE users;
+
+
 
 
 /* Create Tables */
@@ -49,6 +61,17 @@ CREATE TABLE nodes
 	content text COMMENT 'Content',
 	PRIMARY KEY (id)
 ) ENGINE = InnoDB COMMENT = 'Nodes : web page nodes' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+
+CREATE TABLE nodes_type
+(
+	id smallint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+	type varchar(16) NOT NULL UNIQUE COMMENT 'Type',
+	name varchar(64) NOT NULL COMMENT 'Name',
+	template varchar(512) COMMENT 'Template File',
+	note varchar(256) COMMENT 'Note',
+	PRIMARY KEY (id)
+) ENGINE = InnoDB COMMENT = 'Node Types' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
 CREATE TABLE users

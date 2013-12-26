@@ -49,7 +49,7 @@
                                 <i class="icon-newspaper"></i>
                             </div>
                             <div class="brand">
-                                <span class="label fg-white">主题-default</span>
+                                <span class="label fg-white">模板管理</span>
                             </div>
                         </div>
                 </li>
@@ -75,6 +75,18 @@
                         </div>
                     </div>
     			</li>
+
+    			<li data-row="1" data-col="7" data-sizex="1" data-sizey="1" class="gs-w"  id="adminuser">
+    				<div class="tile bg-darkCyan">
+                        <a class="tile-content icon" href="{'admin'|admincp:usergroup}">
+                            <i class=" icon-user"></i>
+                        </a>
+                        <div class="brand">
+                            <span class="label fg-white">用户组</span>
+                        </div>
+                    </div>
+    			</li>
+
        </ul>
 </div>
 {/block}

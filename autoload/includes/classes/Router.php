@@ -84,6 +84,7 @@ class Router {
                 $ref = new ReflectionObject ( $clz );
                 $method = $ref->getMethod ( $action );
                 if ($method) {
+                    call_user_func_array ( array ($clz, 'preRun' ), array () );
                     $params = $method->getParameters ();
                     $args = array ();
                     if ($params) {
@@ -96,7 +97,6 @@ class Router {
                             $idx ++;
                         }
                     }
-                    call_user_func_array ( array ($clz, 'preRun' ), array () );
                     $view = call_user_func_array ( array ($clz, $action ), $args );
                     $view = call_user_func_array ( array ($clz, 'postRun' ), array ($view ) );
                     $res = Response::getInstance ();

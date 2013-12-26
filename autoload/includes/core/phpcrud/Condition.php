@@ -12,7 +12,7 @@
  * @author guangfeng.ning
  *
  */
-class Condition implements ArrayAccess {
+class Condition implements ArrayAccess, Countable {
     private $conditions = array ();
 
     public function __construct($con = array()) {
@@ -21,6 +21,58 @@ class Condition implements ArrayAccess {
                 $this->conditions [] = array ($key, $value );
             }
         }
+    }
+
+    /**
+     *
+     *build where condition from request
+     */
+    public static function where() {
+        $rqst = Request::getInstance ( false );
+        $fields = func_get_args ();
+        $con = new Condition ();
+        foreach ( $fields as $def ) {
+            if (is_array ( $def ) && count ( $def ) > 1) {
+                $key = $def [0];
+                $field = self::safeField ( $key );
+                $op = strtoupper ( $def [1] );
+                if (isset ( $rqst [$field] ) && (is_numeric ( $rqst [$field] ) || ! empty ( $rqst [$field] ))) {
+                    $value = $rqst [$field];
+                    switch ($op) {
+                        case 'LIKE' :
+                            $value = '%' . $value . '%';
+                            break;
+                        case 'RLIKE' :
+                            $value = $value . '%';
+                            $op = 'LIKE';
+                            break;
+                        case 'LLIKE' :
+                            $value = '%' . $value;
+                            $op = 'LIKE';
+                            break;
+                        default :
+                            break;
+                    }
+                    $con [$key . ' ' . $op] = $value;
+                }
+            } else {
+                $key = $def;
+                $field = self::safeField ( $key );
+                if (isset ( $rqst [$field] ) && (is_numeric ( $rqst [$field] ) || ! empty ( $rqst [$field] ))) {
+                    $con [$key] = $rqst [$field];
+                }
+            }
+        }
+        return $con;
+    }
+
+    public static function safeField($field) {
+        $fields = explode ( '.', $field );
+        return str_replace ( '`', '', array_pop ( $fields ) );
+    }
+
+    public function count() {
+        return count ( $this->conditions );
     }
 
     /**

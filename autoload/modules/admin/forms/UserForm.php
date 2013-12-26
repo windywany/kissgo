@@ -100,8 +100,12 @@ class UserForm extends AbstractForm {
      * @param int $selected
      * @return array
      */
-    public function groups($selected = 0) {
-        $groups = array ();
+    public function groups($init = array()) {
+        if (is_array ( $init )) {
+            $groups = $init;
+        } else {
+            $groups = array ();
+        }
         $rst = dbselect ( 'gid,name' )->from ( '{groups}' );
         if (count ( $rst )) {
             foreach ( $rst as $group ) {

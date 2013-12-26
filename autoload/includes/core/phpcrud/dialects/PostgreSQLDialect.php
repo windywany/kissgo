@@ -1,7 +1,7 @@
 <?php
 /**
  * for postgres SQL
- * 
+ *
  * @author guangfeng.ning
  *
  */
@@ -83,7 +83,7 @@ class PostgreSQLDialect extends DatabaseDialect {
             $sql [] = 'USING';
             $sql [] = implode ( ' , ', $us );
         }
-        if ($where) {
+        if ($where && count($where)>0) {
             $sql [] = 'WHERE';
             $sql [] = $where->getWhereCondition ( $this, $values );
         }
@@ -108,14 +108,14 @@ class PostgreSQLDialect extends DatabaseDialect {
             }
         }
         $sql [] = implode ( ' , ', $fields );
-        if ($where) {
+        if ($where && count($where)>0) {
             $sql [] = 'WHERE';
             $sql [] = $where->getWhereCondition ( $this, $values );
         }
         return implode ( ' ', $sql );
     }
     /**
-     * 
+     *
      * @see DatabaseDialect::prepareConstructOption()
      */
     protected function prepareConstructOption($options) {
@@ -123,13 +123,13 @@ class PostgreSQLDialect extends DatabaseDialect {
         $dsn = "pgsql:dbname={$opts['dbname']};host={$opts['host']};port={$opts['port']}";
         return array ($dsn, $opts ['user'], $opts ['password'], $opts ['driver_options'] );
     }
-    
+
     public function sanitize($string) {
         return str_replace ( '`', '"', $string );
     }
     /**
      * generate the common SQL for select and select count
-     * 
+     *
      * @param array $sql
      * @param array $from
      * @param array $joins
@@ -149,7 +149,7 @@ class PostgreSQLDialect extends DatabaseDialect {
                 $sql [] = $join [2] . ' ' . $join [0] . ' AS ' . $join [3] . ' ON (' . $join [1] . ')';
             }
         }
-        if ($where) {
+        if ($where && count($where)>0) {
             $sql [] = 'WHERE ' . $where->getWhereCondition ( $this, $values );
         }
         if ($group) {

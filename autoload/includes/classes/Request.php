@@ -1,4 +1,5 @@
 <?php
+
 /**
  * kissgo framework that keep it simple and stupid, go go go ~~
  *
@@ -17,6 +18,7 @@ class Request implements ArrayAccess {
     private $xss_cleaner;
     private $quotes_gpc;
     private static $INSTANCE = null;
+
     private function __construct($xss_clean = false) {
         $this->use_xss_clean = $xss_clean;
         $this->quotes_gpc = get_magic_quotes_gpc ();
@@ -24,7 +26,7 @@ class Request implements ArrayAccess {
         $this->_sanitize_globals ();
         $this->start_session ();
     }
-    
+
     /**
      * @return Request
      */
@@ -37,7 +39,7 @@ class Request implements ArrayAccess {
         }
         return self::$INSTANCE;
     }
-    
+
     /**
      * 本次请求的类型
      * @return bool 如果是通过ajax请求的返回true,反之返回false
@@ -45,13 +47,15 @@ class Request implements ArrayAccess {
     public static function isAjaxRequest() {
         return isset ( $_SERVER ["HTTP_X_AJAX_TYPE"] );
     }
+
     public static function isGet() {
         return strtoupper ( $_SERVER ['REQUEST_METHOD'] ) == 'GET';
     }
+
     public static function isPost() {
         return strtoupper ( $_SERVER ['REQUEST_METHOD'] ) == 'POST';
     }
-    
+
     /**
      * set enable flag
      * @param $enable
@@ -59,7 +63,6 @@ class Request implements ArrayAccess {
     public function set_cleaner_enable($enable) {
         $this->use_xss_clean = $enable;
     }
-    
     /**
      * 获取客户端传过来的值无论是通过GET方式还是POST方式
      * @param string $name
@@ -94,6 +97,7 @@ class Request implements ArrayAccess {
         }
         return $ary [$name];
     }
+
     public static function getUri() {
         if (isset ( $_SERVER ['REQUEST_URI'] )) {
             return $_SERVER ['REQUEST_URI'];
@@ -113,6 +117,7 @@ class Request implements ArrayAccess {
         }
         return BASE_URL . ltrim ( $url, '/' ) . (empty ( $query_str ) ? '' : '?' . $query_str);
     }
+
     public static function getVirtualPageUrl() {
         if (isset ( $_SERVER ['PATH_INFO'] )) {
             $url = $_SERVER ['PATH_INFO'];
@@ -135,6 +140,7 @@ class Request implements ArrayAccess {
         $url = '/' . ltrim ( $url, '/' );
         return $url;
     }
+
     public static function parseURL() {
         global $_ksg_url_info, $_current_page;
         if (! $_ksg_url_info) {
@@ -190,6 +196,7 @@ class Request implements ArrayAccess {
         }
         return $_ksg_url_info;
     }
+
     /**
      * 对值进行xss安全处理
      *
@@ -202,21 +209,25 @@ class Request implements ArrayAccess {
         }
         return $val;
     }
+
     public function offsetExists($offset) {
         return isset ( $_GET [$offset] ) || isset ( $_POST [$offset] ) || isset ( $this->userData [$offset] );
     }
+
     public function offsetGet($offset) {
         return $this->get ( $offset );
     }
+
     public function offsetSet($offset, $value) {
         $this->userData [$offset] = $value;
     }
+
     public function offsetUnset($offset) {
         if (isset ( $this->userData [$offset] )) {
             unset ( $this->userData [$offset] );
         }
     }
-    
+
     //处理全局输入
     private function _sanitize_globals() {
         //$_GET = $this->_clean_input_data($_GET);
@@ -226,7 +237,7 @@ class Request implements ArrayAccess {
         unset ( $_COOKIE ['$Domain'] );
         $_COOKIE = $this->_clean_input_data ( $_COOKIE );
     }
-    
+
     /**
      * Clean Input Data
      *
@@ -245,25 +256,25 @@ class Request implements ArrayAccess {
             }
             return $new_array;
         }
-        
+
         // We strip slashes if magic quotes is on to keep things consistent
         if ($this->quotes_gpc) {
             $str = stripslashes ( $str );
         }
-        
+
         // Should we filter the input data?
         if ($this->use_xss_clean === true) {
             $str = $this->xss_cleaner->xss_clean ( $str );
         }
-        
+
         // Standardize newlines
         if (strpos ( $str, "\r" ) !== FALSE) {
             $str = str_replace ( array ("\r\n", "\r" ), "\n", $str );
         }
-        
+
         return $str;
     }
-    
+
     /**
      * Clean Keys
      *
@@ -281,6 +292,7 @@ class Request implements ArrayAccess {
         }
         return $str;
     }
+
     /**
      * start the session
      */
@@ -343,7 +355,7 @@ class XssCleaner {
     private $never_allowed_regex = array ('javascript\s*:' => '[removed]', 'expression\s*(\(|&\#40;)' => '[removed]', // CSS and IE
 'vbscript\s*:' => '[removed]', // IE, surprise!
 'Redirect\s+302' => '[removed]' );
-    
+
     /**
      * XSS Clean
      *
@@ -380,24 +392,24 @@ class XssCleaner {
             while ( (list ( $key ) = each ( $str )) != false ) {
                 $str [$key] = $this->xss_clean ( $str [$key] );
             }
-            
+
             return $str;
         }
-        
+
         /*
           * Remove Invisible Characters
           */
         $str = $this->_remove_invisible_characters ( $str );
-        
+
         /*
           * Protect GET variables in URLs
           */
-        
+
         // 901119URL5918AMP18930PROTECT8198
-        
+
 
         $str = preg_replace ( '|\&([a-z\_0-9]+)\=([a-z\_0-9]+)|i', $this->xss_hash () . "\\1=\\2", $str );
-        
+
         /*
           * Validate standard character entities
           *
@@ -406,7 +418,7 @@ class XssCleaner {
           *
           */
         $str = preg_replace ( '#(&\#?[0-9a-z]{2,})([\x00-\x20])*;?#i', "\\1;\\2", $str );
-        
+
         /*
           * Validate UTF16 two byte encoding (x00)
           *
@@ -414,12 +426,12 @@ class XssCleaner {
           *
           */
         $str = preg_replace ( '#(&\#x?)([0-9A-F]+);?#i', "\\1\\2;", $str );
-        
+
         /*
           * Un-Protect GET variables in URLs
           */
         $str = str_replace ( $this->xss_hash (), '&', $str );
-        
+
         /*
           * URL Decode
           *
@@ -431,7 +443,7 @@ class XssCleaner {
           *
           */
         $str = rawurldecode ( $str );
-        
+
         /*
           * Convert character entities to ASCII
           *
@@ -440,16 +452,16 @@ class XssCleaner {
           * these are the ones that will pose security problems.
           *
           */
-        
+
         $str = preg_replace_callback ( '/[a-z]+=([\'\"]).*?\\1/si', array ($this, '_convert_attribute' ), $str );
-        
+
         $str = preg_replace_callback ( '/<\w+.*?(?=>|<|$)/si', array ($this, '_html_entity_decode_callback' ), $str );
-        
+
         /*
           * Remove Invisible Characters Again!
           */
         $str = $this->_remove_invisible_characters ( $str );
-        
+
         /*
           * Convert all tabs to spaces
           *
@@ -459,28 +471,28 @@ class XssCleaner {
           * so we use str_replace.
           *
           */
-        
+
         if (strpos ( $str, "\t" ) !== FALSE) {
             $str = str_replace ( "\t", ' ', $str );
         }
-        
+
         /*
           * Capture converted string for later comparison
           */
         $converted_string = $str;
-        
+
         /*
           * Not Allowed Under Any Conditions
           */
-        
+
         foreach ( $this->never_allowed_str as $key => $val ) {
             $str = str_replace ( $key, $val, $str );
         }
-        
+
         foreach ( $this->never_allowed_regex as $key => $val ) {
             $str = preg_replace ( "#" . $key . "#i", $val, $str );
         }
-        
+
         /*
           * Makes PHP tags safe
           *
@@ -498,7 +510,7 @@ class XssCleaner {
         } else {
             $str = str_replace ( array ('<?', '?' . '>' ), array ('&lt;?', '?&gt;' ), $str );
         }
-        
+
         /*
           * Compact any exploded words
           *
@@ -509,16 +521,16 @@ class XssCleaner {
         $words = array ('javascript', 'expression', 'vbscript', 'script', 'applet', 'alert', 'document', 'write', 'cookie', 'window' );
         foreach ( $words as $word ) {
             $temp = '';
-            
+
             for($i = 0, $wordlen = strlen ( $word ); $i < $wordlen; $i ++) {
                 $temp .= substr ( $word, $i, 1 ) . '\s*';
             }
-            
+
             // We only want to do this when it is followed by a non-word character
             // That way valid stuff like "dealer to" does not become "dealerto"
             $str = preg_replace_callback ( '#(' . substr ( $temp, 0, - 3 ) . ')(\W)#is', array ($this, '_compact_exploded_words' ), $str );
         }
-        
+
         /*
           * Remove disallowed Javascript in links or img tags
           * We used to do some version comparisons and use of stripos for PHP5, but it is dog slow compared
@@ -526,22 +538,22 @@ class XssCleaner {
           */
         do {
             $original = $str;
-            
+
             if (preg_match ( "/<a/i", $str )) {
                 $str = preg_replace_callback ( '#<a\s+([^>]*?)(>|$)#si', array ($this, '_js_link_removal' ), $str );
             }
-            
+
             if (preg_match ( "/<img/i", $str )) {
                 $str = preg_replace_callback ( '#<img\s+([^>]*?)(\s?/?>|$)#si', array ($this, '_js_img_removal' ), $str );
             }
-            
+
             if (preg_match ( "/script/i", $str ) or preg_match ( "/xss/i", $str )) {
                 $str = preg_replace ( '#<(/*)(script|xss)(.*?)\>#si', '[removed]', $str );
             }
         } while ( $original != $str );
-        
+
         unset ( $original );
-        
+
         /*
           * Remove JavaScript Event Handlers
           *
@@ -551,7 +563,7 @@ class XssCleaner {
           *
           */
         $event_handlers = array ('[^a-z_\-]on\w*', 'xmlns' );
-        
+
         if ($is_image === TRUE) {
             /*
                * Adobe Photoshop puts XML metadata into JFIF images, including namespacing,
@@ -559,9 +571,9 @@ class XssCleaner {
                */
             unset ( $event_handlers [array_search ( 'xmlns', $event_handlers )] );
         }
-        
+
         $str = preg_replace ( "#<([^><]+?)(" . implode ( '|', $event_handlers ) . ')(\s*=\s*[^><]*)([><]*)#i', "<\\1\\4", $str );
-        
+
         /*
           * Sanitize naughty HTML elements
           *
@@ -574,7 +586,7 @@ class XssCleaner {
           */
         $naughty = 'alert|applet|audio|basefont|base|behavior|bgsound|blink|body|embed|expression|form|frameset|frame|head|html|ilayer|iframe|input|isindex|layer|link|meta|object|plaintext|style|script|textarea|title|video|xml|xss';
         $str = preg_replace_callback ( '#<(/*\s*)(' . $naughty . ')([^><]*)([><]*)#is', array ($this, '_sanitize_naughty_html' ), $str );
-        
+
         /*
           * Sanitize naughty scripting elements
           *
@@ -589,7 +601,7 @@ class XssCleaner {
           *
           */
         $str = preg_replace ( '#(alert|cmd|passthru|eval|exec|expression|system|fopen|fsockopen|file|file_get_contents|readfile|unlink)(\s*)\((.*?)\)#si', "\\1\\2&#40;\\3&#41;", $str );
-        
+
         /*
           * Final clean up
           *
@@ -600,11 +612,11 @@ class XssCleaner {
         foreach ( $this->never_allowed_str as $key => $val ) {
             $str = str_replace ( $key, $val, $str );
         }
-        
+
         foreach ( $this->never_allowed_regex as $key => $val ) {
             $str = preg_replace ( "#" . $key . "#i", $val, $str );
         }
-        
+
         /*
           *  Images are Handled in a Special Way
           *  - Essentially, we want to know that after all of the character conversion is done whether
@@ -612,7 +624,7 @@ class XssCleaner {
           *  However, if the string post-conversion does not matched the string post-removal of XSS,
           *  then it fails, as there was unwanted XSS code found and removed/changed during processing.
           */
-        
+
         if ($is_image === TRUE) {
             if ($str == $converted_string) {
                 return TRUE;
@@ -622,9 +634,9 @@ class XssCleaner {
         }
         return $str;
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * Random Hash for protecting URLs
@@ -634,19 +646,17 @@ class XssCleaner {
      */
     public function xss_hash() {
         if ($this->xss_hash == '') {
-            if (phpversion () >= 4.2)
-                mt_srand ();
-            else
-                mt_srand ( hexdec ( substr ( md5 ( microtime () ), - 8 ) ) & 0x7fffffff );
-            
+            if (phpversion () >= 4.2) mt_srand ();
+            else mt_srand ( hexdec ( substr ( md5 ( microtime () ), - 8 ) ) & 0x7fffffff );
+
             $this->xss_hash = md5 ( time () + mt_rand ( 0, 1999999999 ) );
         }
-        
+
         return $this->xss_hash;
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * Remove Invisible Characters
@@ -660,7 +670,7 @@ class XssCleaner {
      */
     private function _remove_invisible_characters($str) {
         static $non_displayables = false;
-        
+
         if (! $non_displayables) {
             // every control character except newline (dec 10), carriage return (dec 13), and horizontal tab (dec 09),
             $non_displayables = array ('/%0[0-8bcef]/', // url encoded 00-08, 11, 12, 14, 15
@@ -669,17 +679,17 @@ class XssCleaner {
 '/\x0b/', '/\x0c/', // 11, 12
 '/[\x0e-\x1f]/' ); // 14-31
         }
-        
+
         do {
             $cleaned = $str;
             $str = preg_replace ( $non_displayables, '', $str );
         } while ( $cleaned != $str );
-        
+
         return $str;
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * Compact Exploded Words
@@ -694,9 +704,9 @@ class XssCleaner {
     function _compact_exploded_words($matches) {
         return preg_replace ( '/\s+/s', '', $matches [1] ) . $matches [2];
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * Sanitize Naughty HTML
@@ -710,15 +720,15 @@ class XssCleaner {
     function _sanitize_naughty_html($matches) {
         // encode opening brace
         $str = '&lt;' . $matches [1] . $matches [2] . $matches [3];
-        
+
         // encode captured opening or closing brace to prevent recursive vectors
         $str .= str_replace ( array ('>', '<' ), array ('&gt;', '&lt;' ), $matches [4] );
-        
+
         return $str;
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * JS Link Removal
@@ -736,7 +746,7 @@ class XssCleaner {
         $attributes = $this->_filter_attributes ( str_replace ( array ('<', '>' ), '', $match [1] ) );
         return str_replace ( $match [1], preg_replace ( '#href=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si', '', $attributes ), $match [0] );
     }
-    
+
     /**
      * JS Image Removal
      *
@@ -753,9 +763,9 @@ class XssCleaner {
         $attributes = $this->_filter_attributes ( str_replace ( array ('<', '>' ), '', $match [1] ) );
         return str_replace ( $match [1], preg_replace ( '#src=.*?(alert\(|alert&\#40;|javascript\:|charset\=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si', '', $attributes ), $match [0] );
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * Attribute Conversion
@@ -769,9 +779,9 @@ class XssCleaner {
     function _convert_attribute($match) {
         return str_replace ( array ('>', '<', '\\' ), array ('&gt;', '&lt;', '\\\\' ), $match [0] );
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * HTML Entity Decode Callback
@@ -786,9 +796,9 @@ class XssCleaner {
         $charset = 'UTF8';
         return $this->_html_entity_decode ( $match [0], strtoupper ( $charset ) );
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * HTML Entities Decode
@@ -808,43 +818,42 @@ class XssCleaner {
     /* -------------------------------------------------
      /*  Replacement for html_entity_decode()
      /* -------------------------------------------------*/
-    
+
     /*
      NOTE: html_entity_decode() has a bug in some PHP versions when UTF-8 is the
      character set, and the PHP developers said they were not back porting the
      fix to versions other than PHP 5.x.
      */
     private function _html_entity_decode($str, $charset = 'UTF-8') {
-        if (stristr ( $str, '&' ) === FALSE)
-            return $str;
-        
-     // The reason we are not using html_entity_decode() by itself is because
+        if (stristr ( $str, '&' ) === FALSE) return $str;
+
+        // The reason we are not using html_entity_decode() by itself is because
         // while it is not technically correct to leave out the semicolon
         // at the end of an entity most browsers will still interpret the entity
         // correctly.  html_entity_decode() does not convert entities without
         // semicolons, so we are left with our own little solution here. Bummer.
-        
+
 
         if (function_exists ( 'html_entity_decode' ) && (strtolower ( $charset ) != 'utf-8' or version_compare ( phpversion (), '5.0.0', '>=' ))) {
             $str = html_entity_decode ( $str, ENT_COMPAT, $charset );
             $str = preg_replace ( '~&#x(0*[0-9a-f]{2,5})~ei', 'chr(hexdec("\\1"))', $str );
             return preg_replace ( '~&#([0-9]{2,4})~e', 'chr(\\1)', $str );
         }
-        
+
         // Numeric Entities
         $str = preg_replace ( '~&#x(0*[0-9a-f]{2,5});{0,1}~ei', 'chr(hexdec("\\1"))', $str );
         $str = preg_replace ( '~&#([0-9]{2,4});{0,1}~e', 'chr(\\1)', $str );
-        
+
         // Literal Entities - Slightly slow so we do another check
         if (stristr ( $str, '&' ) === FALSE) {
             $str = strtr ( $str, array_flip ( get_html_translation_table ( HTML_ENTITIES ) ) );
         }
-        
+
         return $str;
     }
-    
+
     // --------------------------------------------------------------------
-    
+
 
     /**
      * Filter Attributes
@@ -857,13 +866,13 @@ class XssCleaner {
      */
     private function _filter_attributes($str) {
         $out = '';
-        
+
         if (preg_match_all ( '#\s*[a-z\-]+\s*=\s*(\042|\047)([^\\1]*?)\\1#is', $str, $matches )) {
             foreach ( $matches [0] as $match ) {
                 $out .= preg_replace ( '#/\*.*?\*/#s', '', $match );
             }
         }
-        
+
         return $out;
     }
 }
