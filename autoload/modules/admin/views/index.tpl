@@ -13,7 +13,7 @@
                 <li data-row="1" data-col="1" data-sizex="1" data-sizey="1" class="gs-w"  id="pages">
                 	<div class="tile bg-green" >
                         <a class="tile-content icon" href="{'nodes'|admincp}">
-                            <i class="icon-files"></i>
+                            <i class="icon-folder-2"></i>
                         </a>
                         <div class="brand">
                             <span class="label fg-white">页面</span>
@@ -45,11 +45,11 @@
     			</li>
     			<li data-row="1" data-col="4" data-sizex="1" data-sizey="1" class="gs-w"  id="theme">
             			<div class="tile bg-mauve">
-                            <div class="tile-content icon">
+                            <a class="tile-content icon" href="{$admincp}/admin/theme/">
                                 <i class="icon-newspaper"></i>
-                            </div>
+                            </a>
                             <div class="brand">
-                                <span class="label fg-white">模板管理</span>
+                                <span class="label fg-white">主题模板</span>
                             </div>
                         </div>
                 </li>
@@ -86,6 +86,17 @@
                         </div>
                     </div>
     			</li>
+
+				<li data-row="2" data-col="6" data-sizex="1" data-sizey="1" class="gs-w"  id="content-type">
+            			<div class="tile bg-mauve">
+                            <a class="tile-content icon" href="{$admincp}/nodes/type/">
+                                <i class="icon-files"></i>
+                            </a>
+                            <div class="brand">
+                                <span class="label fg-white">内容模型</span>
+                            </div>
+                        </div>
+                </li>
 
        </ul>
 </div>

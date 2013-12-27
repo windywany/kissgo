@@ -13,7 +13,7 @@ DROP INDEX UDX_CONTENT ON nodes;
 
 DROP TABLE groups;
 DROP TABLE nodes;
-DROP TABLE nodes_type;
+DROP TABLE theme_templates;
 DROP TABLE users;
 
 
@@ -48,7 +48,7 @@ CREATE TABLE nodes
 	path varchar(512) NOT NULL COMMENT 'Path',
 	filename_tpl varchar(64) COMMENT 'File Name Template',
 	filename varchar(32) NOT NULL COMMENT 'File Name',
-	template varchar(512) COMMENT 'Template File',
+	template varchar(1024) COMMENT 'Template File',
 	ontop datetime COMMENT 'On top',
 	cache_time int unsigned DEFAULT 0 COMMENT 'Cache Time',
 	commentable tinyint DEFAULT 0 COMMENT 'Commentable',
@@ -63,15 +63,15 @@ CREATE TABLE nodes
 ) ENGINE = InnoDB COMMENT = 'Nodes : web page nodes' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
-CREATE TABLE nodes_type
+CREATE TABLE theme_templates
 (
-	id smallint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-	type varchar(16) NOT NULL UNIQUE COMMENT 'Type',
-	name varchar(64) NOT NULL COMMENT 'Name',
-	template varchar(512) COMMENT 'Template File',
-	note varchar(256) COMMENT 'Note',
-	PRIMARY KEY (id)
-) ENGINE = InnoDB COMMENT = 'Node Types' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+	id int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+	theme varchar(32) NOT NULL COMMENT 'Theme',
+	type varchar(32) NOT NULL COMMENT 'Node Type',
+	template varchar(1024) COMMENT 'Template File',
+	PRIMARY KEY (id),
+	CONSTRAINT UDX_THEME_TPL UNIQUE (theme, type)
+) ENGINE = InnoDB COMMENT = 'Theme Templates' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 
 CREATE TABLE users
