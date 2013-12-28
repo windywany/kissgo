@@ -1,0 +1,134 @@
+h3 span {
+	font-weight: normal;
+}
+
+#pagestuff .xsidebar {
+	margin-right: auto;
+	width: 280px;
+	clear: right;
+	float: right;
+	position: relative;
+}
+
+#side-sortables {
+	min-height: 300px;
+	padding: 0;
+	width: 280px;
+}
+
+#page-body {
+	clear: left;
+	float: left;
+	margin-right: -2000px;
+	width: 100%;
+}
+
+.post-body-form {
+	margin-right: 300px; 	
+	padding:10px;
+}
+
+#menuitem-list {
+	padding: 0;
+	margin: 0;	
+}
+.ui-sortable,.ui-sortable ol{
+	list-style-type:none;
+}
+.menu-item-bar {
+	clear: both;
+	line-height: 1.5em;
+	margin: 5px 0 0;
+	position: relative;
+}
+.menu-item-handle {
+	border: 1px solid #DFDFDF;
+	height: auto;
+	line-height: 35px;
+	overflow: hidden;
+	padding-left: 10px;
+	position: relative;
+	text-shadow: 0 1px 0 #FFFFFF;
+	width: 400px;
+	word-wrap: break-word;
+	cursor: move;
+	box-shadow: 0 1px 0 #FFFFFF inset;
+	background-color: #F1F1F1;
+	background-image: -moz-linear-gradient(center top , #F9F9F9, #ECECEC);
+	border-radius: 3px;
+}
+.menu-item-handle .item-title {
+	display: block;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 20px;
+	margin-right: 13em;
+	padding: 7px 0;
+}
+.item-controls {
+	font-size: 14px;
+	position: absolute;
+	right: 40px;
+	top: 8px;
+}
+.item-controls a {
+	text-decoration: none;
+	display: block;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+}
+.item-controls a:hover {
+	cursor: pointer;
+}
+.item-controls .item-edit {	
+	right: -10px;	
+}
+.item-controls .item-del {	
+	right: -30px;	
+}
+.item-type {
+	color: #999999;
+	font-size: 12px;
+	padding-right: 10px;
+}
+.menu-wrap .form-inline {
+	background-color: #F5F5F5;
+	background-image: -moz-linear-gradient(center top , #F9F9F9, #F5F5F5);
+	box-shadow: 0 1px 0 #FFFFFF inset;
+	-moz-border-bottom-colors: none;
+	-moz-border-image: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	border-color: -moz-use-text-color;
+	border-style: solid;
+	border-width: 0 1px 1px;
+	border-color: #DFDFDF;
+	display: block;
+	padding: 10px 0 10px 10px;
+	width: 400px;
+}
+.menu-wrap-inactive .form-inline {
+	display: none;
+}
+.menu-wrap-active .form-inline {
+	display: block;
+}
+.menu-wrap-active .menu-item-handle {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.placeholder {
+	border: 1px dashed #999;
+	margin: 13px 0 0;	
+	width: 410px;
+	background: #F5F5F5;
+}
+
+
+* html .ui-autocomplete {
+	height: 150px;
+}

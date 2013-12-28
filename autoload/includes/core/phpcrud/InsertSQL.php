@@ -12,7 +12,7 @@ class InsertSQL extends QueryBuilder implements Countable, ArrayAccess, Iterator
     }
     /**
      * specify the auto increment key then
-     * 
+     *
      * @param string $key
      * @return InsertSQL
      */
@@ -22,7 +22,7 @@ class InsertSQL extends QueryBuilder implements Countable, ArrayAccess, Iterator
     }
     /**
      * the datas will be inserted into whitch table.
-     * 
+     *
      * @param string $table
      * @return InsertSQL
      */
@@ -32,7 +32,7 @@ class InsertSQL extends QueryBuilder implements Countable, ArrayAccess, Iterator
     }
     /**
      * just use count() function to perform this SQL and get the affected rows(inserted)
-     * 
+     *
      * @see Countable::count()
      * @return int
      */
@@ -46,7 +46,7 @@ class InsertSQL extends QueryBuilder implements Countable, ArrayAccess, Iterator
             try {
                 $statement = $this->dialect->prepare ( $sql );
                 if ($this->batch) {
-                    foreach ( $this->datas as $data ) {
+                    foreach ( $this->datas as $idx=> $data ) {
                         foreach ( $values as $value ) {
                             list ( $name, $val, $type, $key ) = $value;
                             if (! $statement->bindValue ( $name, $data [$key], $type )) {
@@ -58,7 +58,7 @@ class InsertSQL extends QueryBuilder implements Countable, ArrayAccess, Iterator
                         }
                         $rst = $statement->execute ();
                         if ($rst) {
-                            $this->ids [] = $this->dialect->lastInsertId ( $this->keyField );
+                            $this->ids [$idx] = $this->dialect->lastInsertId ( $this->keyField );
                         } else {
                             break;
                         }
@@ -92,21 +92,21 @@ class InsertSQL extends QueryBuilder implements Countable, ArrayAccess, Iterator
         }
         return false;
     }
-    
+
     public function offsetExists($offset) {
         return isset ( $this->ids [$offset] );
     }
-    
+
     public function offsetGet($offset) {
         return $this->ids [$offset];
     }
-    
+
     public function offsetSet($offset, $value) {}
-    
+
     public function offsetUnset($offset) {}
     /**
      * get the last inserted id
-     * 
+     *
      * @param string $name
      * @return int
      */

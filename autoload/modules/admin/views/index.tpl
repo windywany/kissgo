@@ -55,7 +55,7 @@
                 </li>
                 <li data-row="2" data-col="4" data-sizex="1" data-sizey="1" class="gs-w" id="menu" >
                     <div class="tile bg-darkIndigo">
-                        <a class="tile-content icon" href="{'admin'|admincp:user}">
+                        <a class="tile-content icon" href="{'admin'|admincp:menu}">
                             <i class="icon-tree-view"></i>
                         </a>
                         <div class="brand">

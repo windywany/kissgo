@@ -33,7 +33,7 @@ class AdminThemeController extends Controller {
             $set ['template'] = $tpl;
             $rst = dbinsert ( $set )->inito ( '{theme_templates}' );
         }
-        if (count ( $rst ) == false) {
+        if (count ( $rst ) === false) {
             $data ['success'] = false;
             $data ['msg'] = '不能修改数据库';
         }
@@ -55,7 +55,7 @@ class AdminThemeController extends Controller {
     public function reset($theme) {
         $data = array ('success' => true );
         if ($theme) {
-            count ( dbdelete ()->from ( '{theme_templates}' )->where ( array ('theme' => $theme ) ) );
+            count ( dbupdate('{theme_templates}')->set(array('template'=>''))->where ( array ('theme' => $theme ) ) );
         }
         return new JsonView ( $data );
     }

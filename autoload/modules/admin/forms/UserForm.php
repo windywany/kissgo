@@ -43,7 +43,7 @@ class UserForm extends AbstractForm {
         }
         $rst = dbselect ( 'id' )->from ( '{users}' )->where ( $where );
         if (count ( $rst ) > 0) {
-            return __ ( '@admin:The username %s is in used!', $value );
+            return false;
         }
         return true;
     }
@@ -62,7 +62,7 @@ class UserForm extends AbstractForm {
         }
         $rst = dbselect ( 'id' )->from ( '{users}' )->where ( $where );
         if (count ( $rst ) > 0) {
-            return __ ( '@admin:The email %s is in used!', $value );
+            return false;
         }
         return true;
     }

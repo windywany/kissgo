@@ -46,7 +46,9 @@ class ThemeManager {
             foreach ( $tpls as $tpl ) {
                 $type = $tpl ['type'];
                 if (isset ( $templates [$type] )) {
-                    $templates [$type] [1] = $tpl ['template'];
+                    if ($tpl ['template']) {
+                        $templates [$type] [1] = $tpl ['template'];
+                    }
                 } else {
                     $deleting [] = $tpl ['id'];
                 }

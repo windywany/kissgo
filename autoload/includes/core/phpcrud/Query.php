@@ -1,4 +1,5 @@
 <?php
+
 class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggregate {
     private $fields = array ();
     private $performed = false;
@@ -8,7 +9,7 @@ class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggr
     private $resultSet = array ();
     private $statement;
     private $countStatement;
-    
+
     public function __construct() {
         parent::__construct ();
         $args = func_get_args ();
@@ -24,9 +25,10 @@ class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggr
             }
         }
     }
+
     /**
-     * append a field to result set. 
-     * 
+     * append a field to result set.
+     *
      * @param string|Query $field
      * @param string $alias
      * @return QueryBuilder
@@ -42,20 +44,27 @@ class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggr
         }
         return $this;
     }
+
     /**
      * check if there is any row in database suits the condition.
-     * 
+     *
      * @return boolean
      */
     public function exist() {
         return $this->count () > 0;
     }
+
     /**
-     * 1. The implementation of Countable interface, so, you can count this class instance directly to get the size of the result set.<br/>
-     * 2. Specify the $field argument to perform a 'select count($field)' operation, if the SQL has a having sub-sql, please note that the $field variables must contain the fields.
-     * 
+     * 1.
+     * The implementation of Countable interface, so, you can count this class
+     * instance directly to get the size of the result set.<br/>
+     * 2. Specify the $field argument to perform a 'select count($field)'
+     * operation, if the SQL has a having sub-sql, please note that the $field
+     * variables must contain the fields.
+     *
      * @see Countable::count()
-     * @return the number of result set or the count total or false on error SQL.
+     * @return the number of result set or the count total or false on error
+     *         SQL.
      */
     public function count($field = null) {
         if ($field == null) {
@@ -71,14 +80,14 @@ class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggr
         }
         return false;
     }
-    
+
     public function offsetExists($offset) {
         if (! $this->performed) {
             $this->perform ();
         }
         return isset ( $this->resultSet [$offset] );
     }
-    
+
     public function offsetGet($offset) {
         if (! $this->performed) {
             $this->perform ();
@@ -88,25 +97,32 @@ class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggr
         }
         return null;
     }
-    
+
     public function offsetSet($offset, $value) {}
-    
+
     public function offsetUnset($offset) {}
-    
+
     public function getIterator() {
         if (! $this->performed) {
             $this->perform ();
         }
         return new ArrayIterator ( $this->resultSet );
     }
-    
+
+    public function toArray() {
+        if (! $this->performed) {
+            $this->perform ();
+        }
+        return $this->resultSet;
+    }
+
     public function __toString() {
         $sql = $this->getSQL ();
         return $sql;
     }
+
     /**
      * perform the select statement
-     * 
      */
     private function perform() {
         $sql = $this->getSQL ();
@@ -146,9 +162,10 @@ class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggr
         }
         $this->performed = true;
     }
+
     /**
      * perform the select count($field) statement.
-     * 
+     *
      * @param string $field
      */
     private function performCount() {
@@ -198,8 +215,8 @@ class Query extends QueryBuilder implements Countable, ArrayAccess, IteratorAggr
         }
         $this->countperformed = true;
     }
+
     /**
-     * 
      * get the raw SQL
      */
     private function getSQL() {
