@@ -34,12 +34,11 @@
                 </li>
     			<li data-row="2" data-col="1" data-sizex="1" data-sizey="1" class="gs-w"  id="media">
     				<div class="tile bg-cyan">
-                        <div class="tile-content icon">
+                        <a class="tile-content icon" href="{$admincp}/media/">
                             <i class="icon-pictures"></i>
-                        </div>
+                        </a>
                         <div class="brand">
                             <span class="label fg-white">多媒体</span>
-                            <span class="badge bg-orange">12</span>
                         </div>
                     </div>
     			</li>
