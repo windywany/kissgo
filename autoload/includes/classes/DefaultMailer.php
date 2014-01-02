@@ -4,7 +4,7 @@
  * @author Leo
  *
  */
-class KsgMailer implements IMailer {
+class DefaultMailer implements IMailer {
     /**
 	 * 邮件发送器
 	 * @var PHPMailer

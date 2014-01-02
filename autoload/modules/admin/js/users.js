@@ -90,7 +90,7 @@ define('admin/js/users', function(require, exports) {
             focusCleanup : true
         }));
 
-        $('#user_form').submit(function(e) {
+        $('#user_form').submit(function() {
             if (!$(this).valid()) {
                 return false;
             }
