@@ -110,35 +110,30 @@ define('media/js/media', function(require, exports) {
                 name : 'url',
                 width : 220
             }, {
+                display : '文件',
+                name : 'filename',
+                width : 200,
+                sortable : true
+            }, {
                 display : '类型',
-                name : 'display_name',
+                name : 'mime_type',
                 width : 100,
                 sortable : true
             }, {
                 display : '用户',
                 name : 'gid',
-                width : 180,
+                width : 120,
                 sortable : true
             }, {
                 display : '用户组',
                 name : 'email',
                 hide : true,
-                width : 200,
+                width : 120,
                 sortable : true
             }, {
-                display : '上传日期',
+                display : '日期',
                 name : 'status',
                 width : 200,
-                sortable : true
-            }, {
-                display : 'Last Log-in IP',
-                name : 'last_ip',
-                hide : true,
-                width : 180
-            }, {
-                display : 'Last Log-in Time',
-                name : 'last_time',
-                width : 120,
                 sortable : true
             } ];
             grid = $('#medias_grid').flexigrid({

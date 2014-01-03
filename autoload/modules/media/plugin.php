@@ -9,8 +9,7 @@ I18n::append ( __FILE__ );
  *
  */
 function register_media_content_type($typeManager) {
-    $typeManager->register ( 'image', '图片', 'image.tpl', '图片.', false );
-    $typeManager->register ( 'attach', '附件', 'attach.tpl', '图片.', false );
+    $typeManager->register ( 'attachment', '附件', 'attach.tpl', '附件(图片,文件).', false );
     return $typeManager;
 }
 bind ( 'register_content_type', 'register_media_content_type' );
