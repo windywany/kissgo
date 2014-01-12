@@ -1,55 +1,71 @@
 <?php
+
+/**
+ *
+ * @author Leo
+ *
+ */
 class UploadTmpFile {
     /**
      * 附件描述
+     *
      * @var string
      */
     public $alt_text;
     /**
      * 文件名
+     *
      * @var string
      */
     public $name;
     public $orName;
     /**
      * 无扩展名的文件名
+     *
      * @var unknown_type
      */
     public $basename;
     /**
      * 大小
+     *
      * @var int
      */
     public $size;
     /**
      * 上传状态
+     *
      * @var string
      */
     public $status;
     /**
      * 标题
+     *
      * @var string
      */
     public $title;
     /**
      * 临时文件
+     *
      * @var string
      */
     public $tmpname;
     /**
      * 扩展名
+     *
      * @var string
      */
     public $file_ext;
     /**
      * mime类型
+     *
      * @var string
      */
     public $mimeType;
     public $errors = array ();
+
     /**
-     *
      * 创建一个新的上传文件实例
+     *
      * @param int $index
      * @param string $tmpdir
      */
@@ -130,22 +146,25 @@ class UploadTmpFile {
             $this->mimeType = self::getAttachmentMimeType ( $this->file_ext );
         }
     }
+
     /**
-     *
      * 是否是完整的上传文件
+     *
      * @return boolean
      */
     public function isuploaded() {
         return $this->status == 'done' && $this->tmpname && $this->name;
     }
+
     public function getType() {
         return self::getAttachmentType ( $this->file_ext );
     }
+
     public function getMimeType() {
         return self::getAttachmentMimeType ( $this->file_ext );
     }
+
     /**
-     *
      * 删除使用plupload机制上传的文件
      *
      * @return boolean
@@ -158,8 +177,8 @@ class UploadTmpFile {
         }
         return true;
     }
+
     /**
-     *
      * 获取所有附件的类型
      *
      * @return array 附件类型列表(key=>value)
@@ -167,14 +186,16 @@ class UploadTmpFile {
     public static function getAttachmentTypes() {
         static $types = null;
         if ($types == null) {
-            $types = apply_filter ( 'get_attachment_types', array ('image' => '图片', 'zip' => '归档', 'media' => '多媒体', 'doc' => '办公', 'file' => '普通文件' ) );
+            $types = apply_filter ( 'get_attachment_types', array ('image' => '图片', 'zip' => '归档文件', 'media' => '多媒体', 'doc' => '办公文件', 'file' => '普通文件' ) );
         }
         return $types;
     }
+
     /**
      * 根据文件扩展名得到一个文件的附件类型
      *
-     * @param string $ext 文件扩展名
+     * @param string $ext
+     *            文件扩展名
      * @return string 附件类型
      */
     public static function getAttachmentType($ext) {
@@ -189,11 +210,12 @@ class UploadTmpFile {
         }
         return 'file';
     }
+
     /**
-     *
      * 根据文件扩展 名获取文件的mime类型
      *
-     * @param string $ext 文件扩展名
+     * @param string $ext
+     *            文件扩展名
      * @return string 文件的mime名
      */
     public static function getAttachmentMimeType($ext) {
@@ -208,37 +230,44 @@ class UploadTmpFile {
         }
         return 'text/plain';
     }
+
     public function errorInfo() {
         return empty ( $this->errors ) ? '' : $this->errors [0];
     }
+
     /**
-     *
      * save uploaded file
+     *
      * @param IUploader $uploader
-     * @param int $uid
+     * @param Passport $uid
+     * @return boolean
      */
-    public function save($uploader, $uid = 0) {
-        static $atM = false;
+    public function save($uploader, $user) {
         $rst = false;
         if ($this->isuploaded () && $uploader->allowed ( $this->file_ext )) {
             $rst = $uploader->save ( $this );
         }
-        /*
-        if ($rst !== false) { //保存文件成功
-            if (! $atM) {
-                $atM = new MediaTable ();
-            }
-            $data ['create_uid'] = $uid;
-            $data ['create_time'] = time ();
-            $data ['type'] = $this->getType ();
-            $data ['mine_type'] = $this->mimeType;
+
+        if ($rst !== false) {
+            $data ['uid'] = $user ['uid'];
+            $data ['gid'] = $user ['gid'];
+            $data ['create_uid'] = $user ['uid'];
+            $data ['create_time'] = date ( 'Y-m-d H:i:s' );
+            $data ['update_uid'] = $user ['uid'];
+            $data ['update_time'] = $data ['create_time'];
+            $data ['content_type'] = 'attachment';
+            $data ['content_id'] = '0';
+            $data ['mime_type'] = $this->mimeType;
+            $data ['path'] = $rst [2];
+            $data ['filename'] = $rst [3];
             $data ['url'] = $rst [0];
             $data ['name'] = $this->title;
-            $data ['ext'] = trim ( $this->file_ext, '.' );
-            $data ['alt_text'] = $this->alt_text;
-            $ret = $atM->save ( $data );
+            $data ['title'] = $this->alt_text;
+            $data ['target'] = '_self';
+            $data ['commentable'] = 1;
+            $ret = dbinsert ( $data )->inito ( '{nodes}' );
             if (count ( $ret ) > 0) {
-                //生成缩略图与添加水印
+                // 生成缩略图与添加水印
                 if (in_array ( $this->file_ext, array ('.jpg', '.gif', '.jpeg', '.png', '.bmp' ) )) {
                     if (cfg ( 'enable_watermark@thumb', false ) && cfg ( 'watermark_pic@thumb' )) {
                         $watermark = APPDATA_PATH . cfg ( 'watermark_pic@thumb' );
@@ -256,15 +285,16 @@ class UploadTmpFile {
                         }
                     }
                 }
-                return $ret->getData ();
+                count ( dbinsert ( array ('nid' => $ret [0], 'meta_key' => 'attach_type', 'meta_value' => self::getAttachmentType ( $this->file_ext ) ) )->inito ( '{nodemeta}' ) );
+                return $ret [0];
             } else {
-                $this->errors [] = "文件上传失败: " . $ret->errorInfo;
+                $this->errors [] = "文件上传失败: " . $ret->lastError ();
                 $uploader->delete ( $rst [1] );
             }
         } else {
             log_error ( "文件上传失败: " . $uploader->get_last_error () );
             $this->errors [] = "文件上传失败: " . $uploader->get_last_error ();
-        }*/
+        }
         $this->delete ();
         return false;
     }

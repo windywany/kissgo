@@ -61,7 +61,7 @@ define('media/js/media', function(require, exports) {
                     fdiv.after($('<div class="plupload_filt_name"><input placeholder="描述" type="text" name="uploader_'+i+'_title" value="'+nm+'"/></div><div class="plupload_filt_alt"><input type="hidden" name="uploader_'+i+'_size" value="'+f.size+'"/><input placeholder="描述" type="text" name="uploader_'+i+'_alt" value="'+nm+'"/></div>'));
                 }
             });
-        });
+        });        
         $('#upload-from').submit(function() {
             $('body').blockit();
             $.ajax({
@@ -73,6 +73,9 @@ define('media/js/media', function(require, exports) {
                     if (data.success) {
                         $('#tab-media-grid').click();
                         grid.flexReload();
+                        $('#uploader_filelist').empty();
+                        uploader.splice(0,uploader.files.length);
+                        $('#attach-info').hide();
                     } else {
                         KsgApp.errormsg('出错啦!' + data.msg);
                     }
@@ -86,6 +89,12 @@ define('media/js/media', function(require, exports) {
         });
     };
     exports.main = function() {
+        var preProcessData = function(data) {            
+            for ( var i = 0; i < data.rows.length; i++) {
+                data.rows[i].cell[1] = '<a href="#"><img class="shadow" src="' +  KsgApp.base+data.rows[i].cell[1] + '"/></a>';
+            }
+            return data;
+        };
         $('.datepicker').datepicker({
             format : 'yyyy-mm-dd'
         });
@@ -112,17 +121,17 @@ define('media/js/media', function(require, exports) {
             }, {
                 display : '文件',
                 name : 'filename',
-                width : 200,
+                width : 300,
                 sortable : true
             }, {
                 display : '类型',
                 name : 'mime_type',
-                width : 100,
+                width : 150,
                 sortable : true
             }, {
                 display : '用户',
                 name : 'gid',
-                width : 120,
+                width : 150,
                 sortable : true
             }, {
                 display : '用户组',
@@ -132,7 +141,7 @@ define('media/js/media', function(require, exports) {
                 sortable : true
             }, {
                 display : '日期',
-                name : 'status',
+                name : 'update_time',
                 width : 200,
                 sortable : true
             } ];
@@ -140,13 +149,13 @@ define('media/js/media', function(require, exports) {
                 url : KsgApp.acturl('media/data'),
                 dataType : 'json',
                 colModel : colModel,
-                height : 260,
+                height : 450,
                 sortname : "id",
                 sortorder : "desc",
                 usepager : true,
                 useRp : true,
                 rp : 15,
-                // preProcess : preProcessData,
+                preProcess : preProcessData,
                 showTableToggleBtn : false,
                 onError : function(r, t, e) {
                     alert('cannot load data');

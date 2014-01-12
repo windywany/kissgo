@@ -17,7 +17,7 @@ class MediaController extends Controller {
 
     public function index() {
         $data = array ();
-        $data ['types'] = array ('' => '全部', 'image' => '图片', 'attach' => '附件' );
+        $data ['types'] = array_merge ( array ('' => '全部' ), UploadTmpFile::getAttachmentTypes () );
         return view ( 'media.tpl', $data );
     }
 
@@ -30,7 +30,7 @@ class MediaController extends Controller {
             $uploader = apply_filter ( 'get_uploader', new LocalFileUploader () ); // 得到文件上传器
             for($i = 0; $i < $uploader_count; $i ++) {
                 $tmpfile = new UploadTmpFile ( $i, $tmpdir );
-                $rst = $tmpfile->save ( $uploader, $this->user ['uid'] );
+                $rst = $tmpfile->save ( $uploader, $this->user );
                 if (! $rst) {
                     $errors += $tmpfile->errors;
                 }
@@ -158,7 +158,7 @@ class MediaController extends Controller {
                 $title = rqst ( 'filename', '' );
                 $tmpfile = array ('tmpname' => $fileName, 'name' => rqst ( 'name' ), 'filesize' => rqst ( 'filesize', 0 ), 'title' => $title, 'alt' => $title );
                 $file = new UploadTmpFile ( $tmpfile, $targetDir );
-                $ret = $file->save ( $uploader, $this->user ['uid'] );
+                $ret = $file->save ( $uploader, $this->user );
                 if ($ret !== false) {
                     $ret ['id'] = $ret ['fid'];
                     unset ( $ret ['fid'] );
@@ -181,28 +181,59 @@ class MediaController extends Controller {
      * @param int $page
      * @param int $rp
      */
-    public function data($page = 1, $rp = 15, $sortname = 'id', $sortorder = 'desc') {
+    public function data($page = 1, $rp = 15, $sortname = 'id', $sortorder = 'desc', $type = '', $sd = '', $ed = '', $filename = '') {
+        $types = UploadTmpFile::getAttachmentTypes ();
         $page = intval ( $page );
         $rp = intval ( $rp );
         $rp = $rp ? $rp : 15;
         $start = ($page ? $page - 1 : $page) * $rp;
-        $where = Condition::where ( array ('display_name', 'like' ), 'status', array ('username', 'like' ), array ('email', 'like' ), 'G.gid' );
-        $users = dbselect ( 'U.*', 'G.name AS groupname' )->from ( '{users} AS U' )->join ( '{groups} AS G', 'U.gid = G.gid' )->where ( $where )->limit ( $start, $rp )->sort ( $sortname, $sortorder );
-        $total = $users->count ( 'U.id' );
+        $where ['content_type'] = 'attachment';
+        $where ['deleted'] = 0;
+        if ($sd) {
+            $where ['create_time >='] = $sd . ' 00:00:00';
+        }
+        if ($ed) {
+            $where ['create_time <='] = $ed . ' 23:59:59';
+        }
+
+        if ($type) {
+            $where ['@'] = dbselect ( 'meta_id' )->from ( '{nodemeta}' )->where ( array ('nid' => imv ( 'ND.id' ), 'meta_key' => 'attach_type', 'meta_value' => $type ) );
+        }
+        if ($filename) {
+            $con = new Condition ();
+            $val = '%' . $filename . '%';
+            $con ['filename LIKE'] = $val;
+            $con ['||ND.name LIKE'] = $val;
+            $con ['||title LIKE'] = $val;
+            $where [] = $con;
+        }
+        $nodes = dbselect ( 'ND.*', 'U.display_name', 'G.name AS group_name' )->from ( '{nodes} AS ND' )->where ( $where )->limit ( $start, $rp )->sort ( $sortname, $sortorder );
+        $nodes->field ( dbselect ( 'meta_value' )->from ( '{nodemeta}' )->where ( array ('nid' => imv ( 'ND.id' ), 'meta_key' => 'attach_type' ) ), 'attach_type' );
+
+        $nodes->join ( '{users} AS U', 'ND.uid = U.id', Query::LEFT );
+        $nodes->join ( '{groups} AS G', 'ND.gid = G.gid', Query::LEFT );
+
+        $total = $nodes->count ( 'ND.id' );
         $jsonData = array ('page' => $page, 'total' => $total, 'rows' => array (), 'rp' => $rp );
-        if ($total > 0 && count ( $users )) {
-            foreach ( $users as $u ) {
+        if ($total > 0 && count ( $nodes )) {
+            foreach ( $nodes as $node ) {
                 // the order is very important
                 $cell = array ();
-                $cell [] = $u ['id'];
-                $cell [] = $u ['username'];
-                $cell [] = $u ['display_name'];
-                $cell [] = $u ['groupname'];
-                $cell [] = $u ['email'];
-                $cell [] = $u ['status'] ? '' : __ ( '@admin:blocked' );
-                $cell [] = $u ['last_ip'];
-                $cell [] = $u ['last_time'];
-                $jsonData ['rows'] [] = array ('id' => $u ['id'], 'cell' => $cell );
+                $cell [] = $node ['id'];
+                if(empty($node ['attach_type'])){
+                    $node ['attach_type'] = 'file';
+                }
+                if ($node ['attach_type'] != 'image') {
+                    $cell [] = MISC_DIR . '/images/icons/' . $node ['attach_type'] . '.png';
+                } else {
+                    $cell [] = $node ['url'];
+                }
+                $cell [] = $node ['name'];
+                $cell [] = $types [$node ['attach_type']];
+                $cell [] = $node ['display_name'];
+                $cell [] = $node ['group_name'];
+                $cell [] = $node ['create_time'];
+                $jsonData ['rows'] [] = array ('id' => $node ['id'], 'cell' => $cell );
             }
         }
         return new JsonView ( $jsonData );

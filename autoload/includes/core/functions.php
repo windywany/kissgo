@@ -14,17 +14,24 @@
  */
 function cfg($name, $default = '') {
     static $cfgs = false;
-    if (! $cfgs) {
-        $cpt = new KsgPreferenceTable ();
-        $data = $cpt->query ();
-        $cfgs = $data->walk ( array ($cpt, 'map' ) );
+    if($cfgs === false){
+        $cfgs = InnerCacher::get('system_preferences');
+    }
+    if ($cfgs === false) {
+        $cfgs = array();
+        $cpt = dbselect('*')->from('{preferences}');
+        foreach ($cpt as $p){
+            $key = $p['name'].'@'.$p['preference_group'];
+            $cfgs[$key] = $p['value'];
+        }
         $settings = KissGoSetting::getSetting ();
         $data = $settings->toArray ();
         foreach ( $data as $key => $value ) {
             $cfgs [$key . '@core'] = $value;
         }
+        InnerCacher::add('system_preferences', $cfgs);
     }
-    
+
     if (strpos ( $name, '@', 1 ) === false) {
         $name .= '@core';
     }
@@ -34,7 +41,7 @@ function cfg($name, $default = '') {
     return $default;
 }
 /**
- * 
+ *
  * covert the charset of filename to UTF-8
  * @param string $filename
  * @return string
@@ -47,7 +54,7 @@ function thefilename($filename) {
     return $filename;
 }
 /**
- * 
+ *
  * reimplements is_subclass_of function
  * @param mixed $object
  * @param string $class_name
@@ -100,7 +107,7 @@ function sendmail($to, $subject, $message, $attachments = array(), $type = '') {
  */
 function status_header($header) {
     $text = get_status_header_desc ( $header );
-    
+
     if (empty ( $text )) {
         return;
     }
@@ -108,9 +115,9 @@ function status_header($header) {
     if ('HTTP/1.1' != $protocol && 'HTTP/1.0' != $protocol) {
         $protocol = 'HTTP/1.0';
     }
-    
+
     $status_header = "$protocol $header $text";
-    
+
     @header ( $status_header, true, $header );
     if (php_sapi_name () == 'cgi-fcgi') {
         @header ( "Status: $header $text" );
@@ -128,22 +135,22 @@ function status_header($header) {
  */
 function get_status_header_desc($code) {
     global $output_header_to_desc;
-    
+
     $code = abs ( intval ( $code ) );
-    
+
     if (! isset ( $output_header_to_desc )) {
-        $output_header_to_desc = array (100 => 'Continue', 101 => 'Switching Protocols', 102 => 'Processing', 
+        $output_header_to_desc = array (100 => 'Continue', 101 => 'Switching Protocols', 102 => 'Processing',
 
-        200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 207 => 'Multi-Status', 226 => 'IM Used', 
+        200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 207 => 'Multi-Status', 226 => 'IM Used',
 
-        300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 306 => 'Reserved', 307 => 'Temporary Redirect', 
+        300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 306 => 'Reserved', 307 => 'Temporary Redirect',
 
-        400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Timeout', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Long', 415 => 'Unsupported Media Type', 416 => 'Requested Range Not Satisfiable', 417 => 'Expectation Failed', 
-                422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required', 
+        400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 406 => 'Not Acceptable', 407 => 'Proxy Authentication Required', 408 => 'Request Timeout', 409 => 'Conflict', 410 => 'Gone', 411 => 'Length Required', 412 => 'Precondition Failed', 413 => 'Request Entity Too Large', 414 => 'Request-URI Too Long', 415 => 'Unsupported Media Type', 416 => 'Requested Range Not Satisfiable', 417 => 'Expectation Failed',
+                422 => 'Unprocessable Entity', 423 => 'Locked', 424 => 'Failed Dependency', 426 => 'Upgrade Required',
 
                 500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Timeout', 505 => 'HTTP Version Not Supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 510 => 'Not Extended' );
     }
-    
+
     if (isset ( $output_header_to_desc [$code] )) {
         return $output_header_to_desc [$code];
     } else {
@@ -198,14 +205,14 @@ function path_is_absolute($path) {
     // a symbolic link
     if (realpath ( $path ) == $path)
         return true;
-    
+
     if (strlen ( $path ) == 0 || $path {0} == '.')
         return false;
-    
+
      // windows allows absolute paths like this
     if (preg_match ( '#^[a-zA-Z]:\\\\#', $path ))
         return true;
-    
+
      // a path starting with / or \ is absolute; anything else is relative
     return ( bool ) preg_match ( '#^[/\\\\]#', $path );
 }
@@ -253,19 +260,19 @@ function sanitize_file_name($filename) {
     // Return if only one extension
     if (count ( $parts ) <= 2)
         return $filename;
-    
+
      // Process multiple extensions
     $filename = array_shift ( $parts );
     $extension = array_pop ( $parts );
-    
+
     $mimes = array ('tmp', 'txt', 'jpg', 'gif', 'png', 'rar', 'zip', 'gzip', 'ppt' );
-    
+
     // Loop over any intermediate extensions. Munge them with a trailing
     // underscore if they are a 2 - 5 character
     // long alpha string not in the extension whitelist.
     foreach ( ( array ) $parts as $part ) {
         $filename .= '.' . $part;
-        
+
         if (preg_match ( '/^[a-zA-Z]{2,5}\d?$/', $part )) {
             $allowed = false;
             foreach ( $mimes as $ext_preg => $mime_match ) {
@@ -280,7 +287,7 @@ function sanitize_file_name($filename) {
         }
     }
     $filename .= '.' . $extension;
-    
+
     return $filename;
 }
 
@@ -303,28 +310,28 @@ function sanitize_file_name($filename) {
 function unique_filename($dir, $filename, $unique_filename_callback = null) {
     // sanitize the file name before we begin processing
     $filename = sanitize_file_name ( $filename );
-    
+
     // separate the filename into a name and extension
     $info = pathinfo ( $filename );
     $ext = ! empty ( $info ['extension'] ) ? '.' . $info ['extension'] : '';
     $name = basename ( $filename, $ext );
-    
+
     // edge case: if file is named '.ext', treat as an empty name
     if ($name === $ext)
         $name = '';
-    
+
      // Increment the file number until we have a unique file to save in
     // $dir. Use $override['unique_filename_callback'] if supplied.
     if ($unique_filename_callback && is_callable ( $unique_filename_callback )) {
         $filename = $unique_filename_callback ( $dir, $name );
     } else {
         $number = '';
-        
+
         // change '.ext' to lower case
         if ($ext && strtolower ( $ext ) != $ext) {
             $ext2 = strtolower ( $ext );
             $filename2 = preg_replace ( '|' . preg_quote ( $ext ) . '$|', $ext2, $filename );
-            
+
             // check for both lower and upper case extension or image sub-sizes
             // may be overwritten
             while ( file_exists ( $dir . "/$filename" ) || file_exists ( $dir . "/$filename2" ) ) {
@@ -335,7 +342,7 @@ function unique_filename($dir, $filename, $unique_filename_callback = null) {
             }
             return $filename2;
         }
-        
+
         while ( file_exists ( $dir . "/$filename" ) ) {
             if ('' == "$number$ext")
                 $filename = $filename . ++ $number . $ext;
@@ -343,7 +350,7 @@ function unique_filename($dir, $filename, $unique_filename_callback = null) {
                 $filename = str_replace ( "$number$ext", ++ $number . $ext, $filename );
         }
     }
-    
+
     return $filename;
 }
 
@@ -420,9 +427,9 @@ function get_allowed_mime_types() {
     static $mimes = false;
     if (! $mimes) {
         // Accepted MIME types are set here as PCRE unless provided.
-        $mimes = apply_filter ( 'upload_mimes', array ('jpg|jpeg|jpe' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png', 'bmp' => 'image/bmp', 'tif|tiff' => 'image/tiff', 'ico' => 'image/x-icon', 'asf|asx|wax|wmv|wmx' => 'video/asf', 'avi' => 'video/avi', 'divx' => 'video/divx', 'flv' => 'video/x-flv', 'mov|qt' => 'video/quicktime', 'mpeg|mpg|mpe' => 'video/mpeg', 'txt|asc|c|cc|h' => 'text/plain', 'csv' => 'text/csv', 'tsv' => 'text/tab-separated-values', 
-                'ics' => 'text/calendar', 'rtx' => 'text/richtext', 'css' => 'text/css', 'htm|html' => 'text/html', 'mp3|m4a|m4b' => 'audio/mpeg', 'mp4|m4v' => 'video/mp4', 'ra|ram' => 'audio/x-realaudio', 'wav' => 'audio/wav', 'ogg|oga' => 'audio/ogg', 'ogv' => 'video/ogg', 'mid|midi' => 'audio/midi', 'wma' => 'audio/wma', 'mka' => 'audio/x-matroska', 'mkv' => 'video/x-matroska', 'rtf' => 'application/rtf', 'js' => 'application/javascript', 'pdf' => 'application/pdf', 
-                'doc|docx' => 'application/msword', 'pot|pps|ppt|pptx|ppam|pptm|sldm|ppsm|potm' => 'application/vnd.ms-powerpoint', 'wri' => 'application/vnd.ms-write', 'xla|xls|xlsx|xlt|xlw|xlam|xlsb|xlsm|xltm' => 'application/vnd.ms-excel', 'mdb' => 'application/vnd.ms-access', 'mpp' => 'application/vnd.ms-project', 'docm|dotm' => 'application/vnd.ms-word', 'pptx|sldx|ppsx|potx' => 'application/vnd.openxmlformats-officedocument.presentationml', 
+        $mimes = apply_filter ( 'upload_mimes', array ('jpg|jpeg|jpe' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png', 'bmp' => 'image/bmp', 'tif|tiff' => 'image/tiff', 'ico' => 'image/x-icon', 'asf|asx|wax|wmv|wmx' => 'video/asf', 'avi' => 'video/avi', 'divx' => 'video/divx', 'flv' => 'video/x-flv', 'mov|qt' => 'video/quicktime', 'mpeg|mpg|mpe' => 'video/mpeg', 'txt|asc|c|cc|h' => 'text/plain', 'csv' => 'text/csv', 'tsv' => 'text/tab-separated-values',
+                'ics' => 'text/calendar', 'rtx' => 'text/richtext', 'css' => 'text/css', 'htm|html' => 'text/html', 'mp3|m4a|m4b' => 'audio/mpeg', 'mp4|m4v' => 'video/mp4', 'ra|ram' => 'audio/x-realaudio', 'wav' => 'audio/wav', 'ogg|oga' => 'audio/ogg', 'ogv' => 'video/ogg', 'mid|midi' => 'audio/midi', 'wma' => 'audio/wma', 'mka' => 'audio/x-matroska', 'mkv' => 'video/x-matroska', 'rtf' => 'application/rtf', 'js' => 'application/javascript', 'pdf' => 'application/pdf',
+                'doc|docx' => 'application/msword', 'pot|pps|ppt|pptx|ppam|pptm|sldm|ppsm|potm' => 'application/vnd.ms-powerpoint', 'wri' => 'application/vnd.ms-write', 'xla|xls|xlsx|xlt|xlw|xlam|xlsb|xlsm|xltm' => 'application/vnd.ms-excel', 'mdb' => 'application/vnd.ms-access', 'mpp' => 'application/vnd.ms-project', 'docm|dotm' => 'application/vnd.ms-word', 'pptx|sldx|ppsx|potx' => 'application/vnd.openxmlformats-officedocument.presentationml',
                 'xlsx|xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml', 'docx|dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml', 'onetoc|onetoc2|onetmp|onepkg' => 'application/onenote', 'swf' => 'application/x-shockwave-flash', 'class' => 'application/java', 'tar' => 'application/x-tar', 'zip' => 'application/zip', 'gz|gzip' => 'application/x-gzip', 'rar' => 'application/rar', '7z' => 'application/x-7z-compressed', 'exe' => 'application/x-msdownload',  // openoffice
                 // formats
                 'odt' => 'application/vnd.oasis.opendocument.text', 'odp' => 'application/vnd.oasis.opendocument.presentation', 'ods' => 'application/vnd.oasis.opendocument.spreadsheet', 'odg' => 'application/vnd.oasis.opendocument.graphics', 'odc' => 'application/vnd.oasis.opendocument.chart', 'odb' => 'application/vnd.oasis.opendocument.database', 'odf' => 'application/vnd.oasis.opendocument.formula' ) );
@@ -611,33 +618,33 @@ function readable_size($size) {
  */
 function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
     $ckey_length = 4;
-    
+
     $key = md5 ( $key ? $key : SECURITY_KEY );
     $keya = md5 ( substr ( $key, 0, 16 ) );
     $keyb = md5 ( substr ( $key, 16, 16 ) );
     $keyc = $ckey_length ? ($operation == 'DECODE' ? substr ( $string, 0, $ckey_length ) : substr ( md5 ( microtime () ), - $ckey_length )) : '';
-    
+
     $cryptkey = $keya . md5 ( $keya . $keyc );
     $key_length = strlen ( $cryptkey );
-    
+
     $string = $operation == 'DECODE' ? base64_decode ( substr ( $string, $ckey_length ) ) : sprintf ( '%010d', $expiry ? $expiry + time () : 0 ) . substr ( md5 ( $string . $keyb ), 0, 16 ) . $string;
     $string_length = strlen ( $string );
-    
+
     $result = '';
     $box = range ( 0, 255 );
-    
+
     $rndkey = array ();
     for($i = 0; $i <= 255; $i ++) {
         $rndkey [$i] = ord ( $cryptkey [$i % $key_length] );
     }
-    
+
     for($j = $i = 0; $i < 256; $i ++) {
         $j = ($j + $box [$i] + $rndkey [$i]) % 256;
         $tmp = $box [$i];
         $box [$i] = $box [$j];
         $box [$j] = $tmp;
     }
-    
+
     for($a = $j = $i = 0; $i < $string_length; $i ++) {
         $a = ($a + 1) % 256;
         $j = ($j + $box [$a]) % 256;
@@ -646,7 +653,7 @@ function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
         $box [$j] = $tmp;
         $result .= chr ( ord ( $string [$i] ) ^ ($box [($box [$a] + $box [$j]) % 256]) );
     }
-    
+
     if ($operation == 'DECODE') {
         if ((substr ( $result, 0, 10 ) == 0 || substr ( $result, 0, 10 ) - time () > 0) && substr ( $result, 10, 16 ) == substr ( md5 ( substr ( $result, 26 ) . $keyb ), 0, 16 )) {
             return substr ( $result, 26 );
@@ -767,7 +774,7 @@ function log_error($message) {
  * 排序字段
  * @param string $sort
  * 默认排序
- * @param string $url 
+ * @param string $url
  * @return string
  */
 function sortheader($text, $filed, $sort = 'd', $url = '') {
@@ -905,7 +912,7 @@ function build_page_url($url, $args) {
     }
 }
 /**
- * 
+ *
  * 生成html标签属性
  * @param array $properties
  * @return string
@@ -922,7 +929,7 @@ function html_tag_properties($properties) {
     return ' ' . implode ( ' ', $tmp_ary ) . ' ';
 }
 /**
- * 
+ *
  * 合并二个数组，并将对应值相加
  * @param array $ary1
  * @param array $ary2
@@ -950,7 +957,7 @@ function merge_add($ary1, $ary2, $sep = ' ') {
 }
 /**
  * 将配置保存到文件
- * 
+ *
  * @param string $file
  * @param string $setting
  */
@@ -1001,7 +1008,7 @@ function randstr($len = 6, $format = "ALL") {
 }
 /**
  * get the current theme
- * 
+ *
  * @return string
  */
 function get_theme() {

@@ -17,7 +17,7 @@ class LocalFileUploader implements IUploader {
      * 默认文件上传器
      *
      * @param UploadTmpFile $title
-     * @return boolean
+     * @return array array(url,destfile,destdir,filename)
      */
     public function save($file) {
         $path = UPLOAD_DIR . date ( '/Y/m/d/' );
@@ -41,7 +41,7 @@ class LocalFileUploader implements IUploader {
             $this->last_error = '无法将文件[' . $tmp_file . ']重命名为[' . $destfile . ']';
             return false;
         }
-        return array (str_replace ( DS, '/', $fileName ), $destfile );
+        return array (str_replace ( DS, '/', $fileName ), $destfile, $path, $file->name );
     }
     /*
      * (non-PHPdoc) @see IUploader::get_last_error()

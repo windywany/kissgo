@@ -27,6 +27,7 @@
             	['.js','.js?1.0']
           ]
         });
+        KsgApp.base = '{$siteurl}';
         </script>
     </head>
     <body class="metro">

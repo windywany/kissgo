@@ -40,7 +40,7 @@ class AdminController extends Controller {
                     $data ['msg'] = __ ( '@admin:User is locked!' );
                 } else {
                     $user = $user [0];
-                    $loginInfo = new LoginInfo ( $user ['id'], $user ['username'], $user ['display_name'], time (), $_SERVER ['REMOTE_ADDR'] );
+                    $loginInfo = new LoginInfo ( $user ['id'], $user ['username'], $user ['display_name'], time (), $_SERVER ['REMOTE_ADDR'], 'admin', $user ['gid'] );
                     $loginInfo->login ( true );
                     LoginInfo::save ( $loginInfo );
                     $data ['success'] = true;
