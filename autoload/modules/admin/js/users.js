@@ -61,17 +61,9 @@ define('admin/js/users', function(require, exports) {
                 sortable : true
             } ];
             grid = $('#users_grid').flexigrid({
-                url : KsgApp.acturl('admin/user/data'),
-                dataType : 'json',
-                colModel : colModel,
-                height : 260,
-                sortname : "id",
-                sortorder : "desc",
-                usepager : true,
-                useRp : true,
-                rp : 15,
-                preProcess : preProcessData,
-                showTableToggleBtn : false,
+                url : KsgApp.acturl('admin/user/data'),                
+                colModel : colModel,                
+                preProcess : preProcessData,                
                 onError : function(r, t, e) {
                     alert('cannot load data');
                 },

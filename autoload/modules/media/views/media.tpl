@@ -27,9 +27,9 @@
 						<div class="row" >
 							<div class="span1"><label for="filename">文件名</label></div>
 							<div data-role="input-control"  class="span3 input-control text"><input type="text"  tabindex="1" name="filename" id="filename" /></div>
-							<div class="span1"><label for="email">上传日期</label></div>
-							<div class="span2 input-control text datepicker"><input type="text"  tabindex="2" name="sd" id="sd"/><a class="btn-date"></a></div>
-							<div class="span2 input-control text datepicker"><input type="text"  tabindex="3" name="ed" id="ed"/><a class="btn-date"></a></div>
+							<div class="span1"><label for="sd">上传日期</label></div>
+							<div class="span2 input-control text datepicker"><input type="text"  tabindex="2" name="sd" id="sd"/><button type="button" class="btn-date"></button></div>
+							<div class="span2 input-control text datepicker"><input type="text"  tabindex="3" name="ed" id="ed"/><button type="button" class="btn-date"></button></div>
 							<div class="span1"><label for="type">类型</label></div>
 							<div data-role="input-control" class="span2 input-control select"><select tabindex="4" name="type" id="type">{html_options options=$types}</select></div>
 						</div>

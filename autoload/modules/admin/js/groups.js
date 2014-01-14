@@ -36,17 +36,10 @@ define('admin/js/groups', function(require, exports) {
                 sortable : true
             } ];
             grid = $('#groups_grid').flexigrid({
-                url : KsgApp.acturl('admin/usergroup/data'),
-                dataType : 'json',
-                colModel : colModel,
-                height : 260,
+                url : KsgApp.acturl('admin/usergroup/data'),                
+                colModel : colModel,                
                 sortname : "gid",
-                sortorder : "desc",
-                usepager : true,
-                useRp : true,
-                rp : 15,
-                preProcess : preProcessData,
-                showTableToggleBtn : false,
+                preProcess : preProcessData,                
                 onError : function(r, t, e) {
                     alert('cannot load data');
                 },

@@ -23,9 +23,9 @@
                 </li>
                 <li data-row="1" data-col="2" data-sizex="1" data-sizey="1" class="gs-w"  id="comments">
                 		<div class="tile bg-yellow">
-                            <div class="tile-content icon">
+                            <a class="tile-content icon" href="{$admincp}/nodes/comment/">
                                 <i class="icon-comments-4"></i>
-                            </div>
+                            </a>
                             <div class="brand">
                                 <span class="label fg-white">评论</span>
                                 <span class="badge bg-orange">12</span>

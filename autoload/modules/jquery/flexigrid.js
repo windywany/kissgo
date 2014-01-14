@@ -75,18 +75,18 @@ define('jquery/flexigrid',function(){
 		$.addFlex = function (t, p) {
 			if (t.grid) return false; //return if already exist
 			p = $.extend({ //apply default properties
-				height: 200, //default height
+				height: 'auto', //default height
 				width: 'auto', //auto width
 				striped: true, //apply odd even stripes
 				novstripe: false,
 				minwidth: 30, //min width of columns
-				minheight: 80, //min height of columns
-				resizable: true, //allow table resizing
+				minheight: 250, //min height of columns
+				resizable: false, //allow table resizing
 				url: false, //URL if using data from AJAX
 				method: 'POST', //data sending method
-				dataType: 'xml', //type of data for AJAX, either xml or json
+				dataType: 'json', //type of data for AJAX, either xml or json
 				errormsg: 'Connection Error',
-				usepager: false,
+				usepager: true,
 				nowrap: true,
 				page: 1, //current page
 				total: 1, //total pages
@@ -94,6 +94,8 @@ define('jquery/flexigrid',function(){
 				rp: 15, //results per page
 				rpOptions: [10, 15, 20, 30, 50], //allowed per-page values
 				title: false,
+				sortname:'id',
+				sortorder : 'desc',  
 				idProperty: 'id',
 				pagestat: 'Displaying {from} to {to} of {total} items',
 				pagetext: 'Page',
@@ -106,6 +108,7 @@ define('jquery/flexigrid',function(){
 				nomsg: 'No items',
 				minColToggle: 1, //minimum allowed column to be hidden
 				showToggleBtn: true, //show or hide column toggle popup
+				showTableToggleBtn:false,
 				hideOnSubmit: true,
 				autoload: true,
 				blockOpacity: 0.5,
@@ -1179,7 +1182,8 @@ define('jquery/flexigrid',function(){
 			g.bDiv.className = 'bDiv';
 			$(t).before(g.bDiv);
 			$(g.bDiv).css({
-				height: (p.height == 'auto') ? 'auto' : p.height + "px"
+				height: (p.height == 'auto') ? 'auto' : p.height + "px",
+				'min-height':p.minheight+'px'
 			}).scroll(function (e) {
 				g.scroll()
 			}).append(t);
