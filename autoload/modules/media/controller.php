@@ -220,7 +220,7 @@ class MediaController extends Controller {
                 // the order is very important
                 $cell = array ();
                 $cell [] = $node ['id'];
-                if(empty($node ['attach_type'])){
+                if (empty ( $node ['attach_type'] )) {
                     $node ['attach_type'] = 'file';
                 }
                 if ($node ['attach_type'] != 'image') {
@@ -233,6 +233,12 @@ class MediaController extends Controller {
                 $cell [] = $node ['display_name'];
                 $cell [] = $node ['group_name'];
                 $cell [] = $node ['create_time'];
+                if ($node ['attach_type'] != 'image') {
+                    $cell [] = 'attach';
+                } else {
+                    $cell [] = 'image';
+                }
+                $cell [] = strtoupper ( array_pop ( explode ( '.', $node ['filename'] ) ) );
                 $jsonData ['rows'] [] = array ('id' => $node ['id'], 'cell' => $cell );
             }
         }

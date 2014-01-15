@@ -62,29 +62,32 @@ class NodesCommentController extends Controller {
             $con ['||CMMT.content LIKE'] = $val;
             $where [] = $con;
         }
-        $comments = dbselect ( 'CMMT.*,ND.title,ND.url,U.display_name,CMMT1.subject AS psubject' )->from ( '{comments} AS CMMT' )->where ( $where )->sort ( 'CMMT.' . $sortname, $sortorder )->limit ( $start, $rp );
+        $comments = dbselect ( 'CMMT.*,ND.title,ND.url,U.display_name,CMMT1.id AS rid,CMMT1.author as rauthor' )->from ( '{comments} AS CMMT' )->where ( $where )->sort ( 'CMMT.' . $sortname, $sortorder )->limit ( $start, $rp );
         $comments->join ( '{nodes} AS ND', 'CMMT.nid = ND.id' );
-        $comments->join('{users} AS U','U.id = CMMT.user_id');
-        $comments->join('{comments} AS CMMT1','CMMT.parent = CMMT1.id');
+        $comments->join ( '{users} AS U', 'U.id = CMMT.user_id' );
+        $comments->join ( '{comments} AS CMMT1', 'CMMT.parent = CMMT1.id' );
         $total = $comments->count ( 'CMMT.id' );
         $jsonData = array ('page' => $page, 'total' => $total, 'rows' => array (), 'rp' => $rp );
         if ($total > 0 && count ( $comments )) {
             foreach ( $comments as $comment ) {
                 // the order is very important
                 $cell = array ();
-                $cell [] = $comment ['id'];
-                $cell [] = $comment ['subject'];
-                $cell [] = $comment ['title'];
-                $cell [] = $comment ['psubject'];
-                $cell [] = $comment ['status'];
-                $cell [] = $comment ['display_name'];
-                $cell [] = $comment ['author'];
-                $cell [] = $comment ['author_email'];
-                $cell [] = $comment ['author_url'];
-                $cell [] = $comment ['author_IP'];
-                $cell [] = $comment ['url'];
-                $cell [] = $comment ['parent'];
-                $cell [] = $comment ['user_id'];
+                $cell [0] = $comment ['id'];
+                $cell [1] = $comment ['author'];
+                $cell [2] = $comment ['subject'];
+                $cell [3] = $comment ['title'];
+                $cell [4] = $comment ['status'];
+                //extra fields
+                $cell [5] = $comment ['display_name'];
+                $cell [6] = $comment ['rid'];
+                $cell [7] = $comment ['author_email'];
+                $cell [8] = $comment ['author_url'];
+                $cell [9] = $comment ['author_IP'];
+                $cell [10] = $comment ['url'];
+                $cell [11] = $comment ['create_time'];
+                $cell [12] = $comment ['user_id'];
+                $cell [13] = $comment ['rauthor'];
+                $cell [14] = nl2br ( $comment ['content'] );
                 $jsonData ['rows'] [] = array ('id' => $comment ['id'], 'cell' => $cell );
             }
         }

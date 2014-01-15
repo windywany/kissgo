@@ -93,6 +93,8 @@ define('media/js/media', function(require, exports) {
         var preProcessData = function(data) {
             for ( var i = 0; i < data.rows.length; i++) {
                 data.rows[i].cell[1] = '<a href="#"><img class="shadow" src="' + KsgApp.base + data.rows[i].cell[1] + '"/></a>';
+                data.rows[i].cell[2] = '<a href="'+KsgApp.base +'files/'+data.rows[i].cell[7]+'/'+ data.rows[i].id+'" target="_blank">' + data.rows[i].cell[2] + '</a>';
+                data.rows[i].cell[3] += '<br/><strong>'+data.rows[i].cell[8]+'</strong>';
             }
             return data;
         };
@@ -127,7 +129,7 @@ define('media/js/media', function(require, exports) {
             }, {
                 display : '类型',
                 name : 'mime_type',
-                width : 150,
+                width : 100,
                 sortable : true
             }, {
                 display : '用户',
@@ -143,7 +145,7 @@ define('media/js/media', function(require, exports) {
             }, {
                 display : '日期',
                 name : 'update_time',
-                width : 200,
+                width : 120,
                 sortable : true
             } ];
             grid = $('#medias_grid').flexigrid({
