@@ -1,5 +1,9 @@
 body {
-	padding-top:50px;	
+	padding-top:50px;
+	font:12px/1.5 'MS Hei',\5b8b\4f53,Arial,sans-serif
+}
+.metro div, .metro span, .metro p,.metro ul, .metro ol{
+	font-family: 'MS Hei',\5b8b\4f53,Arial,sans-serif,Verdana,Helvetica;
 }
 ul, ol {
 list-style: none;
