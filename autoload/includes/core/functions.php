@@ -572,7 +572,7 @@ function frqst($name, $default = 0) {
  * 是否返回数组
  * @return mixed
  */
-function safe_ids($ids, $sp = ",", $array = false) {
+function safe_ids($ids, $sp = ',', $array = false) {
     if (empty ( $ids )) {
         return $array ? array () : null;
     }
@@ -580,7 +580,7 @@ function safe_ids($ids, $sp = ",", $array = false) {
     $ids = array ();
     foreach ( $_ids as $id ) {
         if (preg_match ( '/^[1-9]\d*$/', $id )) {
-            $ids [] = $id;
+            $ids [] = intval($id);
         }
     }
     if ($array === false) {

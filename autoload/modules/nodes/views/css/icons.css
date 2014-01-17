@@ -1,0 +1,8 @@
+.context-menu-item.ico-del { background-image: url(icons/del.png); }
+.context-menu-item.ico-reply { background-image: url(icons/reply.png); }
+.context-menu-item.ico-spam { background-image: url(icons/spam.png); }
+.context-menu-item.ico-unspam{ background-image: url(icons/unspam.png); }
+.context-menu-item.ico-trash{ background-image: url(icons/trash.png); }
+.context-menu-item.ico-restore{ background-image: url(icons/undo.png); }
+.context-menu-item.ico-approve{ background-image: url(icons/approve.png); }
+.context-menu-item.ico-reject{ background-image: url(icons/undo.png); }

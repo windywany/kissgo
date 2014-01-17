@@ -2,6 +2,7 @@
 {block name="layout_style_block"}
 <link href="{'jquery/flexigrid/flexigrid.css'|module}"	rel="stylesheet" />
 <link href="{'jquery/css/contextmenu.css'|module}"	rel="stylesheet" />
+<link href="{'css/icons.css'|here}" rel="stylesheet"/>
 {/block}
 {block name="subtitle"}评论{/block}
 {block name="workbench"}
@@ -38,7 +39,7 @@
 {/block}
 {block name="layout_foot_block"}
 <script type="text/javascript">
-	seajs.use(['nodes/js/comments','jquery/flexigrid'], function(app) {
+	seajs.use(['nodes/js/comments','jquery/blockit','jquery/flexigrid'], function(app) {
             $(function(){
             	app.main();
             });

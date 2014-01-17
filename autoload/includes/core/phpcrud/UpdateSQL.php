@@ -1,19 +1,22 @@
 <?php
+
 /**
  * update SQL
- * 
+ *
  * @author guangfeng.ning
  *
  */
 class UpdateSQL extends QueryBuilder implements Countable {
     private $data = array ();
+
     public function __construct($table) {
         parent::__construct ();
         $this->from ( $table );
     }
+
     /**
      * the data to be updated
-     * 
+     *
      * @param array $data
      * @return UpdateSQL
      */
@@ -21,6 +24,7 @@ class UpdateSQL extends QueryBuilder implements Countable {
         $this->data += $data;
         return $this;
     }
+
     public function count() {
         $this->checkDialect ();
         $values = new BindValues ();
@@ -53,5 +57,10 @@ class UpdateSQL extends QueryBuilder implements Countable {
             $this->errorValues = $values->__toString ();
         }
         return false;
+    }
+
+    public function execute() {
+        $cnt = count ( $this );
+        return empty ( $this->error ) ? true : false;
     }
 }

@@ -6,17 +6,94 @@
  *
  */
 class NodesCommentController extends Controller {
+    private $user;
 
     public function preRun() {
         $user = whoami ();
         if (! $user->isLogin ()) {
             Response::redirect ( ADMINCP_URL );
         }
+        $this->user = $user;
     }
 
     public function index() {
         $data = array ();
         return view ( 'comments.tpl', $data );
+    }
+    public function edit($id){
+
+    }
+    public function save($id){
+
+    }
+    public function approve($ids) {
+        $ids = safe_ids ( $ids, ',', true );
+        $rst = dbupdate ( '{comments}' )->set ( array ('status' => 'pass', 'approved_uid' => $this->user ['uid'], 'approved_time' => date ( 'Y-m-d H:i:s' ) ) )->where ( array ('id IN' => $ids, 'status' => 'new' ) );
+        $data ['success'] = $rst->execute ();
+        if (! $data ['success']) {
+            $data ['msg'] = $rst->lastError ();
+        }
+        return new JsonView ( $data );
+    }
+
+    public function revoke($ids) {
+        $ids = safe_ids ( $ids, ',', true );
+        $rst = dbupdate ( '{comments}' )->set ( array ('status' => 'new' ) )->where ( array ('id IN' => $ids, 'status' => 'pass' ) );
+        $data ['success'] = $rst->execute ();
+        if (! $data ['success']) {
+            $data ['msg'] = $rst->lastError ();
+        }
+        return new JsonView ( $data );
+    }
+
+    public function spam($ids) {
+        $ids = safe_ids ( $ids, ',', true );
+        $rst = dbupdate ( '{comments}' )->set ( array ('status' => 'spam' ) )->where ( array ('id IN' => $ids ) );
+        $data ['success'] = $rst->execute ();
+        if (! $data ['success']) {
+            $data ['msg'] = $rst->lastError ();
+        }
+        return new JsonView ( $data );
+    }
+
+    public function unspam($ids) {
+        $ids = safe_ids ( $ids, ',', true );
+        $rst = dbupdate ( '{comments}' )->set ( array ('status' => 'new' ) )->where ( array ('id IN' => $ids, 'status' => 'spam' ) );
+        $data ['success'] = $rst->execute ();
+        if (! $data ['success']) {
+            $data ['msg'] = $rst->lastError ();
+        }
+        return new JsonView ( $data );
+    }
+
+    public function trash($ids) {
+        $ids = safe_ids ( $ids, ',', true );
+        $rst = dbupdate ( '{comments}' )->set ( array ('deleted' => 1 ) )->where ( array ('id IN' => $ids ) );
+        $data ['success'] = $rst->execute ();
+        if (! $data ['success']) {
+            $data ['msg'] = $rst->lastError ();
+        }
+        return new JsonView ( $data );
+    }
+
+    public function restore($ids) {
+        $ids = safe_ids ( $ids, ',', true );
+        $rst = dbupdate ( '{comments}' )->set ( array ('deleted' => 0 ) )->where ( array ('id IN' => $ids ) );
+        $data ['success'] = $rst->execute ();
+        if (! $data ['success']) {
+            $data ['msg'] = $rst->lastError ();
+        }
+        return new JsonView ( $data );
+    }
+
+    public function delete($ids) {
+        $ids = safe_ids ( $ids, ',', true );
+        $rst = dbdelete ()->from ( '{comments}' )->where ( array ('id IN' => $ids, 'deleted' => 0 ) );
+        $data ['success'] = $rst->execute ();
+        if (! $data ['success']) {
+            $data ['msg'] = $rst->lastError ();
+        }
+        return new JsonView ( $data );
     }
 
     /**

@@ -1036,7 +1036,7 @@ var // currently active contextMenu trigger
                 
                     // add icons
                     if (item.icon) {
-                        $t.addClass("icon icon-" + item.icon);
+                        $t.addClass("icon ico-" + item.icon);
                     }
                 }
                 
@@ -1141,21 +1141,12 @@ var // currently active contextMenu trigger
         layer: function(opt, zIndex) {
             // add transparent layer for click area
             // filter and background for Internet Explorer, Issue #23
-            var $layer = opt.$layer = $('<div id="context-menu-layer" style="position:fixed; z-index:' + zIndex + '; top:0; left:0; opacity: 0; filter: alpha(opacity=0); background-color: #000;"></div>')
-                .css({height: $win.height(), width: $win.width(), display: 'block'})
+            var $layer = opt.$layer = $('<div id="context-menu-layer" style="position:fixed; z-index:' + zIndex + '; top:0; left:0;right:0;bottom:0; opacity: 0; filter: alpha(opacity=0); background-color: #000;"></div>')
+                .css({display: 'block'})
                 .data('contextMenuRoot', opt)
                 .insertBefore(this)
                 .on('contextmenu', handle.abortevent)
                 .on('mousedown', handle.layerClick);
-            
-            // IE6 doesn't know position:fixed;
-            if (!$.support.fixedPosition) {
-                $layer.css({
-                    'position' : 'absolute',
-                    'height' : $(document).height()
-                });
-            }
-            
             return $layer;
         }
     };

@@ -85,62 +85,93 @@ define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
             });
             var contextMenu = {
                 selector : '#comments_grid tr',
-                zIndex: 500,
+                zIndex : 500,
                 callback : function(key, options) {
-                    var m = "clicked: " + key;
-                    alert($(this).attr('data-id'));
+                    var cmts = $('#comments_grid').selectedRows();
+                    var ids = [], id = $(this).attr('data-id');
+                    if (key == 'reply') {// open a popup window
+
+                    } else {
+                        $('body').blockit();
+                        ids.push(id);
+                        if (cmts) {
+                            $(cmts).each(function(i, cmt) {
+                                if (cmt[0].RowIdentifier != id) {
+                                    ids.push(cmt[0].RowIdentifier);
+                                }
+                            });
+                        }
+                        $.ajax({
+                            url : KsgApp.acturl('nodes/comment', key),
+                            data : {
+                                ids : ids.join(',')
+                            },
+                            success : function(data) {
+                                $('body').unblockit();
+                                grid.flexReload();
+                            }
+                        });
+                    }
                 },
                 items : {
                     'reply' : {
                         name : '回复',
-                        disabled:function(){
-                            return  $('#status').val() == 'trush' ;
+                        icon:'reply',
+                        disabled : function() {
+                            return $('#status').val() == 'trush';
                         }
                     },
-                    "sep1": "---------",
+                    "sep1" : "---------",
                     'approve' : {
                         name : '审核',
-                        disabled:function(){
+                        icon:'approve',
+                        disabled : function() {
                             return $('#status').val() != 'new';
                         }
                     },
                     'revoke' : {
                         name : '驳回',
-                        disabled:function(){
+                        icon:'reject',
+                        disabled : function() {
                             return $('#status').val() != 'pass';
                         }
                     },
-                    "sep2": "---------",
+                    "sep2" : "---------",
                     'spam' : {
                         name : '这是垃圾评论',
-                        disabled:function(){
-                            return $('#status').val() == 'spam' ||  $('#status').val() == 'trush' ;
+                        icon:'spam',
+                        disabled : function() {
+                            return $('#status').val() == 'spam' || $('#status').val() == 'trush';
                         }
                     },
                     'unspam' : {
                         name : '这不是垃圾评论',
-                        disabled:function(){
-                            return $('#status').val() != 'spam' ||  $('#status').val() == 'trush' ;
+                        icon:'unspam',
+                        disabled : function() {
+                            return $('#status').val() != 'spam' || $('#status').val() == 'trush';
                         }
                     },
-                    "sep3": "---------",
-                    'trush' : {
+                    "sep3" : "---------",
+                    'trash' : {
                         name : '移到回收站',
-                        disabled:function(){
+                        icon:'trash',
+                        disabled : function() {
                             return $('#status').val() == 'trush';
                         }
                     },
-                    'untrush' : {
+                    'restore' : {
                         name : '还原',
-                        disabled:function(){
+                        icon:'restore',
+                        disabled : function() {
                             return $('#status').val() != 'trush';
                         }
                     },
-                    "sep4": "---------",
+                    "sep4" : "---------",
                     'delete' : {
                         name : '删除',
-                        disabled:function(){
-                            return $('#status').val() != 'deleted';
+                        icon:'del',
+                        disabled : function() {
+                            return $('#status').val() != 'trush';
                         }
                     }
                 }

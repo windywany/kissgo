@@ -1,18 +1,21 @@
 <?php
+
 /**
  * delete SQL
- * 
+ *
  * @author guangfeng.ning
  *
  */
 class DeleteSQL extends QueryBuilder implements Countable {
     private $using = array ();
+
     public function __construct() {
         parent::__construct ();
     }
+
     /**
      * mysql and postgresql support using syntax, others may not support.
-     * 
+     *
      * @param string $using
      * @return DeleteSQL
      * @deprecated
@@ -21,9 +24,10 @@ class DeleteSQL extends QueryBuilder implements Countable {
         $this->using [] = self::parseAs ( $using );
         return $this;
     }
+
     /**
      * perform the delete sql, false for deleting failed. Just call count() function for short.
-     * 
+     *
      * @return int
      */
     public function count() {
@@ -59,5 +63,10 @@ class DeleteSQL extends QueryBuilder implements Countable {
             $this->errorValues = $values->__toString ();
         }
         return false;
+    }
+
+    public function execute() {
+        $cnt = count ( $this );
+        return empty ( $this->error ) ? true : false;
     }
 }

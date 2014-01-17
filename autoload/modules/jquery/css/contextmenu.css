@@ -1,18 +1,4 @@
-/*!
- * jQuery contextMenu - Plugin for simple contextMenu handling
- *
- * Version: 1.6.5
- *
- * Authors: Rodney Rehm, Addy Osmani (patches for FF)
- * Web: http://medialize.github.com/jQuery-contextMenu/
- *
- * Licensed under
- *   MIT License http://www.opensource.org/licenses/mit-license
- *   GPL v3 http://opensource.org/licenses/GPL-3.0
- *
- */
-
-.context-menu-list {
+ul.context-menu-list {
     margin:0; 
     padding:0;
     
@@ -32,7 +18,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
     
     font-family: Verdana, Arial, Helvetica, sans-serif;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .context-menu-item {
@@ -81,7 +67,7 @@
     right: 3px;
     z-index: 1;
 }
-.context-menu-item.icon { min-height: 18px; background-repeat: no-repeat; background-position: 4px 2px; }
+.context-menu-item.icon { min-height: 18px; background-repeat: no-repeat; background-position: 4px 50%; display: block;}
 /* vertically align inside labels */
 .context-menu-input > label > * { vertical-align: top; }
 /* position checkboxes and radios as icons */

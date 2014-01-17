@@ -146,12 +146,20 @@ abstract class QueryBuilder {
         return $this->error;
     }
 
+    public function error() {
+        return $this->error;
+    }
+
     public function lastSQL() {
         return $this->errorSQL;
     }
 
     public function lastValues() {
         return $this->errorValues;
+    }
+
+    public function success() {
+        return empty ( $this->error ) ? true : false;
     }
 
     protected function sanitize($var) {
