@@ -440,10 +440,7 @@ i.handl {
 	border-top-right-radius:3px;
 	border-width:1px;
 }
-.quicktags-toolbar {
-	border-bottom-style:solid;
-	border-bottom-width:1px;
-	border-bottom-color:#CCCCCC;
+.quicktags-toolbar {	
 	border-top-left-radius:3px;
 	border-top-right-radius:3px;
 	max-height:30px;
@@ -451,7 +448,7 @@ i.handl {
 	background-color:#E9E9E9;
 	background-image:-moz-linear-gradient(center bottom, #DDDDDD, #E9E9E9);
 }
-.quicktags-toolbar input {
+.metro .quicktags-toolbar input {
 	background-color:#EEEEEE;
 	background-image:-moz-linear-gradient(center bottom, #E3E3E3, #FFFFFF);
 	border:1px solid #C3C3C3;
@@ -482,14 +479,14 @@ i.handl {
 .quicktags-editor {
 	-moz-box-sizing:border-box;
 	box-sizing:border-box;
-	border:0;
+	border:1px solid #E9E9E9;
 	font-family:Consolas,Monaco,monospace;
 	line-height:150%;
 	outline:none;
 	padding:5px;
 	resize:vertical;
-	width:99.9%;
-	margin:1px;
+	width:100%;	
+	margin-bottom: 5px;
 	box-shadow:none;
 }
 textarea.error, input.error {

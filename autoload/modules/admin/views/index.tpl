@@ -17,7 +17,6 @@
                         </a>
                         <div class="brand">
                             <span class="label fg-white">页面</span>
-                            <span class="badge bg-orange">12</span>
                         </div>
                     </div>
                 </li>
@@ -28,7 +27,6 @@
                             </a>
                             <div class="brand">
                                 <span class="label fg-white">评论</span>
-                                <span class="badge bg-orange">12</span>
                             </div>
                         </div>
                 </li>

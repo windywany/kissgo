@@ -18,7 +18,7 @@ define('admin/js/menu', function(require, exports) {
             if (!$(this).valid()) {
                 return false;
             }
-            var sort = $('ol.sortable'),redirect=true;
+            var sort = $('ol.sortable'), redirect = true;
             if (sort.length > 0) {
                 redirect = false;
                 var items = sort.nestedSortable('toArray', {
@@ -40,11 +40,11 @@ define('admin/js/menu', function(require, exports) {
                 },
                 success : function(data) {
                     if (data.success) {
-                        if(redirect){
+                        if (redirect) {
                             window.location.href = KsgApp.acturl('admin/menu');
-                        }else{
+                        } else {
                             alert('保存成功');
-                            $('.item-title').css('color','#000');
+                            $('.item-title').css('color', '#000');
                         }
                     } else if (data.formerr) {
                         validator.showErrors(data.formerr);
@@ -138,75 +138,76 @@ define('admin/js/menu', function(require, exports) {
             }
             return false;
         });
-        $('#menuitem-list').delegate('.item-del', 'click', function(e) {            
+        $('#menuitem-list').delegate('.item-del', 'click', function(e) {
             if (!confirm('你确定要移除这个菜单项?')) {
                 return false;
             } else {
                 e.preventDefault();
-                window.location.href = KsgApp.acturl('admin/menu/delitem', $(this).attr('data-value'))+$('#menuid').val();
+                window.location.href = KsgApp.acturl('admin/menu/delitem', $(this).attr('data-value')) + $('#menuid').val();
             }
         });
-        $('#menuitem-list').delegate('.item-edit', 'click', function(e) { 
+        $('#menuitem-list').delegate('.item-edit', 'click', function(e) {
             e.preventDefault();
-            var me = $(this), wrap = me.parents('.menu-wrap');            
+            var me = $(this), wrap = me.parents('.menu-wrap');
             $.Dialog({
-                width:400,
-                overlay: true,
-                shadow: true,
-                flat: true,
-                icon: '<span class="icon-pencil"></span>',
-                title: '编辑菜单项',
-                content: '',
-                padding: 10,
-                onShow: function(_dialog){
-                    var content = $('<div>'+
-                            '<label>菜单名称</label>' +
-                            '<div class="input-control text"><input type="text" id="ipt-menu-name"></div> ' +
-                            '<label>提示</label>' +
-                            '<div class="input-control text"><input type="text" id="ipt-menu-title"></div> ' +
-                            '<label class="for-url">URL</label>' +
-                            '<div class="input-control text for-url"><input type="text" id="ipt-menu-url"></div> ' + 
-                            '<label>打开窗口</label>' +
-                            '<div class="input-control select"><select id="ipt-menu-target"><option value="_blank">新窗口</option><option value="_self">原窗口</option></select></div>'+
-                            '<div class="form-actions">' +
-                            '<button class="button primary">确定</button>&nbsp;'+
-                            '<button class="button" type="button">取消</button> '+
-                            '</div>'+
-                            '</div>');
-                    
+                width : 400,
+                overlay : true,
+                shadow : true,
+                flat : true,
+                icon : '<span class="icon-pencil"></span>',
+                title : '编辑菜单项',
+                content : '',
+                padding : 10,
+                onShow : function(_dialog) {
+                    var content = '<div>';
+                    content += '<label>菜单名称</label>';
+                    content += '<div class="input-control text"><input type="text" id="ipt-menu-name"></div> ';
+                    content += '<label>提示</label>';
+                    content += '<div class="input-control text"><input type="text" id="ipt-menu-title"></div> ';
+                    content += '<label class="for-url">URL</label>';
+                    content += '<div class="input-control text for-url"><input type="text" id="ipt-menu-url"></div> ';
+                    content += '<label>打开窗口</label>';
+                    content += '<div class="input-control select"><select id="ipt-menu-target">';
+                    content += '<option value="_blank">新窗口</option><option value="_self">原窗口</option></select></div>';
+                    content += '<div class="form-actions">';
+                    content += '<button class="button primary">确定</button>&nbsp;';
+                    content += '<button class="button" type="button">取消</button> ';
+                    content += '</div>';
+                    content += '</div>';
+                    content = $(content);
                     content.find('#ipt-menu-name').val(wrap.find('.item_name').val());
                     content.find('#ipt-menu-title').val(wrap.find('.title').val());
                     content.find('#ipt-menu-target').val(wrap.find('.target').val());
-                   
+
                     if (wrap.find('.url').length > 0) {
                         content.find('#ipt-menu-url').val(wrap.find('.url').val());
-                    }else{
+                    } else {
                         content.find('.for-url').remove();
                     }
-                    content.find('button').eq(0).click(function(){
+                    content.find('button').eq(0).click(function() {
                         var item_name = $.trim($('#ipt-menu-name').val());
                         if (item_name.length == 0) {
                             alert('请填菜单项名称.');
                             return;
                         }
-                        if ($('#ipt-menu-url').lenght>0) {
+                        if ($('#ipt-menu-url').lenght > 0) {
                             var url = $('#ipt-menu-url').val();
                             if (!/^https?:\/\/.+/.test(url)) {
                                 alert('请填写正确的URL.');
                                 return;
                             }
                             wrap.find('.url').val(url);
-                        }       
+                        }
                         wrap.find('.item_name').val(item_name);
                         wrap.find('.title').val($('#ipt-menu-title').val());
                         wrap.find('.target').val($('#ipt-menu-target').val());
-                        wrap.find('.item-title').text($('#ipt-menu-name').val()).css('color','blue');
+                        wrap.find('.item-title').text($('#ipt-menu-name').val()).css('color', 'blue');
                         $('.window-overlay').click();
                     });
-                    content.find('button').eq(1).click(function(){
+                    content.find('button').eq(1).click(function() {
                         $('.window-overlay').click();
                     });
-                    $.Dialog.content(content);                    
+                    $.Dialog.content(content);
                 }
             });
         });

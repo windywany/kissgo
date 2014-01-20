@@ -20,12 +20,62 @@ class NodesCommentController extends Controller {
         $data = array ();
         return view ( 'comments.tpl', $data );
     }
-    public function edit($id){
 
+    public function edit($id) {
+        $data = array ();
+        $cmt = dbselect ( '*' )->from ( '{comments}' )->where ( array ('id' => $id ) );
+        $data ['cmt'] = $cmt [0];
+        return view ( 'comment_edit.tpl', $data );
     }
-    public function save($id){
 
+    public function save($id, $author = '', $url = '', $mail = '', $subject = '', $status = '', $content = '', $apid = 0) {
+        $data ['success'] = false;
+        if (! empty ( $id )) {
+            $cmt ['author'] = $author;
+            $cmt ['author_url'] = $url;
+            $cmt ['subject'] = $subject;
+            $cmt ['content'] = $content;
+            $cmt ['author_email'] = $mail;
+            $cmt ['status'] = in_array ( $status, array ('new', 'pass', 'spam' ) ) ? $status : 'spam';
+            if ($cmt ['status'] == 'pass' && empty ( $apid )) {
+                $cmt ['approved_time'] = date ( 'Y-m-d H:i:s' );
+                $cmt ['approved_uid'] = $this->user ['uid'];
+            }
+            $rst = dbupdate ( '{comments}' )->set ( $cmt )->where ( array ('id' => $id ) );
+            $data ['success'] = $rst->execute ();
+            if (! $data ['success']) {
+                $data ['msg'] = $rst->error ();
+            }
+        } else {
+            $data ['msg'] = '错误的评论编号';
+        }
+        return new JsonView ( $data );
     }
+
+    public function reply($id, $nid, $subject = '', $content = '') {
+        $data ['success'] = true;
+        $cmt ['parent'] = intval ( $id );
+        $cmt ['nid'] = $nid;
+        $cmt ['user_id'] = $this->user ['uid'];
+        $cmt ['create_uid'] = $this->user ['uid'];
+        $cmt ['status'] = 'pass';
+        $cmt ['subject'] = $subject;
+        $cmt ['content'] = $content;
+        $cmt ['create_time'] = date ( 'Y-m-d H:i:s' );
+        $cmt ['author'] = $this->user ['name'];
+        $cmt ['author_email'] = $this->user ['mail'];
+        $cmt ['author_IP'] = $_SERVER ['REMOTE_ADDR'];
+
+        $rst = dbinsert ( $cmt )->inito ( '{comments}' );
+        if (count ( $rst ) > 0) {
+            count ( dbupdate ( '{comments}' )->set ( array ('status' => 'pass' ) )->where ( array ('id' => $id ) ) );
+        } else {
+            $data ['success'] = false;
+            $data ['msg'] = $rst->error ();
+        }
+        return new JsonView ( $data );
+    }
+
     public function approve($ids) {
         $ids = safe_ids ( $ids, ',', true );
         $rst = dbupdate ( '{comments}' )->set ( array ('status' => 'pass', 'approved_uid' => $this->user ['uid'], 'approved_time' => date ( 'Y-m-d H:i:s' ) ) )->where ( array ('id IN' => $ids, 'status' => 'new' ) );
@@ -165,6 +215,7 @@ class NodesCommentController extends Controller {
                 $cell [12] = $comment ['user_id'];
                 $cell [13] = $comment ['rauthor'];
                 $cell [14] = nl2br ( $comment ['content'] );
+                $cell [15] = $comment ['nid'];
                 $jsonData ['rows'] [] = array ('id' => $comment ['id'], 'cell' => $cell );
             }
         }

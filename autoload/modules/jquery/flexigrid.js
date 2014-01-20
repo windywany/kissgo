@@ -444,6 +444,7 @@ define('jquery/flexigrid',function(){
 						$.each(data.rows, function (i, row) {
 							var tr = document.createElement('tr');
 							var jtr = $(tr);
+							jtr.data('rowData',row);
 							if (row.name) tr.name = row.name;
 							if (row.color) {
 								jtr.css('background',row.color);

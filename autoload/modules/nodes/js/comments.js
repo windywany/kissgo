@@ -1,6 +1,117 @@
-define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
+define('nodes/js/comments', [ 'jquery/contextmenu', 'jquery/form' ], function(require, exports) {
     require('jquery/contextmenu');
     var grid = false;
+    function replayComment(id, nid) {
+        $.Dialog({
+            width : 600,
+            overlay : true,
+            shadow : true,
+            flat : true,
+            icon : '<span class="ico-reply"></span>',
+            title : '回复评论',
+            content : '',
+            padding : 10,
+            onShow : function(_dialog) {
+                var content = '<div><div class="grid fluid">';
+                content += '<div class="row" style="margin-top:0">';
+                content += '<div class="input-control text span12"><input type="text" id="ipt-subject" placeholder="主题"/></div>';
+                content += '</div></div>';
+                content += '<div id="replay-wrapper"><textarea id="replay-content" rows="5" class="quicktags-editor"></textarea></div>';
+                content += '<div class="form-actions">';
+                content += '<button class="button primary">确定</button>&nbsp;';
+                content += '<button class="button" type="button">取消</button> ';
+                content += '</div></div>';
+                content = $(content);
+                content.find('#replay-wrapper').quicktags('replay-content');
+                content.find('button').eq(0).click(function() {
+                    var subject = $('#ipt-subject').val();
+                    var content = $('#replay-content').val().trim();
+                    if (!content || content.length < 15) {
+                        alert('不要吝惜你的文笔，你就写点东西吧!');
+                        return;
+                    }
+                    $('body').blockit();
+                    $.ajax({
+                        url : KsgApp.acturl('nodes/comment/reply/' + id),
+                        method : 'POST',
+                        data : {
+                            nid : nid,
+                            subject : subject,
+                            content : content
+                        },
+                        success : function(data) {
+                            $('body').unblockit();                            
+                            if (data.success) {
+                                grid.flexReload();
+                                $('.window-overlay').click();
+                            } else {
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                });
+                content.find('button').eq(1).click(function() {
+                    $('.window-overlay').click();
+                });
+                $.Dialog.content(content);
+            }
+        });
+    }
+    function editComment(id) {
+        require('jquery/form');
+        $.Dialog({
+            width : 600,
+            overlay : true,
+            shadow : true,
+            flat : true,
+            icon : '<span class="ico-reply"></span>',
+            title : '回复评论',
+            content : '',
+            padding : 10,
+            onShow : function(_dialog) {
+                $('body').blockit();
+                $.get(KsgApp.acturl('nodes/comment/edit', id), function(data) {
+                    var content = $(data);
+                    content.find('#edit-cmt-wrapper').quicktags('edit-cmt-txtr');
+                    content.submit(function() {
+                        var author = $('#ipt-author').val().trim();
+                        var content = $('#edit-cmt-txtr').val().trim();
+                        if (!author) {
+                            alert('请填写作者!');
+                            return;
+                        }
+                        if (!content || content.length < 15) {
+                            alert('不要吝惜你的文笔，你就写点东西吧!');
+                            return;
+                        }
+                        $('body').blockit();
+                        $(this).ajaxSubmit({
+                            dataType : 'json',
+                            success : function(data) {
+                                $('body').unblockit();
+                                if (data.success) {
+                                    grid.flexReload();
+                                    $('.window-overlay').click();
+                                } else {
+                                    alert('出错啦!' + data.msg);
+                                }                                
+                            },
+                            error : function(data) {
+                                $('body').unblockit();
+                            }
+                        });
+                        return false;
+                    });
+                    content.find('button').eq(1).click(function() {
+                        $('.window-overlay').click();
+                    });
+                    $.Dialog.content(content);
+                    $('body').unblockit();
+                }, 'html');
+            }
+        });
+
+    }
     exports.main = function() {
         $('.datepicker').datepicker({
             format : 'yyyy-mm-dd'
@@ -90,7 +201,14 @@ define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
                     var cmts = $('#comments_grid').selectedRows();
                     var ids = [], id = $(this).attr('data-id');
                     if (key == 'reply') {// open a popup window
-
+                        var cmt = $('#row' + id).data('rowData');
+                        if (!cmt) {
+                            alert('没有选中要回复的评论.');
+                            return;
+                        }
+                        replayComment(id, cmt.cell[15]);
+                    } else if (key == 'edit') {
+                        editComment(id);
                     } else {
                         $('body').blockit();
                         ids.push(id);
@@ -114,9 +232,16 @@ define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
                     }
                 },
                 items : {
+                    'edit' : {
+                        name : '编辑',
+                        icon : 'edit',
+                        disabled : function() {
+                            return $('#status').val() == 'trush';
+                        }
+                    },
                     'reply' : {
                         name : '回复',
-                        icon:'reply',
+                        icon : 'reply',
                         disabled : function() {
                             return $('#status').val() == 'trush';
                         }
@@ -124,14 +249,14 @@ define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
                     "sep1" : "---------",
                     'approve' : {
                         name : '审核',
-                        icon:'approve',
+                        icon : 'approve',
                         disabled : function() {
                             return $('#status').val() != 'new';
                         }
                     },
                     'revoke' : {
                         name : '驳回',
-                        icon:'reject',
+                        icon : 'reject',
                         disabled : function() {
                             return $('#status').val() != 'pass';
                         }
@@ -139,14 +264,14 @@ define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
                     "sep2" : "---------",
                     'spam' : {
                         name : '这是垃圾评论',
-                        icon:'spam',
+                        icon : 'spam',
                         disabled : function() {
                             return $('#status').val() == 'spam' || $('#status').val() == 'trush';
                         }
                     },
                     'unspam' : {
                         name : '这不是垃圾评论',
-                        icon:'unspam',
+                        icon : 'unspam',
                         disabled : function() {
                             return $('#status').val() != 'spam' || $('#status').val() == 'trush';
                         }
@@ -154,14 +279,14 @@ define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
                     "sep3" : "---------",
                     'trash' : {
                         name : '移到回收站',
-                        icon:'trash',
+                        icon : 'trash',
                         disabled : function() {
                             return $('#status').val() == 'trush';
                         }
                     },
                     'restore' : {
                         name : '还原',
-                        icon:'restore',
+                        icon : 'restore',
                         disabled : function() {
                             return $('#status').val() != 'trush';
                         }
@@ -169,7 +294,7 @@ define('nodes/js/comments', 'jquery/contextmenu', function(require, exports) {
                     "sep4" : "---------",
                     'delete' : {
                         name : '删除',
-                        icon:'del',
+                        icon : 'del',
                         disabled : function() {
                             return $('#status').val() != 'trush';
                         }

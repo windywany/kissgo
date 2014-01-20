@@ -20,7 +20,7 @@
 						<div class="row" >
 							<div class="span1"><label for="nid">页面ID</label></div>
 							<div data-role="input-control" class="span1 input-control text"><input type="text"  tabindex="1" name="nid" id="nid"/></div>
-                            <div class="span1"><label for="nid">关键词</label></div>
+                            <div class="span1"><label for="key">关键词</label></div>
                             <div data-role="input-control" class="span2 input-control text"><input type="text"  tabindex="2" name="key" id="key"/></div>
 							<div class="span1"><label for="sd">日期</label></div>
 							<div class="span2 input-control text datepicker"><input type="text"  tabindex="3" name="sd" id="sd"/><button type="button" class="btn-date"></button></div>
@@ -38,6 +38,7 @@
 <div id="comments_grid"></div>
 {/block}
 {block name="layout_foot_block"}
+<script type="text/javascript" src="{'js/quicktags.js'|assets}"></script>
 <script type="text/javascript">
 	seajs.use(['nodes/js/comments','jquery/blockit','jquery/flexigrid'], function(app) {
             $(function(){
