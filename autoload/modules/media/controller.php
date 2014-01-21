@@ -20,6 +20,28 @@ class MediaController extends Controller {
         $data ['types'] = array_merge ( array ('' => '全部' ), UploadTmpFile::getAttachmentTypes () );
         return view ( 'media.tpl', $data );
     }
+    public function delete($ids){
+         $data ['success'] = true;
+      return new JsonView ( $data );
+    }
+    public function thumb($ids) {
+        $data ['success'] = false;
+        $aid = safe_ids ( $ids, ',', true );
+        if ($aid) {
+            $atts = dbselect ( 'id,content' )->from ( '{nodes}' )->where ( array ('id IN' => $aid ) );
+            if (count ( $atts )) {
+                $uploader = $uploader = apply_filter ( 'get_uploader', new LocalFileUploader () ); //得到文件上传器
+                foreach ( $atts as $att ) {
+                    $rst = $uploader->thumbnail ( $att ['content'], array (array (260, 180 ), array (300, 200 ) ) );
+                    $data ['rst'] [$att ['id']] = $rst;
+                }
+            }
+            $data ['success'] = true;
+        } else {
+            $data ['msg'] = "错误的附件编号";
+        }
+        return new JsonView ( $data );
+    }
 
     public function upload($uploader_count = 0) {
         $data ['success'] = false;
@@ -219,26 +241,27 @@ class MediaController extends Controller {
             foreach ( $nodes as $node ) {
                 // the order is very important
                 $cell = array ();
-                $cell [] = $node ['id'];
+                $cell [0] = $node ['id'];
                 if (empty ( $node ['attach_type'] )) {
                     $node ['attach_type'] = 'file';
                 }
                 if ($node ['attach_type'] != 'image') {
-                    $cell [] = MISC_DIR . '/images/icons/' . $node ['attach_type'] . '.png';
+                    $cell [1] = ASSETS_URL . 'images/icons/' . $node ['attach_type'] . '.png';
                 } else {
-                    $cell [] = $node ['url'];
+                    $cell [1] = the_thumbnail_src ( $node ['content'], 260, 180 );
                 }
-                $cell [] = $node ['name'];
-                $cell [] = $types [$node ['attach_type']];
-                $cell [] = $node ['display_name'];
-                $cell [] = $node ['group_name'];
-                $cell [] = $node ['create_time'];
+                $cell [2] = $node ['name'];
+                $cell [3] = $types [$node ['attach_type']];
+                $cell [4] = $node ['display_name'];
+                $cell [5] = $node ['group_name'];
+                $cell [6] = $node ['create_time'];
                 if ($node ['attach_type'] != 'image') {
-                    $cell [] = 'attach';
+                    $cell [7] = 'attach';
                 } else {
-                    $cell [] = 'image';
+                    $cell [7] = 'image';
                 }
-                $cell [] = strtoupper ( array_pop ( explode ( '.', $node ['filename'] ) ) );
+                $cell [8] = strtoupper ( array_pop ( explode ( '.', $node ['filename'] ) ) );
+                $cell [9] = $node ['url'];
                 $jsonData ['rows'] [] = array ('id' => $node ['id'], 'cell' => $cell );
             }
         }

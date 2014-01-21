@@ -195,7 +195,7 @@ class UploadTmpFile {
      * 根据文件扩展名得到一个文件的附件类型
      *
      * @param string $ext
-     *            文件扩展名
+     * 文件扩展名
      * @return string 附件类型
      */
     public static function getAttachmentType($ext) {
@@ -215,7 +215,7 @@ class UploadTmpFile {
      * 根据文件扩展 名获取文件的mime类型
      *
      * @param string $ext
-     *            文件扩展名
+     * 文件扩展名
      * @return string 文件的mime名
      */
     public static function getAttachmentMimeType($ext) {
@@ -247,7 +247,6 @@ class UploadTmpFile {
         if ($this->isuploaded () && $uploader->allowed ( $this->file_ext )) {
             $rst = $uploader->save ( $this );
         }
-
         if ($rst !== false) {
             $data ['uid'] = $user ['uid'];
             $data ['gid'] = $user ['gid'];
@@ -258,9 +257,10 @@ class UploadTmpFile {
             $data ['content_type'] = 'attachment';
             $data ['content_id'] = '0';
             $data ['mime_type'] = $this->mimeType;
-            $data ['path'] = $rst [2];
+            $data ['path'] = 'files/' . self::getAttachmentType ( $this->file_ext ) . '/' . date ( 'Y/m/d/' );
             $data ['filename'] = $rst [3];
-            $data ['url'] = $rst [0];
+            $data ['url'] = $data ['path'] . $data ['filename'];
+            $data ['content'] = $rst [0];
             $data ['name'] = $this->title;
             $data ['title'] = $this->alt_text;
             $data ['target'] = '_self';

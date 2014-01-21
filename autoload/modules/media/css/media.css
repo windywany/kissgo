@@ -64,3 +64,7 @@
 .plupload_filelist_footer {
 	height: auto;
 }
+.ico-edit { background-image: url(edit.png); }
+.ico-del { background-image: url(del.png); }
+.ico-mark { background-image: url(mark.png); }
+.ico-thumb { background-image: url(thumbnail.png); }

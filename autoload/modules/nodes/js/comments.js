@@ -110,7 +110,6 @@ define('nodes/js/comments', [ 'jquery/contextmenu', 'jquery/form' ], function(re
                 }, 'html');
             }
         });
-
     }
     exports.main = function() {
         $('.datepicker').datepicker({

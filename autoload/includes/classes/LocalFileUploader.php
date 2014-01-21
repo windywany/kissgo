@@ -73,9 +73,9 @@ class LocalFileUploader implements IUploader {
 
     public function thumbnail_url($thumbfile, $src) {
         if (file_exists ( $this->upload_root_path . $thumbfile )) {
-            return BASE_URL . '/' . $thumbfile;
+            return BASE_URL . $thumbfile;
         } else {
-            return BASE_URL . '/' . $src;
+            return BASE_URL . $src;
         }
     }
 

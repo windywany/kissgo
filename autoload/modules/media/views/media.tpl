@@ -2,6 +2,7 @@
 {block name="layout_style_block"}
 <link href="{'jquery/flexigrid/flexigrid.css'|module}" rel="stylesheet" />
 <link href="{'jquery/plupload/css/queue.css'|module}" rel="stylesheet" />
+<link href="{'jquery/css/contextmenu.css'|module}"	rel="stylesheet" />
 <link href="{'../css/media.css'|here}" rel="stylesheet" />
 {/block}
 {block name="subtitle"}多媒体{/block}

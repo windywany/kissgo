@@ -464,7 +464,7 @@ function get_thumbnail_filename($filename, $w, $h) {
 function the_thumbnail_src($src, $w, $h) {
     static $uploader = false;
     if (! $uploader) {
-        $uploader = apply_filter ( 'get_uploader', new PlUploader () ); //得到文件上传器
+        $uploader = apply_filter ( 'get_uploader', new LocalFileUploader () ); //得到文件上传器
     }
     $thumbfile = get_thumbnail_filename ( $src, $w, $h );
     return $uploader->thumbnail_url ( $thumbfile, $src );
