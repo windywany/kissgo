@@ -5,6 +5,9 @@ body {
 .metro div, .metro span, .metro p,.metro ul, .metro ol{
 	font-family: \5b8b\4f53,Arial,sans-serif,Verdana,Helvetica;
 }
+input,textarea,select{
+	background:#fff;
+}
 ul, ol {
 list-style: none;
 }
@@ -972,4 +975,10 @@ img.sltimg {
 }
 .metro form.grid .row {
 	margin-top: 5px;	
+}
+.metro form.grid .row .input-control{
+	margin: 0;
+}
+.metro .tab-control .frame{
+	padding: 10px;
 }

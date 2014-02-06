@@ -155,7 +155,7 @@ define('nodes/js/comments', [ 'jquery/contextmenu', 'jquery/form' ], function(re
                 data.rows[i].cell[3] = '<a href="' + KsgApp.base + cell[10] + '" target="_blank">' + cell[3] + '</a>';
             }
             return data;
-        }
+        };
         if (!grid) {
             var colModel = [ {
                 display : 'ID',

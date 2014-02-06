@@ -94,6 +94,13 @@ define('media/js/media', [ 'jquery/contextmenu' ], function(require, exports) {
         });
     };
     exports.main = function() {
+        $('.tabs li a').on('click', function(){
+            if($(this).attr('id') == 'tab-media-grid'){
+                $('.flexigrid').show();
+            }else{
+                $('.flexigrid').hide();
+            }
+        });
         var preProcessData = function(data) {
             var w = 0,h = 0;
             for ( var i = 0; i < data.rows.length; i++) {

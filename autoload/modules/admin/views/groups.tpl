@@ -16,12 +16,10 @@
 						<div class="row" >
 							<div class="span1"><label for="name">用户组</label></div>
 							<div data-role="input-control"  class="span3 input-control text"><input type="text"  tabindex="1" name="name" id="name" /></div>
-							</div>
-						<div class="row">
 							<div class="span3">
 								<button class="button primary">确定</button>
-							</div>
-						</div>
+							</div>	
+						</div>						
 					</form>
                 </div>
             </div>

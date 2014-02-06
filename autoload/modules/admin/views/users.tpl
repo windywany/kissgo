@@ -25,7 +25,7 @@
 							<div class="span1"><label for="display_name">姓名</label></div>
 							<div data-role="input-control"  class="span3 input-control text"><input type="text"  tabindex="2" name="display_name" id="display_name" /></div>
 							<div class="span1"><label for="status">状态</label></div>
-							<div class="span7">
+							<div class="span6">
 								<div data-role="input-control" class="input-control radio">
                                     <label>
                                         全部
@@ -48,12 +48,10 @@
                                     </label>
                                 </div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="span3">
+							<div class="span1">
 								<button class="button primary">确定</button>
 							</div>
-						</div>
+						</div>						
 					</form>
                 </div>
             </div>

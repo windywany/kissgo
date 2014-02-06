@@ -33,7 +33,7 @@
     <body class="metro">
 	    <div class="navigation-bar dark fixed-top">
             <div class="navigation-bar-content" id="top-menu">
-                <a class="element" href="{$siteurl}" target="_blank"><i class="icon-home"></i>我的网站</a>
+                <a class="element" href="{$siteurl}" target="_blank"><i class="icon-home"></i> 我的网站</a>
                 <span class="element-divider"></span>
                 <a href="{$admincp}?logout" class="element place-right"><i class="icon-exit fg-red"  id="btn-exit"></i></a>
                 <span class="element-divider place-right"></span>
@@ -44,6 +44,7 @@
                             <ul data-role="dropdown" class="dropdown-menu place-right" >
                             	<li class="divider"></li>
                             	<li><a href="{$admincp}/admin/settings/" ><span class="icon-tools" ></span>系统设置</a></li>
+                            	<li class="divider"></li>
                             	<li><a href="{$admincp}?clear" ><span class="icon-remove fg-red" ></span>清空运行时缓存</a></li>
                             </ul>
 				</div>

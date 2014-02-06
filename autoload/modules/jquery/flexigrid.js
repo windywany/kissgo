@@ -80,7 +80,7 @@ define('jquery/flexigrid',function(){
 				striped: true, //apply odd even stripes
 				novstripe: false,
 				minwidth: 30, //min width of columns
-				minheight: 250, //min height of columns
+				minheight: 300, //min height of columns
 				resizable: false, //allow table resizing
 				url: false, //URL if using data from AJAX
 				method: 'POST', //data sending method
