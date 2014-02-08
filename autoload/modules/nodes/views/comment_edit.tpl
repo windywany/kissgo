@@ -44,7 +44,7 @@
     </div>
     <div></div>
     <div class="form-actions">
-    	<button class="button primary">确定</button>&nbsp;
+    	<button class="button primary" >确定</button>&nbsp;
     	<button class="button" type="button">取消</button>
     </div>
 </form>

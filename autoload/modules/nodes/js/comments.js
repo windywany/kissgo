@@ -18,7 +18,7 @@ define('nodes/js/comments', [ 'jquery/contextmenu', 'jquery/form' ], function(re
                 content += '</div></div>';
                 content += '<div id="replay-wrapper"><textarea id="replay-content" rows="5" class="quicktags-editor"></textarea></div>';
                 content += '<div class="form-actions">';
-                content += '<button class="button primary">确定</button>&nbsp;';
+                content += '<button class="button primary"  type="button">确定</button>&nbsp;';
                 content += '<button class="button" type="button">取消</button> ';
                 content += '</div></div>';
                 content = $(content);
@@ -28,7 +28,7 @@ define('nodes/js/comments', [ 'jquery/contextmenu', 'jquery/form' ], function(re
                     var content = $('#replay-content').val().trim();
                     if (!content || content.length < 15) {
                         alert('不要吝惜你的文笔，你就写点东西吧!');
-                        return;
+                        return false;
                     }
                     $('body').blockit();
                     $.ajax({
@@ -78,11 +78,11 @@ define('nodes/js/comments', [ 'jquery/contextmenu', 'jquery/form' ], function(re
                         var content = $('#edit-cmt-txtr').val().trim();
                         if (!author) {
                             alert('请填写作者!');
-                            return;
+                            return false;
                         }
                         if (!content || content.length < 15) {
                             alert('不要吝惜你的文笔，你就写点东西吧!');
-                            return;
+                            return false;
                         }
                         $('body').blockit();
                         $(this).ajaxSubmit({
