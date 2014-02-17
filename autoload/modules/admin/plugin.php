@@ -13,7 +13,7 @@ function on_init_smarty_engine($smarty) {
 bind ( 'init_smarty_engine', 'on_init_smarty_engine' );
 
 function on_init_smarty_view_engine($smarty) {
-    $smarty->assign ( 'layout', 'admin/layout/layout.tpl' );
+    $smarty->assign ( 'layout', 'admin/views/layout.tpl' );
     $smarty->assign ( 'passport', whoami () );
     return $smarty;
 }
