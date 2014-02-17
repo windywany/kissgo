@@ -142,4 +142,12 @@ class NodesController extends Controller {
 		);
 		return new JsonView ( $data );
 	}
+	public function edit($id) {
+		$data = array ();
+		return view ( 'node_form.tpl', $data );
+	}
+	public function create($type) {
+		$data = array ();
+		return view ( 'node_form.tpl', $data );
+	}
 }
