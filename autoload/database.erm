@@ -23,8 +23,8 @@
 		<g>255</g>
 		<b>255</b>
 	</color>
-	<font_name></font_name>
-	<font_size>9</font_size>
+	<font_name>宋体</font_name>
+	<font_size>12</font_size>
 	<settings>
 		<database>MySQL</database>
 		<capital>false</capital>
@@ -57,10 +57,10 @@
 			<create_trigger>false</create_trigger>
 			<create_view>false</create_view>
 			<drop_index>true</drop_index>
-			<drop_sequence>true</drop_sequence>
+			<drop_sequence>false</drop_sequence>
 			<drop_table>true</drop_table>
-			<drop_tablespace>true</drop_tablespace>
-			<drop_trigger>true</drop_trigger>
+			<drop_tablespace>false</drop_tablespace>
+			<drop_trigger>false</drop_trigger>
 			<drop_view>true</drop_view>
 			<inline_column_comment>false</inline_column_comment>
 			<inline_table_comment>false</inline_table_comment>
@@ -110,7 +110,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2013-12-06 09:56:49</creation_date>
-			<updated_date>2014-01-03 19:53:06</updated_date>
+			<updated_date>2014-02-17 20:51:56</updated_date>
 			<model_property>
 				<name>Project Name</name>
 				<value></value>
@@ -1416,8 +1416,8 @@
 			<width>124</width>
 				<font_name>Segoe UI</font_name>
 				<font_size>9</font_size>
-			<x>678</x>
-			<y>276</y>
+			<x>603</x>
+			<y>272</y>
 			<color>
 				<r>128</r>
 				<g>128</g>
@@ -1433,7 +1433,7 @@
 			<option></option>
 			<columns>
 				<normal_column>
-					<word_id>26</word_id>
+					<word_id>25</word_id>
 					<id>3</id>
 					<description></description>
 					<unique_key_name></unique_key_name>
@@ -1639,7 +1639,7 @@
 					<physical_name></physical_name>
 					<type>enum</type>
 					<constraint></constraint>
-					<default_value>&apos;new&apos;</default_value>
+					<default_value>new</default_value>
 					<auto_increment>false</auto_increment>
 					<foreign_key>false</foreign_key>
 					<not_null>true</not_null>
@@ -1973,6 +1973,66 @@
 							<id>5</id>
 							<desc>false</desc>
 						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>5</id>
+							<desc>false</desc>
+						</column>
 					</columns>
 				</inidex>
 				<inidex>
@@ -1982,6 +2042,66 @@
 					<type></type>
 					<description></description>
 					<columns>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>9</id>
+							<desc>false</desc>
+						</column>
 						<column>
 							<id>9</id>
 							<desc>false</desc>
@@ -1999,6 +2119,66 @@
 							<id>4</id>
 							<desc>false</desc>
 						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>4</id>
+							<desc>false</desc>
+						</column>
 					</columns>
 				</inidex>
 				<inidex>
@@ -2008,6 +2188,66 @@
 					<type></type>
 					<description></description>
 					<columns>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>8</id>
+							<desc>false</desc>
+						</column>
 						<column>
 							<id>8</id>
 							<desc>false</desc>
@@ -2048,7 +2288,7 @@
 			<option></option>
 			<columns>
 				<normal_column>
-					<word_id>25</word_id>
+					<word_id>26</word_id>
 					<id>19</id>
 					<description></description>
 					<unique_key_name></unique_key_name>
@@ -3316,7 +3556,7 @@
 				<schema></schema>
 				<character_set>utf8</character_set>
 				<collation>utf8_unicode_ci</collation>
-				<storage_engine>MyISAM</storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -3499,6 +3739,22 @@
 							<id>55</id>
 							<desc>false</desc>
 						</column>
+						<column>
+							<id>54</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>55</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>54</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>55</id>
+							<desc>false</desc>
+						</column>
 					</columns>
 				</inidex>
 			</indexes>
@@ -3508,7 +3764,7 @@
 				<schema></schema>
 				<character_set>utf8</character_set>
 				<collation>utf8_unicode_ci</collation>
-				<storage_engine>MyISAM</storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -3518,7 +3774,7 @@
 			<width>186</width>
 				<font_name>Segoe UI</font_name>
 				<font_size>9</font_size>
-			<x>85</x>
+			<x>39</x>
 			<y>284</y>
 			<color>
 				<r>128</r>
@@ -3675,7 +3931,7 @@
 				<schema></schema>
 				<character_set>utf8</character_set>
 				<collation>utf8_unicode_ci</collation>
-				<storage_engine>MyISAM</storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -3694,7 +3950,7 @@
 			</color>
 			<connections>
 			</connections>
-			<physical_name>menu_items</physical_name>
+			<physical_name>menuitems</physical_name>
 			<logical_name>Menu Items</logical_name>
 			<description>menu items</description>
 			<constraint></constraint>
@@ -4036,10 +4292,58 @@
 				<inidex>
 					<full_text>false</full_text>
 					<non_unique>true</non_unique>
-					<name>IDX_MENU_NAME</name>
+					<name>IDX_MENU</name>
 					<type></type>
 					<description></description>
 					<columns>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>63</id>
+							<desc>false</desc>
+						</column>
 						<column>
 							<id>63</id>
 							<desc>false</desc>
@@ -4084,7 +4388,7 @@
 			</color>
 			<connections>
 			</connections>
-			<physical_name>theme_templates</physical_name>
+			<physical_name>themetemplates</physical_name>
 			<logical_name>Theme Templates</logical_name>
 			<description></description>
 			<constraint></constraint>
@@ -4254,8 +4558,8 @@
 			<width>185</width>
 				<font_name>Segoe UI</font_name>
 				<font_size>9</font_size>
-			<x>402</x>
-			<y>192</y>
+			<x>324</x>
+			<y>180</y>
 			<color>
 				<r>128</r>
 				<g>128</g>
@@ -4419,6 +4723,14 @@
 							<id>77</id>
 							<desc>false</desc>
 						</column>
+						<column>
+							<id>76</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>77</id>
+							<desc>false</desc>
+						</column>
 					</columns>
 				</inidex>
 			</indexes>
@@ -4428,7 +4740,7 @@
 				<schema></schema>
 				<character_set>utf8</character_set>
 				<collation>utf8_unicode_ci</collation>
-				<storage_engine>MyISAM</storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -4438,8 +4750,8 @@
 			<width>140</width>
 				<font_name>Segoe UI</font_name>
 				<font_size>9</font_size>
-			<x>54</x>
-			<y>135</y>
+			<x>85</x>
+			<y>168</y>
 			<color>
 				<r>128</r>
 				<g>128</g>
@@ -4455,7 +4767,7 @@
 			<option></option>
 			<columns>
 				<normal_column>
-					<word_id>25</word_id>
+					<word_id>26</word_id>
 					<id>79</id>
 					<description></description>
 					<unique_key_name></unique_key_name>
@@ -4779,8 +5091,8 @@
 			</color>
 			<connections>
 			</connections>
-			<physical_name>menu</physical_name>
-			<logical_name>Menu</logical_name>
+			<physical_name>menus</physical_name>
+			<logical_name>Menus</logical_name>
 			<description>menus</description>
 			<constraint></constraint>
 			<primary_key_name></primary_key_name>
@@ -5028,7 +5340,7 @@
 				<schema></schema>
 				<character_set>utf8</character_set>
 				<collation>utf8_unicode_ci</collation>
-				<storage_engine>MyISAM</storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>

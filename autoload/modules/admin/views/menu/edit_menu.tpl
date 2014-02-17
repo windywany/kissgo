@@ -81,19 +81,17 @@
             	<ol id="menuitem-list" class="sortable"></ol>
                 <div class="post-body-plain" id="menu-instructions"><p>从右侧挑选一些项目（页面、分类目录、链接等）来开始构建您的自定义菜单。</p></div>
             {/if}
+            <div class="row" style="margin-top:30px;">				
+				<div class="span5">
+				    <a class="button large default" tabindex="8" href="{$admincp}/admin/menu/"><i class="icon-undo on-left"></i>返回</a>
+					<button class="button large success" tabindex="7"><i class="icon-floppy on-left"></i>保存</button>
+				</div>
+			</div>
             </div>
         </div>
 	</div>
 
-	</fieldset>
-
-    <div class="row" style="margin-top:10px;">
-		<div class="span2"></div>
-		<div class="span5">
-		    <a class="button large default" tabindex="8" href="{$admincp}/admin/menu/"><i class="icon-undo on-left"></i>返回</a>
-			<button class="button large success" tabindex="7"><i class="icon-floppy on-left"></i>保存</button>
-		</div>
-	</div>
+	</fieldset>    
 </form>
 
 {/block}

@@ -16,7 +16,7 @@ class MenuForm extends AbstractForm {
         if ($data ['id']) {
             $where ['id <>'] = $data ['id'];
         }
-        $rst = dbselect ( 'id' )->from ( '{menu}' )->where ( $where );
+        $rst = dbselect ( 'id' )->from ( '{menus}' )->where ( $where );
         if (count ( $rst ) > 0) {
             return false;
         }
@@ -27,9 +27,9 @@ class MenuForm extends AbstractForm {
         $menu = $this->toArray ();
         unset ( $menu ['id'] );
         if ($id) {
-            $rst = dbupdate ( '{menu}' )->set ( $menu )->where ( array ('id' => $id ) );
+            $rst = dbupdate ( '{menus}' )->set ( $menu )->where ( array ('id' => $id ) );
         } else {
-            $rst = dbinsert ( $menu )->inito ( '{menu}' );
+            $rst = dbinsert ( $menu )->inito ( '{menus}' );
         }
         if (count ( $rst ) !== false) {
             if (! $id) {

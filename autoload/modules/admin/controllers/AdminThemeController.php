@@ -26,12 +26,12 @@ class AdminThemeController extends Controller {
     public function settpl($theme, $type, $tpl) {
         $data = array ('success' => true );
         $set = array ('theme' => $theme, 'type' => $type );
-        $rst = dbselect ()->from ( '{theme_templates}' )->where ( $set );
+        $rst = dbselect ()->from ( '{themetemplates}' )->where ( $set );
         if ($rst->count ( 'id' ) > 0) {
-            $rst = dbupdate ( '{theme_templates}' )->set ( array ('template' => $tpl ) )->where ( $set );
+            $rst = dbupdate ( '{themetemplates}' )->set ( array ('template' => $tpl ) )->where ( $set );
         } else {
             $set ['template'] = $tpl;
-            $rst = dbinsert ( $set )->inito ( '{theme_templates}' );
+            $rst = dbinsert ( $set )->inito ( '{themetemplates}' );
         }
         if (count ( $rst ) === false) {
             $data ['success'] = false;
@@ -55,7 +55,7 @@ class AdminThemeController extends Controller {
     public function reset($theme) {
         $data = array ('success' => true );
         if ($theme) {
-            count ( dbupdate('{theme_templates}')->set(array('template'=>''))->where ( array ('theme' => $theme ) ) );
+            count ( dbupdate('{themetemplates}')->set(array('template'=>''))->where ( array ('theme' => $theme ) ) );
         }
         return new JsonView ( $data );
     }

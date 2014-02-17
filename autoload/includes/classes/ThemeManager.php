@@ -40,7 +40,7 @@ class ThemeManager {
             $types = $ctm->getTypes ();
         }
         $templates = array_merge ( array (), $types );
-        $tpls = dbselect ( 'id,template,type' )->from ( '{theme_templates}' )->where ( array ('theme' => $theme ) );
+        $tpls = dbselect ( 'id,template,type' )->from ( '{themetemplates}' )->where ( array ('theme' => $theme ) );
         if (count ( $tpls )) {
             $deleting = array ();
             foreach ( $tpls as $tpl ) {
@@ -54,7 +54,7 @@ class ThemeManager {
                 }
             }
             if (! empty ( $deleting )) {
-                $rst = dbdelete ()->from ( '{theme_templates}' )->where ( array ('id IN' => $deleting ) );
+                $rst = dbdelete ()->from ( '{themetemplates}' )->where ( array ('id IN' => $deleting ) );
             }
         }
         return $templates;
